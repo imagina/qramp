@@ -1,16 +1,8 @@
 <template>
   <div id="services-container">
-    <div v-if="responsive" class="q-px-md q-py-md">
-      <div class="q-pl-md flex items-center text-primary">
-        <q-icon size="32px" :name="toolbar.icon" />
-        <div class="title q-pl-sm text-h4">{{toolbar.title}}</div>
-      </div>
-      <q-separator class="q-my-sm"/>
-      <span class="q-pl-md caption text-primary">1 of 7</span>
-    </div>
     <!-- toolbar -->
     <i-toolbar @edit="readonly = $event" :toolbar="toolbar"></i-toolbar>
-    <div class="q-pa-md">
+    <div class="q-px-md">
       <q-input clearable borderless standout dense rounded style="max-width: 100%"
       color="primary" :placeholder="`${$tr('ifly.cms.label.search',{capitalize : true})}...`"
       class="q-my-md q-ml-md q-mr-xs  search">
@@ -18,7 +10,7 @@
           <q-icon color="primary" class="q-pl-sm" name="search" />
         </template>
       </q-input>
-      <expansion-component :data="services" />
+      <expansion-component class="q-px-md" :data="services" />
     </div>
   </div>
 </template>

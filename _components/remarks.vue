@@ -1,16 +1,8 @@
 <template>
   <div>
-    <div v-if="responsive" class="q-px-md q-py-md">
-      <div class="q-pl-md flex items-center text-primary">
-        <q-icon size="32px" :name="toolbar.icon" />
-        <div class="title q-pl-sm text-h4">{{toolbar.title}}</div>
-      </div>
-      <q-separator class="q-my-sm"/>
-      <span class="q-pl-md caption text-primary">1 of 7</span>
-    </div>
     <!-- toolbar -->
     <i-toolbar @edit="readonly = $event" :toolbar="toolbar"></i-toolbar>
-    <div class="row q-pa-md">
+    <div class="row q-px-md">
       <dynamic-field :class="`col-12 col-md-6 ${readonly ? 'q-px-md':'q-px-sm'}`" v-for="(field, keyField) in formFields" :key="keyField" :field="field"
         v-model="form[field.name || keyField]"/>
     </div>

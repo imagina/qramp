@@ -1,11 +1,21 @@
 <template>
-  <div id="stepComponent">
+  <div id="stepComponent" class="bg-white dynamicComponent" style="border-radius: 8px;">
     <div v-if="responsive">
+      <div class="flex justify-between q-px-sm q-py-md">
+        <template v-for="(step, index) in steps">
+          <q-btn 
+            :key="index"
+            :icon="step.icon"
+            size="10px"
+            round
+            :color="currentTab == tabs[index] ? 'primary': 'grey-6'"
+            @click="currentTab = tabs[index]"
+          />
+        </template>
+      </div>
       <component 
-        class="bg-white dynamicComponent" 
         :is="currentTab" 
         :toolbar="steps[this.index]"
-        style="border-radius: 8px;"
         >
       </component>
     </div>
@@ -15,6 +25,7 @@
       ref="stepper"
       color="primary"
       alternative-labels
+      header-nav
       animated
     >
       <template v-for="(step, index) in steps">
@@ -34,7 +45,6 @@
         </q-step>
       </template>
     </q-stepper>
-    
   </div>
 </template>
 <script>
