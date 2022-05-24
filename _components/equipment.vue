@@ -1,34 +1,26 @@
 <template>
   <div id="equipment">
-    <div v-if="responsive" class="q-px-md q-py-md">
-      <div class="q-pl-md flex items-center text-primary">
-        <q-icon size="32px" :name="toolbar.icon" />
-        <div class="title q-pl-sm text-h4">{{toolbar.title}}</div>
-      </div>
-      <q-separator class="q-my-sm"/>
-      <span class="q-pl-md caption text-primary">1 of 7</span>
-    </div>
     <!-- toolbar -->
     <i-toolbar @edit="readonly = $event" :toolbar="toolbar"></i-toolbar>
     <div class="q-pa-md">
-      <div :class="`row ${readonly? 'q-px-md' : ''}`">
-        <div v-for="(field, keyField) in formFields.mapActions" :class="`col-12 col-md-4 q-pb-md ${readonly ? 'q-px-sm':''}`">
-          <label :class="`${readonly ? 'flex no-wrap items-center justify-center': '' }`">
-            <span v-if="readonly" class="span text-right text-primary">{{field.label}}:</span>
-            <dynamic-field class=" q-px-sm" :key="keyField" :field="field"
+      <div class="row">
+        <div v-for="(field, keyField) in formFields.mapActions" :class="`col-12 col-md-4 q-pb-md ${readonly ? 'q-px-sm':''}`" :style="`${readonly ? 'height: 80px' : ''}`">
+          <label :class="`${readonly ? `flex no-wrap items-center ${responsive ? 'row' :'justify-center'}`: '' }`">
+            <span v-if="readonly" :class="`${responsive ? 'col-5': ''} span text-right text-primary`">{{field.label}}:</span>
+            <dynamic-field :class="`${responsive ? 'col-7' : '' } q-px-sm`" :key="keyField" :field="field"
               v-model="form[field.name || keyField]"/>
           </label>
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-        <q-separator color="blue-grey-2" inset />
-      <div :class="`row ${readonly? 'q-px-md' : ''}`">
-        <div v-for="(field, keyField) in formFields.mainLoader" :class="`col-12 col-md-6 q-py-md ${readonly ? 'q-px-sm':''}`">
-          <label :class="`${readonly ? 'flex no-wrap items-center justify-center': '' }`">
-            <span v-if="readonly" class="span text-right text-primary">{{field.label}}:</span>
+        <q-separator v-if="!responsive && readonly" color="blue-grey-2" inset />
+      <div class="row">
+        <div v-for="(field, keyField) in formFields.mainLoader" :class="`col-12 col-md-6 q-py-md ${readonly ? 'q-px-sm':''}`" :style="`${readonly ? 'height: 80px' : ''}`">
+          <label :class="`${readonly ? `flex no-wrap items-center ${responsive ? 'row' :'justify-center'}`: '' }`">
+            <span v-if="readonly" :class="`${responsive ? 'col-5': ''} span text-right text-primary`">{{field.label}}:</span>
             <dynamic-field
               :key="keyField" 
-              class="q-px-sm" 
+              :class="`${responsive ? 'col-7' : '' } q-px-sm`" 
               :field="field"
               v-model="form[field.name || keyField]" 
             />
@@ -36,13 +28,13 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-        <q-separator color="blue-grey-2" inset />
-      <div :class="`row ${readonly? 'q-px-md' : ''}`">
-        <div v-for="(field, keyField) in formFields.lowerLoader"  :class="`col-12 col-md-6 q-py-md ${readonly ? 'q-px-sm':''}`">
-          <label :class="`${readonly ? 'flex no-wrap items-center justify-center': '' }`">
-            <span v-if="readonly" class="span text-right text-primary">{{field.label}}:</span>
+        <q-separator v-if="!responsive && readonly" color="blue-grey-2" inset />
+      <div class="row">
+        <div v-for="(field, keyField) in formFields.lowerLoader"  :class="`col-12 col-md-6 q-py-md ${readonly ? 'q-px-sm':''}`" :style="`${readonly ? 'height: 80px' : ''}`">
+          <label :class="`${readonly ? `flex no-wrap items-center ${responsive ? 'row' :'justify-center'}`: '' }`">
+            <span v-if="readonly" :class="`${responsive ? 'col-5': ''} span text-right text-primary`">{{field.label}}:</span>
             <dynamic-field
-              class="q-px-sm" 
+              :class="`${responsive ? 'col-7' : '' } q-px-sm`" 
               :key="keyField"
               :field="field"
               v-model="form[field.name || keyField]" 
@@ -51,13 +43,13 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-        <q-separator color="blue-grey-2" inset />
-      <div :class="`row ${readonly? 'q-px-md' : ''}`">
-        <div v-for="(field, keyField) in formFields.addLoader" :class="`col-12 col-md-6 q-py-md ${readonly ? 'q-px-sm':''}`">
-          <label :class="`${readonly ? 'flex no-wrap items-center justify-center': '' }`">
-            <span v-if="readonly" class="span text-right text-primary">{{field.label}}:</span>
+        <q-separator v-if="!responsive && readonly" color="blue-grey-2" inset />
+      <div class="row">
+        <div v-for="(field, keyField) in formFields.addLoader" :class="`col-12 col-md-6 q-py-md ${readonly ? 'q-px-sm':''}`" :style="`${readonly ? 'height: 80px' : ''}`">
+          <label :class="`${readonly ? `flex no-wrap items-center ${responsive ? 'row' :'justify-center'}`: '' }`">
+            <span v-if="readonly" :class="`${responsive ? 'col-5': ''} span text-right text-primary`">{{field.label}}:</span>
             <dynamic-field
-              class="q-px-sm"
+              :class="`${responsive ? 'col-7' : '' } q-px-sm`"
               :key="keyField"
               :field="field"
               v-model="form[field.name || keyField]" 
@@ -66,13 +58,13 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-        <q-separator color="blue-grey-2" inset />
-      <div class="row q-px-md items-center">
-        <div v-for="(field, keyField) in formFields.transport"  :class="`col-12 col-md-6 q-py-md ${readonly ? 'q-px-sm':''}`">
-          <label :class="`${readonly ? 'flex no-wrap items-center justify-center': '' }`">
-            <span v-if="readonly" class="span text-right text-primary">{{field.label}}:</span>
+        <q-separator v-if="!responsive && readonly" color="blue-grey-2" inset />
+      <div class="row items-center">
+        <div v-for="(field, keyField) in formFields.transport"  :class="`col-md-6 col-12 q-py-md ${readonly ? 'q-px-sm':''}`" :style="`${readonly ? 'height: 80px' : ''}`">
+          <label :class="`${readonly ? `flex no-wrap items-center ${responsive ? 'row' :'justify-center'}`: '' }`">
+            <span v-if="readonly" :class="`${responsive ? 'col-5': ''} span text-right text-primary`">{{field.label}}:</span>
             <dynamic-field
-              class="q-px-sm"
+              :class="`${responsive ? 'col-7' : '' } q-px-sm`"
               :key="keyField"
               :field="field"
               v-model="form[field.name || keyField]" 
@@ -81,7 +73,7 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
         <q-btn 
-          class="text-capitalize btn-add col-12 col-md-6 q-px-sm" 
+          :class="`text-capitalize col-md-6 col-12 ${readonly ? 'q-my-lg' : 'q-my-md'}`" 
           color="white"
           outline
           rounded 

@@ -1,5 +1,5 @@
 <template>
-  <div id="expansion-container" class="q-mr-xs q-ml-md " style="max-width: 100%">
+  <div id="expansion-container"  style="max-width: 100%">
     <q-list v-for="(item, index) in data" :key="index">
       <q-expansion-item class="q-py-sm">
         <template v-slot:header>

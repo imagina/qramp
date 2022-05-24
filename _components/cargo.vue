@@ -1,16 +1,8 @@
 <template>
   <div id="cargoContainer">
-    <div v-if="responsive" class="q-px-md q-py-md">
-      <div class="q-pl-md flex items-center text-primary">
-        <q-icon size="32px" :name="toolbar.icon" />
-        <div class="title q-pl-sm text-h4">{{toolbar.title}}</div>
-      </div>
-      <q-separator class="q-my-sm"/>
-      <span class="q-pl-md caption text-primary">1 of 7</span>
-    </div>
     <!-- toolbar -->
     <i-toolbar @edit="readonly = $event" :toolbar="toolbar.toolbar"></i-toolbar>
-    <div class="row no-wrap justify-center items-center" :style="'padding: 0 22px 0 26px'">
+    <div :class="`row justify-center items-center q-px-md ${responsive ? '':'no-wrap'}`">
       <div class="col-12 col-md-6 q-mb-sm q-py-lg">
         <q-card flat :bordered="!readonly" class="q-pa-none">
           <q-card-section class="text-primary boundColor q-py-xs text-center text-weight-bold">

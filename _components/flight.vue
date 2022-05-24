@@ -1,23 +1,15 @@
 <template>
   <div id="formFlyStep">
-    <div v-if="responsive" class="q-px-md q-py-md">
-      <div class="q-pl-md flex items-center text-primary">
-        <q-icon size="32px" :name="toolbar.icon" class="rotate-315" />
-        <div class="title q-pl-sm text-h4">{{toolbar.title}}</div>
-      </div>
-      <q-separator class="q-my-sm"/>
-      <span class="q-pl-md caption text-primary">1 of 7</span>
-    </div>
     <i-toolbar @edit="readonly = $event" :toolbar="toolbar.toolbar"></i-toolbar>
-    <div class="row">
+    <div id="rowContainer" class="row">
       <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
-        <label :class="`${readonly ? 'row no-wrap items-center justify-end q-pr-xl': '' }`">
-          <span v-if="readonly" class="q-pb-sm col-12 col-md-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+        <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
           <dynamic-field
             :key="keyField"
             :id="keyField"
             :field="field"
-            :class="`${readonly ? 'col-12 col-md-7': ''}`"
+            :class="`${readonly ? 'col-7': ''}`"
             :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
             v-model="form[field.name || keyField]" 
           />
@@ -25,13 +17,13 @@
         <hr v-if="readonly" class="label-container"/>
       </div>
       <div v-for="(field, keyField) in formFields.flyFormRight" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
-        <label :class="`${readonly ? 'row no-wrap items-center justify-end q-pr-xl': '' }`">
-          <span v-if="readonly" class="q-pb-sm col-12 col-md-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+        <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
           <dynamic-field
             :key="keyField"
             :id="keyField"
             :field="field"
-            :class="`${readonly ? 'col-12 col-md-7': ''}`"
+            :class="`${readonly ? 'col-7': ''}`"
             :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
             v-model="form[field.name || keyField]" 
           />
@@ -48,11 +40,11 @@
             :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
             :style="`${readonly ? 'height: 50px' : ''}`"
           >
-            <label :class="`${readonly ?'row no-wrap items-center justify-end q-pr-xl' : ''}`">
-              <span v-if="readonly" class="col-12 col-md-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
               <dynamic-field
                 :key="keyField"
-                :class="`${readonly ? 'col-12 col-md-7': ''}`"
+                :class="`${readonly ? 'col-7': ''}`"
                 :id="keyField"
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
@@ -73,11 +65,11 @@
             :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
             :style="`${readonly ? 'height: 50px' : ''}`"
           >
-            <label :class="`${readonly ?'row no-wrap items-center justify-end q-pr-xl' : ''}`">
-              <span v-if="readonly" class="col-12 col-md-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
               <dynamic-field
                 :key="keyField"
-                :class="`${readonly ? 'col-12 col-md-7': ''}`"
+                :class="`${readonly ? 'col-7': ''}`"
                 :id="keyField"
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
@@ -107,6 +99,15 @@ export default {
     }
   },
   computed: {
+    showLabel(){
+      if(this.readonly && !this.responsive ){
+        return true
+      }
+      if(this.readonly && this.responsive ){
+        return false   
+      }
+      return false
+    },
     formFields(){
       return{
         flyFormLeft:{
@@ -387,10 +388,10 @@ export default {
       position relative
       bottom 20px
       border-top 1px dashed #000D4726
-      .span 
-        padding-bottom 10px
-      .spanBottom
-        padding-bottom 15px
+    .span 
+      padding-bottom 10px
+    .spanBottom
+      padding-bottom 15px
     .card-bound
       border: 1px solid #f1f4fa;
       border-radius: 8px 8px 0px 0px; 
