@@ -1,6 +1,6 @@
 <template>
   <master-modal id="formRampComponent" v-model="show" v-bind="modalProps"
-                :loading="loading" @hide="clear" :actions="actions" :width="'90vw'">
+                :loading="loading" @hide="clear" :actions="actions" :width="'90vw'" :maximized="responsive">
     <stepper-ramp-form @sp="sp = $event" ref="stepper" :steps="steppers" />
   </master-modal>
 </template>
