@@ -1,85 +1,58 @@
 <template>
   <div class="q-mb-md">
-    <q-toolbar class="bg-primary text-white q-px-md q-py-sm">
-      <q-toolbar-title class="text-caption"><span :style="`color:${toolbar.titleColor}`">{{toolbar.title}}</span> {{toolbar.code}}</q-toolbar-title>
-      <q-btn v-if="responsive" icon="more_vert" round flat>
-        <q-menu v-if="!edit">
-          <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup>
-              <q-item-section>Summary Report</q-item-section>
-            </q-item>
-            <q-separator />
-            <q-item clickable v-close-popup @click="() => {this.edit = true; $emit('edit', false)}">
-              <q-item-section>Edit</q-item-section>
-            </q-item>
-            <q-separator />
-            <q-item clickable v-close-popup>
-              <q-item-section>Submit</q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
-        <q-menu v-else>
-          <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup @click="() => { this.edit = false; $emit('edit', true)}">
-              <q-item-section>Cancel</q-item-section>
-            </q-item>
-            <q-separator />
-            <q-item clickable v-close-popup @click="() => { this.edit = false; $emit('edit', true)}">
-              <q-item-section>Update</q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
-      <div v-else>
-        <div v-if="!edit" class="row justify-between items-center">
-          <q-btn 
-            class="q-mr-sm text-capitalize" 
-            color="white"
-            rounded-borders
-            text-color="primary" 
-            label="Summary Report" 
-            icon-right="assessment"
-          />
-          <q-btn 
-            class="q-mr-sm text-capitalize" 
-            color="white" 
-            rounded-borders
-            text-color="primary" 
-            label="Edit" 
-            icon-right="mode_edit_outline"
-            @click="() => {this.edit = true; $emit('edit', false)}"
-          />
-          <q-btn 
-            class="q-mr-sm text-capitalize" 
-            color="white" 
-            text-color="primary" 
-            rounded-borders
-            label="Submit" 
-            icon-right="send"
-          />
-        </div>
-        <div v-else class="row justify-between items-center">
-          <q-btn 
-            class="q-mr-sm text-capitalize" 
-            color="white"
-            rounded-borders
-            text-color="primary" 
-            label="Cancel" 
-            icon-right="close"
-            @click="() => { this.edit = false; $emit('edit', true)}"
-          />
-          <q-btn 
-            class="q-mr-sm text-capitalize" 
-            color="white" 
-            rounded-borders
-            text-color="primary" 
-            label="Update" 
-            icon-right="update"
-            @click="() => { this.edit = false; $emit('edit', true)}"
-          />
-        </div>
+    <div class="bg-primary text-white q-px-md q-py-sm">
+      <div v-if="!edit" class="flex justify-end">
+        <q-space />
+        <q-btn 
+          class="q-mr-sm text-capitalize" 
+          color="white"
+          rounded
+          text-color="primary" 
+          label="Summary Report" 
+        >
+          <q-icon v-if="!responsive" color="primary" class="q-pl-sm" name="assessment" />
+        </q-btn>
+        <q-btn 
+          flat
+          class="bg-white q-mr-sm text-capitalize"
+          :rounded="!responsive"
+          :round="responsive"
+          @click="() => {this.edit = true; $emit('edit', false)}"
+        >
+          <span class="text-primary q-mr-sm" v-if="!responsive">Edit</span>
+          <q-icon name="mode_edit_outline" color="primary" />
+        </q-btn>
+        <q-btn 
+          flat
+          class="bg-white text-capitalize" 
+          :rounded="!responsive"
+          :round="responsive"
+        >
+          <span class="text-primary q-mr-sm" v-if="!responsive">Send</span>
+          <q-icon name="send" color="primary" />
+        </q-btn>
       </div>
-    </q-toolbar>
+      <div v-else class="flex justify-end">
+        <q-btn 
+          class="q-mr-sm text-capitalize" 
+          color="white"
+          rounded-borders
+          text-color="primary" 
+          label="Cancel" 
+          icon-right="close"
+          @click="() => { this.edit = false; $emit('edit', true)}"
+        />
+        <q-btn 
+          class="q-mr-sm text-capitalize" 
+          color="white" 
+          rounded-borders
+          text-color="primary" 
+          label="Update" 
+          icon-right="update"
+          @click="() => { this.edit = false; $emit('edit', true)}"
+        />
+      </div>
+    </div>
   </div>
 </template>
 <script>

@@ -1,14 +1,16 @@
 <template>
-  <master-modal id="fromRampComponent" v-model="show" custom-position width="90%" v-bind="modalProps"
-                :loading="loading" @hide="clear" :actions="actions">
+  <master-modal id="formRampComponent" v-model="show" v-bind="modalProps"
+                :loading="loading" @hide="clear" :actions="actions" :width="'90vw'" :maximized="responsive">
     <stepper-ramp-form @sp="sp = $event" ref="stepper" :steps="steppers" />
   </master-modal>
 </template>
 <script>
 import stepperRampForm from '@imagina/qramp/_components/stepperRampForm.vue'
+import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   name:'formOrders',
   components: { stepperRampForm },
+  mixins:[responsive],
   data() {
     return {
       show: false,
@@ -23,6 +25,7 @@ export default {
         {
           title:'Flight',
           icon:'fas fa-plane',
+          step: 1,
           toolbar:{
             title:'Work Order Details |',
             titleColor:'#84abe5',
@@ -32,6 +35,7 @@ export default {
         {
           title:'Cargo Op.',
           icon:'rv_hookup',
+          step: 2,
           toolbar:{
             title:'Work Order Details |',
             titleColor:'#84abe5',
@@ -41,6 +45,7 @@ export default {
         {
           title:'Services',
           icon:'fas fa-briefcase',
+          step: 3,
           toolbar:{
             title:'Work Order Details |',
             titleColor:'#84abe5',
@@ -50,6 +55,7 @@ export default {
         {
           title:'Equipment',
           icon:'extension',
+          step: 4,
           toolbar:{
             title:'Work Order Details |',
             titleColor:'#84abe5',
@@ -59,6 +65,7 @@ export default {
         {
           title:'Crew',
           icon:'fas fa-users',
+          step: 5,
           toolbar:{
             title:'Work Order Details |',
             titleColor:'#84abe5',
@@ -68,6 +75,7 @@ export default {
         {
           title:'Remark',
           icon:'far fa-edit',
+          step: 6,
           toolbar:{
             title:'Work Order Details |',
             titleColor:'#84abe5',
@@ -77,6 +85,7 @@ export default {
         {
           title: this.$tr('ifly.cms.label.signature'),
           icon:'draw',
+          step: 7,
           toolbar:{
             title:'Work Order Details |',
             titleColor:'#84abe5',
@@ -84,6 +93,14 @@ export default {
           }
         }
       ]
+    },
+    nextLabel(){
+      if(this.responsive) {
+        console.log(this.sp)
+        return (this.sp + 1) === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
+      }else {
+        return this.sp === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
+      }
     },
     actions(){
       return[
@@ -103,7 +120,7 @@ export default {
           props:{
             color:'primary',
             'icon-right': this.sp === this.steppers.length  ? 'fas fa-check' :'fas fa-arrow-right',
-            label: this.sp === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next'),
+            label: this.nextLabel
           },
           action: () => {
             this.$refs.stepper.next()
@@ -126,7 +143,7 @@ export default {
 }
 </script>
 <style lang="stylus">
-  #fromRampComponent
+  #formRampComponent
     .boundColor
       background-color #F1F4FA
 </style>

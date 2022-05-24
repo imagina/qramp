@@ -1,23 +1,14 @@
 <template>
   <div id="cargoContainer">
-    <div v-if="responsive" class="q-px-md q-py-md">
-      <div class="q-pl-md flex items-center text-primary">
-        <q-icon size="32px" :name="toolbar.icon" />
-        <div class="title q-pl-sm text-h4">{{toolbar.title}}</div>
-      </div>
-      <q-separator class="q-my-sm"/>
-      <span class="q-pl-md caption text-primary">1 of 7</span>
-    </div>
     <!-- toolbar -->
     <i-toolbar @edit="readonly = $event" :toolbar="toolbar.toolbar"></i-toolbar>
-    <div class="row no-wrap justify-center items-center" :style="'padding: 0 22px 0 26px'">
+    <div :class="`row justify-center items-center q-px-md ${responsive ? '':'no-wrap'}`">
       <div class="col-12 col-md-6 q-mb-sm q-py-lg">
-        <q-card flat :bordered="!readonly" class="q-pa-none">
-          <q-card-section class="text-primary boundColor q-py-xs text-center text-weight-bold">
+        <div :class="`${readonly? '' :'card-bound'}`">
+          <div class="text-primary boundColor q-py-xs text-center text-weight-bold">
             <div>Inbound</div>
-          </q-card-section>
-          <q-separator></q-separator>
-          <q-card-section>
+          </div>
+          <div class="q-pa-md">
             <template v-for="(field, keyField) in formFields.inbound" >
               <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
                 <p class="text-primary text-right q-mb-none span q-mr-sm col-5">{{field.label}}<span v-if="readonly">:</span></p>
@@ -29,16 +20,15 @@
               </label>
               <hr v-if="readonly" class="label-container"/>
             </template>
-          </q-card-section>
-        </q-card>
+          </div>
+        </div>
       </div>
       <div class="col-12 col-md-6 q-mb-sm q-ml-sm">
-        <q-card flat :bordered="!readonly">
-          <q-card-section class="text-primary boundColor q-py-xs text-center text-weight-bold">
+        <div :class="`${readonly? '' :'card-bound'}`">
+          <div class="text-primary boundColor q-py-xs text-center text-weight-bold">
             <div>Outbound</div>
-          </q-card-section>
-          <q-separator></q-separator>
-          <q-card-section>
+          </div>
+          <div class="q-pa-md">
             <template v-for="(field, keyField) in formFields.outbound" >
               <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
                 <p class="text-primary text-right q-mb-none span q-mr-sm col-5">{{field.label}}<span v-if="readonly">:</span></p>
@@ -50,8 +40,8 @@
               </label>
               <hr v-if="readonly" class="label-container"/>
             </template>
-          </q-card-section>
-        </q-card>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -127,6 +117,9 @@ export default {
 
 <style lang="stylus" scoped>
   #cargoContainer
+    .card-bound
+      border: 1px solid #f1f4fa;
+      border-radius: 8px 8px 0px 0px; 
     hr.label-container
       position relative
       bottom 20px

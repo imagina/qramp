@@ -25,7 +25,7 @@ export default {
           method: () => {
             this.$refs.formOrders.loadform({
               modalProps: {
-                title: this.$tr('ifly.cms.form.newWorkOrder')
+                title: this.$tr('ifly.cms.form.newWorkOrder'),
               }
             })
           }
