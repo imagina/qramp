@@ -1,7 +1,6 @@
 <template>
   <div id="services-container">
     <!-- toolbar -->
-    <i-toolbar @edit="readonly = $event" :toolbar="toolbar"></i-toolbar>
     <div class="q-px-md">
       <q-input clearable borderless standout dense rounded style="max-width: 100%"
       color="primary" :placeholder="`${$tr('ifly.cms.label.search',{capitalize : true})}...`"
@@ -16,18 +15,17 @@
 </template>
 
 <script>
-import iToolbar from '@imagina/qramp/_components/toolbar.vue'
 import expansionComponent from '@imagina/qramp/_components/expansionComponent.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
+    readonly: true,
     toolbar:{}
   },
-  components:{iToolbar, expansionComponent},
+  components:{expansionComponent},
   mixins:[responsive],
   data(){
     return{
-      readonly: true,
     }
   },
   computed:{
