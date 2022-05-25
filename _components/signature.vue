@@ -1,7 +1,5 @@
 <template>
   <div id="signatureForm">
-    <!-- toolbar -->
-    <i-toolbar @edit="readonly = $event" :toolbar="toolbar"></i-toolbar>
     <div id="signatureContainer" class="q-pa-md">
       <div id="disableSignature" :class="readonly ? 'disableEdit': ''"></div>
       <div class="row">
@@ -24,18 +22,16 @@
 
 <script>
 
-import iToolbar from '@imagina/qramp/_components/toolbar.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
+    readonly: true,
     toolbar:{}
   },
-  components:{iToolbar},
   mixins:[responsive],
   data(){
     return{
       form:{},
-      readonly: true,
       isFull: false,
     }
   },

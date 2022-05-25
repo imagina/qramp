@@ -13,6 +13,7 @@
           <q-icon v-if="!responsive" color="primary" class="q-pl-sm" name="assessment" />
         </q-btn>
         <q-btn 
+          v-if="id"
           flat
           class="bg-white q-mr-sm text-capitalize"
           :rounded="!responsive"
@@ -58,7 +59,7 @@
 <script>
 export default {
   props:{
-    toolbar:{}
+    id:{}
   },
   data(){
     return{

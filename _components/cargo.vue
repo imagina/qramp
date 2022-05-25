@@ -1,7 +1,6 @@
 <template>
   <div id="cargoContainer">
     <!-- toolbar -->
-    <i-toolbar @edit="readonly = $event" :toolbar="toolbar.toolbar"></i-toolbar>
     <div :class="`row justify-center items-center q-px-md ${responsive ? '':'no-wrap'}`">
       <div class="col-12 col-md-6 q-mb-sm q-py-lg">
         <div :class="`${readonly? '' :'card-bound'}`">
@@ -48,18 +47,16 @@
 </template>
 
 <script>
-import iToolbar from '@imagina/qramp/_components/toolbar.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
+    readonly: true,
     toolbar:{}
   },
-  components:{iToolbar},
   mixins:[responsive],
   data(){
     return{
       form:{},
-      readonly: true,
     }
   },
   computed:{
@@ -88,7 +85,7 @@ export default {
           }
         },
         outbound:{
-          totalUldsUnloaded:{
+          totalUldsLoaded:{
             value: '',
             type: 'inputStandard',
             props: {
@@ -98,7 +95,7 @@ export default {
             },
             label: `${this.$tr('ifly.cms.form.TotalUldsLoaded')}`,
           },
-          bulkUnloaded:{
+          bulkLoaded:{
             value: '',
             type: 'inputStandard',
             props: {
