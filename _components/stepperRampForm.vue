@@ -22,11 +22,15 @@
           </div>
         </template>
       </div>
-      <component 
-        :is="currentTab" 
-        :toolbar="steps[this.index]"
-        >
-      </component>
+      <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
+      <KeepAlive>
+        <component 
+          :is="currentTab" 
+          :readonly="readonly"
+          >
+        </component>
+      </KeepAlive>
+
     </div>
     <q-stepper
       v-else
@@ -43,14 +47,16 @@
           :name="index + 1"
           :title="step.title"
           :icon="step.icon"
+          keep-alive
         >
-          <i-flight v-if="step.step == 1" :toolbar="step"></i-flight>
-          <i-cargo v-if="step.step == 2" :toolbar="step"></i-cargo>
-          <i-services v-if="step.step == 3" :toolbar="step"></i-services>
-          <i-equipment v-if="step.step == 4" :toolbar="step"></i-equipment>
-          <i-crew v-if="step.step == 5" :toolbar="step"></i-crew>
-          <i-remarks v-if="step.step == 6" :toolbar="step"></i-remarks>
-          <i-signature v-if="step.step == 7" :toolbar="step"></i-signature>
+          <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
+          <i-flight v-if="step.step == 1" :readonly="readonly"></i-flight>
+          <i-cargo v-if="step.step == 2" :readonly="readonly"></i-cargo>
+          <i-services v-if="step.step == 3" :readonly="readonly"></i-services>
+          <i-equipment v-if="step.step == 4" :readonly="readonly"></i-equipment>
+          <i-crew v-if="step.step == 5" :readonly="readonly"></i-crew>
+          <i-remarks v-if="step.step == 6" :readonly="readonly"></i-remarks>
+          <i-signature v-if="step.step == 7" :readonly="readonly"></i-signature>
         </q-step>
       </template>
     </q-stepper>
@@ -65,6 +71,7 @@ import iServices from '@imagina/qramp/_components/services.vue'
 import iRemarks from '@imagina/qramp/_components/remarks.vue'
 import iSignature from '@imagina/qramp/_components/signature.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
+import iToolbar from '@imagina/qramp/_components/toolbar.vue'
 export default {
   name:'stepperRampForm',
   components:{
@@ -75,15 +82,18 @@ export default {
     iCrew,
     iRemarks,
     iSignature,
+    iToolbar
   },
   mixins:[responsive],
   props:{
     steps:{},
+    data:{}
   },
   data() {
     return {
       sp: 1,
       index: 0,
+      readonly:false,
       form:{},
       tabs:[
         {name:'iFlight', step: 1},

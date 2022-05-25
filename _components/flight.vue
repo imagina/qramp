@@ -1,6 +1,5 @@
 <template>
   <div id="formFlyStep">
-    <i-toolbar @edit="readonly = $event" :toolbar="toolbar.toolbar"></i-toolbar>
     <div id="rowContainer" class="row">
       <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
         <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
@@ -84,18 +83,17 @@
   </div>
 </template>
 <script>
-import iToolbar from '@imagina/qramp/_components/toolbar.vue'
+
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
+    readonly: true,
     toolbar:{}
   },
-  components:{iToolbar},
   mixins:[responsive],
   data(){
     return{
       form:{},
-      readonly: true,
     }
   },
   computed: {

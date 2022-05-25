@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- toolbar -->
-    <i-toolbar @edit="readonly = $event" :toolbar="toolbar"></i-toolbar>
     <div class="row q-px-md">
       <dynamic-field :class="`col-12 col-md-6 ${readonly ? 'q-px-md':'q-px-sm'}`" v-for="(field, keyField) in formFields" :key="keyField" :field="field"
         v-model="form[field.name || keyField]"/>
@@ -10,18 +8,16 @@
 </template>
 
 <script>
-import iToolbar from '@imagina/qramp/_components/toolbar.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
+    readonly: true,
     toolbar:{}
   },
-  components:{iToolbar},
   mixins:[responsive],
   data(){
     return{
       form:{},
-      readonly: true,
     }
   },
   computed:{
