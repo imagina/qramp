@@ -201,16 +201,16 @@ export default {
     addDelay() {
       this.delayList.push({
           delayItem: {
-            name:`code${this.delayList.length - 1}`,
+            name:`code${this.$uid()}`,
           },
           delayDate: {
-            name:`date${this.delayList.length - 1}`,
+            name:`date${this.$uid()}`,
           },
       })
     },
     delDelay(index) {
-      debugger
-      this.delayList = this.delayList.filter(item => item.delayDate.name !== index)
+      const i = parseInt(index.split("delayDate")[1])
+      this.delayList.splice(i,1)
     }
   },
 }
