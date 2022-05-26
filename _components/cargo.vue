@@ -137,12 +137,12 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('iste.cms.label.time'),
+              label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
             },
-            label: this.readonly ? '' : this.$tr('iste.cms.label.time'),
+            label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
           }    
         }
       })
