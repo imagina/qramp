@@ -3,17 +3,26 @@
     <div id="signatureContainer" class="q-pa-md">
       <div id="disableSignature" :class="readonly ? 'disableEdit': ''"></div>
       <div class="row">
-        <div id="sig1" class="col-12 col-md-6">
+        <div class="col-12 col-md-6">
           <div class="row">
-              <dynamic-field :class="`${field.type === 'signature' ? 'col-12' : 'col-6 q-mt-sm'} q-px-sm`" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
+              <dynamic-field  id="sig1" v-if="field.type === 'signature'" class="col-12 q-px-sm" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
                 v-model="form[field.name || keyField]" @fullscreenAction="isFull ? cancelFullScreen('sig1') : launchFullScreen('sig1')"/>
           </div>
-        </div>
-        <div id="sig2" class="col-12 col-md-6">
           <div class="row">
-            <dynamic-field :class="`${field.type === 'signature' ? 'col-12' : 'col-6 q-mt-sm'} q-px-sm`" v-for="(field, keyField) in formField.representative" :key="keyField" :field="field"
-              v-model="form[field.name || keyField]" @fullscreenAction="isFull ? cancelFullScreen('sig2') : launchFullScreen('sig2')"/>
+              <dynamic-field v-if="field.type !== 'signature'" class="col-6 q-mt-sm q-pa-sm" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
+                v-model="form[field.name || keyField]" />
           </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="row">
+              <dynamic-field  id="sig2" v-if="field.type === 'signature'" class="col-12 q-px-sm" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
+                v-model="form[field.name || keyField]" @fullscreenAction="isFull ? cancelFullScreen('sig2') : launchFullScreen('sig2')"/>
+          </div>
+          <div class="row">
+              <dynamic-field v-if="field.type !== 'signature'" class="col-6 q-mt-sm q-pa-sm" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
+                v-model="form[field.name || keyField]" />
+          </div>
+        </div>
         </div>
       </div>  
     </div>
