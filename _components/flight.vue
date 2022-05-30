@@ -29,7 +29,7 @@
         </label>
         <hr v-if="readonly" class="label-container"/>
       </div>
-      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+      <div v-if="isInbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
             <div>Inbound</div>
@@ -39,22 +39,25 @@
             :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
             :style="`${readonly ? 'height: 50px' : ''}`"
           >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : 'row justify-between'}`">
               <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
               <dynamic-field
                 :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
+                :class="`${readonly ? 'col-7': field.name.includes('flight') ? 'col-8' : 'col-12'}`"
                 :id="keyField"
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
                 v-model="form[field.name || keyField]" 
               />
+              <template v-if="field.name.includes('flight')">
+                <q-checkbox v-if="thereInFlight" class="col-3 q-pb-md" v-model="newInbound" label="Add Flight" />
+              </template>
             </label>
             <hr v-if="readonly" class="label-container"/>
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+      <div v-if="isOutbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
             <div>Outbound</div>
@@ -64,16 +67,19 @@
             :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
             :style="`${readonly ? 'height: 50px' : ''}`"
           >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : 'row justify-between'}`">
               <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
               <dynamic-field
                 :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
+                :class="`${readonly ? 'col-7': field.name.includes('flight') ? 'col-8' : 'col-12'}`"
                 :id="keyField"
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
                 v-model="form[field.name || keyField]" 
               />
+              <template v-if="field.name.includes('flight')">
+                <q-checkbox v-if="thereOutFlight" class="col-3 q-pb-md" v-model="newOutbound" label="Add Flight" />
+              </template>
             </label>
             <hr v-if="readonly" class="label-container"/>
           </div>
@@ -94,6 +100,12 @@ export default {
   data(){
     return{
       form:{},
+      isOutbound:true,
+      isInbound:true,
+      newOutbound:true,
+      newInbound:true,
+      thereInFlight:true,
+      thereOutFlight:true,
     }
   },
   computed: {
@@ -231,26 +243,27 @@ export default {
           },
         },
         inboundLeft:{
-          fligth: {
-            name:'fligth',
+          flight: {
+            name:'flight',
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.fligth'),
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
+              maxlength: 7,
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.fligth'),
+            label: this.$tr('ifly.cms.form.flight'),
           },
           origin: {
             name:'origin',
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.origin'),
@@ -264,7 +277,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
@@ -278,7 +291,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledArrival'),
@@ -292,7 +305,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -303,26 +316,27 @@ export default {
           },
         },
         outboundRight:{
-          fligth: {
-            name:'fligthOutbound',
+          flight: {
+            name:'flightOutbound',
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.fligth'),
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
+              maxlength: 7,
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.fligth'),
+            label: this.$tr('ifly.cms.form.flight'),
           },
           destination: {
             name:'destination',
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.destination'),
@@ -336,7 +350,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
@@ -350,7 +364,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledDeparture'),
@@ -364,7 +378,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
