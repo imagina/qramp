@@ -60,7 +60,14 @@
               :field="field"
               v-model="form[field.name || keyField]" 
             />
-            <q-btn v-if="field.type == 'hour'" class="col-12 col-md-1 q-pb-md" flat round icon="delete" size="12px" color="primary" @click="delDelay(keyField)"/>
+            <q-btn 
+              v-if="field.type == 'hour'" 
+              style="height:12px; width:12px"
+              class="col-12 col-md-1 q-pb-md" 
+              flat round icon="delete" 
+              size="12px" color="primary" 
+              @click="delDelay(keyField)"
+            />
         </template>
       </div>
     </div>

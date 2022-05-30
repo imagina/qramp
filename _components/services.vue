@@ -8,7 +8,7 @@
           <q-icon color="primary" class="q-pl-sm" name="search" />
         </template>
       </q-input>
-      <expansion-component class="q-px-md" :data="services" />
+      <expansion-component class="q-px-md" :data="services" @value="setValue($event)"/>
     </div>
   </div>
 </template>
@@ -27,6 +27,11 @@ export default {
     return{
     }
   },
+  methods: {
+    setValue(value) {
+      console.log('valor', value)
+    }
+  },
   computed:{
     pageActions() {
       return [
@@ -40,8 +45,8 @@ export default {
           title:'Regulated Garbage',
           formField:{
             quantity: {
-              name:'quantity',
-              value: 5,
+              name:'quantity0',
+              value:0,
               type: 'quantity',
               props: {
                 readonly: this.readonly,
@@ -55,9 +60,10 @@ export default {
           title:'Marshalling',
           icon:'gesture',
           formField:{
-            hour: { 
-              value: null,
-              type: 'date',
+            hour: {
+              name:'time0',
+              value: '',
+              type: 'fullDate',
               props: {
                 readonly: this.readonly,
                 label: this.$tr('isite.cms.form.date'),
@@ -70,9 +76,10 @@ export default {
           title:'Add Pusback',
           icon:'undo',
           formField:{
-            hour: { 
-              value: null,
-              type: 'date',
+            hour: {
+              name:'time1',
+              value: '',
+              type: 'fullDate',
               props: {
                 readonly: this.readonly,
                 label: this.$tr('isite.cms.form.date'),
@@ -80,8 +87,8 @@ export default {
               },
             },
             quantity: {
-              name:'quantity',
-              value: null,
+              name:'quantity1',
+              value: 0,
               type: 'quantity',
               props: {
                 readonly: this.readonly,
@@ -96,8 +103,8 @@ export default {
           icon:'flash_on',
           formField:{
             quantity: {
-              name:'quantity',
-              value: null,
+              name:'quantity2',
+              value: 0,
               type: 'quantity',
               props: {
                 readonly: this.readonly,
@@ -105,9 +112,10 @@ export default {
                 color:"primary",
               },
             },
-            hour: { 
-              value: null,
-              type: 'date',
+            hour: {
+              name:'time2',
+              value: '',
+              type: 'fullDate',
               props: {
                 readonly: this.readonly,
                 label: this.$tr('isite.cms.form.date'),
@@ -120,9 +128,10 @@ export default {
           title:'A/C Cleaning',
           icon:'air',
           formField:{
-            hour: { 
-              value: null,
-              type: 'date',
+            hour: {
+              name:'time3',
+              value: '',
+              type: 'fullDate',
               props: {
                 readonly: this.readonly,
                 label: this.$tr('isite.cms.form.date'),
@@ -130,8 +139,8 @@ export default {
               },
             },
             quantity: {
-              name:'quantity',
-              value: null,
+              name:'quantity3',
+              value: 0,
               type: 'quantity',
               props: {
                 readonly: this.readonly,

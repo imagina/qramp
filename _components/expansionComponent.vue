@@ -8,14 +8,15 @@
           </q-item-section>
           <q-item-section>
             {{item.title}}
-            <span class="spanCaption text-caption">{{item.value}}</span>
+            <span class="spanCaption text-caption">{{showValue(item.formField.quantity)}}</span>
+            <span class="spanCaption text-caption">{{showValue(item.formField.hour)}}</span>
           </q-item-section>
         </template>
         <q-card class="flex card-color rounted-3 q-px-lg q-mx-md">
           <q-card-section class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
             <label class="flex no-wrap items-center" >
               <span v-if="field.props.label" class="q-pl-lg">{{field.props.label}}</span>
-              <dynamic-field class="q-ml-sm" :field="field"></dynamic-field>
+              <dynamic-field class="q-ml-sm" v-model="form[`${field.name || keyfield}`]" :field="field"></dynamic-field>
             </label>
           </q-card-section>
         </q-card>
@@ -30,6 +31,34 @@ export default {
   props:{
     data:[]
   },
+  data(){
+    return{
+      form:{}
+    }
+  },
+  watch:{
+    form(val){
+      if(val){
+        this.data.map((item) => {
+          if (item.formField.hour) {
+            for (let key in val) {
+              if (item.formField.hour.name == key ) {
+                item.formField.hour.value = val[key]
+              }
+            }
+          }
+          return item
+        })
+      }
+    }
+  },
+  methods: {
+    showValue(data) {
+      if(data) {
+        return  data.value ? typeof(data.value) == 'number' ? data.value: this.$trd(data.value) : ''
+      }
+    }
+  }
 }
 </script>
 <style lang="stylus">
