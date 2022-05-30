@@ -41,7 +41,7 @@ export default {
           title:'Supervisor',
           formField:{
             quantity: {
-              name:'quantity',
+              name:'quantity0',
               value: 5,
               type: 'quantity',
               props: {
@@ -57,8 +57,9 @@ export default {
           icon:'admin_panel_settings',
           formField:{
             hour: { 
-              value: null,
-              type: 'date',
+              name:'date0',
+              value: '',
+              type: 'fullDate',
               props: {
                 readonly: this.readonly,
                 label: this.$tr('isite.cms.form.date'),
@@ -72,8 +73,9 @@ export default {
           icon:'support_agent',
           formField:{
             hour: { 
-              value: null,
-              type: 'date',
+              name:'date1',
+              value: '',
+              type: 'fullDate',
               props: {
                 readonly: this.readonly,
                 label: this.$tr('isite.cms.form.date'),
@@ -81,7 +83,7 @@ export default {
               },
             },
             quantity: {
-              name:'quantity',
+              name:'quantity1',
               value: null,
               type: 'quantity',
               props: {

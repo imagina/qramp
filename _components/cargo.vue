@@ -60,7 +60,14 @@
               :field="field"
               v-model="form[field.name || keyField]" 
             />
-            <q-btn v-if="field.type == 'hour'" class="col-12 col-md-1 q-pb-md" flat round icon="delete" size="12px" color="primary" @click="delDelay(keyField)"/>
+            <q-btn 
+              v-if="field.type == 'hour'" 
+              style="height:12px; width:12px"
+              class="col-12 col-md-1 q-pb-md" 
+              flat round icon="delete" 
+              size="12px" color="primary" 
+              @click="delDelay(keyField)"
+            />
         </template>
       </div>
     </div>
@@ -137,12 +144,12 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('iste.cms.label.time'),
+              label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
             },
-            label: this.readonly ? '' : this.$tr('iste.cms.label.time'),
+            label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
           }    
         }
       })
