@@ -15,6 +15,56 @@
         </label>
         <hr v-if="readonly" class="label-container"/>
       </div>
+      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+        <div :class="`${readonly? '' :'card-bound'}`">
+          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
+            <div>Inbound</div>
+          </div>
+          <div
+              v-for="(field, keyField) in formFields.inboundLeft"
+              :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
+              :style="`${readonly ? 'height: 50px' : ''}`"
+          >
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+              <dynamic-field
+                  :key="keyField"
+                  :class="`${readonly ? 'col-7': ''}`"
+                  :id="keyField"
+                  :field="field"
+                  :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                  v-model="form[field.name || keyField]"
+              />
+            </label>
+            <hr v-if="readonly" class="label-container"/>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+        <div :class="`${readonly? '' :'card-bound'}`">
+          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
+            <div>Outbound</div>
+          </div>
+          <div
+              v-for="(field, keyField) in formFields.outboundRight"
+              :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
+              :style="`${readonly ? 'height: 50px' : ''}`"
+          >
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+              <dynamic-field
+                  :key="keyField"
+                  :class="`${readonly ? 'col-7': ''}`"
+                  :id="keyField"
+                  :field="field"
+                  :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                  v-model="form[field.name || keyField]"
+              />
+            </label>
+            <hr v-if="readonly" class="label-container"/>
+          </div>
+        </div>
+      </div>
       <div v-for="(field, keyField) in formFields.flyFormRight" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
         <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
           <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
@@ -29,56 +79,7 @@
         </label>
         <hr v-if="readonly" class="label-container"/>
       </div>
-      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
-        <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
-            <div>Inbound</div>
-          </div>
-          <div 
-            v-for="(field, keyField) in formFields.inboundLeft"
-            :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
-            :style="`${readonly ? 'height: 50px' : ''}`"
-          >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-              <dynamic-field
-                :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
-                :id="keyField"
-                :field="field"
-                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
-                v-model="form[field.name || keyField]" 
-              />
-            </label>
-            <hr v-if="readonly" class="label-container"/>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
-        <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
-            <div>Outbound</div>
-          </div>
-          <div 
-            v-for="(field, keyField) in formFields.outboundRight"
-            :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
-            :style="`${readonly ? 'height: 50px' : ''}`"
-          >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-              <dynamic-field
-                :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
-                :id="keyField"
-                :field="field"
-                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
-                v-model="form[field.name || keyField]" 
-              />
-            </label>
-            <hr v-if="readonly" class="label-container"/>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
 </template>
@@ -109,35 +110,6 @@ export default {
     formFields(){
       return{
         flyFormLeft:{
-          carrier: {
-            name:'carrier',
-            value: null,
-            type: this.readonly ? 'inputStandard':'select',
-            props: {
-              readonly: this.readonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.carrier'),
-              clearable: true,
-              color:"primary",
-              'hide-bottom-space': false
-            },
-            label: this.$tr('ifly.cms.form.carrier'),
-          },
-          station: {
-            name:'station',
-            value: null,
-            type: this.readonly ? 'inputStandard':'input',
-            props: {
-              readonly: this.readonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.station'),
-              clearable: true,
-              color:"primary"
-            },
-            label: this.$tr('ifly.cms.form.station'),
-          },
           customer: {
             name:'customer',
             value: null,
@@ -151,38 +123,51 @@ export default {
               color:"primary",
               'hide-bottom-space': false
             },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.setupCustomers',
+              select: {label: 'customerName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
             label: this.$tr('ifly.cms.form.customer'),
           },
-          gate: {
-            name:'gate',
-            value: null,
-            type: this.readonly ? 'inputStandard':'input',
-            props: {
-              readonly: this.readonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.gate'),
-              clearable: true,
-              color:"primary"
-            },
-            label: this.$tr('ifly.cms.form.gate'),
-          },
-        },
-        flyFormRight:{
-          acType: {
-            name:'acType',
+          carrier: {
+            name:'carrier',
             value: null,
             type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.acType'),
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.carrier'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
             },
-            label: this.$tr('ifly.cms.form.acType'),
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airlines',
+              select: {label: 'airlineName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
+            label: this.$tr('ifly.cms.form.carrier'),
+          },
+          station: {
+            name:'station',
+            value: null,
+            type: this.readonly ? 'inputStandard':'select',
+            props: {
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.station'),
+              clearable: true,
+              color:"primary"
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.setupStations',
+              select: {label: 'stationName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
+            label: this.$tr('ifly.cms.form.station'),
           },
           date: {
             name:'date',
@@ -211,12 +196,45 @@ export default {
               color:"primary",
               'hide-bottom-space': false
             },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.operationTypes',
+              select: {label: 'operationName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
             label: this.$tr('ifly.cms.form.operation'),
           },
-          
+          gate: {
+            name:'gate',
+            value: null,
+            type: this.readonly ? 'inputStandard':'input',
+            props: {
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.gate'),
+              clearable: true,
+              color:"primary"
+            },
+            label: this.$tr('ifly.cms.form.gate'),
+          },
+          acType: {
+            name:'acType',
+            value: null,
+            type: this.readonly ? 'inputStandard':'select',
+            props: {
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.acType'),
+              clearable: true,
+              color:"primary",
+              'hide-bottom-space': false
+            },
+            label: this.$tr('ifly.cms.form.acType'),
+          },
           status: {
             name:'status',
-            value: null,
+            value: 1,
             type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.readonly,
@@ -225,21 +243,33 @@ export default {
               label: this.readonly ? '' : this.$tr('ifly.cms.form.status'),
               clearable: true,
               color:"primary",
-             'hide-bottom-space': false
+              'hide-bottom-space': false
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.workOrderStatuses',
+              select: {label: 'statusName', id: 'id'},
+              requestParams: {filter: {status: 1}}
             },
             label: this.$tr('ifly.cms.form.status'),
           },
         },
+        flyFormRight:{
+
+          /*
+
+
+           */
+        },
         inboundLeft:{
           fligth: {
-            name:'fligth',
+            name:'flight',
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.fligth'),
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
               color:"primary"
             },
@@ -311,7 +341,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.fligth'),
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
               color:"primary"
             },
