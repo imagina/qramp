@@ -15,7 +15,7 @@
         </label>
         <hr v-if="readonly" class="label-container"/>
       </div>
-      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+      <div v-if="isInbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
             <div>Inbound</div>
@@ -28,19 +28,20 @@
             <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
               <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
               <dynamic-field
-                  :key="keyField"
-                  :class="`${readonly ? 'col-7': ''}`"
-                  :id="keyField"
-                  :field="field"
-                  :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
-                  v-model="form[field.name || keyField]"
+                :key="keyField"
+                :class="`${readonly ? 'col-7': ''}`"
+                :id="keyField"
+                :field="field"
+                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                v-model="form[field.name || keyField]"
+                @input="search(field)"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+      <div v-if="isOutbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
             <div>Outbound</div>
@@ -53,12 +54,13 @@
             <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
               <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
               <dynamic-field
-                  :key="keyField"
-                  :class="`${readonly ? 'col-7': ''}`"
-                  :id="keyField"
-                  :field="field"
-                  :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
-                  v-model="form[field.name || keyField]"
+                :key="keyField"
+                :class="`${readonly ? 'col-7': ''}`"
+                :id="keyField"
+                :field="field"
+                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                v-model="form[field.name || keyField]" 
+                @input="search(field)"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
@@ -95,6 +97,10 @@ export default {
   data(){
     return{
       form:{},
+      newOutbound:false,
+      newInbound:false,
+      thereInFlight:true,
+      thereOutFlight:true,
     }
   },
   computed: {
@@ -106,6 +112,21 @@ export default {
         return false   
       }
       return false
+    },
+    isOutbound() {
+      if(this.form.operation){
+        return this.form.operation == 4 || this.form.operation != 3
+      }
+      return false
+    },
+    isInbound() {
+      if(this.form.operation){
+        return this.form.operation == 3 || this.form.operation != 4
+      }
+      return false
+    },
+    readStatus(){
+      return  this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
     },
     formFields(){
       return{
@@ -237,7 +258,7 @@ export default {
             value: 1,
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              readonly: this.readonly,
+              readonly: this.readStatus,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.status'),
@@ -261,26 +282,27 @@ export default {
            */
         },
         inboundLeft:{
-          fligth: {
+          flight: {
             name:'flight',
             value: null,
-            type: this.readonly ? 'inputStandard':'input',
+            type: this.readonly ? 'inputStandard':'search',
             props: {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
+              maxlength: 7,
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.fligth'),
+            label: this.$tr('ifly.cms.form.flight'),
           },
           origin: {
             name:'origin',
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.origin'),
@@ -294,7 +316,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
@@ -308,7 +330,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledArrival'),
@@ -322,7 +344,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -333,26 +355,27 @@ export default {
           },
         },
         outboundRight:{
-          fligth: {
-            name:'fligthOutbound',
+          flight: {
+            name:'flightOutbound',
             value: null,
-            type: this.readonly ? 'inputStandard':'input',
+            type: this.readonly ? 'inputStandard':'search',
             props: {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
+              maxlength: 7,
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.fligth'),
+            label: this.$tr('ifly.cms.form.flight'),
           },
           destination: {
             name:'destination',
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.destination'),
@@ -366,7 +389,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
@@ -380,7 +403,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledDeparture'),
@@ -394,7 +417,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.readonly,
+              readonly: !this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -405,6 +428,37 @@ export default {
           },
         },
       }
+    }
+  },
+  methods: {
+    search({type, name}, criteria = null){
+      if(type != 'search') return;
+      criteria = name == 'flight' ?  this.form.flight : this.form.flightOutbound
+      if(!criteria) return ;
+      const params = {
+      refresh: true,
+      params: {
+        filter: {search: criteria.toUpperCase()}
+      }
+    }
+      //Request
+      this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
+        if (response.status == 200) {
+          this.$alert.info({
+            mode:'modal',
+            title: this.$tr('ifly.cms.form.flight'),
+            message: 'Does the inbound data belong to the outbound?'
+          })
+        } else if (response.status == 204) {
+          this.$alert.warning({
+            mode:'modal',
+            title: this.$tr('ifly.cms.form.flight'),
+            message: 'Are you sure this is a correct flight number?'
+          })
+        }
+      }).catch(error => {
+        console.log('error', error)
+      })
     }
   },
 }
