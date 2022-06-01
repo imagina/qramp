@@ -18,7 +18,7 @@ export default {
       return {
         crudId: this.crudId,
         entityName: config("main.qfly.entityNames.workOrder"),
-        apiRoute: 'apiRoutes.qfly.workOrders',
+        apiRoute: 'apiRoutes.qramp.workOrders',
         //permission: 'ifly.fly',
         //extraFormFields: 'ifly.crud-fields.fly',
         create: {
