@@ -97,8 +97,8 @@ export default {
   data(){
     return{
       form:{},
-      newOutbound:false,
-      newInbound:false,
+      newOutbound:true,
+      newInbound:true,
       thereInFlight:true,
       thereOutFlight:true,
     }
@@ -302,7 +302,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: !this.newInbound,
+              readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.origin'),
@@ -316,7 +316,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: !this.newInbound,
+              readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
@@ -330,7 +330,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: !this.newInbound,
+              readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledArrival'),
@@ -344,7 +344,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: !this.newInbound,
+              readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -375,7 +375,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: !this.newOutbound,
+              readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.destination'),
@@ -389,7 +389,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              readonly: !this.newOutbound,
+              readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
@@ -403,7 +403,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: !this.newOutbound,
+              readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledDeparture'),
@@ -417,7 +417,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: !this.newOutbound,
+              readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -447,13 +447,33 @@ export default {
           this.$alert.info({
             mode:'modal',
             title: this.$tr('ifly.cms.form.flight'),
-            message: 'Does the inbound data belong to the outbound?'
+            message: 'Does the inbound data belong to the outbound?',
+            actions: [
+              {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+              {
+                label: this.$tr('isite.cms.label.yes'),
+                color: 'primary',
+                handler: () => {
+                  name.includes('Outbound') ? this.newOutbound = false : this.newInbound = false
+                }
+              },
+            ]
           })
         } else if (response.status == 204) {
           this.$alert.warning({
             mode:'modal',
             title: this.$tr('ifly.cms.form.flight'),
-            message: 'Are you sure this is a correct flight number?'
+            message: 'Are you sure this is a correct flight number?',
+            actions: [
+              {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+              {
+                label: this.$tr('isite.cms.label.yes'),
+                color: 'primary',
+                handler: () => {
+                  name.includes('Outbound') ? this.newOutbound = false : this.newInbound = false
+                }
+              },
+            ]
           })
         }
       }).catch(error => {
