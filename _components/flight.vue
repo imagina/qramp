@@ -32,7 +32,7 @@
                 :class="`${readonly ? 'col-7': ''}`"
                 :id="keyField"
                 :field="field"
-                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
                 v-model="form[field.name || keyField]"
                 @input="search(field)"
                 @enter="search(field)"
@@ -59,7 +59,7 @@
                 :class="`${readonly ? 'col-7': ''}`"
                 :id="keyField"
                 :field="field"
-                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
                 v-model="form[field.name || keyField]" 
                 @input="search(field)"
                 @enter="search(field)"
@@ -303,7 +303,7 @@ export default {
           origin: {
             name:'origin',
             value: '',
-            type: this.readonly ? 'inputStandard':'input',
+            type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.newInbound,
               outlined: !this.readonly,
@@ -311,6 +311,11 @@ export default {
               label: this.readonly ? '' : this.$tr('ifly.cms.form.origin'),
               clearable: true,
               color:"primary"
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airports',
+              select: {label: 'airportName', id: 'id'},
+              requestParams: {filter: {status: 1}}
             },
             label: this.$tr('ifly.cms.form.origin'),
           },
@@ -347,7 +352,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.newInbound,
+              readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -376,7 +381,7 @@ export default {
           destination: {
             name:'destination',
             value: '',
-            type: this.readonly ? 'inputStandard':'input',
+            type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.newOutbound,
               outlined: !this.readonly,
@@ -384,6 +389,11 @@ export default {
               label: this.readonly ? '' : this.$tr('ifly.cms.form.destination'),
               clearable: true,
               color:"primary"
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airports',
+              select: {label: 'airportName', id: 'id'},
+              requestParams: {filter: {status: 1}}
             },
             label: this.$tr('ifly.cms.form.destination'),
           },
@@ -420,7 +430,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.newOutbound,
+              readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -453,8 +463,8 @@ export default {
         const inOutBound = ["3","4"].includes(_this.form.operation)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
-          _this.setForm(response.data[0], name)
           if ((response.status == 200) && !inOutBound) {
+            _this.setForm(response.data[0], name)
             _this.$alert.info({
               mode:'modal',
               title: _this.$tr('ifly.cms.form.flight'),
@@ -495,12 +505,12 @@ export default {
     setForm(data, name) {
       if(name.includes('Outbound')){
         this.$set(this.form, "flightOutbound",  data.ident)
-        this.$set(this.form, "destination",  data.destinationAirport.airportName)
+        this.$set(this.form, "destination",  data.destinationAirport.id)
         this.$set(this.form, "schuduledDeparture",  data.scheduledOut)
         this.$set(this.form, "tailOutbound",  data.registration)
       } else {
         this.$set(this.form, "flight", data.ident)
-        this.$set(this.form, "origin", data.originAirport.airportName)
+        this.$set(this.form, "origin", data.originAirport.id)
         this.$set(this.form, "schuduledArrival", data.scheduledIn)
         this.$set(this.form, "tail", data.registration)
       }
@@ -511,6 +521,8 @@ export default {
 
 <style lang="stylus" scoped>
   #formFlyStep
+    #origin
+      padding-bottom 0px
     hr.label-container
       position relative
       bottom 20px
