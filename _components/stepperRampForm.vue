@@ -40,6 +40,7 @@
       alternative-labels
       header-nav
       animated
+      keep-alive
     >
       <template v-for="(step, index) in steps">
         <q-step
@@ -47,7 +48,6 @@
           :name="index + 1"
           :title="step.title"
           :icon="step.icon"
-          keep-alive
         >
           <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
           <i-flight v-if="step.step == 1" :readonly="readonly"></i-flight>
