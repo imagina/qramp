@@ -32,9 +32,10 @@
                 :class="`${readonly ? 'col-7': ''}`"
                 :id="keyField"
                 :field="field"
-                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
                 v-model="form[field.name || keyField]"
                 @input="search(field)"
+                @enter="search(field)"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
@@ -58,9 +59,10 @@
                 :class="`${readonly ? 'col-7': ''}`"
                 :id="keyField"
                 :field="field"
-                :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
                 v-model="form[field.name || keyField]" 
                 @input="search(field)"
+                @enter="search(field)"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
@@ -101,6 +103,7 @@ export default {
       newInbound:true,
       thereInFlight:true,
       thereOutFlight:true,
+      timeoutID: '',
     }
   },
   computed: {
@@ -133,7 +136,7 @@ export default {
         flyFormLeft:{
           customer: {
             name:'customer',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.readonly,
@@ -153,7 +156,7 @@ export default {
           },
           carrier: {
             name:'carrier',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.readonly,
@@ -173,7 +176,7 @@ export default {
           },
           station: {
             name:'station',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.readonly,
@@ -192,7 +195,7 @@ export default {
           },
           date: {
             name:'date',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               readonly: this.readonly,
@@ -206,7 +209,7 @@ export default {
           },
           operation: {
             name:'operation',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.readonly,
@@ -226,7 +229,7 @@ export default {
           },
           gate: {
             name:'gate',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
@@ -240,7 +243,7 @@ export default {
           },
           acType: {
             name:'acType',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.readonly,
@@ -284,7 +287,7 @@ export default {
         inboundLeft:{
           flight: {
             name:'flight',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
               readonly: this.readonly,
@@ -299,8 +302,8 @@ export default {
           },
           origin: {
             name:'origin',
-            value: null,
-            type: this.readonly ? 'inputStandard':'input',
+            value: '',
+            type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.newInbound,
               outlined: !this.readonly,
@@ -309,11 +312,16 @@ export default {
               clearable: true,
               color:"primary"
             },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airports',
+              select: {label: 'airportName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
             label: this.$tr('ifly.cms.form.origin'),
           },
           tail: {
             name:'tail',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.newInbound,
@@ -327,7 +335,7 @@ export default {
           },
           schuduledArrival: {
             name:'schuduledArrival',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               readonly: this.newInbound,
@@ -341,10 +349,10 @@ export default {
           },
           blockIn: {
             name:'blockIn',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.newInbound,
+              readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -357,7 +365,7 @@ export default {
         outboundRight:{
           flight: {
             name:'flightOutbound',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
               readonly: this.readonly,
@@ -372,8 +380,8 @@ export default {
           },
           destination: {
             name:'destination',
-            value: null,
-            type: this.readonly ? 'inputStandard':'input',
+            value: '',
+            type: this.readonly ? 'inputStandard':'select',
             props: {
               readonly: this.newOutbound,
               outlined: !this.readonly,
@@ -382,11 +390,16 @@ export default {
               clearable: true,
               color:"primary"
             },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airports',
+              select: {label: 'airportName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
             label: this.$tr('ifly.cms.form.destination'),
           },
           tail: {
             name:'tailOutbound',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.newOutbound,
@@ -400,7 +413,7 @@ export default {
           },
           schuduledDeparture: {
             name:'schuduledDeparture',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               readonly: this.newOutbound,
@@ -414,10 +427,10 @@ export default {
           },
           blockOut: {
             name:'blockOut',
-            value: null,
+            value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              readonly: this.newOutbound,
+              readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -433,52 +446,74 @@ export default {
   methods: {
     search({type, name}, criteria = null){
       if(type != 'search') return;
-      criteria = name == 'flight' ?  this.form.flight : this.form.flightOutbound
-      if(!criteria) return ;
-      const params = {
-      refresh: true,
-      params: {
-        filter: {search: criteria.toUpperCase()}
+      if (this.timeoutID) {
+        clearTimeout(this.timeoutID)
       }
-    }
-      //Request
-      this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
-        if (response.status == 200) {
-          this.$alert.info({
-            mode:'modal',
-            title: this.$tr('ifly.cms.form.flight'),
-            message: 'Does the inbound data belong to the outbound?',
-            actions: [
-              {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
-              {
-                label: this.$tr('isite.cms.label.yes'),
-                color: 'primary',
-                handler: () => {
-                  name.includes('Outbound') ? this.newOutbound = false : this.newInbound = false
-                }
-              },
-            ]
-          })
-        } else if (response.status == 204) {
-          this.$alert.warning({
-            mode:'modal',
-            title: this.$tr('ifly.cms.form.flight'),
-            message: 'Are you sure this is a correct flight number?',
-            actions: [
-              {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
-              {
-                label: this.$tr('isite.cms.label.yes'),
-                color: 'primary',
-                handler: () => {
-                  name.includes('Outbound') ? this.newOutbound = false : this.newInbound = false
-                }
-              },
-            ]
-          })
+      const _this = this
+      this.timeoutID = setTimeout(function () {
+        criteria = name == 'flight' ?  _this.form.flight : _this.form.flightOutbound
+        if(!criteria || criteria.length < 3) return ;
+        
+        const params = {
+          refresh: true,
+          params: {
+            filter: {search: criteria.toUpperCase()}
+          }
         }
-      }).catch(error => {
-        console.log('error', error)
-      })
+        const inOutBound = ["3","4"].includes(_this.form.operation)
+        //Request
+        _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
+          if ((response.status == 200) && !inOutBound) {
+            _this.setForm(response.data[0], name)
+            _this.$alert.info({
+              mode:'modal',
+              title: _this.$tr('ifly.cms.form.flight'),
+              message: name.includes('Outbound') ? _this.$tr('ifly.cms.label.flightMessageOutBound') : _this.$tr('ifly.cms.label.flightMessageInBound'),
+              actions: [
+                {label: _this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+                {
+                  label: _this.$tr('isite.cms.label.yes'),
+                  color: 'primary',
+                  handler: () => {
+                    _this.setForm(response.data[0], name == 'flight' ?  'flightOutbound' : 'flight')
+                  }
+                },
+              ]
+            })
+          } else if (response.status == 204) {
+            _this.$alert.warning({
+              mode:'modal',
+              title: _this.$tr('ifly.cms.form.flight'),
+              message: _this.$tr('ifly.cms.label.flightMessage'),
+              actions: [
+                {label: _this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+                {
+                  label: _this.$tr('isite.cms.label.yes'),
+                  color: 'primary',
+                  handler: () => {
+                    name.includes('Outbound') ? _this.newOutbound = false : _this.newInbound = false
+                  }
+                },
+              ]
+            })
+          }
+        }).catch(error => {
+          console.log('error', error)
+        })
+      },3000) 
+    },
+    setForm(data, name) {
+      if(name.includes('Outbound')){
+        this.$set(this.form, "flightOutbound",  data.ident)
+        this.$set(this.form, "destination",  data.destinationAirport.id)
+        this.$set(this.form, "schuduledDeparture",  data.scheduledOut)
+        this.$set(this.form, "tailOutbound",  data.registration)
+      } else {
+        this.$set(this.form, "flight", data.ident)
+        this.$set(this.form, "origin", data.originAirport.id)
+        this.$set(this.form, "schuduledArrival", data.scheduledIn)
+        this.$set(this.form, "tail", data.registration)
+      }
     }
   },
 }
@@ -486,6 +521,8 @@ export default {
 
 <style lang="stylus" scoped>
   #formFlyStep
+    #origin
+      padding-bottom 0px
     hr.label-container
       position relative
       bottom 20px
