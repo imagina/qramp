@@ -161,17 +161,19 @@ export default {
 }
 </script>
 <style lang="stylus">
-  hr.line
-    position absolute
-    border-top: 1px solid #9e9e9e;
-    width: 50%;
-    left: 73%;
-    top: 11%;
-  .q-stepper--horizontal .q-stepper__step-inner
-    padding 0
-    .order-color
-      color #84abe5
-    q-stepper--horizontal > .q-stepper__nav 
-      padding: 12px 16px 12px;
+  #stepComponent
+    hr.line
+      position absolute
+      border-top 1px solid #9e9e9e
+      width 50%
+      left 73%
+      top 11%
+    .q-stepper--horizontal .q-stepper__line 
+      padding 17px
+      
+      span
+        position absolute
+        font-size 20px
+
 </style>
 

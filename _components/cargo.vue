@@ -94,22 +94,6 @@ export default {
           delayDate: {
             name:'date0',
           },
-        },
-        {
-          delayItem: {
-            name:'code1',
-          },
-          delayDate: {
-            name:'date1',
-          },
-        },
-        {
-          delayItem: {
-            name:'code2',
-          },
-          delayDate: {
-            name:'date2',
-          },
         }
       ]
     }
