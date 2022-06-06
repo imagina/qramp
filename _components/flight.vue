@@ -555,10 +555,13 @@ export default {
             filter: {search: criteria.toUpperCase()}
           }
         }
+        _this.readonly = true
+        _this.loadingState = true
         _this.inOutBound = ["3","4"].includes(_this.form.operation)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
-          _this.loadingState = true
+          _this.readonly = false
+          _this.loadingState = false
           _this.name = name
           if (response.status == 200) {
             _this.mainData = response.data
