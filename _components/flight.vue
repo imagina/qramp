@@ -1,6 +1,7 @@
 <template>
   <div id="formFlyStep">
     <div id="rowContainer" class="row">
+      <table-flight @cancel="dialog = $event" :dialog="dialog" :dataTable="dataTable" @flightSelect="setDataTable($event)"/>
       <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
         <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
           <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
@@ -18,7 +19,7 @@
       <div v-if="isInbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
-            <div>Inbound</div>
+            <div>{{$tr('isite.cms.label.inbound')}}</div>
           </div>
           <div
               v-for="(field, keyField) in formFields.inboundLeft"
@@ -45,7 +46,7 @@
       <div v-if="isOutbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
-            <div>Outbound</div>
+            <div>{{$tr('isite.cms.label.outbound')}}</div>
           </div>
           <div
               v-for="(field, keyField) in formFields.outboundRight"
@@ -83,27 +84,103 @@
         </label>
         <hr v-if="readonly" class="label-container"/>
       </div>
-
     </div>
   </div>
 </template>
 <script>
 
 import responsive from '@imagina/qramp/_mixins/responsive.js'
+import tableFlight from '@imagina/qramp/_components/modal/tableFlight.vue'
 export default {
   props:{
     readonly: true,
     toolbar:{}
   },
+  components:{tableFlight},
   mixins:[responsive],
   data(){
     return{
-      form:{},
+      form:{
+        operation:null,
+        flight:null,
+        flightOutbound:null,
+        customer:null,
+        carrier:null,
+        station:null,
+        date:null,
+        gate:null,
+        acType:null,
+        status:"1",
+        origin:null,
+        tail:null,
+        scheduledArrival:null,
+        blockIn:null,
+        destination:null,
+        tailOutbound:null,
+        scheduledDeparture:null,
+        blockOut:null
+      },
+      selected:[],
       newOutbound:true,
       newInbound:true,
       thereInFlight:true,
       thereOutFlight:true,
+      loadingState:false,
+      openAlert:false,
+      dialog:false,
+      inOutBound:null,
       timeoutID: '',
+      type:'',
+      
+      dataTable:[],
+      mainData:[]
+    }
+  },
+  watch:{
+    'form.operation'(newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.form.flight = null,
+        this.form.flightOutbound = null,
+        this.form.origin = null,
+        this.form.tail = null,
+        this.form.scheduledArrival = null,
+        this.form.blockIn = null,
+        this.form.destination = null,
+        this.form.tailOutbound = null,
+        this.form.scheduledDeparture = null,
+        this.form.blockOut = null
+      }
+    },
+    'form.flight' (val) {
+      if (!val) {
+        this.form.flight = null,
+        this.form.origin = null,
+        this.form.tail = null,
+        this.form.scheduledArrival = null,
+        this.form.blockIn = null
+      }
+    },
+    'form.flightOutbound' (val) {
+      if (!val) {
+        this.form.destination = null,
+        this.form.tailOutbound = null,
+        this.form.scheduledDeparture = null,
+        this.form.blockOut = null
+      }
+    },
+    'form.destination' (val) {
+      if (this.form.origin) {
+        this.openAlert = false
+      } else {
+        this.openAlert = true
+      }
+    },
+    'form.origin' (val) {
+      if (this.form.destination) {
+        this.openAlert = false
+      } else {
+        this.openAlert = true
+      }
     }
   },
   computed: {
@@ -196,9 +273,12 @@ export default {
           date: {
             name:'date',
             value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
+            type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
+              mask:"##/##/#### ##:##",
+              'fill-mask':true,
+              hint:"MM-DD-YYYY Hr:Sec",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.date'),
@@ -290,6 +370,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
+              loading: this.loadingState,
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -333,26 +414,32 @@ export default {
             },
             label: this.$tr('ifly.cms.form.tail'),
           },
-          schuduledArrival: {
-            name:'schuduledArrival',
+          scheduledArrival: {
+            name:'scheduledArrival',
             value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
+            type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.newInbound,
+              mask:"##/##/#### ##:##",
+              'fill-mask':true,
+              hint:"MM-DD-YYYY Hr:Sec",
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledArrival'),
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledArrival'),
               clearable: true,
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.schuduledArrival'),
+            label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
           blockIn: {
             name:'blockIn',
             value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
+            type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
+              mask:"##/##/#### ##:##",
+              'fill-mask':true,
+              hint:"MM-DD-YYYY Hr:Sec",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -368,6 +455,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
+              loading: this.loadingState,
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -411,26 +499,32 @@ export default {
             },
             label: this.$tr('ifly.cms.form.tail'),
           },
-          schuduledDeparture: {
-            name:'schuduledDeparture',
+          scheduledDeparture: {
+            name:'scheduledDeparture',
             value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
+            type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.newOutbound,
+              mask:"##/##/#### ##:##",
+              'fill-mask':true,
+              hint:"MM-DD-YYYY Hr:Sec",
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.schuduledDeparture'),
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledDeparture'),
               clearable: true,
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.schuduledDeparture'),
+            label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
           blockOut: {
             name:'blockOut',
             value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
+            type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
+              mask:"##/##/#### ##:##",
+              'fill-mask':true,
+              hint:"MM-DD-YYYY Hr:Sec",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -449,6 +543,7 @@ export default {
       if (this.timeoutID) {
         clearTimeout(this.timeoutID)
       }
+      this.dataTable = []
       const _this = this
       this.timeoutID = setTimeout(function () {
         criteria = name == 'flight' ?  _this.form.flight : _this.form.flightOutbound
@@ -460,26 +555,20 @@ export default {
             filter: {search: criteria.toUpperCase()}
           }
         }
-        const inOutBound = ["3","4"].includes(_this.form.operation)
+        _this.readonly = true
+        _this.loadingState = true
+        _this.inOutBound = ["3","4"].includes(_this.form.operation)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
-          if ((response.status == 200) && !inOutBound) {
-            _this.setForm(response.data[0], name)
-            _this.$alert.info({
-              mode:'modal',
-              title: _this.$tr('ifly.cms.form.flight'),
-              message: name.includes('Outbound') ? _this.$tr('ifly.cms.label.flightMessageOutBound') : _this.$tr('ifly.cms.label.flightMessageInBound'),
-              actions: [
-                {label: _this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
-                {
-                  label: _this.$tr('isite.cms.label.yes'),
-                  color: 'primary',
-                  handler: () => {
-                    _this.setForm(response.data[0], name == 'flight' ?  'flightOutbound' : 'flight')
-                  }
-                },
-              ]
-            })
+          _this.readonly = false
+          _this.loadingState = false
+          _this.name = name
+          if (response.status == 200) {
+            _this.mainData = response.data
+            _this.loadingState = false
+            _this.setTable(response.data)
+           _this.dialog = true
+            
           } else if (response.status == 204) {
             _this.$alert.warning({
               mode:'modal',
@@ -500,20 +589,73 @@ export default {
         }).catch(error => {
           console.log('error', error)
         })
-      },3000) 
+      },2000) 
     },
-    setForm(data, name) {
-      if(name.includes('Outbound')){
+    setForm(data) {
+      if(this.name.includes('Outbound')){
         this.$set(this.form, "flightOutbound",  data.ident)
         this.$set(this.form, "destination",  data.destinationAirport.id)
-        this.$set(this.form, "schuduledDeparture",  data.scheduledOut)
+        this.$set(this.form, "scheduledDeparture",  this.dateFormatterFull(data.scheduledOut))
         this.$set(this.form, "tailOutbound",  data.registration)
       } else {
         this.$set(this.form, "flight", data.ident)
         this.$set(this.form, "origin", data.originAirport.id)
-        this.$set(this.form, "schuduledArrival", data.scheduledIn)
+        this.$set(this.form, "scheduledArrival", this.dateFormatterFull(data.scheduledIn))
         this.$set(this.form, "tail", data.registration)
       }
+    },
+    setDataTable({select, dialog}) {
+      this.dialog = dialog
+      this.setForm(this.mainData.find((item,index) => {
+        return index === select.index 
+      }))
+      if(!this.inOutBound && this.openAlert){
+        this.$alert.info({
+          mode:'modal',
+          title: this.$tr('ifly.cms.form.flight'),
+          message: this.name.includes('Outbound') ? this.$tr('ifly.cms.label.flightMessageOutBound') : this.$tr('ifly.cms.label.flightMessageInBound'),
+          actions: [
+            {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+            {
+              label: this.$tr('isite.cms.label.yes'),
+              color: 'primary',
+              handler: () => {
+                this.name = this.name == 'flight' ?  'flightOutbound' : 'flight'
+                this.setForm(this.mainData.find((item,index) => {
+                  return index === select.index 
+                }))
+              }
+            },
+          ]
+        })
+      }
+    },
+    dateFormatterFull(date) {
+      if (!date) return null
+      const formDate = date.split("T")
+      const [year, month, day] = formDate[0].substr(0, 10).split('-')
+      const [hr, sec] = formDate[1].substr(0, 5).split(':')
+      return `${day}-${month}-${year} ${hr}:${sec}`
+    },
+    dateFormatter(date) {
+      if (!date) return null
+      const [year, month, day] = date.substr(0, 10).split('-')
+      return `${day}-${month}-${year}`
+    },
+    setTable(data) {
+      data.forEach((items, index) => {
+        const date = this.dateFormatter(items.scheduledOn.split("T")[0])
+        const time = items.scheduledOn.split("T")[1].substr(0, 5)
+        const flight = {
+          index,
+          date,
+          inbound: `${time} - ${items.originAirport.airportName}`,
+          outbound: `${time} - ${items.destinationAirport.airportName}`,
+          aircraftType: items.aircraftType,
+        }
+        this.dataTable.push(flight)
+      })
+        
     }
   },
 }

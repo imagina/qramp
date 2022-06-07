@@ -4,6 +4,7 @@
       <div v-if="!edit" class="flex justify-end">
         <q-space />
         <q-btn 
+          v-if="id"
           class="q-mr-sm text-capitalize" 
           color="white"
           rounded
