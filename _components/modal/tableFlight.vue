@@ -1,7 +1,8 @@
-<template lang="">
+<template>
   <q-dialog
     v-model="dialog"
     persistent
+    class="master-dialog-custom"
     transition-show="slide-up"
     transition-hide="slide-down"
   >
@@ -61,8 +62,9 @@ export default {
       filter:'',
       columns:[
         { name: 'date', label: 'Date', field: 'date', sortable: true , align: 'left'},
-        { name: 'inbound', label: 'Inbound', field: 'inbound', align: 'left'},
-        { name: 'outbound', label: 'Outbound', field: 'outbound' , align: 'left'},
+        { name: 'tailNumber', label: 'Tail Number', field: 'registration', sortable: true , align: 'left'},
+        { name: 'inbound', label: 'Departure ', field: 'inbound', align: 'left'},
+        { name: 'outbound', label: 'Arrival', field: 'outbound' , align: 'left'},
         { name: 'aircraftType', label: 'Aircraft', field: 'aircraftType', align: 'left'}
       ],
     }
@@ -97,4 +99,23 @@ export default {
       z-index: 2
       background: $primary
       color: #fff
+  .master-dialog-custom
+    .q-dialog__inner
+      padding 15px 0 0 0
+      width 65vw
+      @media screen and (max-width: $breakpoint-md)
+        width 90vw
+      @media screen and (max-width: $breakpoint-xs)
+        width 100vw
+
+    .master-dialog
+      &__content
+        height 100%
+        max-height 100%
+        width 100%
+        max-width 100%
+        border-radius $custom-radius 0 0 0 !important
+
+      &__body
+        height calc(100vh - 207px)
 </style>

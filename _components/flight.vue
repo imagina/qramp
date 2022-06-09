@@ -277,8 +277,8 @@ export default {
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.date'),
@@ -421,8 +421,8 @@ export default {
             props: {
               readonly: this.newInbound,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledArrival'),
@@ -438,8 +438,8 @@ export default {
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -506,8 +506,8 @@ export default {
             props: {
               readonly: this.newOutbound,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledDeparture'),
@@ -523,8 +523,8 @@ export default {
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -647,6 +647,7 @@ export default {
         const flight = {
           index,
           date,
+          registration: items.registration,
           inbound: `${time} - ${items.originAirport.airportName}`,
           outbound: `${time} - ${items.destinationAirport.airportName}`,
           aircraftType: items.aircraftType,

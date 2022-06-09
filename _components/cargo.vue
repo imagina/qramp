@@ -147,6 +147,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              mask:'###################',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly
@@ -157,6 +158,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              mask:'###################',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly
@@ -169,6 +171,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              mask:'###################',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly
@@ -179,6 +182,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              mask:'###################',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly
