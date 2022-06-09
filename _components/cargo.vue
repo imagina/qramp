@@ -43,13 +43,13 @@
         </div>
       </div>
     </div>
-    <div class="flex justify-between q-px-md">
+    <div class="flex q-px-md">
       <q-toggle
         v-model="delay"
         color="primary"
         label="Delay"
       />
-      <q-btn v-if="delay" class="btn-stick" round icon="add" color="primary" @click="addDelay()"/>
+      <q-btn v-if="delay" class="q-ml-sm" flat round icon="add" color="primary" @click="addDelay()"/>
     </div>
     <div v-if="delay" class="q-pa-md">
       <div flat class="row">
@@ -62,10 +62,11 @@
             />
             <q-btn 
               v-if="field.type == 'hour'" 
-              style="height:12px; width:12px"
-              class="col-12 col-md-1 q-pb-md" 
-              flat round icon="delete" 
-              size="12px" color="primary" 
+              style="width: 40px; height:38px"
+              class="col-12 btn-stick col-md-1" 
+              round icon="delete" flat
+              size="12px"
+              color="primary" 
               @click="delDelay(keyField)"
             />
         </template>
@@ -219,6 +220,9 @@ export default {
     #labelInput
       .span
         padding-bottom 22px
-    .btn-stick
-      position sticky
+    .btn-stick > .q-btn--round .q-btn__wrapper
+      padding: 0;
+      min-width: 2em;
+      min-height: 0em;
+      
 </style>
