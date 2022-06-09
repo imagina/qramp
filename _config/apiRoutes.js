@@ -14,4 +14,6 @@ export default {
   operationTypes: `${urlBase}/operation-types`,
   setupCustomers: `${setupUrlBase}/customers`,
   setupStations: `${setupUrlBase}/stations`,
+  products: `${urlBase}/products`,
+  attributes: `${urlBase}/attributes`
 }

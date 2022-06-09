@@ -8,7 +8,7 @@
           <q-icon color="primary" class="q-pl-sm" name="search" />
         </template>
       </q-input>
-      <expansion-component class="q-px-md" :data="services" @value="setValue($event)"/>
+      <expansion-component class="q-px-md" :data="services"/>
     </div>
   </div>
 </template>
@@ -16,20 +16,50 @@
 <script>
 import expansionComponent from '@imagina/qramp/_components/expansionComponent.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
+import services from '@imagina/qramp/_mixins/services.js'
 export default {
   props:{
     readonly: true,
     toolbar:{}
   },
   components:{expansionComponent},
-  mixins:[responsive],
-  data(){
-    return{
-    }
-  },
+  mixins:[responsive, services],
   methods: {
-    setValue(value) {
-      console.log('valor', value)
+    async init() {
+      //Request params
+      let requestParams = {
+        refresh: true,
+        params: {
+        filter: {categoryId: 1},
+        include: 'category,attributes,attributes.values'
+      }
+      }
+      //Request data
+      await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
+        data.forEach(item => {
+          this.services.push({
+            icon: "settings",
+            title: item.name,
+            formField: {
+              ...item.attributes.reduce((previousValue, currentValue, currentIndex, array) => {
+                const props = this.setProps(currentValue.type, currentValue.name)
+                  previousValue = {
+                    ...previousValue,
+                      [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
+                      name: currentValue.name || `${currentValue.type}${currentValue.id}${item.id}`,
+                      value: currentValue.length > 0 ? currentValue.length : this.setValue(currentValue.type),
+                      type: currentValue.type == 'fullDate' ? 'input' : currentValue.type,
+                      props :{ ...props}
+                    }
+                  }
+                  return previousValue
+              }, {} )
+            }
+          })
+        })
+      }).catch(error => {
+        console.error("[qramp-services]::init", error)
+      })
     }
   },
   computed:{
@@ -38,120 +68,6 @@ export default {
         'search',
       ]
     },
-    services(){
-      return[
-        {
-          icon:'delete_outline',
-          title:'Regulated Garbage',
-          formField:{
-            quantity: {
-              name:'quantity0',
-              value:0,
-              type: 'quantity',
-              props: {
-                readonly: this.readonly,
-                clearable: true,
-                color:"primary",
-              },
-            },
-          }
-        },
-        {
-          title:'Marshalling',
-          icon:'gesture',
-          formField:{
-            hour: {
-              name:'time0',
-              value: '',
-              type: 'fullDate',
-              props: {
-                readonly: this.readonly,
-                label: this.$tr('isite.cms.form.date'),
-                clearable: true,
-              },
-            },
-          }
-        },
-        {
-          title:'Add Pusback',
-          icon:'undo',
-          formField:{
-            hour: {
-              name:'time1',
-              value: '',
-              type: 'fullDate',
-              props: {
-                readonly: this.readonly,
-                label: this.$tr('isite.cms.form.date'),
-                clearable: true,
-              },
-            },
-            quantity: {
-              name:'quantity1',
-              value: 0,
-              type: 'quantity',
-              props: {
-                readonly: this.readonly,
-                clearable: true,
-                color:"primary",
-              },
-            },
-          }
-        },
-        {
-          title:'GPU',
-          icon:'flash_on',
-          formField:{
-            quantity: {
-              name:'quantity2',
-              value: 0,
-              type: 'quantity',
-              props: {
-                readonly: this.readonly,
-                clearable: true,
-                color:"primary",
-              },
-            },
-            hour: {
-              name:'time2',
-              value: '',
-              type: 'fullDate',
-              props: {
-                readonly: this.readonly,
-                label: this.$tr('isite.cms.form.date'),
-                clearable: true,
-              },
-            },
-          }
-        },
-        {
-          title:'A/C Cleaning',
-          icon:'air',
-          formField:{
-            hour: {
-              name:'time3',
-              value: '',
-              type: 'fullDate',
-              props: {
-                readonly: this.readonly,
-                label: this.$tr('isite.cms.form.date'),
-                clearable: true,
-              },
-            },
-            quantity: {
-              name:'quantity3',
-              value: 0,
-              type: 'quantity',
-              props: {
-                readonly: this.readonly,
-                clearable: true,
-                color:"primary",
-              },
-            },
-          }
-        }
-      ]
-    }
   }
 }
 </script>
