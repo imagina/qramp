@@ -9,14 +9,14 @@
           <q-item-section>
             {{item.title}}
             <span class="spanCaption text-caption">{{showValue(item.formField.quantity)}}</span>
-            <span class="spanCaption text-caption">{{showValue(item.formField.hour)}}</span>
+            <span class="spanCaption text-caption">{{showValue(item.formField.datetime)}}</span>
           </q-item-section>
         </template>
         <q-card class="flex card-color rounted-3 q-px-lg q-mx-md">
           <q-card-section class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
             <label class="flex no-wrap items-center" >
-              <span v-if="field.props.label" class="q-pl-lg">{{field.props.label}}</span>
-              <dynamic-field class="q-ml-sm" v-model="form[`${field.name || keyfield}`]" :field="field"></dynamic-field>
+              <span v-if="field.props.label" :style="`${field.props.type == 'select' ? 'margin-bottom:20px': ''}`" class="q-pl-lg">{{field.props.label}}</span>
+              <dynamic-field class="q-ml-sm marginzero" v-model="form[`${field.name || keyfield}`]" :field="field"></dynamic-field>
             </label>
           </q-card-section>
         </q-card>
@@ -70,4 +70,6 @@ export default {
       border-radius 8px
     .spanCaption
       color:#949494
+    .marginzero > div > div > label
+      margin-bottom 0px !important
 </style>

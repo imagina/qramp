@@ -277,8 +277,8 @@ export default {
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              'fill-mask':true,
-              hint:"MM-DD-YYYY Hr:Sec",
+              placeholder:'MM/DD/AAAA Hr:mm',
+              hint:"MM/DD/YYYY Hr:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.date'),
@@ -371,7 +371,7 @@ export default {
             type: this.readonly ? 'inputStandard':'search',
             props: {
               loading: this.loadingState,
-              readonly: this.readonly,
+              readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
@@ -421,8 +421,8 @@ export default {
             props: {
               readonly: this.newInbound,
               mask:"##/##/#### ##:##",
-              'fill-mask':true,
-              hint:"MM-DD-YYYY Hr:Sec",
+              placeholder:'MM/DD/AAAA Hr:mm',
+              hint:"MM/DD/YYYY Hr:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledArrival'),
@@ -438,8 +438,8 @@ export default {
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              'fill-mask':true,
-              hint:"MM-DD-YYYY Hr:Sec",
+              placeholder:'MM/DD/AAAA Hr:mm',
+              hint:"MM/DD/YYYY Hr:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -456,7 +456,7 @@ export default {
             type: this.readonly ? 'inputStandard':'search',
             props: {
               loading: this.loadingState,
-              readonly: this.readonly,
+              readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
@@ -506,8 +506,8 @@ export default {
             props: {
               readonly: this.newOutbound,
               mask:"##/##/#### ##:##",
-              'fill-mask':true,
-              hint:"MM-DD-YYYY Hr:Sec",
+              placeholder:'MM/DD/AAAA Hr:mm',
+              hint:"MM/DD/YYYY Hr:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledDeparture'),
@@ -523,8 +523,8 @@ export default {
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              'fill-mask':true,
-              hint:"MM-DD-YYYY Hr:Sec",
+              placeholder:'MM/DD/AAAA Hr:mm',
+              hint:"MM/DD/YYYY Hr:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -555,12 +555,10 @@ export default {
             filter: {search: criteria.toUpperCase()}
           }
         }
-        _this.readonly = true
         _this.loadingState = true
         _this.inOutBound = ["3","4"].includes(_this.form.operation)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
-          _this.readonly = false
           _this.loadingState = false
           _this.name = name
           if (response.status == 200) {
