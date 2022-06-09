@@ -371,7 +371,7 @@ export default {
             type: this.readonly ? 'inputStandard':'search',
             props: {
               loading: this.loadingState,
-              readonly: this.readonly,
+              readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
@@ -456,7 +456,7 @@ export default {
             type: this.readonly ? 'inputStandard':'search',
             props: {
               loading: this.loadingState,
-              readonly: this.readonly,
+              readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
@@ -555,12 +555,10 @@ export default {
             filter: {search: criteria.toUpperCase()}
           }
         }
-        _this.formFields.inboundLeft.flight.props.readonly = true
         _this.loadingState = true
         _this.inOutBound = ["3","4"].includes(_this.form.operation)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
-          _this.formFields.inboundLeft.flight.props.readonly = false
           _this.loadingState = false
           _this.name = name
           if (response.status == 200) {
