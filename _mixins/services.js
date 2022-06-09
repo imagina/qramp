@@ -6,7 +6,24 @@ export default {
   },
   data(){
     return{
-      services:[]
+      services:[],
+      searchServices: '',
+    }
+  },
+  computed:{
+    filterServices () {
+      const conditions = []
+      if (this.searchServices) {
+          conditions.push(this.servicesFilter)
+      }
+      if (conditions.length > 0) {
+          return this.services.filter((service) => {
+              return conditions.every((condition) => {
+                  return condition(service)
+              })  
+          })
+      }
+      return this.services
     }
   },
   methods: {
@@ -17,8 +34,10 @@ export default {
         return ''
       }
     },
+    servicesFilter(service){
+      return service.title.toLowerCase().includes(this.searchServices.toLowerCase())
+    },
     setProps(type, name, options) {
-      console.log('select', type)
       if (type == 'quantity') {
         return {
           readonly: this.readonly

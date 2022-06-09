@@ -1,20 +1,16 @@
 <template>
   <div id="services-container">
     <div class="q-px-md">
-      <q-input clearable borderless standout dense rounded style="max-width: 100%"
-      color="primary" :placeholder="`${$tr('ifly.cms.label.search',{capitalize : true})}...`"
-      class="q-my-md q-ml-md q-mr-xs  search">
-        <template v-slot:prepend>
-          <q-icon color="primary" class="q-pl-sm" name="search" />
-        </template>
-      </q-input>
-      <expansion-component class="q-px-md" :data="services"/>
+      <search-local @value="searchServices = $event" />
+      <q-linear-progress v-if="services.length == 0"  stripe  indeterminate rounded color="primary" class="q-mt-sm" />
+      <expansion-component class="q-px-md" :data="filterServices"/>
     </div>
   </div>
 </template>
 
 <script>
 import expansionComponent from '@imagina/qramp/_components/expansionComponent.vue'
+import searchLocal from '@imagina/qramp/_components/searchLocal'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 import services from '@imagina/qramp/_mixins/services.js'
 export default {
@@ -22,7 +18,7 @@ export default {
     readonly: true,
     toolbar:{}
   },
-  components:{expansionComponent},
+  components:{expansionComponent, searchLocal},
   mixins:[responsive, services],
   methods: {
     async init() {
