@@ -26,77 +26,41 @@ export default {
           title:'Flight',
           icon:'fas fa-plane',
           step: 1,
-          toolbar:{
-            title:'Work Order Details |',
-            titleColor:'#84abe5',
-            code:'000-115-asd5-ssd21',
-          }
         },
         {
           title:'Cargo Op.',
           icon:'rv_hookup',
           step: 2,
-          toolbar:{
-            title:'Work Order Details |',
-            titleColor:'#84abe5',
-            code:'000-115-asd5-ssd21',
-          }
         },
         {
           title:'Services',
           icon:'fas fa-briefcase',
           step: 3,
-          toolbar:{
-            title:'Work Order Details |',
-            titleColor:'#84abe5',
-            code:'000-115-asd5-ssd21',
-          }
         },
         {
           title:'Equipment',
           icon:'extension',
           step: 4,
-          toolbar:{
-            title:'Work Order Details |',
-            titleColor:'#84abe5',
-            code:'000-115-asd5-ssd21',
-          }
         },
         {
           title:'Crew',
           icon:'fas fa-users',
           step: 5,
-          toolbar:{
-            title:'Work Order Details |',
-            titleColor:'#84abe5',
-            code:'000-115-asd5-ssd21',
-          }
         },
         {
           title:'Remark',
           icon:'far fa-edit',
           step: 6,
-          toolbar:{
-            title:'Work Order Details |',
-            titleColor:'#84abe5',
-            code:'000-115-asd5-ssd21',
-          }
         },
         {
           title: this.$tr('ifly.cms.label.signature'),
           icon:'draw',
           step: 7,
-          toolbar:{
-            title:'Work Order Details |',
-            titleColor:'#84abe5',
-            code:'000-115-asd5-ssd21',
-          }
         }
       ]
     },
     nextLabel(){
       if(this.responsive) {
-        console.log(this.sp)
         return (this.sp + 1) === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
       }else {
         return this.sp === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
@@ -123,7 +87,7 @@ export default {
             label: this.nextLabel
           },
           action: () => {
-            this.$refs.stepper.next()
+            this.sp === this.steppers.length ? this.sendInfo() : this.$refs.stepper.next()
           }
         },
       ]
@@ -138,6 +102,24 @@ export default {
     clear() {
       this.modalProps = {}
       this.show = false
+    },
+    camelToSnakeCase(str) {return str.replace(/[A-Z]/g,(letter) => `_${letter.toLowerCase()}`)},
+    setData(data) {
+      const obj = {}
+      for (let key in data){
+        const name = this.camelToSnakeCase(key)
+        obj[name] = data[key]
+      }
+      return obj
+    },
+    sendInfo() {
+      const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
+      this.setData()
+      console.log(this.setData({
+        ...data.form,
+        delay: data.delay,
+        products: data.products
+      }))
     }
   },
 }

@@ -49,7 +49,12 @@ export default {
         },
       }
     }
-  }
+  },
+  methods: {
+    saveInfo() {
+      this.$store.commit('qrampApp/SET_FORM_REMARK', this.form )
+    },
+  },
 }
 </script>
 

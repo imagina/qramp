@@ -57,8 +57,8 @@ export default {
           readonly: this.readonly,
           label: name,
           mask:"##/##/#### ##:##",
-          placeholder:'MM/DD/AAAA Hr:mm',
-          hint:"MM/DD/YYYY Hr:mm",
+          'fill-mask':true,
+          hint:"mm/dd/yyyy hh:mm",
         }
       } else {
         return {

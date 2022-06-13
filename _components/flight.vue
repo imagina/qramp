@@ -11,7 +11,7 @@
             :field="field"
             :class="`${readonly ? 'col-7': ''}`"
             :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
-            v-model="form[field.name || keyField]" 
+            v-model="form[keyField]" 
           />
         </label>
         <hr v-if="readonly" class="label-container"/>
@@ -34,7 +34,7 @@
                 :id="keyField"
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
-                v-model="form[field.name || keyField]"
+                v-model="form[keyField]"
                 @input="search(field)"
                 @enter="search(field)"
               />
@@ -61,7 +61,7 @@
                 :id="keyField"
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
-                v-model="form[field.name || keyField]" 
+                v-model="form[keyField]" 
                 @input="search(field)"
                 @enter="search(field)"
               />
@@ -70,31 +70,16 @@
           </div>
         </div>
       </div>
-      <div v-for="(field, keyField) in formFields.flyFormRight" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
-        <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
-          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
-          <dynamic-field
-            :key="keyField"
-            :id="keyField"
-            :field="field"
-            :class="`${readonly ? 'col-7': ''}`"
-            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
-            v-model="form[field.name || keyField]" 
-          />
-        </label>
-        <hr v-if="readonly" class="label-container"/>
-      </div>
     </div>
   </div>
 </template>
 <script>
-
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 import tableFlight from '@imagina/qramp/_components/modal/tableFlight.vue'
 export default {
   props:{
     readonly: true,
-    toolbar:{}
+    toolbar:{},
   },
   components:{tableFlight},
   mixins:[responsive],
@@ -102,8 +87,6 @@ export default {
     return{
       form:{
         operation:null,
-        flight:null,
-        flightOutbound:null,
         customer:null,
         carrier:null,
         station:null,
@@ -111,14 +94,16 @@ export default {
         gate:null,
         acType:null,
         status:"1",
-        origin:null,
-        tail:null,
-        scheduledArrival:null,
-        blockIn:null,
-        destination:null,
-        tailOutbound:null,
-        scheduledDeparture:null,
-        blockOut:null
+        inboundFlight:null,
+        inboundOrigin:null,
+        inboundTail:null,
+        inboundScheduledArrival:null,
+        inboundBlockIn:null,
+        outboundFlight:null,
+        outboundDestination:null,
+        outboundTail:null,
+        outboundScheduledDeparture:null,
+        outboundBlockOut:null
       },
       selected:[],
       newOutbound:true,
@@ -139,44 +124,45 @@ export default {
   watch:{
     'form.operation'(newVal, oldVal) {
       if (newVal != oldVal) {
-        this.form.flight = null,
-        this.form.flightOutbound = null,
-        this.form.origin = null,
-        this.form.tail = null,
-        this.form.scheduledArrival = null,
-        this.form.blockIn = null,
-        this.form.destination = null,
-        this.form.tailOutbound = null,
-        this.form.scheduledDeparture = null,
-        this.form.blockOut = null
+        this.form.inboundFlight = null,
+        this.form.inboundOrigin = null,
+        this.form.inboundTail = null,
+        this.form.inboundBlockIn = null,
+        this.form.inboundScheduledArrival = null,
+        this.form.outboundFlight = null,
+        this.form.outboundDestination = null,
+        this.form.outboundTail = null,
+        this.form.outboundScheduledDeparture = null,
+        this.form.outboundBlockOut = null
       }
     },
-    'form.flight' (val) {
+    'form.inboundFlight' (val) {
       if (!val) {
-        this.form.flight = null,
-        this.form.origin = null,
-        this.form.tail = null,
-        this.form.scheduledArrival = null,
-        this.form.blockIn = null
+        this.form.inboundFlight = null,
+        this.form.inboundOrigin = null,
+        this.form.inboundTail = null,
+        this.form.inboundScheduledArrival = null,
+        this.form.inboundBlockIn = null
       }
     },
-    'form.flightOutbound' (val) {
+    'form.outboundFlight' (val) {
       if (!val) {
-        this.form.destination = null,
-        this.form.tailOutbound = null,
-        this.form.scheduledDeparture = null,
-        this.form.blockOut = null
+        this.form.outboundFlight = null,
+        this.form.outboundDestination = null,
+        this.form.outboundTail = null,
+        this.form.outboundScheduledDeparture = null,
+        this.form.outboundBlockOut = null
       }
     },
-    'form.destination' (val) {
-      if (this.form.origin) {
+    'form.outboundDestination' (val) {
+      if (this.form.inboundOrigin) {
         this.openAlert = false
       } else {
         this.openAlert = true
       }
     },
-    'form.origin' (val) {
-      if (this.form.destination) {
+    'form.inboundOrigin' (val) {
+      if (this.form.outboundDestination) {
         this.openAlert = false
       } else {
         this.openAlert = true
@@ -216,6 +202,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -236,6 +225,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -256,6 +248,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -275,10 +270,13 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.date'),
@@ -292,6 +290,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -312,6 +313,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -326,6 +330,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -341,6 +348,9 @@ export default {
             value: 1,
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readStatus,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -357,19 +367,15 @@ export default {
             label: this.$tr('ifly.cms.form.status'),
           },
         },
-        flyFormRight:{
-
-          /*
-
-
-           */
-        },
         inboundLeft:{
-          flight: {
-            name:'flight',
+          inboundFlight: {
+            name:'inboundFlight',
             value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               loading: this.loadingState,
               readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
@@ -381,11 +387,14 @@ export default {
             },
             label: this.$tr('ifly.cms.form.flight'),
           },
-          origin: {
-            name:'origin',
+          inboundOrigin: {
+            name:'inboundOrigin',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -400,11 +409,14 @@ export default {
             },
             label: this.$tr('ifly.cms.form.origin'),
           },
-          tail: {
-            name:'tail',
+          inboundTail: {
+            name:'inboundTail',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -414,15 +426,18 @@ export default {
             },
             label: this.$tr('ifly.cms.form.tail'),
           },
-          scheduledArrival: {
-            name:'scheduledArrival',
+          inboundScheduledArrival: {
+            name:'inboundScheduledArrival',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.newInbound,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledArrival'),
@@ -431,15 +446,15 @@ export default {
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
-          blockIn: {
-            name:'blockIn',
+          inboundBlockIn: {
+            name:'inboundBlockIn',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
@@ -450,11 +465,14 @@ export default {
           },
         },
         outboundRight:{
-          flight: {
-            name:'flightOutbound',
+          outboundFlight: {
+            name:'outboundFlight',
             value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               loading: this.loadingState,
               readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
@@ -466,11 +484,14 @@ export default {
             },
             label: this.$tr('ifly.cms.form.flight'),
           },
-          destination: {
-            name:'destination',
+          outboundDestination: {
+            name:'outboundDestination',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -485,11 +506,14 @@ export default {
             },
             label: this.$tr('ifly.cms.form.destination'),
           },
-          tail: {
-            name:'tailOutbound',
+          outboundTail: {
+            name:'outboundTail',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -499,15 +523,18 @@ export default {
             },
             label: this.$tr('ifly.cms.form.tail'),
           },
-          scheduledDeparture: {
-            name:'scheduledDeparture',
+          outboundScheduledDeparture: {
+            name:'outboundScheduledDeparture',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.newOutbound,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledDeparture'),
@@ -516,15 +543,15 @@ export default {
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
-          blockOut: {
-            name:'blockOut',
+          outboundBlockOut: {
+            name:'outboundBlockOut',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
               readonly: this.readonly,
               mask:"##/##/#### ##:##",
-              placeholder:'MM/DD/AAAA Hr:mm',
-              hint:"MM/DD/YYYY Hr:mm",
+              'fill-mask':true,
+              hint:"mm/dd/yyyy hh:mm",
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
@@ -538,6 +565,9 @@ export default {
     }
   },
   methods: {
+    saveInfo() {
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
+    },
     search({type, name}, criteria = null){
       if(type != 'search') return;
       if (this.timeoutID) {
@@ -546,7 +576,7 @@ export default {
       this.dataTable = []
       const _this = this
       this.timeoutID = setTimeout(function () {
-        criteria = name == 'flight' ?  _this.form.flight : _this.form.flightOutbound
+        criteria = name == 'inboundFlight' ?  _this.form.inboundFlight : _this.form.outboundFlight
         if(!criteria || criteria.length < 3) return ;
         
         const params = {
@@ -590,16 +620,16 @@ export default {
       },2000) 
     },
     setForm(data) {
-      if(this.name.includes('Outbound')){
-        this.$set(this.form, "flightOutbound",  data.ident)
-        this.$set(this.form, "destination",  data.destinationAirport.id)
-        this.$set(this.form, "scheduledDeparture",  this.dateFormatterFull(data.scheduledOut))
-        this.$set(this.form, "tailOutbound",  data.registration)
+      if(this.name.includes('outboundFlight')){
+        this.$set(this.form, "outboundFlight",  data.ident)
+        this.$set(this.form, "outboundDestination",  data.destinationAirport.id)
+        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.scheduledOut))
+        this.$set(this.form, "outboundTail",  data.registration)
       } else {
-        this.$set(this.form, "flight", data.ident)
-        this.$set(this.form, "origin", data.originAirport.id)
-        this.$set(this.form, "scheduledArrival", this.dateFormatterFull(data.scheduledIn))
-        this.$set(this.form, "tail", data.registration)
+        this.$set(this.form, "inboundFlight", data.ident)
+        this.$set(this.form, "inboundOrigin", data.originAirport.id)
+        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.scheduledIn))
+        this.$set(this.form, "inboundTail", data.registration)
       }
     },
     setDataTable({select, dialog}) {
@@ -618,7 +648,7 @@ export default {
               label: this.$tr('isite.cms.label.yes'),
               color: 'primary',
               handler: () => {
-                this.name = this.name == 'flight' ?  'flightOutbound' : 'flight'
+                this.name = this.name == 'inboundFlight' ?  'outboundFlight' : 'inboundFlight'
                 this.setForm(this.mainData.find((item,index) => {
                   return index === select.index 
                 }))
@@ -647,6 +677,7 @@ export default {
         const flight = {
           index,
           date,
+          registration: items.registration,
           inbound: `${time} - ${items.originAirport.airportName}`,
           outbound: `${time} - ${items.destinationAirport.airportName}`,
           aircraftType: items.aircraftType,
