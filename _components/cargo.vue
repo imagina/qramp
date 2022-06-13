@@ -54,21 +54,21 @@
     <div v-if="delay" class="q-pa-md">
       <div flat class="row">
         <template v-for="(field,keyField) in delayFields">
-            <dynamic-field
-              class="col-12 col-md-5 q-pr-sm"
-              :key="keyField"
-              :field="field"
-              v-model="form[field.name || keyField]" 
-            />
-            <q-btn 
-              v-if="field.type == 'hour'" 
-              style="width: 40px; height:38px"
-              class="col-12 btn-stick col-md-1" 
-              round icon="delete" flat
-              size="12px"
-              color="primary" 
-              @click="delDelay(keyField)"
-            />
+          <dynamic-field
+            class="col-12 col-md-5 q-pr-sm"
+            :key="keyField"
+            :field="field"
+            v-model="delayList[keyField.includes('code') ? keyField.split('code')[1] : keyField.split('hours')[1]][keyField.includes('code') ? 'code' : 'hours']"
+          />
+          <q-btn 
+            v-if="field.type == 'input'" 
+            style="width: 40px; height:38px"
+            class="col-12 btn-stick col-md-1" 
+            round icon="delete" flat
+            size="12px"
+            color="primary" 
+            @click="delDelay(keyField)"
+          />
         </template>
       </div>
     </div>
@@ -89,26 +89,24 @@ export default {
       delay:false,
       delayList:[
         {
-          delayItem: {
-            name:'code0',
-          },
-          delayDate: {
-            name:'date0',
-          },
-        }
-      ]
+          code:"",
+          hours:""
+        },
+      ],
     }
   },
   computed:{
     delayFields(){
       const obj = {}
       this.delayList.forEach((delay,index) => {
-        for (let item in delay.delayItem) {
-          obj['delayItem'+index] = {
-            name: delay.delayItem['name'],
-            value: null,
+          obj['code'+index] = {
+            value: delay.code,
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              options: [
+                {label: this.$tr('isite.cms.label.inverse'), value: '0'},
+                {label: this.$tr('isite.cms.label.open'), value: '1'}
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -119,13 +117,12 @@ export default {
             },
             label: this.$tr('icommerce.cms.sidebar.code'),
           }    
-        }
-        for (let item in delay.delayDate) {
-          obj['delayDate'+index] = {
-            name: delay.delayDate['name'],
-            value: null,
-            type: this.readonly ? 'inputStandard':'hour',
+          obj['hours'+index] = {
+            value: delay.hours,
+            type: this.readonly ? 'inputStandard':'input',
             props: {
+              mask:"##:##",
+              'fill-mask':'0',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -136,14 +133,13 @@ export default {
             },
             label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
           }    
-        }
       })
       return obj
     },
     formFields() {
       return {
         inbound:{
-          totalUldsUnloaded:{
+          inboundCargoTotalUldsUnloaded:{
             value: '',
             type: 'inputStandard',
             props: {
@@ -154,7 +150,7 @@ export default {
             },
             label: `${this.$tr('ifly.cms.form.TotalUldsUnloaded')}`,
           },
-          bulkUnloaded:{
+          inboundCargoBulkUnloaded:{
             value: '',
             type: 'inputStandard',
             props: {
@@ -167,7 +163,7 @@ export default {
           }
         },
         outbound:{
-          totalUldsLoaded:{
+          outboundCargoTotalUldsLoaded:{
             value: '',
             type: 'inputStandard',
             props: {
@@ -178,7 +174,7 @@ export default {
             },
             label: `${this.$tr('ifly.cms.form.TotalUldsLoaded')}`,
           },
-          bulkLoaded:{
+          outboundCargobulkLoaded:{
             value: '',
             type: 'inputStandard',
             props: {
@@ -191,21 +187,21 @@ export default {
           }
         }
       }
-    }
+    },
   },
   methods: {
     addDelay() {
       this.delayList.push({
-          delayItem: {
-            name:`code${this.$uid()}`,
-          },
-          delayDate: {
-            name:`date${this.$uid()}`,
-          },
+        code: '',
+        hours: ''
       })
     },
+    saveInfo() {
+      this.$store.commit('qrampApp/SET_FORM_DELAY', this.delayList)
+      this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
+    },
     delDelay(index) {
-      const i = parseInt(index.split("delayDate")[1])
+      const i = parseInt(index.slice(-1))
       this.delayList.splice(i,1)
     }
   },

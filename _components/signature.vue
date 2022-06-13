@@ -15,14 +15,13 @@
         </div>
         <div class="col-12 col-md-6">
           <div class="row">
-              <dynamic-field  id="sig2" v-if="field.type === 'signature'" class="col-12 q-px-sm" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
+              <dynamic-field  id="sig2" v-if="field.type === 'signature'" class="col-12 q-px-sm" v-for="(field, keyField) in formField.representative" :key="keyField" :field="field"
                 v-model="form[field.name || keyField]" @fullscreenAction="isFull ? cancelFullScreen('sig2') : launchFullScreen('sig2')"/>
           </div>
           <div class="row">
-              <dynamic-field v-if="field.type !== 'signature'" class="col-6 q-mt-sm q-pa-sm" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
+              <dynamic-field v-if="field.type !== 'signature'" class="col-6 q-mt-sm q-pa-sm" v-for="(field, keyField) in formField.representative" :key="keyField" :field="field"
                 v-model="form[field.name || keyField]" />
           </div>
-        </div>
         </div>
       </div>  
     </div>
@@ -134,21 +133,24 @@ export default {
       }
     },
     cancelFullScreen(name) {
-        const element = document.getElementById(name)
-        if(document.cancelFullScreen) {
-            element.style.background = "initial"
-            this.isFull = false
-            document.cancelFullScreen();
-        } else if(document.mozCancelFullScreen) {
-            element.style.background = "initial"
-            this.isFull = false
-            document.mozCancelFullScreen();
-        } else if(document.webkitCancelFullScreen) {
-            element.style.background = "initial"
-            this.isFull = false
-            document.webkitCancelFullScreen();
-        }
-      },
+      const element = document.getElementById(name)
+      if(document.cancelFullScreen) {
+          element.style.background = "initial"
+          this.isFull = false
+          document.cancelFullScreen();
+      } else if(document.mozCancelFullScreen) {
+          element.style.background = "initial"
+          this.isFull = false
+          document.mozCancelFullScreen();
+      } else if(document.webkitCancelFullScreen) {
+          element.style.background = "initial"
+          this.isFull = false
+          document.webkitCancelFullScreen();
+      }
+    },
+    saveInfo() {
+      this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
+    },
   }
 }
 </script>

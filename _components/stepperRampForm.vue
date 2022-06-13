@@ -4,7 +4,6 @@
       <div class="flex q-px-sm q-py-md">
         <template v-for="(step, index) in steps">
           <div 
-            @click="showSteps(step.step)" 
             v-if="columns(step.step)"
             class="flex relative-position column items-center"
             style="width:33.33%"
@@ -27,6 +26,7 @@
         <component 
           :is="currentTab" 
           :readonly="readonly"
+          :ref="setRefs(currentTab)"
           >
         </component>
       </KeepAlive>
@@ -38,7 +38,6 @@
       ref="stepper"
       color="primary"
       alternative-labels
-      header-nav
       animated
       keep-alive
     >
@@ -50,13 +49,13 @@
           :icon="step.icon"
         >
           <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
-          <i-flight v-if="step.step == 1" :readonly="readonly"></i-flight>
-          <i-cargo v-if="step.step == 2" :readonly="readonly"></i-cargo>
-          <i-services v-if="step.step == 3" :readonly="readonly"></i-services>
-          <i-equipment v-if="step.step == 4" :readonly="readonly"></i-equipment>
-          <i-crew v-if="step.step == 5" :readonly="readonly"></i-crew>
-          <i-remarks v-if="step.step == 6" :readonly="readonly"></i-remarks>
-          <i-signature v-if="step.step == 7" :readonly="readonly"></i-signature>
+          <i-flight ref="flight" v-if="step.step == 1" :readonly="readonly"></i-flight>
+          <i-cargo ref="cargo" v-if="step.step == 2" :readonly="readonly"></i-cargo>
+          <i-services ref="services" v-if="step.step == 3" :readonly="readonly"></i-services>
+          <i-equipment ref="equipment" v-if="step.step == 4" :readonly="readonly"></i-equipment>
+          <i-crew ref="crew" v-if="step.step == 5" :readonly="readonly"></i-crew>
+          <i-remarks ref="remarks" v-if="step.step == 6" :readonly="readonly"></i-remarks>
+          <i-signature ref="signature" v-if="step.step == 7" :readonly="readonly"></i-signature>
         </q-step>
       </template>
     </q-stepper>
@@ -121,7 +120,45 @@ export default {
     init(){
       this.$emit('sp', this.sp)
     },
+    setData() {
+      switch (this.responsive ? this.currentTab : this.sp) {
+        case 1:
+          this.responsive ? this.$refs.flight.saveInfo() : this.$refs.flight[0].saveInfo()
+          break;
+        case 2:
+          this.responsive ? this.$refs.cargo.saveInfo() : this.$refs.cargo[0].saveInfo()
+          break;
+        case 3:
+          this.responsive ? this.$refs.services.saveInfo() : this.$refs.services[0].saveInfo()
+          break;
+        case 4:
+          this.responsive ? this.$refs.equipment.saveInfo() : this.$refs.equipment[0].saveInfo()
+          break;
+        case 5:
+          this.responsive ? this.$refs.crew.saveInfo() : this.$refs.crew[0].saveInfo()
+          break;
+        case 6:
+          this.responsive ? this.$refs.remarks.saveInfo() : this.$refs.remarks[0].saveInfo()
+          break;
+        case 7:
+          this.responsive ? this.$refs.signature.saveInfo() : this.$refs.signature[0].saveInfo()
+          break;
+      }
+    },
+    setRefs(component) {
+      const ref= {
+        iFlight:"flight",
+        iCargo:"cargo",
+        iServices:"services",
+        iEquipment:"equipment",
+        iCrew:"crew",
+        iRemarks:"remarks",
+        iSignature:"signature",
+      }
+      return ref[component]
+    },
     next(){
+      this.setData()
       this.index = this.index < 6 ? ++this.index : 6
       this.responsive ? this.sp = this.index : this.sp
       this.responsive ? this.currentTab = this.tabs[this.index].name:this.$refs.stepper.next()

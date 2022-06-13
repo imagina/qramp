@@ -45,6 +45,8 @@ export default {
                       name: currentValue.name || `${currentValue.type}${currentValue.id}${item.id}`,
                       value: currentValue.length > 0 ? currentValue.length : this.setValue(currentValue.type),
                       type: currentValue.type == 'fullDate' ? 'input' : currentValue.type,
+                      id: currentValue.id,
+                      categoryId: currentValue.categoryId,
                       props :{ ...props}
                     }
                   }
@@ -56,7 +58,10 @@ export default {
       }).catch(error => {
         console.error("[qramp-services]::init", error)
       })
-    }
+    },
+    saveInfo() {
+      this.$store.commit('qrampApp/SET_FORM_PRODUCTS', this.services)
+    },
   },
   computed:{
     pageActions() {

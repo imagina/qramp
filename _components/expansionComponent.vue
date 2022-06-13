@@ -16,7 +16,7 @@
           <q-card-section class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
             <label class="flex no-wrap items-center" >
               <span v-if="field.props.label" :style="`${field.props.type == 'select' ? 'margin-bottom:20px': ''}`" class="q-pl-lg">{{field.props.label}}</span>
-              <dynamic-field class="q-ml-sm marginzero" v-model="form[`${field.name || keyfield}`]" :field="field"></dynamic-field>
+              <dynamic-field class="q-ml-sm marginzero" v-model="data[index]['formField'][keyfield]['value']" :field="field"></dynamic-field>
             </label>
           </q-card-section>
         </q-card>
@@ -36,26 +36,24 @@ export default {
       form:{}
     }
   },
-  watch:{
-    form(val){
-      if(val){
-        this.data.map((item) => {
-          if (item.formField.hour) {
-            for (let key in val) {
-              if (item.formField.hour.name == key ) {
-                item.formField.hour.value = val[key]
-              }
-            }
-          }
-          return item
-        })
-      }
-    }
-  },
   methods: {
     showValue(data) {
       if(data) {
         return  data.value ? typeof(data.value) == 'number' ? data.value: this.$trd(data.value) : ''
+      }
+    },
+    formatName(string) {
+      if(string.includes(" ")) {
+        return string
+      } else {
+        const arr = string.split(" ")
+        a.map((item, index) =>{ 
+            if (index == 0) { 
+                item.toLowerCase()
+            }
+            return item
+        }).join().replace(",","")
+        return a
       }
     }
   }

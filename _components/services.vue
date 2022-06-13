@@ -18,6 +18,14 @@ export default {
     readonly: true,
     toolbar:{}
   },
+  data(){
+    return{
+      form:{
+        services:{},
+      },
+      products:[],
+    }
+  },
   components:{expansionComponent, searchLocal},
   mixins:[responsive, services],
   methods: {
@@ -36,15 +44,18 @@ export default {
           this.services.push({
             icon: "settings",
             title: item.name,
+            id: item.id,
             formField: {
               ...item.attributes.reduce((previousValue, currentValue, currentIndex, array) => {
                 const props = this.setProps(currentValue.type, currentValue.name)
                   previousValue = {
                     ...previousValue,
                       [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
-                      name: currentValue.name || `${currentValue.type}${currentValue.id}${item.id}`,
+                      name: `${currentValue.type}${currentValue.id}${item.id}`,
                       value: currentValue.length > 0 ? currentValue.length : this.setValue(currentValue.type),
                       type: currentValue.type == 'fullDate' ? 'input' : currentValue.type,
+                      id: currentValue.id,
+                      categoryId: currentValue.categoryId,
                       props :{ ...props}
                     }
                   }
@@ -56,7 +67,10 @@ export default {
       }).catch(error => {
         console.error("[qramp-services]::init", error)
       })
-    }
+    },
+    saveInfo() {
+      this.$store.commit('qrampApp/SET_FORM_PRODUCTS', this.services)
+    },
   },
   computed:{
     pageActions() {
