@@ -29,48 +29,19 @@ export default {
   components:{expansionComponent, searchLocal},
   mixins:[responsive, services],
   methods: {
-    async init() {
+    init() {
       //Request params
       let requestParams = {
         refresh: true,
         params: {
-        filter: {categoryId: 1},
-        include: 'category,attributes,attributes.values'
-      }
+          filter: {categoryId: 1},
+          include: 'category,attributes,attributes.values'
+        }
       }
       //Request data
-      await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
-        data.forEach(item => {
-          this.services.push({
-            icon: "settings",
-            title: item.name,
-            id: item.id,
-            formField: {
-              ...item.attributes.reduce((previousValue, currentValue, currentIndex, array) => {
-                const props = this.setProps(currentValue.type, currentValue.name)
-                  previousValue = {
-                    ...previousValue,
-                      [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
-                      name: `${currentValue.type}${currentValue.id}${item.id}`,
-                      value: currentValue.length > 0 ? currentValue.length : this.setValue(currentValue.type),
-                      type: currentValue.type == 'fullDate' ? 'input' : currentValue.type,
-                      id: currentValue.id,
-                      categoryId: currentValue.categoryId,
-                      props :{ ...props}
-                    }
-                  }
-                  return previousValue
-              }, {} )
-            }
-          })
-        })
-      }).catch(error => {
-        console.error("[qramp-services]::init", error)
-      })
+      this.getProducts(requestParams)
     },
-    saveInfo() {
-      this.$store.commit('qrampApp/SET_FORM_PRODUCTS', this.services)
-    },
+    
   },
   computed:{
     pageActions() {

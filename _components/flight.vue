@@ -94,6 +94,8 @@ export default {
         gate:null,
         acType:null,
         status:"1",
+        inboundCustomFlightNumber:null,
+        outboundCustomFlightNumber:null,
         inboundFlight:null,
         inboundOrigin:null,
         inboundTail:null,
@@ -404,11 +406,7 @@ export default {
               clearable: true,
               color:"primary"
             },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qfly.airports',
-              select: {label: 'airportName', id: 'id'},
-              requestParams: {filter: {status: 1}}
-            },
+            loadOptions: this.getAirports(),
             label: this.$tr('ifly.cms.form.origin'),
           },
           inboundTail: {
@@ -495,11 +493,7 @@ export default {
               clearable: true,
               color:"primary"
             },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qfly.airports',
-              select: {label: 'airportName', id: 'id'},
-              requestParams: {filter: {status: 1}}
-            },
+            loadOptions: this.getAirports(),
             label: this.$tr('ifly.cms.form.destination'),
           },
           outboundTail: {
@@ -582,6 +576,9 @@ export default {
           _this.loadingState = false
           _this.name = name
           if (response.status == 200) {
+            _this.form.outboundCustomFlightNumber= false
+            _this.form.inboundCustomFlightNumber= false
+            _this.getAirports()
             _this.mainData = response.data
             _this.loadingState = false
             _this.setTable(response.data)
@@ -598,7 +595,13 @@ export default {
                   label: _this.$tr('isite.cms.label.yes'),
                   color: 'primary',
                   handler: () => {
-                    name.includes('Outbound') ? _this.newOutbound = false : _this.newInbound = false
+                    if(name.includes('Outbound')) {
+                      _this.form.outboundCustomFlightNumber= true
+                      _this.newOutbound = false
+                    } else {
+                      _this.form.inboundCustomFlightNumber= true
+                      _this.newInbound = false
+                    }
                   }
                 },
               ]
@@ -608,6 +611,13 @@ export default {
           console.log('error', error)
         })
       },2000) 
+    },
+    getAirports(){
+      return{
+        apiRoute: 'apiRoutes.qfly.airports',
+        select: {label: 'airportName', id: 'id'},
+        requestParams: {filter: {status: 1}}
+      }
     },
     setForm(data) {
       if(this.name.includes('outboundFlight')){
@@ -627,6 +637,7 @@ export default {
       this.setForm(this.mainData.find((item,index) => {
         return index === select.index 
       }))
+      this.getAirports()
       this.name = this.name == 'inboundFlight' ?  'outboundFlight' : 'inboundFlight'
       if(!this.inOutBound && this.openAlert){
         this.setForm(this.mainData.find((item,index) => {
