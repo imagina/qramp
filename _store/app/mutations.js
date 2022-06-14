@@ -1,5 +1,4 @@
 export function SET_FORM_FLIGHT(state, data) {
-  console.log('SET_FORM_FLIGHT >', data)
   state.form = {
     ...state.form,
     ...data
@@ -17,7 +16,6 @@ export function SET_FORM_DELAY(state, data) {
   ]
 }
 export function SET_FORM_PRODUCTS(state, data) {
-  console.log('services data', data)
   function setAttr (obj){
     const att = []
     for(let key in obj){
@@ -37,12 +35,10 @@ export function SET_FORM_PRODUCTS(state, data) {
       attributes : setAttr(items.formField)
     })
   })
-  console.log('products', products)
   state.products = [
     ...state.products,
     ...products
   ]
-  console.log('state', state)
 }
 export function SET_FORM_REMARK(state, data) {
   state.form = {

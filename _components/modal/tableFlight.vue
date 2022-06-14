@@ -2,11 +2,12 @@
   <q-dialog
     v-model="dialog"
     persistent
-    class="master-dialog-custom"
+    full-width
+    class="flight-modal"
     transition-show="slide-up"
     transition-hide="slide-down"
   >
-    <q-card flat style="width:85%">
+    <q-card flat>
       <q-card-section>
         <q-table
           :data="dataTable"
@@ -99,7 +100,7 @@ export default {
       z-index: 2
       background: $primary
       color: #fff
-  .master-dialog-custom
+  .flight-modal
     .q-dialog__inner
       padding 15px 0 0 0
       width 65vw

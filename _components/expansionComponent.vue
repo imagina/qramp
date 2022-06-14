@@ -9,7 +9,6 @@
           <q-item-section>
             {{item.title}}
             <span class="spanCaption text-caption">{{showValue(item.formField.quantity)}}</span>
-            <span class="spanCaption text-caption">{{showValue(item.formField.datetime)}}</span>
           </q-item-section>
         </template>
         <q-card class="flex card-color rounted-3 q-px-lg q-mx-md">
@@ -39,7 +38,7 @@ export default {
   methods: {
     showValue(data) {
       if(data) {
-        return  data.value ? typeof(data.value) == 'number' ? data.value: this.$trd(data.value) : ''
+        return  data.value
       }
     },
     formatName(string) {

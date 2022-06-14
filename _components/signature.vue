@@ -49,7 +49,7 @@ export default {
         customer:{
           customer:{
             value: '',
-            name:'customer',
+            name:'customerSignature',
             type: 'signature',
             props: {
               btnFullscreen: true,
@@ -82,7 +82,7 @@ export default {
         representative:{
           representative:{
             value: '',
-            name:'representative',
+            name:'representativeSignature',
             type: 'signature',
             props: {
               btnFullscreen: true,

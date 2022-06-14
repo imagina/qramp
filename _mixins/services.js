@@ -8,6 +8,7 @@ export default {
     return{
       services:[],
       searchServices: '',
+      isProducts :[]
     }
   },
   computed:{
@@ -37,6 +38,56 @@ export default {
     servicesFilter(service){
       return service.title.toLowerCase().includes(this.searchServices.toLowerCase())
     },
+    async getProducts(requestParams){
+      await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
+        data.forEach(item => {
+          this.services.push({
+            icon: "settings",
+            title: item.name,
+            id: item.id,
+            categoryId: item.categoryId,
+            formField: {
+              ...item.attributes.reduce((previousValue, currentValue, currentIndex, array) => {
+                const props = this.setProps(currentValue.type, currentValue.name, currentValue.values)
+                  previousValue = {
+                    ...previousValue,
+                      [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
+                      name: currentValue.name,
+                      value: currentValue.length > 0 ? currentValue.values : null,
+                      type: currentValue.type,
+                      id: currentValue.id,
+                      props :{ ...props}
+                    }
+                  }
+                  return previousValue
+              }, {} )
+            }
+          })
+        })
+      }).catch(error => {
+        console.error("[qramp-services]::init", error)
+      })
+    },
+    saveInfo() {
+      this.options = this.services.find(items => {
+        for(let item in items.formField){
+          for(let key in items.formField[item]){
+            if (key == 'value'){
+              return items.formField[item][key]
+            }
+          }
+        }
+      })
+      this.$store.commit('qrampApp/SET_FORM_PRODUCTS', this.services.filter(items => {
+          for(let item in items.formField){
+            for(let key in items.formField[item]){
+              if (key == 'value'){
+                return items.formField[item][key]
+              }
+            }
+          }
+      }))
+    },
     setProps(type, name, options) {
       if (type == 'quantity') {
         return {
@@ -51,14 +102,6 @@ export default {
             return item
           }),
           type
-        }
-      } else if(type == 'fullDate') {
-        return {
-          readonly: this.readonly,
-          label: name,
-          mask:"##/##/#### ##:##",
-          'fill-mask':true,
-          hint:"mm/dd/yyyy hh:mm",
         }
       } else {
         return {

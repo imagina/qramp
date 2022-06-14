@@ -119,10 +119,8 @@ export default {
           }    
           obj['hours'+index] = {
             value: delay.hours,
-            type: this.readonly ? 'inputStandard':'input',
+            type: this.readonly ? 'inputStandard':'hour',
             props: {
-              mask:"##:##",
-              'fill-mask':'0',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,

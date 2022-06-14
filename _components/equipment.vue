@@ -31,36 +31,7 @@ export default {
       }
       }
       //Request data
-      await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
-        data.forEach(item => {
-          this.services.push({
-            icon: "settings",
-            title: item.name,
-            formField: {
-              ...item.attributes.reduce((previousValue, currentValue, currentIndex, array) => {
-                const props = this.setProps(currentValue.type, currentValue.name, currentValue.values)
-                  previousValue = {
-                    ...previousValue,
-                      [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
-                      name: currentValue.name || `${currentValue.type}${currentValue.id}${item.id}`,
-                      value: this.setValue(currentValue.type),
-                      type: currentValue.type == 'fullDate' ? 'input' : currentValue.type,
-                      id: currentValue.id,
-                      categoryId: currentValue.categoryId,
-                      props :{ ...props}
-                    }
-                  }
-                  return previousValue
-              }, {} )
-            }
-          })
-        })
-      }).catch(error => {
-        console.error("[qramp-services]::init", error)
-      })
-    },
-    saveInfo() {
-      this.$store.commit('qrampApp/SET_FORM_PRODUCTS', this.services)
+      this.getProducts(requestParams)
     },
   },
   computed:{
