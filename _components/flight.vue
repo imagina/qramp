@@ -576,6 +576,8 @@ export default {
           _this.loadingState = false
           _this.name = name
           if (response.status == 200) {
+            _this.form.outboundCustomFlightNumber= false
+            _this.form.inboundCustomFlightNumber= false
             _this.getAirports()
             _this.mainData = response.data
             _this.loadingState = false
@@ -594,10 +596,10 @@ export default {
                   color: 'primary',
                   handler: () => {
                     if(name.includes('Outbound')) {
-                      _outboundCustomFlightNumber: _this.outboundFlight,
+                      _this.form.outboundCustomFlightNumber= true
                       _this.newOutbound = false
                     } else {
-                      _inboundCustomFlightNumber: _this.inboundFlight,
+                      _this.form.inboundCustomFlightNumber= true
                       _this.newInbound = false
                     }
                   }
