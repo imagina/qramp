@@ -148,8 +148,27 @@ export default {
           document.webkitCancelFullScreen();
       }
     },
+    camelToSnakeCase(str) {return str.replace(/[A-Z]/g,(letter) => `_${letter.toLowerCase()}`)},
+    setData(data) {
+      const obj = {}
+      for (let key in data){
+        const name = this.camelToSnakeCase(key)
+        obj[name] = data[key]
+      }
+      return obj
+    },
+    sendInfo() {
+      const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
+      this.setData()
+      console.log(this.setData({
+        ...data.form,
+        delay: data.delay,
+        products: data.products
+      }))
+    },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
+      this.sendInfo()
     },
   }
 }

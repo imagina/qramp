@@ -17,6 +17,7 @@ export function SET_FORM_DELAY(state, data) {
   ]
 }
 export function SET_FORM_PRODUCTS(state, data) {
+  console.log('services data', data)
   function setAttr (obj){
     const att = []
     for(let key in obj){
