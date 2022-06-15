@@ -11,6 +11,7 @@ export function SET_FORM_CARGO(state, data) {
   };
 }
 export function SET_FORM_DELAY(state, data) {
+  console.log('delay', data)
   state.delay = [
     ...data
   ]

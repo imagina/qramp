@@ -195,7 +195,9 @@ export default {
       })
     },
     saveInfo() {
-      this.$store.commit('qrampApp/SET_FORM_DELAY', this.delayList)
+      this.$store.commit('qrampApp/SET_FORM_DELAY', this.delayList.filter(items => {
+          return items.code && items.hours
+      }))
       this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
     },
     delDelay(index) {
