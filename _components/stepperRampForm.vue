@@ -47,11 +47,12 @@
           :name="index + 1"
           :title="step.title"
           :icon="step.icon"
+          error-color="red"
         >
           <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
-          <i-flight ref="flight" v-if="step.step == 1" :readonly="readonly"></i-flight>
+          <i-flight ref="flight" @isError="error = $event" v-if="step.step == 1" :readonly="readonly"></i-flight>
           <i-cargo ref="cargo" v-if="step.step == 2" :readonly="readonly"></i-cargo>
-          <i-services ref="services" v-if="step.step == 3" :readonly="readonly"></i-services>
+          <i-services ref="services" @isError="error = $event" v-if="step.step == 3" :readonly="readonly"></i-services>
           <i-equipment ref="equipment" v-if="step.step == 4" :readonly="readonly"></i-equipment>
           <i-crew ref="crew" v-if="step.step == 5" :readonly="readonly"></i-crew>
           <i-remarks ref="remarks" v-if="step.step == 6" :readonly="readonly"></i-remarks>
@@ -94,6 +95,7 @@ export default {
       index: 0,
       readonly:false,
       form:{},
+      error: false,
       tabs:[
         {name:'iFlight', step: 1},
         {name:'iCargo', step: 2},
@@ -159,9 +161,12 @@ export default {
     },
     next(){
       this.setData()
-      this.index = this.index < 6 ? ++this.index : 6
-      this.responsive ? this.sp = this.index : this.sp
-      this.responsive ? this.currentTab = this.tabs[this.index].name:this.$refs.stepper.next()
+      if(this.error) return;
+      setTimeout(()=>{
+        this.index = this.index < 6 ? ++this.index : 6
+        this.responsive ? this.sp = this.index : this.sp
+        this.responsive ? this.currentTab = this.tabs[this.index].name:this.$refs.stepper.next()
+      },500)
     },
     previous(){
       this.index = this.index > 0 ? --this.index : 0

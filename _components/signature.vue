@@ -163,7 +163,7 @@ export default {
       console.log(this.setData({
         ...data.form,
         delay: data.delay,
-        products: data.products
+        workOrderItems: data.products
       }))
     },
     saveInfo() {
