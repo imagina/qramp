@@ -31,8 +31,8 @@ export function SET_FORM_PRODUCTS(state, data) {
   const products = []
   data.forEach((items) => {
     products.push({
-      id:items.id,
-      categoryId: items.categoryId,
+      products_Id: items.productsId ? items.productsId : items.id,
+      category_Id: items.categoryId,
       work_order_item_attributes: setAttr(items.formField)
     })
   })
