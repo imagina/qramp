@@ -33,7 +33,7 @@ export function SET_FORM_PRODUCTS(state, data) {
     products.push({
       id:items.id,
       categoryId: items.categoryId,
-      attributes : setAttr(items.formField)
+      work_order_item_attributes: setAttr(items.formField)
     })
   })
   state.products = [
