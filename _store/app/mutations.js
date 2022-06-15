@@ -23,7 +23,7 @@ export function SET_FORM_PRODUCTS(state, data) {
       att.push({
         name: obj[key].name,
         value: obj[key].value,
-        id:obj[key].id,
+        attribute_id:obj[key].id,
       })
     }
     return att

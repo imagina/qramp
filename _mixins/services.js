@@ -73,7 +73,7 @@ export default {
         for(let item in items.formField){
           for(let key in items.formField[item]){
             if (key == 'value'){
-              return items.formField[item][key]
+              return items.formField[item][key] && items.formField[item][key] > 0
             }
           }
         }

@@ -3,7 +3,6 @@
     v-model="dialog"
     persistent
     full-width
-    class="flight-modal"
     transition-show="slide-up"
     transition-hide="slide-down"
   >
@@ -100,23 +99,4 @@ export default {
       z-index: 2
       background: $primary
       color: #fff
-  .flight-modal
-    .q-dialog__inner
-      padding 15px 0 0 0
-      width 65vw
-      @media screen and (max-width: $breakpoint-md)
-        width 90vw
-      @media screen and (max-width: $breakpoint-xs)
-        width 100vw
-
-    .master-dialog
-      &__content
-        height 100%
-        max-height 100%
-        width 100%
-        max-width 100%
-        border-radius $custom-radius 0 0 0 !important
-
-      &__body
-        height calc(100vh - 207px)
 </style>
