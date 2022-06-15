@@ -182,7 +182,7 @@ export default {
       return false
     },
     readStatus(){
-      return  this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
+      return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
     },
     formFields(){
       return{
@@ -241,6 +241,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              selectByDefault : true,
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
