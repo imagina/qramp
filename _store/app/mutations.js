@@ -72,7 +72,6 @@ export function SET_FORM_SERVICES(state, data) {
   state.services = [
     ...products
   ]
-  console.log("services", state.services)
 }
 export function SET_FORM_EQUIPMENTS(state, data) {
   const products = []

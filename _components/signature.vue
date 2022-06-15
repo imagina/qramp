@@ -159,8 +159,7 @@ export default {
     },
     sendInfo() {
       const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
-      
-      console.log(this.setData({
+      this.$crud.post('apiRoutes.qramp.workOrders',this.setData({
         ...data.form,
         delay: data.delay,
         workOrderItems: [
