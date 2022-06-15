@@ -95,7 +95,7 @@ export default {
       index: 0,
       readonly:false,
       form:{},
-      error: true,
+      error: false,
       tabs:[
         {name:'iFlight', step: 1},
         {name:'iCargo', step: 2},

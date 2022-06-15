@@ -172,7 +172,7 @@ export default {
             },
             label: `${this.$tr('ifly.cms.form.TotalUldsLoaded')}`,
           },
-          outboundCargobulkLoaded:{
+          outboundCargoBulkLoaded:{
             value: '',
             type: 'inputStandard',
             props: {

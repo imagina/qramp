@@ -90,10 +90,10 @@ export default {
         status:"1",
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
-        inboundFlight:null,
-        inboundOrigin:null,
-        outboundFlight:null,
-        outboundDestination:null,
+        inboundFlightNumber:null,
+        inboundOriginAirportId:null,
+        outboundFlightNumber:null,
+        outboundDestinationAirportId:null,
       },
       selected:[],
       newOutbound:true,
@@ -114,45 +114,45 @@ export default {
   watch:{
     'form.operation'(newVal, oldVal) {
       if (newVal != oldVal) {
-        this.form.inboundFlight = null,
-        this.form.inboundOrigin = null,
-        this.form.inboundTail = null,
+        this.form.inboundFlightNumber = null,
+        this.form.inboundOriginAirportId = null,
+        this.form.inboundTailNumber = null,
         this.form.inboundBlockIn = null,
         this.form.inboundScheduledArrival = null,
-        this.form.outboundFlight = null,
-        this.form.outboundDestination = null,
-        this.form.outboundTail = null,
+        this.form.outboundFlightNumber = null,
+        this.form.outboundDestinationAirportId = null,
+        this.form.outboundTailNumber = null,
         this.form.outboundScheduledDeparture = null,
         this.form.outboundBlockOut = null
       }
     },
-    'form.inboundFlight' (val) {
+    'form.inboundFlightNumber' (val) {
       if (!val) {
-        this.form.inboundFlight = null,
-        this.form.inboundOrigin = null,
-        this.form.inboundTail = null,
+        this.form.inboundFlightNumber = null,
+        this.form.inboundOriginAirportId = null,
+        this.form.inboundTailNumber = null,
         this.form.inboundScheduledArrival = null,
         this.form.inboundBlockIn = null
       }
     },
-    'form.outboundFlight' (val) {
+    'form.outboundFlightNumber' (val) {
       if (!val) {
-        this.form.outboundFlight = null,
-        this.form.outboundDestination = null,
-        this.form.outboundTail = null,
+        this.form.outboundFlightNumber = null,
+        this.form.outboundDestinationAirportId = null,
+        this.form.outboundTailNumber = null,
         this.form.outboundScheduledDeparture = null,
         this.form.outboundBlockOut = null
       }
     },
-    'form.outboundDestination' (val) {
-      if (this.form.inboundOrigin) {
+    'form.outboundDestinationAirportId' (val) {
+      if (this.form.inboundOriginAirportId) {
         this.openAlert = false
       } else {
         this.openAlert = true
       }
     },
-    'form.inboundOrigin' (val) {
-      if (this.form.outboundDestination) {
+    'form.inboundOriginAirportId' (val) {
+      if (this.form.outboundDestinationAirportId) {
         this.openAlert = false
       } else {
         this.openAlert = true
@@ -360,8 +360,8 @@ export default {
           },
         },
         inboundLeft:{
-          inboundFlight: {
-            name:'inboundFlight',
+          inboundFlightNumber: {
+            name:'inboundFlightNumber',
             value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
@@ -379,8 +379,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.flight'),
           },
-          inboundOrigin: {
-            name:'inboundOrigin',
+          inboundOriginAirportId: {
+            name:'inboundOriginAirportId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -397,8 +397,8 @@ export default {
             loadOptions: this.getAirports(),
             label: this.$tr('ifly.cms.form.origin'),
           },
-          inboundTail: {
-            name:'inboundTail',
+          inboundTailNumber: {
+            name:'inboundTailNumber',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
@@ -447,8 +447,8 @@ export default {
           },
         },
         outboundRight:{
-          outboundFlight: {
-            name:'outboundFlight',
+          outboundFlightNumber: {
+            name:'outboundFlightNumber',
             value: '',
             type: this.readonly ? 'inputStandard':'search',
             props: {
@@ -466,8 +466,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.flight'),
           },
-          outboundDestination: {
-            name:'outboundDestination',
+          outboundDestinationAirportId: {
+            name:'outboundDestinationAirportId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -484,8 +484,8 @@ export default {
             loadOptions: this.getAirports(),
             label: this.$tr('ifly.cms.form.destination'),
           },
-          outboundTail: {
-            name:'outboundTail',
+          outboundTailNumber: {
+            name:'outboundTailNumber',
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
@@ -560,7 +560,7 @@ export default {
       this.dataTable = []
       const _this = this
       this.timeoutID = setTimeout(function () {
-        criteria = name == 'inboundFlight' ?  _this.form.inboundFlight : _this.form.outboundFlight
+        criteria = name == 'inboundFlightNumber' ?  _this.form.inboundFlightNumber : _this.form.outboundFlightNumber
         if(!criteria || criteria.length < 3) return ;
         
         const params = {
@@ -620,16 +620,16 @@ export default {
       }
     },
     setForm(data) {
-      if(this.name.includes('outboundFlight')){
-        this.$set(this.form, "outboundFlight",  data.ident)
-        this.$set(this.form, "outboundDestination",  data.destinationAirport.id)
+      if(this.name.includes('outboundFlightNumber')){
+        this.$set(this.form, "outboundFlightNumber",  data.ident)
+        this.$set(this.form, "outboundDestinationAirportId",  data.destinationAirport.id)
         this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.scheduledOut))
-        this.$set(this.form, "outboundTail",  data.registration)
+        this.$set(this.form, "outboundTailNumber",  data.registration)
       } else {
-        this.$set(this.form, "inboundFlight", data.ident)
-        this.$set(this.form, "inboundOrigin", data.originAirport.id)
+        this.$set(this.form, "inboundFlightNumber", data.ident)
+        this.$set(this.form, "inboundOriginAirportId", data.originAirport.id)
         this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.scheduledIn))
-        this.$set(this.form, "inboundTail", data.registration)
+        this.$set(this.form, "inboundTailNumber", data.registration)
       }
     },
     setDataTable({select, dialog}) {
@@ -638,7 +638,7 @@ export default {
         return index === select.index 
       }))
       this.getAirports()
-      this.name = this.name == 'inboundFlight' ?  'outboundFlight' : 'inboundFlight'
+      this.name = this.name == 'inboundFlightNumber' ?  'outboundFlightNumber' : 'inboundFlightNumber'
       if(!this.inOutBound && this.openAlert){
         this.setForm(this.mainData.find((item,index) => {
           return index === select.index 
