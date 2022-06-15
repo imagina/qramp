@@ -73,14 +73,14 @@ export default {
         for(let item in items.formField){
           for(let key in items.formField[item]){
             if (key == 'value'){
-              return items.formField[item][key] && items.formField[item][key] > 0
+              return items.formField[item][key]
             }
           }
         }
       })
       if(this.isProducts) {
         this.$emit('isError', false)
-        this.$store.commit('qrampApp/SET_FORM_PRODUCTS', this.services.filter(items => {
+        this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services.filter(items => {
             for(let item in items.formField){
               for(let key in items.formField[item]){
                 if (key == 'value'){

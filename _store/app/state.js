@@ -1,5 +1,7 @@
 export default {
   form:{ },
-  products:[],
+  services:[],
+  equipments:[],
+  crew:[],
   delay:[],
 }

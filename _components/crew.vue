@@ -33,6 +33,17 @@ export default {
       //Request data
       this.getProducts(requestParams)
     },
+    saveInfo() {
+      this.$store.commit('qrampApp/SET_FORM_CREW', this.services.filter(items => {
+          for(let item in items.formField){
+            for(let key in items.formField[item]){
+              if (key == 'value'){
+                return items.formField[item][key]
+              }
+            }
+          }
+      }))
+    },
   },
   computed:{
     pageActions() {
