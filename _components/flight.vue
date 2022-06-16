@@ -88,7 +88,7 @@ export default {
       form:{
         operationId:null,
         statusId:"1",
-        date: this.currentDate,
+        date: this.currentDate(),
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
         inboundFlightNumber:null,
@@ -170,14 +170,7 @@ export default {
       }
       return false
     },
-    currentDate() {
-      debugger
-      const date = new Date().toLocaleString().split(' ')[0] + ' '+ new Date().toTimeString().split(' ')[0]
-      const formDate = date.split(" ")
-      const [day,month,year] = formDate[0].substr(0, 10).split('-')
-      const [hr, mm] = formDate[1].substr(0, 5).split(':')
-      return `${month}/${day}/${year} ${hr}:${mm}`
-    },
+    
     isOutbound() {
       if(this.form.operationId){
         return this.form.operationId == 4 || this.form.operationId != 3
@@ -549,18 +542,23 @@ export default {
   methods: {
     saveInfo() {
       this.$refs.myForm.validate().then(success => {
-      if (success) {
-        // yay, models are correct
-        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
-        this.$emit('isError', false)
-      }
-      else {
-        // oh no, user has filled in
-        // at least one invalid value
-        console.error('error falta gente')
-        this.$emit('isError', false)
-      }
-    })
+        if (success) {
+          // yay, models are correct
+          this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
+          this.$emit('isError', false)
+        }
+        else {
+          // oh no, user has filled in
+          // at least one invalid value
+          console.error('error falta gente')
+          this.$emit('isError', false)
+        }
+      })
+    },
+    currentDate() {
+      const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
+      const date = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1)
+      return this.dateFormatterFull(date)
     },
     search({type, name}, criteria = null){
       if(type != 'search') return;
