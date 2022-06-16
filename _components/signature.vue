@@ -159,7 +159,7 @@ export default {
     },
     sendInfo() {
       const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
-      this.$crud.post('apiRoutes.qramp.workOrders',this.setData({
+      const setData = this.setData({
         ...data.form,
         delay: data.delay,
         workOrderItems: [
@@ -167,7 +167,10 @@ export default {
           ...data.equipments,
           ...data.crew,
         ]
-      }))
+      })
+      const route = config('apiRoutes.qramp.workOrders')
+      console.log(route)
+      this.$crud.post('apiRoutes.qramp.workOrders',setData)
     },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
