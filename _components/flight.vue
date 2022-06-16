@@ -86,8 +86,9 @@ export default {
   data(){
     return{
       form:{
-        operation:null,
-        status:"1",
+        operationId:null,
+        statusId:"1",
+        date: this.currentDate,
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
         inboundFlightNumber:null,
@@ -112,7 +113,7 @@ export default {
     }
   },
   watch:{
-    'form.operation'(newVal, oldVal) {
+    'form.operationId'(newVal, oldVal) {
       if (newVal != oldVal) {
         this.form.inboundFlightNumber = null,
         this.form.inboundOriginAirportId = null,
@@ -169,15 +170,23 @@ export default {
       }
       return false
     },
+    currentDate() {
+      debugger
+      const date = new Date().toLocaleString().split(' ')[0] + ' '+ new Date().toTimeString().split(' ')[0]
+      const formDate = date.split(" ")
+      const [day,month,year] = formDate[0].substr(0, 10).split('-')
+      const [hr, mm] = formDate[1].substr(0, 5).split(':')
+      return `${month}/${day}/${year} ${hr}:${mm}`
+    },
     isOutbound() {
-      if(this.form.operation){
-        return this.form.operation == 4 || this.form.operation != 3
+      if(this.form.operationId){
+        return this.form.operationId == 4 || this.form.operationId != 3
       }
       return false
     },
     isInbound() {
-      if(this.form.operation){
-        return this.form.operation == 3 || this.form.operation != 4
+      if(this.form.operationId){
+        return this.form.operationId == 3 || this.form.operationId != 4
       }
       return false
     },
@@ -187,8 +196,8 @@ export default {
     formFields(){
       return{
         flyFormLeft:{
-          customer: {
-            name:'customer',
+          customerId: {
+            name:'customerId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -210,8 +219,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.customer'),
           },
-          carrier: {
-            name:'carrier',
+          carrierId: {
+            name:'carrierId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -233,8 +242,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
-          station: {
-            name:'station',
+          stationId: {
+            name:'stationId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -273,8 +282,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.date'),
           },
-          operation: {
-            name:'operation',
+          operationId: {
+            name:'operationId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -313,8 +322,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.gate'),
           },
-          acType: {
-            name:'acType',
+          acTypeId: {
+            name:'acTypeId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -336,8 +345,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.acType'),
           },
-          status: {
-            name:'status',
+          statusId: {
+            name:'statusId',
             value: 1,
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -571,7 +580,7 @@ export default {
           }
         }
         _this.loadingState = true
-        _this.inOutBound = ["3","4"].includes(_this.form.operation)
+        _this.inOutBound = ["3","4"].includes(_this.form.operationId)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
           _this.loadingState = false
@@ -650,13 +659,13 @@ export default {
       if (!date) return null
       const formDate = date.split("T")
       const [year, month, day] = formDate[0].substr(0, 10).split('-')
-      const [hr, sec] = formDate[1].substr(0, 5).split(':')
-      return `${month}-${day}-${year} ${hr}:${sec}`
+      const [hr, mm] = formDate[1].substr(0, 5).split(':')
+      return `${month}/${day}/${year} ${hr}:${mm}`
     },
     dateFormatter(date) {
       if (!date) return null
       const [year, month, day] = date.substr(0, 10).split('-')
-      return `${month}-${day}-${year}`
+      return `${month}/${day}/${year}`
     },
     setTable(data) {
       data.forEach((items, index) => {

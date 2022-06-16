@@ -23,7 +23,7 @@ export default {
   computed:{
     formFields(){
       return{
-        remark : {
+        remarks : {
           value: '',
           type: this.readonly ? 'inputStandard':'input',
           props: {
