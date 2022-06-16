@@ -54,17 +54,17 @@ export function SET_FORM_SERVICES(state, data) {
     if (items.id && items.productsId) {
       products.push({
         id: items.id,
-        products_Id: items.productsId,
+        product_id: items.productsId,
         work_order_item_attributes: setAttr(items.formField)
       })
     } else if (items.id && !items.productsId) {
       products.push({
-        products_Id: items.id,
+        product_id: items.id,
         work_order_item_attributes: setAttr(items.formField)
       })
     } else if (items.id && isDelete(items.formField)) {
       products.push({
-        products_Id: items.productsId,
+        product_id: items.productsId,
         work_order_item_attributes: setAttr(items.formField)
       })
     }
@@ -79,17 +79,17 @@ export function SET_FORM_EQUIPMENTS(state, data) {
     if (items.id && items.productsId) {
       products.push({
         id: items.id,
-        products_Id: items.productsId,
+        product_id: items.productsId,
         work_order_item_attributes: setAttr(items.formField)
       })
     } else if (items.id && !items.productsId) {
       products.push({
-        products_Id: items.id,
+        product_id: items.id,
         work_order_item_attributes: setAttr(items.formField)
       })
     } else if (items.id && isDelete(items.formField)) {
       products.push({
-        products_Id: items.productsId,
+        product_id: items.productsId,
         work_order_item_attributes: setAttr(items.formField)
       })
     }
@@ -104,17 +104,17 @@ export function SET_FORM_CREW(state, data) {
     if (items.id && items.productsId) {
       products.push({
         id: items.id,
-        products_Id: items.productsId,
+        product_id: items.productsId,
         work_order_item_attributes: setAttr(items.formField)
       })
     } else if (items.id && !items.productsId) {
       products.push({
-        products_Id: items.id,
+        product_id: items.id,
         work_order_item_attributes: setAttr(items.formField)
       })
     } else if (items.id && isDelete(items.formField)) {
       products.push({
-        products_Id: items.productsId,
+        product_id: items.productsId,
         work_order_item_attributes: setAttr(items.formField)
       })
     }
