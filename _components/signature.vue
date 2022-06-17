@@ -170,7 +170,7 @@ export default {
       })
       const route = config('apiRoutes.qramp.workOrders')
       console.log(route)
-      this.$crud.post('apiRoutes.qramp.workOrders',setData)
+      this.$crud.post('apiRoutes.qramp.workOrders',{attributes: setData})
     },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )

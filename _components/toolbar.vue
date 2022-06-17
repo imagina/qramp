@@ -1,6 +1,6 @@
 <template>
   <div class="q-mb-md">
-    <div class="bg-primary text-white q-px-md q-py-sm">
+    <div class="bg-primary text-white q-px-md q-py-sm" :style="edit ? '' : 'padding: 28px'">
       <div v-if="!edit" class="flex justify-end">
         <q-space />
         <q-btn 
@@ -25,6 +25,7 @@
           <q-icon name="mode_edit_outline" color="primary" />
         </q-btn>
         <q-btn 
+          v-if="id"
           flat
           class="bg-white text-capitalize" 
           :rounded="!responsive"

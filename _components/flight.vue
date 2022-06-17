@@ -208,7 +208,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.setupCustomers',
               select: {label: 'customerName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: { status: 1 }}
             },
             label: `*${this.$tr('ifly.cms.form.customer')}`,
           },
@@ -397,7 +397,11 @@ export default {
               clearable: true,
               color:"primary"
             },
-            loadOptions: this.getAirports(),
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airports',
+              select: {label: 'airportName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
             label:`*${this.$tr('ifly.cms.form.origin')}`,
           },
           inboundTailNumber: {
@@ -487,7 +491,11 @@ export default {
               clearable: true,
               color:"primary"
             },
-            loadOptions: this.getAirports(),
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airports',
+              select: {label: 'airportName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
             label:`*${this.$tr('ifly.cms.form.destination')}`,
           },
           outboundTailNumber: {
@@ -592,7 +600,6 @@ export default {
           if (response.status == 200) {
             _this.form.outboundCustomFlightNumber= false
             _this.form.inboundCustomFlightNumber= false
-            _this.getAirports()
             _this.mainData = response.data
             _this.loadingState = false
             _this.setTable(response.data)
@@ -626,13 +633,6 @@ export default {
         })
       },2000) 
     },
-    getAirports(){
-      return{
-        apiRoute: 'apiRoutes.qfly.airports',
-        select: {label: 'airportName', id: 'id'},
-        requestParams: {filter: {status: 1}}
-      }
-    },
     setForm(data) {
       if(this.name.includes('outboundFlightNumber')){
         this.$set(this.form, "outboundFlightNumber",  data.ident)
@@ -651,7 +651,6 @@ export default {
       this.setForm(this.mainData.find((item,index) => {
         return index === select.index 
       }))
-      this.getAirports()
       this.name = this.name == 'inboundFlightNumber' ?  'outboundFlightNumber' : 'inboundFlightNumber'
       if(!this.inOutBound && this.openAlert){
         this.setForm(this.mainData.find((item,index) => {
