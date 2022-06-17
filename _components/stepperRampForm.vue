@@ -47,7 +47,7 @@
           :name="index + 1"
           :title="step.title"
           :icon="step.icon"
-          error-color="red"
+          :active-color="error ? 'red' : 'primary'"
         >
           <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
           <i-flight ref="flight" @isError="error = $event" v-if="step.step == 1" :readonly="readonly"></i-flight>
@@ -161,8 +161,8 @@ export default {
     },
     next(){
       this.setData()
-      if(this.error) return;
       setTimeout(()=>{
+        if(this.error) return;
         this.index = this.index < 6 ? ++this.index : 6
         this.responsive ? this.sp = this.index : this.sp
         this.responsive ? this.currentTab = this.tabs[this.index].name:this.$refs.stepper.next()

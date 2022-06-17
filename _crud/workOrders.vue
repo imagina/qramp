@@ -47,7 +47,7 @@ export default {
             {
               name: 'status', 
               label: this.$tr('isite.cms.form.status'), 
-              field: 'status', 
+              field: 'statusId', 
               align: 'left'
             },
             {
