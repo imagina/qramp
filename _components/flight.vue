@@ -10,11 +10,31 @@
               :id="keyField"
               :field="field"
               :class="`${readonly ? 'col-7': ''}`"
-              :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
               v-model="form[keyField]" 
             />
           </label>
           <hr v-if="readonly" class="label-container"/>
+          <div  class="flex q-px-sm" v-if="keyField == 'customerId'">
+            <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
+              <dynamic-field
+                :key="keyField"
+                :id="keyField"
+                :field="field"
+                v-model="form[keyField]" 
+              />
+            </div>
+          </div>
+          <template v-if="keyField == 'carrierId'">
+            <div v-if="form.customCustomer" v-for="(field, keyField) in formFields.customerField" class="col-12 col-md-6" :style="`${readonly ? 'height: 50px' : ''}`">
+              <dynamic-field
+              :key="keyField"
+              :id="keyField"
+              :field="field"
+              :class="`${readonly ? 'col-7': ''}`"
+              v-model="form[keyField]" 
+            />
+            </div>
+          </template>
       </div>
       <div v-if="isInbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
           <div :class="`${readonly? '' :'card-bound'}`">
@@ -33,7 +53,7 @@
                   :class="`${readonly ? 'col-7': ''}`"
                   :id="keyField"
                   :field="field"
-                  :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                  :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
                   v-model="form[keyField]"
                   @input="search(field)"
                   @enter="search(field)"
@@ -60,7 +80,7 @@
                   :class="`${readonly ? 'col-7': ''}`"
                   :id="keyField"
                   :field="field"
-                  :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:20px' : 'padding:10px 0px 0px 0px'}`"
+                  :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
                   v-model="form[keyField]" 
                   @input="search(field)"
                   @enter="search(field)"
@@ -88,7 +108,6 @@ export default {
       form:{
         operationId:null,
         statusId:"1",
-        date: this.currentDate(),
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
         inboundFlightNumber:null,
@@ -96,6 +115,7 @@ export default {
         outboundFlightNumber:null,
         outboundDestinationAirportId:null,
       },
+      refresh: 1,
       selected:[],
       newOutbound:true,
       newInbound:true,
@@ -170,7 +190,6 @@ export default {
       }
       return false
     },
-    
     isOutbound() {
       if(this.form.operationId){
         return this.form.operationId == 4 || this.form.operationId != 3
@@ -186,6 +205,7 @@ export default {
     readStatus(){
       return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
     },
+    
     formFields(){
       return{
         flyFormLeft:{
@@ -200,7 +220,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customer')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.customer'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -208,9 +228,14 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.setupCustomers',
               select: {label: 'customerName', id: 'id'},
-              requestParams: {filter: { status: 1 }}
+              requestParams: {
+                filter: {
+                  status: 1,
+                  allCustomers: this.form.adHoc == 1 ? true : false
+                }
+              }
             },
-            label: `*${this.$tr('ifly.cms.form.customer')}`,
+            label: this.$tr('ifly.cms.form.customer'),
           },
           carrierId: {
             name:'carrierId',
@@ -223,7 +248,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.carrier')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.carrier'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -233,7 +258,7 @@ export default {
               select: {label: 'airlineName', id: 'id'},
               requestParams: {filter: {status: 1}}
             },
-            label:`*${this.$tr('ifly.cms.form.carrier')}`,
+            label: this.$tr('ifly.cms.form.carrier'),
           },
           stationId: {
             name:'stationId',
@@ -243,11 +268,10 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              selectByDefault : true,
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.station')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.station'),
               clearable: true,
               color:"primary"
             },
@@ -256,7 +280,7 @@ export default {
               select: {label: 'stationName', id: 'id'},
               requestParams: {filter: {status: 1}}
             },
-            label:`*${this.$tr('ifly.cms.form.station')}`,
+            label: this.$tr('ifly.cms.form.station'),
           },
           date: {
             name:'date',
@@ -269,11 +293,11 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.date')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.date'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.date')}`,
+            label: this.$tr('ifly.cms.form.date'),
           },
           operationId: {
             name:'operationId',
@@ -286,7 +310,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.operation'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -296,7 +320,7 @@ export default {
               select: {label: 'operationName', id: 'id'},
               requestParams: {filter: {status: 1}}
             },
-            label:`*${this.$tr('ifly.cms.form.operation')}`,
+            label: this.$tr('ifly.cms.form.operation'),
           },
           gate: {
             name:'gate',
@@ -309,11 +333,11 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.gate')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.gate'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.gate')}`,
+            label: this.$tr('ifly.cms.form.gate'),
           },
           acTypeId: {
             name:'acTypeId',
@@ -326,7 +350,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.acType')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.acType'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -336,7 +360,7 @@ export default {
               select: {label: 'model', id: 'id'},
               requestParams: {filter: {status: 1}}
             },
-            label:`*${this.$tr('ifly.cms.form.acType')}`,
+            label: this.$tr('ifly.cms.form.acType'),
           },
           statusId: {
             name:'statusId',
@@ -349,7 +373,7 @@ export default {
               readonly: this.readStatus,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.status')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.status'),
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -359,7 +383,7 @@ export default {
               select: {label: 'statusName', id: 'id'},
               requestParams: {filter: {status: 1}}
             },
-            label:`*${this.$tr('ifly.cms.form.status')}`,
+            label: this.$tr('ifly.cms.form.status'),
           },
         },
         inboundLeft:{
@@ -375,12 +399,12 @@ export default {
               readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.flight')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
               maxlength: 7,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.flight')}`,
+            label: this.$tr('ifly.cms.form.flight'),
           },
           inboundOriginAirportId: {
             name:'inboundOriginAirportId',
@@ -393,16 +417,16 @@ export default {
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.origin')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.origin'),
               clearable: true,
               color:"primary"
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'airportName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: this.refresh}}
             },
-            label:`*${this.$tr('ifly.cms.form.origin')}`,
+            label: this.$tr('ifly.cms.form.origin'),
           },
           inboundTailNumber: {
             name:'inboundTailNumber',
@@ -415,11 +439,11 @@ export default {
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.tail')}`,
+            label: this.$tr('ifly.cms.form.tail'),
           },
           inboundScheduledArrival: {
             name:'inboundScheduledArrival',
@@ -432,11 +456,11 @@ export default {
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledArrival'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.scheduledArrival')}`,
+            label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
           inboundBlockIn: {
             name:'inboundBlockIn',
@@ -449,11 +473,11 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.blockIn')}`,
+            label: this.$tr('ifly.cms.form.blockIn'),
           },
         },
         outboundRight:{
@@ -469,12 +493,12 @@ export default {
               readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.flight')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
               clearable: true,
               maxlength: 7,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.flight')}`,
+            label: this.$tr('ifly.cms.form.flight'),
           },
           outboundDestinationAirportId: {
             name:'outboundDestinationAirportId',
@@ -487,16 +511,16 @@ export default {
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.destination')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.destination'),
               clearable: true,
               color:"primary"
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'airportName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: this.refresh}}
             },
-            label:`*${this.$tr('ifly.cms.form.destination')}`,
+            label: this.$tr('ifly.cms.form.destination'),
           },
           outboundTailNumber: {
             name:'outboundTailNumber',
@@ -509,11 +533,11 @@ export default {
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.tail')}`,
+            label: this.$tr('ifly.cms.form.tail'),
           },
           outboundScheduledDeparture: {
             name:'outboundScheduledDeparture',
@@ -526,11 +550,11 @@ export default {
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledDeparture'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
+            label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
           outboundBlockOut: {
             name:'outboundBlockOut',
@@ -543,42 +567,81 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
               clearable: true,
               color:"primary"
             },
-            label:`*${this.$tr('ifly.cms.form.blockOut')}`,
+            label: this.$tr('ifly.cms.form.blockOut'),
           },
         },
+        checkFields: {
+          customCustomer : {
+            name:'customCustomer ',
+            value: 0,
+            type: this.readonly ? 'inputStandard':'checkbox',
+            props: {
+              readonly: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.customCustomer'),
+              color:"primary"
+            },
+            label: this.$tr('ifly.cms.form.customCustomer'),
+          },
+          adHoc : {
+            name:'adHoc ',
+            value: 1,
+            type: this.readonly ? 'inputStandard':'checkbox',
+            props: {
+              readonly: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.adHoc'),
+              color:"primary"
+            },
+            label: this.$tr('ifly.cms.form.adHoc'),
+          }
+        },
+        customerField: {
+          customCustomerName: {
+            name:'customCustomerName',
+            value: '',
+            type: this.readonly ? 'inputStandard':'input',
+            props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.customCustomerName'),
+              clearable: true,
+              color:"primary"
+            },
+            label: this.$tr('ifly.cms.form.gate'),
+          },
+        }
       }
     }
   },
   methods: {
     saveInfo() {
       this.$refs.myForm.validate().then(success => {
-        if (success) {
-          // yay, models are correct
-          this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
-          this.$emit('isError', false)
-        }
-        else {
-          // oh no, user has filled in
-          // at least one invalid value
-          this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
-          this.$emit('isError', true)
-        }
-      })
-    },
-    currentDate() {
-      const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
-      const date = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1)
-      return this.dateFormatterFull(date)
+      if (success) {
+        // yay, models are correct
+        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
+        this.$emit('isError', false)
+      }
+      else {
+        // oh no, user has filled in
+        // at least one invalid value
+        this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
+        this.$emit('isError', true)
+      }
+    })
     },
     search({type, name}, criteria = null){
       if(type != 'search') return;
       if (this.timeoutID) {
         clearTimeout(this.timeoutID)
       }
+      this.refresh = 0
       this.dataTable = []
       const _this = this
       this.timeoutID = setTimeout(function () {
@@ -600,6 +663,7 @@ export default {
           if (response.status == 200) {
             _this.form.outboundCustomFlightNumber= false
             _this.form.inboundCustomFlightNumber= false
+            _this.refresh = 1
             _this.mainData = response.data
             _this.loadingState = false
             _this.setTable(response.data)
@@ -631,18 +695,19 @@ export default {
         }).catch(error => {
           console.log('error', error)
         })
-      },2000) 
+      },1500) 
     },
     setForm(data) {
+      this.refresh = 0
       if(this.name.includes('outboundFlightNumber')){
         this.$set(this.form, "outboundFlightNumber",  data.ident)
         this.$set(this.form, "outboundDestinationAirportId",  data.destinationAirport.id)
-        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.scheduledOut))
+        this.$set(this.form, "outboundScheduledDeparture",  data.scheduledOut)
         this.$set(this.form, "outboundTailNumber",  data.registration)
       } else {
         this.$set(this.form, "inboundFlightNumber", data.ident)
         this.$set(this.form, "inboundOriginAirportId", data.originAirport.id)
-        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.scheduledIn))
+        this.$set(this.form, "inboundScheduledArrival", data.scheduledIn)
         this.$set(this.form, "inboundTailNumber", data.registration)
       }
     },
@@ -659,16 +724,17 @@ export default {
       }
     },
     dateFormatterFull(date) {
+      console.log('date>', date)
       if (!date) return null
       const formDate = date.split("T")
       const [year, month, day] = formDate[0].substr(0, 10).split('-')
-      const [hr, mm] = formDate[1].substr(0, 5).split(':')
-      return `${month}/${day}/${year} ${hr}:${mm}`
+      const [hr, sec] = formDate[1].substr(0, 5).split(':')
+      return `${month}-${day}-${year} ${hr}:${sec}`
     },
     dateFormatter(date) {
       if (!date) return null
       const [year, month, day] = date.substr(0, 10).split('-')
-      return `${month}/${day}/${year}`
+      return `${month}-${day}-${year}`
     },
     setTable(data) {
       data.forEach((items, index) => {

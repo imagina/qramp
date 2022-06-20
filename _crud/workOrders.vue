@@ -83,40 +83,25 @@ export default {
           requestParams: {
             include: ''
           },
+          actions: [
+            {
+              name: 'show',
+              icon: 'far fa-eye',
+              label: this.$tr('isite.cms.label.show'),
+              action: (item) => {
+                console.log('item>', item)
+                this.$refs.formOrders.loadform({
+                  modalProps: {
+                    title: this.$tr('ifly.cms.form.newWorkOrder'),
+                  }
+                })
+              }
+            },
+          ]
         },
-        update: {
-          title: this.$tr('ifly.cms.form.updateWorkOrder')
-        },
+        update: false,
         delete: true,
         formLeft: {
-          id: {value: ""},
-          userId: {value: this.$store.state.quserAuth.userId},
-          model: {
-            value: "",
-            type: "input",
-            props: {
-              label: `${this.$tr("ifly.cms.form.aircraftModel")}*`,
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-          manufacturer : {
-            value: "",
-            type: "input",
-            props: {
-              label: `${this.$tr("icommerce.cms.form.manufacturer")}*`,
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-          description : {
-            value: '',
-            type: 'input',
-            props: {
-              label: `${this.$tr('isite.cms.form.description')}`,
-              type: 'textarea',
-              rows: "4",
-              debounce: 1500
-            },
-          },
         }
       }
     },
