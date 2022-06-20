@@ -14,7 +14,7 @@
             />
           </label>
           <hr v-if="readonly" class="label-container"/>
-          <div  class="flex q-px-sm" v-if="keyField == 'customer'">
+          <div  class="flex q-px-sm" v-if="keyField == 'customerId'">
             <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
               <dynamic-field
                 :key="keyField"
@@ -24,7 +24,7 @@
               />
             </div>
           </div>
-          <template v-if="keyField == 'carrier'">
+          <template v-if="keyField == 'carrierId'">
             <div v-if="form.customCustomer" v-for="(field, keyField) in formFields.customerField" class="col-12 col-md-6" :style="`${readonly ? 'height: 50px' : ''}`">
               <dynamic-field
               :key="keyField"
@@ -106,8 +106,8 @@ export default {
   data(){
     return{
       form:{
-        operation:null,
-        status:"1",
+        operationId:null,
+        statusId:"1",
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
         inboundFlightNumber:null,
@@ -133,7 +133,7 @@ export default {
     }
   },
   watch:{
-    'form.operation'(newVal, oldVal) {
+    'form.operationId'(newVal, oldVal) {
       if (newVal != oldVal) {
         this.form.inboundFlightNumber = null,
         this.form.inboundOriginAirportId = null,
@@ -191,26 +191,26 @@ export default {
       return false
     },
     isOutbound() {
-      if(this.form.operation){
-        return this.form.operation == 4 || this.form.operation != 3
+      if(this.form.operationId){
+        return this.form.operationId == 4 || this.form.operationId != 3
       }
       return false
     },
     isInbound() {
-      if(this.form.operation){
-        return this.form.operation == 3 || this.form.operation != 4
+      if(this.form.operationId){
+        return this.form.operationId == 3 || this.form.operationId != 4
       }
       return false
     },
     readStatus(){
-      return  this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
+      return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
     },
     
     formFields(){
       return{
         flyFormLeft:{
-          customer: {
-            name:'customer',
+          customerId: {
+            name:'customerId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -237,8 +237,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.customer'),
           },
-          carrier: {
-            name:'carrier',
+          carrierId: {
+            name:'carrierId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -260,8 +260,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
-          station: {
-            name:'station',
+          stationId: {
+            name:'stationId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -299,8 +299,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.date'),
           },
-          operation: {
-            name:'operation',
+          operationId: {
+            name:'operationId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -339,8 +339,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.gate'),
           },
-          acType: {
-            name:'acType',
+          acTypeId: {
+            name:'acTypeId',
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -362,8 +362,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.acType'),
           },
-          status: {
-            name:'status',
+          statusId: {
+            name:'statusId',
             value: 1,
             type: this.readonly ? 'inputStandard':'select',
             props: {
@@ -467,6 +467,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -558,6 +561,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -578,7 +584,7 @@ export default {
               label: this.readonly ? '' : this.$tr('ifly.cms.form.customCustomer'),
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.station'),
+            label: this.$tr('ifly.cms.form.customCustomer'),
           },
           adHoc : {
             name:'adHoc ',
@@ -589,7 +595,7 @@ export default {
               label: this.readonly ? '' : this.$tr('ifly.cms.form.adHoc'),
               color:"primary"
             },
-            label: this.$tr('ifly.cms.form.station'),
+            label: this.$tr('ifly.cms.form.adHoc'),
           }
         },
         customerField: {
@@ -649,7 +655,7 @@ export default {
           }
         }
         _this.loadingState = true
-        _this.inOutBound = ["3","4"].includes(_this.form.operation)
+        _this.inOutBound = ["3","4"].includes(_this.form.operationId)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
           _this.loadingState = false

@@ -168,9 +168,18 @@ export default {
           ...data.crew,
         ]
       })
-      const route = config('apiRoutes.qramp.workOrders')
-      console.log(route)
       this.$crud.post('apiRoutes.qramp.workOrders',{attributes: setData})
+      .then(res => {
+        this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
+        this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
+        this.$store.commit('qrampApp/SET_FORM_EQUIPMENT', [] )
+        this.$store.commit('qrampApp/SET_FORM_CREW', [] )
+        this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
+        this.$emit('close', false)
+      })
+      .catch(err => {
+        console.log('SEND INFO ERROR:', err)
+      })
     },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )

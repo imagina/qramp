@@ -1,7 +1,7 @@
 <template>
   <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true"
                 :loading="loading" @hide="clear" :actions="actions" :width="'90vw'" :maximized="responsive">
-    <stepper-ramp-form @sp="sp = $event" ref="stepper" :steps="steppers" :data="modalProps" />
+    <stepper-ramp-form @sp="sp = $event" ref="stepper" :steps="steppers" :data="modalProps" @close-modal="show = $event" />
   </master-modal>
 </template>
 <script>

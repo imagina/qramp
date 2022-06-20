@@ -56,7 +56,7 @@
           <i-equipment ref="equipment" v-if="step.step == 4" :readonly="readonly"></i-equipment>
           <i-crew ref="crew" v-if="step.step == 5" :readonly="readonly"></i-crew>
           <i-remarks ref="remarks" v-if="step.step == 6" :readonly="readonly"></i-remarks>
-          <i-signature ref="signature" v-if="step.step == 7" :readonly="readonly"></i-signature>
+          <i-signature ref="signature" v-if="step.step == 7" :readonly="readonly" @close="$emit('close-modal', false)"></i-signature>
         </q-step>
       </template>
     </q-stepper>
