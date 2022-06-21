@@ -2,93 +2,99 @@
   <div id="formFlyStep">
     <q-form @submit.prevent.stop="saveInfo" ref="myForm" id="rowContainer" class="row">
       <table-flight @cancel="dialog = $event" :dialog="dialog" :dataTable="dataTable" @flightSelect="setDataTable($event)"/>
-      <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
-          <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
-            <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+      <div class="col-12 col-md-6 q-px-md">
+        <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
+        <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+          <dynamic-field
+            :key="keyField"
+            :id="keyField"
+            :field="field"
+            :class="`${readonly ? 'col-7': ''}`"
+            v-model="form[keyField]" 
+          />
+        </label>
+        <hr v-if="readonly" class="label-container"/>
+        <div  class="flex q-px-sm" v-if="keyField == 'customerId'">
+          <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
             <dynamic-field
               :key="keyField"
               :id="keyField"
               :field="field"
-              :class="`${readonly ? 'col-7': ''}`"
               v-model="form[keyField]" 
             />
-          </label>
-          <hr v-if="readonly" class="label-container"/>
-          <div  class="flex q-px-sm" v-if="keyField == 'customerId'">
-            <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
-              <dynamic-field
-                :key="keyField"
-                :id="keyField"
-                :field="field"
-                v-model="form[keyField]" 
-              />
-            </div>
           </div>
-          <template v-if="keyField == 'carrierId'">
-            <div v-if="form.customCustomer" v-for="(field, keyField) in formFields.customerField" class="col-12 col-md-6" :style="`${readonly ? 'height: 50px' : ''}`">
-              <dynamic-field
-              :key="keyField"
-              :id="keyField"
-              :field="field"
-              :class="`${readonly ? 'col-7': ''}`"
-              v-model="form[keyField]" 
-            />
-            </div>
-          </template>
+        </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 q-px-md">
+        <div v-for="(field, keyField) in formFields.flyFormRight" class="col-12 col-md-6 q-px-md " :style="`${readonly ? 'height: 50px' : 'padding-bottom: 20px'}`">
+        <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+          <dynamic-field
+            :key="keyField"
+            :id="keyField"
+            :field="field"
+            :class="`${readonly ? 'col-7': ''}`"
+            v-model="form[keyField]" 
+          />
+        </label>
+        <hr v-if="readonly" class="label-container"/>
+        </div>
       </div>
       <div v-if="isInbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
-          <div :class="`${readonly? '' :'card-bound'}`">
-            <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
-              <div>{{$tr('isite.cms.label.inbound')}}</div>
-            </div>
-            <div
-                v-for="(field, keyField) in formFields.inboundLeft"
-                :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
-                :style="`${readonly ? 'height: 50px' : ''}`"
-            >
-              <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-                <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-                <dynamic-field
-                  :key="keyField"
-                  :class="`${readonly ? 'col-7': ''}`"
-                  :id="keyField"
-                  :field="field"
-                  :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                  v-model="form[keyField]"
-                  @input="search(field)"
-                  @enter="search(field)"
-                />
-              </label>
-              <hr v-if="readonly" class="label-container"/>
-            </div>
+        <div :class="`${readonly? '' :'card-bound'}`">
+          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
+            <div>{{$tr('isite.cms.label.inbound')}}</div>
           </div>
+          <div
+            v-for="(field, keyField) in formFields.inboundLeft"
+            :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
+            :style="`${readonly ? 'height: 50px' : ''}`"
+          >
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+              <dynamic-field
+                :key="keyField"
+                :class="`${readonly ? 'col-7': ''}`"
+                :id="keyField"
+                :field="field"
+                :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
+                v-model="form[keyField]"
+                @input="search(field)"
+                @enter="search(field)"
+              />
+            </label>
+            <hr v-if="readonly" class="label-container"/>
+          </div>
+        </div>
       </div>
       <div v-if="isOutbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
-          <div :class="`${readonly? '' :'card-bound'}`">
-            <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
-              <div>{{$tr('isite.cms.label.outbound')}}</div>
-            </div>
-            <div
-                v-for="(field, keyField) in formFields.outboundRight"
-                :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
-                :style="`${readonly ? 'height: 50px' : ''}`"
-            >
-              <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-                <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-                <dynamic-field
-                  :key="keyField"
-                  :class="`${readonly ? 'col-7': ''}`"
-                  :id="keyField"
-                  :field="field"
-                  :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                  v-model="form[keyField]" 
-                  @input="search(field)"
-                  @enter="search(field)"
-                />
-              </label>
-              <hr v-if="readonly" class="label-container"/>
-            </div>
+        <div :class="`${readonly? '' :'card-bound'}`">
+          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
+            <div>{{$tr('isite.cms.label.outbound')}}</div>
           </div>
+          <div
+            v-for="(field, keyField) in formFields.outboundRight"
+            :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
+            :style="`${readonly ? 'height: 50px' : ''}`"
+          >
+            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+              <dynamic-field
+                :key="keyField"
+                :class="`${readonly ? 'col-7': ''}`"
+                :id="keyField"
+                :field="field"
+                :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
+                v-model="form[keyField]" 
+                @input="search(field)"
+                @enter="search(field)"
+              />
+            </label>
+            <hr v-if="readonly" class="label-container"/>
+          </div>
+        </div>
       </div>
     </q-form>
   </div>
@@ -100,14 +106,19 @@ export default {
   props:{
     readonly: true,
     toolbar:{},
+    flightData:{
+      type:Object,
+      default:()=>{}
+    }
   },
   components:{tableFlight},
   mixins:[responsive],
   data(){
     return{
       form:{
-        operationId:null,
+        operationTypeId:null,
         statusId:"1",
+        date: this.currentDate(),
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
         inboundFlightNumber:null,
@@ -133,7 +144,7 @@ export default {
     }
   },
   watch:{
-    'form.operationId'(newVal, oldVal) {
+    'form.operationTypeId'(newVal, oldVal) {
       if (newVal != oldVal) {
         this.form.inboundFlightNumber = null,
         this.form.inboundOriginAirportId = null,
@@ -146,6 +157,9 @@ export default {
         this.form.outboundScheduledDeparture = null,
         this.form.outboundBlockOut = null
       }
+    },
+    flightData:function (newVal, oldVal) {
+      this.form = newVal
     },
     'form.inboundFlightNumber' (val) {
       if (!val) {
@@ -191,28 +205,27 @@ export default {
       return false
     },
     isOutbound() {
-      if(this.form.operationId){
-        return this.form.operationId == 4 || this.form.operationId != 3
+      if(this.form.operationTypeId){
+        return this.form.operationTypeId == 4 || this.form.operationTypeId != 3
       }
       return false
     },
     isInbound() {
-      if(this.form.operationId){
-        return this.form.operationId == 3 || this.form.operationId != 4
+      if(this.form.operationTypeId){
+        return this.form.operationTypeId == 3 || this.form.operationTypeId != 4
       }
       return false
     },
     readStatus(){
       return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
     },
-    
     formFields(){
       return{
         flyFormLeft:{
           customerId: {
             name:'customerId',
             value: '',
-            type: this.readonly ? 'inputStandard':'select',
+            type: this.readonly ? 'inputStandard': this.form.customCustomer == 1 ? 'input' : 'select',
             props: {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -237,6 +250,76 @@ export default {
             },
             label: this.$tr('ifly.cms.form.customer'),
           },
+          stationId: {
+            name:'stationId',
+            value: '',
+            type: this.readonly ? 'inputStandard':'select',
+            props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              selectByDefault : true,
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.station')}`,
+              clearable: true,
+              color:"primary"
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.setupStations',
+              select: {label: 'stationName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            }
+          },
+          operationTypeId: {
+            name:'operationTypeId',
+            value: '',
+            type: this.readonly ? 'inputStandard':'select',
+            props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.operation'),
+              clearable: true,
+              color:"primary",
+              'hide-bottom-space': false
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.operationTypes',
+              select: {label: 'operationName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
+            label: this.$tr('ifly.cms.form.operation'),
+          },
+          acTypeId: {
+            name:'acTypeId',
+            value: '',
+            type: this.readonly ? 'inputStandard':'select',
+            props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : this.$tr('ifly.cms.form.acType'),
+              clearable: true,
+              color:"primary",
+              'hide-bottom-space': false
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.aircraftTypes',
+              select: {label: 'model', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
+            label: this.$tr('ifly.cms.form.acType'),
+          },
+        },
+        flyFormRight:{
           carrierId: {
             name:'carrierId',
             value: '',
@@ -260,28 +343,6 @@ export default {
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
-          stationId: {
-            name:'stationId',
-            value: '',
-            type: this.readonly ? 'inputStandard':'select',
-            props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
-              readonly: this.readonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.station'),
-              clearable: true,
-              color:"primary"
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qramp.setupStations',
-              select: {label: 'stationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
-            },
-            label: this.$tr('ifly.cms.form.station'),
-          },
           date: {
             name:'date',
             value: '',
@@ -290,6 +351,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              hint:'Format: MM/DD/YYYY hh:mm',
+              mask:'MM/DD/YYYY hh:mm',
+              'place-holder': 'MM/DD/YYYY hh:mm',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -298,29 +362,6 @@ export default {
               color:"primary"
             },
             label: this.$tr('ifly.cms.form.date'),
-          },
-          operationId: {
-            name:'operationId',
-            value: '',
-            type: this.readonly ? 'inputStandard':'select',
-            props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
-              readonly: this.readonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.operation'),
-              clearable: true,
-              color:"primary",
-              'hide-bottom-space': false
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qramp.operationTypes',
-              select: {label: 'operationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
-            },
-            label: this.$tr('ifly.cms.form.operation'),
           },
           gate: {
             name:'gate',
@@ -338,29 +379,6 @@ export default {
               color:"primary"
             },
             label: this.$tr('ifly.cms.form.gate'),
-          },
-          acTypeId: {
-            name:'acTypeId',
-            value: '',
-            type: this.readonly ? 'inputStandard':'select',
-            props: {
-              /* rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ], */
-              readonly: this.readonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.acType'),
-              clearable: true,
-              color:"primary",
-              'hide-bottom-space': false
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qfly.aircraftTypes',
-              select: {label: 'model', id: 'id'},
-              requestParams: {filter: {status: 1}}
-            },
-            label: this.$tr('ifly.cms.form.acType'),
           },
           statusId: {
             name:'statusId',
@@ -453,6 +471,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              hint:'Format: MM/DD/YYYY hh:mm',
+              mask:'MM/DD/YYYY hh:mm',
+              'place-holder': 'MM/DD/YYYY hh:mm',
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -470,6 +491,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              hint:'Format: MM/DD/YYYY hh:mm',
+              mask:'MM/DD/YYYY hh:mm',
+              'place-holder': 'MM/DD/YYYY hh:mm',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -547,6 +571,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              hint:'Format: MM/DD/YYYY hh:mm',
+              mask:'MM/DD/YYYY hh:mm',
+              'place-holder': 'MM/DD/YYYY hh:mm',
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -564,6 +591,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              hint:'Format: MM/DD/YYYY hh:mm',
+              mask:'MM/DD/YYYY hh:mm',
+              'place-holder': 'MM/DD/YYYY hh:mm',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -588,7 +618,7 @@ export default {
           },
           adHoc : {
             name:'adHoc ',
-            value: 1,
+            value: 0,
             type: this.readonly ? 'inputStandard':'checkbox',
             props: {
               readonly: this.readonly,
@@ -623,18 +653,23 @@ export default {
   methods: {
     saveInfo() {
       this.$refs.myForm.validate().then(success => {
-      if (success) {
-        // yay, models are correct
-        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
-        this.$emit('isError', false)
-      }
-      else {
-        // oh no, user has filled in
-        // at least one invalid value
-        this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
-        this.$emit('isError', true)
-      }
-    })
+        if (success) {
+          // yay, models are correct
+          this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
+          this.$emit('isError', false)
+        }
+        else {
+          // oh no, user has filled in
+          // at least one invalid value
+          this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
+          this.$emit('isError', true)
+        }
+      })
+    },
+    currentDate() {
+      const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
+      const date = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1)
+      return this.dateFormatterFull(date)
     },
     search({type, name}, criteria = null){
       if(type != 'search') return;
@@ -655,7 +690,7 @@ export default {
           }
         }
         _this.loadingState = true
-        _this.inOutBound = ["3","4"].includes(_this.form.operationId)
+        _this.inOutBound = ["3","4"].includes(_this.form.operationTypeId)
         //Request
         _this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
           _this.loadingState = false
