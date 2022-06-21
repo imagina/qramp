@@ -89,11 +89,11 @@ export default {
               icon: 'far fa-eye',
               label: this.$tr('isite.cms.label.show'),
               action: (item) => {
-                console.log('item>', item)
                 this.$refs.formOrders.loadform({
                   modalProps: {
-                    title: this.$tr('ifly.cms.form.newWorkOrder'),
-                  }
+                    title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+                  },
+                  data: item
                 })
               }
             },

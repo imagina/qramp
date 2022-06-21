@@ -50,7 +50,7 @@
           :active-color="error ? 'red' : 'primary'"
         >
           <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
-          <i-flight ref="flight" @isError="error = $event" v-if="step.step == 1" :readonly="readonly"></i-flight>
+          <i-flight ref="flight" @isError="error = $event" v-if="step.step == 1" :flightData="step.form" :readonly="readonly"></i-flight>
           <i-cargo ref="cargo" v-if="step.step == 2" :readonly="readonly"></i-cargo>
           <i-services ref="services" @isError="error = $event" v-if="step.step == 3" :readonly="readonly"></i-services>
           <i-equipment ref="equipment" v-if="step.step == 4" :readonly="readonly"></i-equipment>
