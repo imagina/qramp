@@ -16,7 +16,8 @@ import services from '@imagina/qramp/_mixins/services.js'
 export default {
   props:{
     readonly: true,
-    toolbar:{}
+    toolbar:{},
+    crewData:{}
   },
   components:{expansionComponent, searchLocal},
   mixins:[responsive, services],
