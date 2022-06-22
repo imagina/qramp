@@ -12,7 +12,8 @@ import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
     readonly: true,
-    toolbar:{}
+    toolbar:{},
+    remarkData:{}
   },
   mixins:[responsive],
   data(){
@@ -20,10 +21,15 @@ export default {
       form:{},
     }
   },
+  mounted() {
+     this.$nextTick(function () {
+      this.init()
+    })
+  },
   computed:{
     formFields(){
       return{
-        remarks : {
+        remark : {
           value: '',
           type: this.readonly ? 'inputStandard':'input',
           props: {
@@ -51,6 +57,12 @@ export default {
     }
   },
   methods: {
+    init(){
+      if(Object.keys(this.remarkData).length > 0) {
+        console.log(this.remarkData)
+        this.form = this.remarkData
+      }
+    },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_REMARK', this.form )
     },

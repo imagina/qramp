@@ -49,14 +49,14 @@
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
         >
-          <i-toolbar @edit="readonly = $event" :id="data.id"></i-toolbar>
+          <i-toolbar @edit="readonly = $event" :update="data.update"></i-toolbar>
           <i-flight ref="flight" @isError="error = $event" v-if="step.step == 1" :flightData="step.form" :readonly="readonly"></i-flight>
-          <i-cargo ref="cargo" v-if="step.step == 2" :readonly="readonly"></i-cargo>
-          <i-services ref="services" @isError="error = $event" v-if="step.step == 3" :readonly="readonly"></i-services>
-          <i-equipment ref="equipment" v-if="step.step == 4" :readonly="readonly"></i-equipment>
-          <i-crew ref="crew" v-if="step.step == 5" :readonly="readonly"></i-crew>
-          <i-remarks ref="remarks" v-if="step.step == 6" :readonly="readonly"></i-remarks>
-          <i-signature ref="signature" v-if="step.step == 7" :readonly="readonly" @close="$emit('close-modal', false)"></i-signature>
+          <i-cargo ref="cargo" v-if="step.step == 2" :cargoData="step.form" :readonly="readonly"></i-cargo>
+          <i-services ref="services" @isError="error = $event" v-if="step.step == 3" :servicesData="step.form" :readonly="readonly"></i-services>
+          <i-equipment ref="equipment" v-if="step.step == 4" :equipmentData="step.form" :readonly="readonly"></i-equipment>
+          <i-crew ref="crew" v-if="step.step == 5" :crewData="step.form" :readonly="readonly"></i-crew>
+          <i-remarks ref="remarks" v-if="step.step == 6" :remarkData="step.form" :readonly="readonly"></i-remarks>
+          <i-signature ref="signature" v-if="step.step == 7" :signatureData="step.form" :readonly="readonly" @close="$emit('close-modal', false)"></i-signature>
         </q-step>
       </template>
     </q-stepper>
@@ -108,11 +108,6 @@ export default {
       currentTab: 'iFlight'
     }
   },
-  watch: {
-    sp(value) {
-      this.$emit('sp', value)
-    }
-  },
   mounted() {
     this.$nextTick(function () {
       this.init()
@@ -121,6 +116,11 @@ export default {
   methods: {
     init(){
       this.$emit('sp', this.sp)
+      if(this.data.update){
+        /* setTimeout(() =>{
+          this.readonly = this.data.update
+        },1000) */
+      }
     },
     setData() {
       switch (this.responsive ? this.currentTab : this.sp) {

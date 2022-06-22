@@ -34,7 +34,8 @@ import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
     readonly: true,
-    toolbar:{}
+    toolbar:{},
+    signatureData:{}
   },
   mixins:[responsive],
   data(){
@@ -42,6 +43,11 @@ export default {
       form:{},
       isFull: false,
     }
+  },
+  mounted() {
+     this.$nextTick(function () {
+      this.init()
+    })
   },
   computed: {
     formField(){
@@ -116,6 +122,11 @@ export default {
     }
   },
   methods:{
+    init() {
+      if(Object.keys(this.signatureData).length > 0) {
+        this.form = this.signatureData
+      }
+    },
     launchFullScreen(name) {
       const element = document.getElementById(name)
       if(element.requestFullScreen) {
@@ -172,7 +183,7 @@ export default {
       .then(res => {
         this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
         this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
-        this.$store.commit('qrampApp/SET_FORM_EQUIPMENT', [] )
+        this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
         this.$store.commit('qrampApp/SET_FORM_CREW', [] )
         this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
         this.$emit('close', false)

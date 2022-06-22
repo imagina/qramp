@@ -80,7 +80,8 @@ import responsive from '@imagina/qramp/_mixins/responsive.js'
 export default {
   props:{
     readonly: true,
-    toolbar:{}
+    toolbar:{},
+    cargoData:{}
   },
   mixins:[responsive],
   data(){
@@ -94,6 +95,11 @@ export default {
         },
       ],
     }
+  },
+  mounted() {
+     this.$nextTick(function () {
+      this.init()
+    })
   },
   computed:{
     delayFields(){
@@ -188,6 +194,18 @@ export default {
     },
   },
   methods: {
+    init() {
+      if(Object.keys(this.cargoData).length > 0) {
+        this.form.inboundCargoTotalUldsUnloaded = this.cargoData.inboundCargoTotalUldsUnloaded
+        this.form.inboundCargoBulkUnloaded = this.cargoData.inboundCargoBulkUnloaded
+        this.form.outboundCargoTotalUldsLoaded = this.cargoData.outboundCargoTotalUldsLoaded
+        this.form.outboundCargoBulkLoaded = this.cargoData.outboundCargoBulkLoaded
+        this.delay = this.cargoData.delayList.length > 0
+        if(this.cargoData.delayList.length > 0) {
+          this.delayList = this.cargoData.delayList
+        }
+      }
+    },
     addDelay() {
       this.delayList.push({
         code: '',
