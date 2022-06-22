@@ -11,6 +11,7 @@
             :id="keyField"
             :field="field"
             :class="`${readonly ? 'col-7': ''}`"
+            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
             v-model="form[keyField]" 
           />
         </label>
@@ -18,6 +19,14 @@
         <div  class="flex q-px-sm" v-if="keyField == 'customerId'">
           <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
             <dynamic-field
+              v-if="keyField == 'adHoc'"
+              :key="keyField"
+              :id="keyField"
+              :field="field"
+              v-model="form[keyField]" 
+            />
+            <dynamic-field
+              v-if="keyField == 'customCustomer' && form.adHoc"
               :key="keyField"
               :id="keyField"
               :field="field"
@@ -28,7 +37,7 @@
         </div>
       </div>
       <div class="col-12 col-md-6 q-px-md">
-        <div v-for="(field, keyField) in formFields.flyFormRight" class="col-12 col-md-6 q-px-md " :style="`${readonly ? 'height: 50px' : 'padding-bottom: 20px'}`">
+        <div v-for="(field, keyField) in formFields.flyFormRight" class="col-12 col-md-6 q-px-md " :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`">
         <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
           <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
           <dynamic-field
@@ -36,6 +45,7 @@
             :id="keyField"
             :field="field"
             :class="`${readonly ? 'col-7': ''}`"
+            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
             v-model="form[keyField]" 
           />
         </label>
@@ -113,12 +123,19 @@ export default {
   },
   components:{tableFlight},
   mixins:[responsive],
+  mounted() {
+     this.$nextTick(function () {
+      this.init()
+    })
+  },
   data(){
     return{
       form:{
+        customCustomer: false,
+        adHoc: false,
         operationTypeId:null,
         statusId:"1",
-        date: this.currentDate(),
+        date: '',
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
         inboundFlightNumber:null,
@@ -134,6 +151,7 @@ export default {
       thereOutFlight:true,
       loadingState:false,
       openAlert:false,
+      update:false,
       dialog:false,
       inOutBound:null,
       timeoutID: '',
@@ -145,7 +163,8 @@ export default {
   },
   watch:{
     'form.operationTypeId'(newVal, oldVal) {
-      if (newVal != oldVal) {
+      if(this.update)return;
+      else if (newVal != oldVal) {
         this.form.inboundFlightNumber = null,
         this.form.inboundOriginAirportId = null,
         this.form.inboundTailNumber = null,
@@ -157,9 +176,6 @@ export default {
         this.form.outboundScheduledDeparture = null,
         this.form.outboundBlockOut = null
       }
-    },
-    flightData:function (newVal, oldVal) {
-      this.form = newVal
     },
     'form.inboundFlightNumber' (val) {
       if (!val) {
@@ -351,9 +367,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              hint:'Format: MM/DD/YYYY hh:mm',
-              mask:'MM/DD/YYYY hh:mm',
-              'place-holder': 'MM/DD/YYYY hh:mm',
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -471,9 +487,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              hint:'Format: MM/DD/YYYY hh:mm',
-              mask:'MM/DD/YYYY hh:mm',
-              'place-holder': 'MM/DD/YYYY hh:mm',
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -491,9 +507,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              hint:'Format: MM/DD/YYYY hh:mm',
-              mask:'MM/DD/YYYY hh:mm',
-              'place-holder': 'MM/DD/YYYY hh:mm',
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -571,9 +587,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              hint:'Format: MM/DD/YYYY hh:mm',
-              mask:'MM/DD/YYYY hh:mm',
-              'place-holder': 'MM/DD/YYYY hh:mm',
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -591,9 +607,9 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              hint:'Format: MM/DD/YYYY hh:mm',
-              mask:'MM/DD/YYYY hh:mm',
-              'place-holder': 'MM/DD/YYYY hh:mm',
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
@@ -607,7 +623,7 @@ export default {
         checkFields: {
           customCustomer : {
             name:'customCustomer ',
-            value: 0,
+            value: false,
             type: this.readonly ? 'inputStandard':'checkbox',
             props: {
               readonly: this.readonly,
@@ -618,7 +634,7 @@ export default {
           },
           adHoc : {
             name:'adHoc ',
-            value: 0,
+            value: false,
             type: this.readonly ? 'inputStandard':'checkbox',
             props: {
               readonly: this.readonly,
@@ -651,6 +667,44 @@ export default {
     }
   },
   methods: {
+    showInputs(keyField){
+      console.log((keyField == 'customCustomer' && this.form.adHoc) || keyField == 'adHoc')
+      return (keyField == 'customCustomer' && this.form.adHoc) || keyField == 'adHoc'
+    },
+    init() {
+      this.currentDate()
+      this.updateData()
+    },
+    updateData() {
+      if(Object.keys(this.flightData).length > 0) {
+        this.update = true
+        const updateForm = this.$clone(this.flightData)
+        this.form.statusId = updateForm.statusId
+        this.form.stationId = updateForm.stationId
+        this.form.acTypeId = updateForm.acTypeId
+        this.form.adHoc = updateForm.adHoc
+        this.form.carrierId = updateForm.carrierId
+        this.form.customCustomer = updateForm.customCustomer
+        this.form.customerId = updateForm.customerId
+        this.form.date = updateForm.date
+        this.form.gate = updateForm.gate
+        this.form.operationTypeId = updateForm.operationTypeId
+        setTimeout(() => {
+          this.form.date = this.dateFormatterFull(updateForm.date)
+          this.update = false
+          this.form.inboundFlightNumber = updateForm.inboundFlightNumber 
+          this.form.outboundFlightNumber = updateForm.outboundFlightNumber 
+          this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
+          this.form.inboundTailNumber = updateForm.inboundTailNumber
+          this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
+          this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)
+          this.form.outboundDestinationAirportId = updateForm.outboundDestinationAirportId
+          this.form.outboundTailNumber = updateForm.outboundTailNumber
+          this.form.outboundScheduledDeparture = this.dateFormatterFull(updateForm.outboundScheduledDeparture)
+          this.form.outboundBlockOut = this.dateFormatterFull(updateForm.outboundBlockOut)
+        },1000)
+      }
+    },
     saveInfo() {
       this.$refs.myForm.validate().then(success => {
         if (success) {
@@ -669,7 +723,7 @@ export default {
     currentDate() {
       const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
       const date = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1)
-      return this.dateFormatterFull(date)
+      this.form.date = this.dateFormatterFull(date)
     },
     search({type, name}, criteria = null){
       if(type != 'search') return;
@@ -737,12 +791,12 @@ export default {
       if(this.name.includes('outboundFlightNumber')){
         this.$set(this.form, "outboundFlightNumber",  data.ident)
         this.$set(this.form, "outboundDestinationAirportId",  data.destinationAirport.id)
-        this.$set(this.form, "outboundScheduledDeparture",  data.scheduledOut)
+        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.scheduledOut))
         this.$set(this.form, "outboundTailNumber",  data.registration)
       } else {
         this.$set(this.form, "inboundFlightNumber", data.ident)
         this.$set(this.form, "inboundOriginAirportId", data.originAirport.id)
-        this.$set(this.form, "inboundScheduledArrival", data.scheduledIn)
+        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.scheduledIn))
         this.$set(this.form, "inboundTailNumber", data.registration)
       }
     },
@@ -759,17 +813,16 @@ export default {
       }
     },
     dateFormatterFull(date) {
-      console.log('date>', date)
       if (!date) return null
       const formDate = date.split("T")
       const [year, month, day] = formDate[0].substr(0, 10).split('-')
-      const [hr, sec] = formDate[1].substr(0, 5).split(':')
-      return `${month}-${day}-${year} ${hr}:${sec}`
+      const [hr, mm] = formDate[1].substr(0, 5).split(':')
+      return `${month}/${day}/${year} ${hr}:${mm}`
     },
     dateFormatter(date) {
       if (!date) return null
       const [year, month, day] = date.substr(0, 10).split('-')
-      return `${month}-${day}-${year}`
+      return `${month}/${day}/${year}`
     },
     setTable(data) {
       data.forEach((items, index) => {
@@ -799,6 +852,7 @@ export default {
       position relative
       bottom 20px
       border-top 1px dashed #000D4726
+      z-index 1
     .span 
       padding-bottom 10px
     .spanBottom

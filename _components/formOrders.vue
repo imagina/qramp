@@ -16,7 +16,14 @@ export default {
       show: false,
       loading: false,
       modalProps: {},
-      sp:null
+      sp:null,
+      flight:{},
+      cargo:{},
+      services:[],
+      equipment:[],
+      crew:[],
+      remark:[],
+      signature:[]
     }
   },
   computed:{
@@ -26,36 +33,43 @@ export default {
           title:'Flight',
           icon:'fas fa-plane',
           step: 1,
+          form: this.flight
         },
         {
           title:'Cargo Op.',
           icon:'rv_hookup',
           step: 2,
+          form: this.cargo
         },
         {
           title:'Services',
           icon:'fas fa-briefcase',
           step: 3,
+          form: this.services
         },
         {
           title:'Equipment',
           icon:'extension',
           step: 4,
+          form: this.equipment
         },
         {
           title:'Crew',
           icon:'fas fa-users',
           step: 5,
+          form: this.crew
         },
         {
           title:'Remark',
           icon:'far fa-edit',
           step: 6,
+          form: this.remark
         },
         {
           title: this.$tr('ifly.cms.label.signature'),
           icon:'draw',
           step: 7,
+          form: this.signature
         }
       ]
     },
@@ -95,8 +109,52 @@ export default {
   },
   methods: {
     loadform(params) {
+      const updateData = this.$clone(params)
       this.show = true
-      this.modalProps = params.modalProps
+      this.modalProps = updateData.modalProps
+      this.flight = {}
+      this.cargo = {}
+      this.remark = {}
+      this.signature = {}
+      if(!updateData.data) return;
+      this.flight.operationTypeId = updateData.data['operationTypeId'] ? updateData.data['operationTypeId'].toString() : ''
+      this.flight.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : ''
+      this.flight.inboundCustomFlightNumber = updateData.data['inboundCustomFlightNumber'] ? updateData.data['inboundCustomFlightNumber'] : ''
+      this.flight.outboundCustomFlightNumber = updateData.data['outboundCustomFlightNumber'] ? updateData.data['outboundCustomFlightNumber'] : ''
+      this.flight.inboundFlightNumber = updateData.data['inboundFlightNumber'] ? updateData.data['inboundFlightNumber'].toString() : ''
+      this.flight.inboundOriginAirportId = updateData.data['inboundOriginAirportId'] ? updateData.data['inboundOriginAirportId'].toString() : ''
+      this.flight.outboundFlightNumber = updateData.data['outboundFlightNumber'] ? updateData.data['outboundFlightNumber'].toString() : ''
+      this.flight.outboundDestinationAirportId = updateData.data['outboundDestinationAirportId'] ? updateData.data['outboundDestinationAirportId'].toString() : ''
+      this.flight.customerId = updateData.data['customerId'] ? updateData.data['customerId'].toString() : ''
+      this.flight.customCustomer = updateData.data['customCustomer'] ? updateData.data['customCustomer'] : 0
+      this.flight.adHoc = updateData.data['adHoc'] ? updateData.data['adHoc'] : 0
+      this.flight.carrierId = updateData.data['carrierId'] ? updateData.data['carrierId'].toString() : ''
+      this.flight.stationId = updateData.data['stationId'] ? updateData.data['stationId'].toString() : ''
+      this.flight.inboundTailNumber = updateData.data['inboundTailNumber'] ? updateData.data['inboundTailNumber'].toString() : ''
+      this.flight.inboundBlockIn = updateData.data['inboundBlockIn'] ? updateData.data['inboundBlockIn'].toString() : ''
+      this.flight.inboundScheduledArrival = updateData.data['inboundScheduledArrival'] ? updateData.data['inboundScheduledArrival'].toString() : ''
+      this.flight.outboundTailNumber = updateData.data['outboundTailNumber'] ? updateData.data['outboundTailNumber'].toString() : ''
+      this.flight.outboundScheduledDeparture = updateData.data['outboundScheduledDeparture'] ? updateData.data['outboundScheduledDeparture'].toString() : ''
+      this.flight.outboundBlockOut = updateData.data['outboundBlockOut'] ? updateData.data['outboundBlockOut'].toString() : ''
+      this.flight.gate = updateData.data['gate'] ? updateData.data['gate'].toString() : ''
+      this.flight.acTypeId = updateData.data['acTypeId'] ? updateData.data['acTypeId'].toString() : ''
+      this.flight.date = updateData.data['date'] ? updateData.data['date'].toString() : ''
+      
+      this.cargo.inboundCargoTotalUldsUnloaded = updateData.data['inboundCargoTotalUldsUnloaded'] ? updateData.data['inboundCargoTotalUldsUnloaded'].toString() : ''
+      this.cargo.inboundCargoBulkUnloaded = updateData.data['inboundCargoBulkUnloaded'] ? updateData.data['inboundCargoBulkUnloaded'].toString() : ''
+      this.cargo.outboundCargoTotalUldsLoaded = updateData.data['outboundCargoTotalUldsLoaded'] ? updateData.data['outboundCargoTotalUldsLoaded'].toString() : ''
+      this.cargo.outboundCargoBulkLoaded = updateData.data['outboundCargoBulkLoaded'] ? updateData.data['outboundCargoBulkLoaded'].toString() : ''
+      this.cargo.delayList = updateData.data['delay']
+
+      this.remark.remark = updateData.data['remark']
+      this.remark.safetyMessage = updateData.data['safetyMessage']
+
+      this.signature.costumerName = updateData.data['costumerName']
+      this.signature.costumerTitle = updateData.data['costumerTitle']
+      this.signature.representativeName = updateData.data['representativeName']
+      this.signature.representativeTitle = updateData.data['representativeTitle']
+      this.signature.customerSignature = updateData.data['customerSignature']
+      this.signature.representativeSignature = updateData.data['representativeSignature']
     },
     //Clear
     clear() {

@@ -1,10 +1,10 @@
 <template>
   <div class="q-mb-md">
-    <div class="bg-primary text-white q-px-md q-py-sm" :style="edit ? '' : 'padding: 28px'">
+    <div class="bg-primary text-white q-px-md q-py-sm" :style="update ? '' : 'padding: 25px'">
       <div v-if="!edit" class="flex justify-end">
         <q-space />
         <q-btn 
-          v-if="id"
+          v-if="false"
           class="q-mr-sm text-capitalize" 
           color="white"
           rounded
@@ -14,7 +14,7 @@
           <q-icon v-if="!responsive" color="primary" class="q-pl-sm" name="assessment" />
         </q-btn>
         <q-btn 
-          v-if="id"
+          v-if="update"
           flat
           class="bg-white q-mr-sm text-capitalize"
           :rounded="!responsive"
@@ -25,7 +25,7 @@
           <q-icon name="mode_edit_outline" color="primary" />
         </q-btn>
         <q-btn 
-          v-if="id"
+          v-if="false"
           flat
           class="bg-white text-capitalize" 
           :rounded="!responsive"
@@ -61,7 +61,10 @@
 <script>
 export default {
   props:{
-    id:{}
+    update:{
+      type:Boolean,
+      default: false
+    }
   },
   data(){
     return{
