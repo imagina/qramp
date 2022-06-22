@@ -117,6 +117,7 @@ export default {
       this.remark = {}
       this.signature = {}
       if(!updateData.data) return;
+      console.log(updateData)
       this.flight.operationTypeId = updateData.data['operationTypeId'] ? updateData.data['operationTypeId'].toString() : ''
       this.flight.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : ''
       this.flight.inboundCustomFlightNumber = updateData.data['inboundCustomFlightNumber'] ? updateData.data['inboundCustomFlightNumber'] : ''
@@ -146,6 +147,10 @@ export default {
       this.cargo.outboundCargoBulkLoaded = updateData.data['outboundCargoBulkLoaded'] ? updateData.data['outboundCargoBulkLoaded'].toString() : ''
       this.cargo.delayList = updateData.data['delay']
 
+      this.services = updateData.data['workOrderItems']
+      this.equipments = updateData.data['workOrderItems']
+      this.crew = updateData.data['workOrderItems']
+
       this.remark.remark = updateData.data['remark']
       this.remark.safetyMessage = updateData.data['safetyMessage']
 
@@ -155,6 +160,14 @@ export default {
       this.signature.representativeTitle = updateData.data['representativeTitle']
       this.signature.customerSignature = updateData.data['customerSignature']
       this.signature.representativeSignature = updateData.data['representativeSignature']
+
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight )
+      this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList )
+      this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
+      this.$store.commit('qrampApp/SET_FORM_SERVICES',[])
+      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
+      this.$store.commit('qrampApp/SET_FORM_CREW', [] )
+      this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
     },
     //Clear
     clear() {

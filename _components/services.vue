@@ -40,7 +40,7 @@ export default {
         }
       }
       //Request data
-      this.getProducts(requestParams)
+      this.getProducts(requestParams, 1)
     },
     
   },
