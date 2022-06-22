@@ -39,29 +39,47 @@ export default {
               style: 'width: 50px'
             },
             {
-              name: 'user', 
-              label: this.$tr('isite.cms.label.user'), 
-              field: 'user', 
+              name: 'referenceId',
+              label: 'Reference Id',
+              field: 'referenceId',
               align: 'left'
             },
             {
-              name: 'status', 
+              name: 'customer',
+              label: this.$tr('isite.cms.label.customer'),
+              field: 'customer',
+              format: val => val ? val.customerName : '-',
+              align: 'left'
+            },
+            {
+              name: 'adHoc',
+              label: 'Ad Hoc',
+              field: 'adHoc',
+              format: val => val ? 'Yes' : 'No',
+              align: 'left'
+            },
+            {
+              name: 'statusName',
               label: this.$tr('isite.cms.form.status'), 
-              field: 'statusId', 
+              field: 'workOrderStatus',
+              format: val => val ? val.statusName : '-',
               align: 'left'
             },
             {
-              name: 'flightDate', 
-              label: this.$tr('ifly.cms.form.flightDate'), 
-              field: 'flightDate', 
+              name: 'operationType',
+              label: 'Operation Type',
+              field: 'operationType',
+              format: val => val ? val.operationName : '-',
               align: 'left'
             },
             {
-              name: 'customer', 
-              label: this.$tr('isite.cms.label.customer'), 
-              field: 'model', 
+              name: 'station',
+              label: 'Station',
+              field: 'station',
+              format: val => val ? val.stationName : '-',
               align: 'left'
             },
+
             {
               name: "created_at",
               label: this.$tr("isite.cms.form.createdAt"),
@@ -81,7 +99,7 @@ export default {
           filters: {
           },
           requestParams: {
-            include: ''
+            include: 'customer,workOrderStatus,operationType,station'
           },
           actions: [
             {
