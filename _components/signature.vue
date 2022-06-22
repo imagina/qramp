@@ -172,6 +172,8 @@ export default {
       const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
       const setData = this.setData({
         ...data.form,
+        adHoc: data.form.adHoc == 1,
+        customCustomer: data.form.customCustomer  == 1,
         delay: data.delay,
         workOrderItems: [
           ...data.services,
