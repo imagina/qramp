@@ -27,7 +27,7 @@
             />
           </label>
           <hr v-if="readonly" class="label-container"/>
-          <div  :class="`flex q-px-sm ${form.adHoc ? 'row reverse' : ''}`" v-if="(!form.customCustomer && keyField == 'customerId') || (form.customCustomer && keyField == 'customCustomerName')">
+          <div  :class="`flex q-px-sm row reverse`" v-if="(!form.customCustomer && keyField == 'customerId') || (form.customCustomer && keyField == 'customCustomerName')">
             <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
               <dynamic-field
                 v-if="keyField == 'adHoc'"
