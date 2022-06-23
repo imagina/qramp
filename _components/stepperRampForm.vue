@@ -56,7 +56,6 @@ export default {
   props:{
     steps:{},
     data:{},
-    id:{}
   },
   data() {
     return {
@@ -136,6 +135,7 @@ export default {
         this.$alert.info({message: `${this.$tr('isite.cms.message.recordCreated')}`})
       })
       .catch(err => {
+        this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
         console.log('SEND INFO ERROR:', err)
       })
     },
