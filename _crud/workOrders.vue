@@ -98,9 +98,36 @@ export default {
             {name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left'},
           ],
           filters: {
+            date: {name : "createdAt",quickFilter: true},
+            customerId:{
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              loadOptions: {
+                apiRoute: 'apiRoutes.qramp.setupCustomers',
+                select: {'label': 'customerName', 'id': 'id'},
+              },
+              props: {
+                label: 'Customer',
+                'clearable': true
+              },
+            },
+            statusId:{
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              loadOptions: {
+                apiRoute: 'apiRoutes.qramp.workOrderStatuses',
+                select: {'label': 'statusName', 'id': 'id'},
+              },
+              props: {
+                label: 'Status',
+                'clearable': true
+              },
+            }
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType,station'
+            include: 'customer,workOrderStatus,operationType'
           },
           actions: [
             {
