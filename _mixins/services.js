@@ -39,7 +39,9 @@ export default {
       return service.title.toLowerCase().includes(this.searchServices.toLowerCase())
     },
     async getProducts(requestParams, id){
+      this.$emit('isError', true)
       await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
+        this.$emit('isError', false)
         const formatData = this.formatData(data, id)
         formatData.forEach(item => {
           this.services.push({

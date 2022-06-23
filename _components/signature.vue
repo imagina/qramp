@@ -183,16 +183,20 @@ export default {
       })
       this.$crud.post('apiRoutes.qramp.workOrders',{attributes: setData})
       .then(res => {
-        this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
-        this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
-        this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
-        this.$store.commit('qrampApp/SET_FORM_CREW', [] )
-        this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
-        this.$emit('close', false)
+       this.clean()
+       this.$alert.info({message: `${this.$tr('isite.cms.message.recordCreated')}`})
       })
       .catch(err => {
         console.log('SEND INFO ERROR:', err)
       })
+    },
+    clean(){
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
+      this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
+      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
+      this.$store.commit('qrampApp/SET_FORM_CREW', [] )
+      this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
+      this.$emit('close', false)
     },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )

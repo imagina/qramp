@@ -1,7 +1,7 @@
 <template>
   <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true"
-                :loading="loading" @hide="clear" :actions="actions" :width="'90vw'" :maximized="responsive">
-    <stepper-ramp-form @sp="sp = $event" ref="stepper" :steps="steppers" :data="modalProps" @close-modal="show = $event" />
+                :loading="loading" @hide="clear" :actions="actions" :width="'90vw'" :maximized="$q.screen.lt.md">
+    <stepper-ramp-form @sp="sp = $event" ref="stepper" :steps="steppers" :data="modalProps" @close-modal="close($event)" />
   </master-modal>
 </template>
 <script>
@@ -74,11 +74,7 @@ export default {
       ]
     },
     nextLabel(){
-      if(this.responsive) {
-        return (this.sp + 1) === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
-      }else {
-        return this.sp === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
-      }
+      return this.sp === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
     },
     actions(){
       return[
@@ -108,6 +104,10 @@ export default {
     }
   },
   methods: {
+    close(show) {
+      this.show = show
+      this.$root.$emit('crud.data.refresh')
+    },
     loadform(params) {
       const updateData = this.$clone(params)
       this.show = true
