@@ -159,42 +159,9 @@ export default {
           document.webkitCancelFullScreen();
       }
     },
-    camelToSnakeCase(str) {return str.replace(/[A-Z]/g,(letter) => `_${letter.toLowerCase()}`)},
-    setData(data) {
-      const obj = {}
-      for (let key in data){
-        const name = this.camelToSnakeCase(key)
-        obj[name] = data[key]
-      }
-      return obj
-    },
-    sendInfo() {
-      const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
-      const setData = this.setData({
-        ...data.form,
-        delay: data.delay,
-        workOrderItems: [
-          ...data.services,
-          ...data.equipments,
-          ...data.crew,
-        ]
-      })
-      this.$crud.post('apiRoutes.qramp.workOrders',{attributes: setData})
-      .then(res => {
-        this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
-        this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
-        this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
-        this.$store.commit('qrampApp/SET_FORM_CREW', [] )
-        this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
-        this.$emit('close', false)
-      })
-      .catch(err => {
-        console.log('SEND INFO ERROR:', err)
-      })
-    },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
-      this.sendInfo()
+      this.$emit('send-info')
     },
   }
 }

@@ -38,9 +38,12 @@ export default {
     servicesFilter(service){
       return service.title.toLowerCase().includes(this.searchServices.toLowerCase())
     },
-    async getProducts(requestParams){
+    async getProducts(requestParams, id){
+      this.$emit('isError', true)
       await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
-        data.forEach(item => {
+        this.$emit('isError', false)
+        const formatData = this.formatData(data, id)
+        formatData.forEach(item => {
           this.services.push({
             icon: "settings",
             title: item.name,
@@ -53,7 +56,7 @@ export default {
                     ...previousValue,
                       [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
                       name: currentValue.name,
-                      value: currentValue.length > 0 ? currentValue.values : null,
+                      value: currentValue.value ? currentValue.value : null,
                       type: currentValue.type,
                       id: currentValue.id,
                       props :{ ...props}
@@ -67,6 +70,30 @@ export default {
       }).catch(error => {
         console.error("[qramp-services]::init", error)
       })
+    },
+    formatData(data, id) {
+      const productData = id == 1 ? this.servicesData : id == 2 ? this.equipmentData : this.crewData
+      if(productData.length > 0) {
+        return data.map(product => {
+          productData.map(sw => {
+            if(sw.productId == product.id) {
+              product.attributes.map(att => {
+                sw.workOrderItemAttributes.map(swatt => {
+                  if(swatt.attributeId == att.id) {
+                    att.value = swatt.value
+                    return swatt
+                  }
+                })
+                return att
+              })
+            }
+            return sw
+          })
+          return product
+        })
+      } else {
+        return data
+      }
     },
     saveInfo() {
       this.isProducts = this.services.find(items => {
@@ -108,6 +135,14 @@ export default {
             return item
           }),
           type
+        }
+      }else if(type == 'fullDate') {
+        return {
+          readonly: this.readonly,
+          label: name,
+          hint:'Format: MM/DD/YYYY HH:mm',
+          mask:'MM/DD/YYYY HH:mm',
+          'place-holder': 'MM/DD/YYYY HH:mm',
         }
       } else {
         return {

@@ -32,7 +32,7 @@ export default {
       }
       }
       //Request data
-      this.getProducts(requestParams)
+      this.getProducts(requestParams, 3)
     },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_CREW', this.services.filter(items => {

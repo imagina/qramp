@@ -4,36 +4,59 @@
       <table-flight @cancel="dialog = $event" :dialog="dialog" :dataTable="dataTable" @flightSelect="setDataTable($event)"/>
       <div class="col-12 col-md-6 q-px-md">
         <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
-        <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
-          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
-          <dynamic-field
-            :key="keyField"
-            :id="keyField"
-            :field="field"
-            :class="`${readonly ? 'col-7': ''}`"
-            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
-            v-model="form[keyField]" 
-          />
-        </label>
-        <hr v-if="readonly" class="label-container"/>
-        <div  class="flex q-px-sm" v-if="keyField == 'customerId'">
-          <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
+          <label v-if="!form.customCustomer && keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+            <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
-              v-if="keyField == 'adHoc'"
               :key="keyField"
               :id="keyField"
               :field="field"
+              :class="`${readonly ? 'col-7': ''}`"
+              :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
               v-model="form[keyField]" 
             />
+          </label>
+          <label v-if="form.customCustomer && keyField == 'customCustomerName'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+            <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
-              v-if="keyField == 'customCustomer' && form.adHoc"
               :key="keyField"
               :id="keyField"
               :field="field"
+              :class="`${readonly ? 'col-7': ''}`"
+              :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
               v-model="form[keyField]" 
             />
+          </label>
+          <hr v-if="readonly" class="label-container"/>
+          <div  :class="`flex q-px-sm ${form.adHoc ? 'row reverse' : ''}`" v-if="(!form.customCustomer && keyField == 'customerId') || (form.customCustomer && keyField == 'customCustomerName')">
+            <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
+              <dynamic-field
+                v-if="keyField == 'adHoc'"
+                :key="keyField"
+                :id="keyField"
+                :field="field"
+                v-model="form[keyField]" 
+              />
+              <dynamic-field
+                v-if="keyField == 'customCustomer' && form.adHoc"
+                :key="keyField"
+                :id="keyField"
+                :field="field"
+                v-model="form[keyField]" 
+              />
+            </div>
           </div>
-        </div>
+          <label v-if="keyField != 'customerId' && keyField != 'customCustomerName'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+            <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+            <dynamic-field
+              :key="keyField"
+              :id="keyField"
+              :field="field"
+              :class="`${readonly ? 'col-7': ''}`"
+              :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
+              v-model="form[keyField]" 
+            />
+          </label>
+          <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
       <div class="col-12 col-md-6 q-px-md">
@@ -162,6 +185,13 @@ export default {
     }
   },
   watch:{
+    'form.customCustomer'(newVal) {
+      if(newVal){
+        this.form.customerId = ''
+      } else {
+        this.form.customCustomerName = ''
+      }
+    },
     'form.operationTypeId'(newVal, oldVal) {
       if(this.update)return;
       else if (newVal != oldVal) {
@@ -241,7 +271,7 @@ export default {
           customerId: {
             name:'customerId',
             value: '',
-            type: this.readonly ? 'inputStandard': this.form.customCustomer == 1 ? 'input' : 'select',
+            type: this.readonly ? 'inputStandard': 'select',
             props: {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -249,7 +279,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.customer'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customer')}`,
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -263,6 +293,24 @@ export default {
                   allCustomers: this.form.adHoc == 1 ? true : false
                 }
               }
+            },
+            label: this.$tr('ifly.cms.form.customer'),
+          },
+          customCustomerName: {
+            name:'customCustomerName',
+            value: '',
+            type: this.readonly ? 'inputStandard': 'input',
+            props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customer')}`,
+              clearable: true,
+              color:"primary",
+              'hide-bottom-space': false
             },
             label: this.$tr('ifly.cms.form.customer'),
           },
@@ -299,7 +347,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.operation'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -322,7 +370,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.acType'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.acType')}`,
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -347,7 +395,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.carrier'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.carrier')}`,
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -373,7 +421,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.date'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.date')}`,
               clearable: true,
               color:"primary"
             },
@@ -390,7 +438,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.gate'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.gate')}`,
               clearable: true,
               color:"primary"
             },
@@ -407,7 +455,7 @@ export default {
               readonly: this.readStatus,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.status'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.status')}`,
               clearable: true,
               color:"primary",
               'hide-bottom-space': false
@@ -433,7 +481,7 @@ export default {
               readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.flight')}`,
               clearable: true,
               maxlength: 7,
               color:"primary"
@@ -451,7 +499,7 @@ export default {
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.origin'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.origin')}`,
               clearable: true,
               color:"primary"
             },
@@ -473,7 +521,7 @@ export default {
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
               clearable: true,
               color:"primary"
             },
@@ -493,7 +541,7 @@ export default {
               readonly: this.newInbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledArrival'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
               clearable: true,
               color:"primary"
             },
@@ -513,7 +561,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.blockIn'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
               clearable: true,
               color:"primary"
             },
@@ -533,7 +581,7 @@ export default {
               readonly: this.readonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.flight'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.flight')}`,
               clearable: true,
               maxlength: 7,
               color:"primary"
@@ -551,7 +599,7 @@ export default {
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.destination'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.destination')}`,
               clearable: true,
               color:"primary"
             },
@@ -573,7 +621,7 @@ export default {
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.tail'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
               clearable: true,
               color:"primary"
             },
@@ -593,7 +641,7 @@ export default {
               readonly: this.newOutbound,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.scheduledDeparture'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
               clearable: true,
               color:"primary"
             },
@@ -613,7 +661,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.blockOut'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
               clearable: true,
               color:"primary"
             },
@@ -627,7 +675,7 @@ export default {
             type: this.readonly ? 'inputStandard':'checkbox',
             props: {
               readonly: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.customCustomer'),
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.customCustomer')}`,
               color:"primary"
             },
             label: this.$tr('ifly.cms.form.customCustomer'),
@@ -638,7 +686,7 @@ export default {
             type: this.readonly ? 'inputStandard':'checkbox',
             props: {
               readonly: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.adHoc'),
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.adHoc')}`,
               color:"primary"
             },
             label: this.$tr('ifly.cms.form.adHoc'),
@@ -656,7 +704,7 @@ export default {
               readonly: this.readonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('ifly.cms.form.customCustomerName'),
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customCustomerName')}`,
               clearable: true,
               color:"primary"
             },

@@ -13,7 +13,7 @@ export default {
   props:{
     readonly: true,
     toolbar:{},
-    remarkData:{}
+    remarksData:{}
   },
   mixins:[responsive],
   data(){
@@ -58,9 +58,8 @@ export default {
   },
   methods: {
     init(){
-      if(Object.keys(this.remarkData).length > 0) {
-        console.log(this.remarkData)
-        this.form = this.remarkData
+      if(Object.keys(this.remarksData).length > 0) {
+        this.form = this.remarksData
       }
     },
     saveInfo() {

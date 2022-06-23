@@ -14,7 +14,7 @@
           <q-icon v-if="!responsive" color="primary" class="q-pl-sm" name="assessment" />
         </q-btn>
         <q-btn 
-          v-if="update"
+          v-if="false"
           flat
           class="bg-white q-mr-sm text-capitalize"
           :rounded="!responsive"
@@ -25,11 +25,12 @@
           <q-icon name="mode_edit_outline" color="primary" />
         </q-btn>
         <q-btn 
-          v-if="false"
+          v-if="update"
           flat
           class="bg-white text-capitalize" 
           :rounded="!responsive"
           :round="responsive"
+          @click="$emit('send-info')"
         >
           <span class="text-primary q-mr-sm" v-if="!responsive">Send</span>
           <q-icon name="send" color="primary" />
