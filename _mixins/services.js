@@ -136,6 +136,14 @@ export default {
           }),
           type
         }
+      }else if(type == 'fullDate') {
+        return {
+          readonly: this.readonly,
+          label: name,
+          hint:'Format: MM/DD/YYYY HH:mm',
+          mask:'MM/DD/YYYY HH:mm',
+          'place-holder': 'MM/DD/YYYY HH:mm',
+        }
       } else {
         return {
           readonly: this.readonly,
