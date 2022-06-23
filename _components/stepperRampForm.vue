@@ -17,14 +17,14 @@
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
         >
-          <i-toolbar @edit="readonly = $event" :update="data.update"></i-toolbar>
+          <i-toolbar @edit="readonly = $event" @send-info="sendInfo()":update="data.update"></i-toolbar>
           <i-flight ref="flight" @isError="error = $event" v-if="step.step == 1" :flightData="step.form" :readonly="readonly"></i-flight>
           <i-cargo ref="cargo" v-if="step.step == 2" :cargoData="step.form" :readonly="readonly"></i-cargo>
           <i-services ref="services" @isError="error = $event" v-if="step.step == 3" :servicesData="step.form" :readonly="readonly"></i-services>
           <i-equipment ref="equipment" v-if="step.step == 4" :equipmentData="step.form" :readonly="readonly"></i-equipment>
           <i-crew ref="crew" v-if="step.step == 5" :crewData="step.form" :readonly="readonly"></i-crew>
           <i-remarks ref="remarks" v-if="step.step == 6" :remarksData="step.form" :readonly="readonly"></i-remarks>
-          <i-signature ref="signature" v-if="step.step == 7" :signatureData="step.form" :readonly="readonly" @close="$emit('close-modal', false)"></i-signature>
+          <i-signature ref="signature" v-if="step.step == 7" :signatureData="step.form" :readonly="readonly" @send-info="sendInfo()"></i-signature>
         </q-step>
       </template>
     </q-stepper>
@@ -55,7 +55,8 @@ export default {
   mixins:[responsive],
   props:{
     steps:{},
-    data:{}
+    data:{},
+    id:{}
   },
   data() {
     return {
@@ -103,6 +104,48 @@ export default {
           this.$refs.signature[0].saveInfo()
           break;
       }
+    },
+    camelToSnakeCase(str) {return str.replace(/[A-Z]/g,(letter) => `_${letter.toLowerCase()}`)},
+    formatData(data) {
+      const obj = {}
+      for (let key in data){
+        const name = this.camelToSnakeCase(key)
+        obj[name] = data[key]
+      }
+      return obj
+    },
+    sendInfo() {
+      this.$emit('loading', true)
+      const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
+      const formatData = this.formatData({
+        ...data.form,
+        adHoc: data.form.adHoc == 1,
+        customCustomer: data.form.customCustomer  == 1,
+        delay: data.delay,
+        workOrderItems: [
+          ...data.services,
+          ...data.equipments,
+          ...data.crew,
+        ]
+      })
+      this.$crud.post('apiRoutes.qramp.workOrders',{attributes: formatData})
+      .then(res => {
+        this.$emit('loading', true)
+        this.clean()
+        this.$emit('close-modal', false)
+        this.$alert.info({message: `${this.$tr('isite.cms.message.recordCreated')}`})
+      })
+      .catch(err => {
+        console.log('SEND INFO ERROR:', err)
+      })
+    },
+    clean(){
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
+      this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
+      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
+      this.$store.commit('qrampApp/SET_FORM_CREW', [] )
+      this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
+      this.$emit('close', false)
     },
     next(){
       this.setData()

@@ -30,6 +30,7 @@
           class="bg-white text-capitalize" 
           :rounded="!responsive"
           :round="responsive"
+          @click="$emit('send-info')"
         >
           <span class="text-primary q-mr-sm" v-if="!responsive">Send</span>
           <q-icon name="send" color="primary" />
