@@ -12,6 +12,7 @@ export default {
   workOrders: `${urlBase}/work-orders`,
   workOrderStatuses: `${urlBase}/work-order-statuses`,
   operationTypes: `${urlBase}/operation-types`,
+  setupContracts: `${setupUrlBase}/contracts`,
   setupCustomers: `${setupUrlBase}/customers`,
   setupCompanies: `${setupUrlBase}/companies`,
   setupBuildings: `${setupUrlBase}/buildings`,
