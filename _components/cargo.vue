@@ -48,6 +48,7 @@
         v-model="delay"
         color="primary"
         label="Delay"
+        @input="resetDelayList"
       />
       <q-btn v-if="delay" class="q-ml-sm" flat round icon="add" color="primary" @click="addDelay()"/>
     </div>
@@ -61,7 +62,7 @@
             v-model="delayList[keyField.includes('code') ? keyField.split('code')[1] : keyField.split('hours')[1]][keyField.includes('code') ? 'code' : 'hours']"
           />
           <q-btn 
-            v-if="field.type == 'input'" 
+            v-if="field.type !== 'select'" 
             style="width: 40px; height:38px"
             class="col-12 btn-stick col-md-1" 
             round icon="delete" flat
@@ -296,7 +297,13 @@ export default {
     delDelay(index) {
       const i = parseInt(index.slice(-1))
       this.delayList.splice(i,1)
-    }
+    },
+    resetDelayList() {
+      if(!this.delay) {
+        this.delayList = [];
+        this.addDelay();
+      }
+    },
   },
 }
 </script>
