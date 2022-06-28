@@ -269,7 +269,7 @@ export default {
       return{
         flyFormLeft:{
           customerId: {
-            name:'contractId',
+            name:'customerId',
             value: '',
             type: this.readonly ? 'inputStandard': 'select',
             props: {
@@ -286,7 +286,7 @@ export default {
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.setupContracts',
-              select: {label: 'contractName', id: 'customerId'},
+              select: {label: 'customerName', id: 'customerId'},
               requestParams: {
                 include:'customer',
                 filter: {
