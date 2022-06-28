@@ -27,7 +27,7 @@
             />
           </label>
           <hr v-if="readonly" class="label-container"/>
-          <div  :class="`flex q-px-sm row reverse`" v-if="(!form.customCustomer && keyField == 'customerId') || (form.customCustomer && keyField == 'customCustomerName')">
+          <div  :class="`flex q-px-sm row`" v-if="(!form.customCustomer && keyField == 'customerId') || (form.customCustomer && keyField == 'customCustomerName')">
             <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
               <dynamic-field
                 v-if="keyField == 'adHoc'"
@@ -286,7 +286,7 @@ export default {
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.setupContracts',
-              select: {label: 'customerName', id: 'customerId'},
+              select: {label: 'contractName', id: 'customerId'},
               requestParams: {
                 include:'customer',
                 filter: {
@@ -337,29 +337,6 @@ export default {
               requestParams: {filter: {status: 1}}
             }
           },
-          operationTypeId: {
-            name:'operationTypeId',
-            value: '',
-            type: this.readonly ? 'inputStandard':'select',
-            props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
-              readonly: this.readonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
-              clearable: true,
-              color:"primary",
-              'hide-bottom-space': false
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qramp.operationTypes',
-              select: {label: 'operationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
-            },
-            label: this.$tr('ifly.cms.form.operation'),
-          },
           acTypeId: {
             name:'acTypeId',
             value: '',
@@ -382,6 +359,29 @@ export default {
               requestParams: {filter: {status: 1}}
             },
             label: this.$tr('ifly.cms.form.acType'),
+          },
+          operationTypeId: {
+            name:'operationTypeId',
+            value: '',
+            type: this.readonly ? 'inputStandard':'select',
+            props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              readonly: this.readonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
+              clearable: true,
+              color:"primary",
+              'hide-bottom-space': false
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.operationTypes',
+              select: {label: 'operationName', id: 'id'},
+              requestParams: {filter: {status: 1}}
+            },
+            label: this.$tr('ifly.cms.form.operation'),
           },
         },
         flyFormRight:{
@@ -434,7 +434,7 @@ export default {
             type: this.readonly ? 'inputStandard':'input',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.validateSpecialCharacters(val)
               ],
               readonly: this.readonly,
               outlined: !this.readonly,
@@ -670,6 +670,17 @@ export default {
           },
         },
         checkFields: {
+          adHoc : {
+            name:'adHoc ',
+            value: false,
+            type: this.readonly ? 'inputStandard':'checkbox',
+            props: {
+              readonly: this.readonly,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.adHoc')}`,
+              color:"primary"
+            },
+            label: this.$tr('ifly.cms.form.adHoc'),
+          },
           customCustomer : {
             name:'customCustomer ',
             value: false,
@@ -681,17 +692,6 @@ export default {
             },
             label: this.$tr('ifly.cms.form.customCustomer'),
           },
-          adHoc : {
-            name:'adHoc ',
-            value: false,
-            type: this.readonly ? 'inputStandard':'checkbox',
-            props: {
-              readonly: this.readonly,
-              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.adHoc')}`,
-              color:"primary"
-            },
-            label: this.$tr('ifly.cms.form.adHoc'),
-          }
         },
         customerField: {
           customCustomerName: {
@@ -888,7 +888,13 @@ export default {
         this.dataTable.push(flight)
       })
         
-    }
+    }, 
+    validateSpecialCharacters(val) {
+      if(/[^a-zA-Z0-9]/.test(val)) {
+        return this.$tr('isite.cms.message.specialCharactersAreNotAllowed');
+      }
+      return !!val || this.$tr('isite.cms.message.fieldRequired');
+    },
   },
 }
 </script>
