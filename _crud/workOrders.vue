@@ -131,9 +131,9 @@ export default {
           },
           actions: [
             {
-              name: 'show',
-              icon: 'far fa-eye',
-              label: this.$tr('isite.cms.label.show'),
+              name: 'edit',
+              icon: 'fas fa-pen',
+              label: this.$tr('isite.cms.label.edit'),
               action: (item) => {
                 this.$refs.formOrders.loadform({
                   modalProps: {
