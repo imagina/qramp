@@ -17,14 +17,56 @@
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
         >
-          <i-toolbar @edit="readonly = $event" @send-info="sendInfo()":update="data.update"></i-toolbar>
-          <i-flight ref="flight" @isError="error = $event" v-if="step.step == 1" :flightData="step.form" :readonly="readonly"></i-flight>
-          <i-cargo ref="cargo" v-if="step.step == 2" :cargoData="step.form" :readonly="readonly"></i-cargo>
-          <i-services ref="services" @isError="error = $event" v-if="step.step == 3" :servicesData="step.form" :readonly="readonly"></i-services>
-          <i-equipment ref="equipment" v-if="step.step == 4" :equipmentData="step.form" :readonly="readonly"></i-equipment>
-          <i-crew ref="crew" v-if="step.step == 5" :crewData="step.form" :readonly="readonly"></i-crew>
-          <i-remarks ref="remarks" v-if="step.step == 6" :remarksData="step.form" :readonly="readonly"></i-remarks>
-          <i-signature ref="signature" v-if="step.step == 7" :signatureData="step.form" :readonly="readonly" @send-info="sendInfo()"></i-signature>
+          <i-toolbar 
+            @edit="readonly = $event" 
+            @send-info="sendInfo()"
+            :update="data.update"
+          />
+          <i-flight 
+            ref="flight" 
+            @isError="error = $event" 
+            v-if="step.step == STEP_FLIGTH" 
+            :flightData="step.form" 
+            :readonly="readonly"
+          />
+          <i-cargo 
+            ref="cargo" 
+            v-if="step.step == STEP_CARGO" 
+            :cargoData="step.form" 
+            :readonly="readonly"
+          />
+          <i-services 
+            ref="services" 
+            @isError="error = $event" 
+            v-if="step.step == STEP_SERVICE" 
+            :servicesData="step.form" 
+            :readonly="readonly"
+          />
+          <i-equipment 
+            ref="equipment" 
+            v-if="step.step == STEP_EQUIPMENT" 
+            :equipmentData="step.form" 
+            :readonly="readonly" 
+          />
+          <i-crew 
+            ref="crew" 
+            v-if="step.step == STEP_CREW" 
+            :crewData="step.form" 
+            :readonly="readonly" 
+          />
+          <i-remarks 
+            ref="remarks" 
+            v-if="step.step == STEP_REMARKS" 
+            :remarksData="step.form" 
+            :readonly="readonly" 
+          />
+          <i-signature 
+            ref="signature" 
+            v-if="step.step == STEP_SIGNATURE" 
+            :signatureData="step.form" 
+            :readonly="readonly" 
+            @send-info="sendInfo()" 
+          />
         </q-step>
       </template>
     </q-stepper>
@@ -40,6 +82,15 @@ import iRemarks from '@imagina/qramp/_components/remarks.vue'
 import iSignature from '@imagina/qramp/_components/signature.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 import iToolbar from '@imagina/qramp/_components/toolbar.vue'
+import { 
+  STEP_FLIGTH, 
+  STEP_CARGO,
+  STEP_SERVICE,
+  STEP_EQUIPMENT,
+  STEP_CREW,
+  STEP_REMARKS,
+  STEP_SIGNATURE
+}  from '@imagina/qramp/_components/model/constants.js'
 export default {
   name:'stepperRampForm',
   components:{
@@ -62,7 +113,14 @@ export default {
       readonly:false,
       form:{},
       error: false,
-      sp:1
+      sp:1,
+      STEP_FLIGTH, 
+      STEP_CARGO,
+      STEP_SERVICE,
+      STEP_EQUIPMENT,
+      STEP_CREW,
+      STEP_REMARKS,
+      STEP_SIGNATURE,
     }
   },
   mounted() {
@@ -114,7 +172,6 @@ export default {
       return obj
     },
     sendInfo() {
-      this.$emit('loading', true)
       const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
       const formatData = this.formatData({
         ...data.form,
@@ -133,8 +190,10 @@ export default {
         this.clean()
         this.$emit('close-modal', false)
         this.$alert.info({message: `${this.$tr('isite.cms.message.recordCreated')}`})
+         this.$emit('loading', false)
       })
       .catch(err => {
+         this.$emit('loading', false)
         this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
         console.log('SEND INFO ERROR:', err)
       })

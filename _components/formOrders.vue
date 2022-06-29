@@ -1,16 +1,33 @@
 <template>
-  <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true"
-                :loading="loading" @hide="clear" :actions="actions" :width="'90vw'" :maximized="$q.screen.lt.md">
-    <stepper-ramp-form @sp="sp = $event" @loading="loading = $event" ref="stepper" :steps="steppers" :data="modalProps" @close-modal="close($event)" />
+  <master-modal 
+    id="formRampComponent" 
+    v-model="show" 
+    v-bind="modalProps" 
+    :persistent="true"
+    :loading="loading" 
+    @hide="clear" 
+    :actions="actions" 
+    :width="'90vw'" 
+    :maximized="$q.screen.lt.md"
+  >
+    <stepper-ramp-form 
+      @sp="sp = $event" 
+      @loading="loading = $event" 
+      ref="stepper" 
+      :steps="steppers" 
+      :data="modalProps" 
+      @close-modal="close($event)"
+    />
   </master-modal>
 </template>
 <script>
 import stepperRampForm from '@imagina/qramp/_components/stepperRampForm.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
+import services from '../_mixins/services.js';
 export default {
   name:'formOrders',
   components: { stepperRampForm },
-  mixins:[responsive],
+  mixins:[responsive, services],
   data() {
     return {
       show: false,
@@ -107,6 +124,7 @@ export default {
     close(show) {
       this.show = show
       this.$root.$emit('crud.data.refresh')
+      this.services = [];
     },
     loadform(params) {
       const updateData = this.$clone(params)
@@ -173,6 +191,7 @@ export default {
     clear() {
       this.modalProps = {}
       this.show = false
+      this.services = [];
     }
   },
 }
