@@ -6,8 +6,8 @@
         <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
-            <dynamic-field 
-              v-if="selectCustomers.id"
+            <dynamic-field
+              v-if="bannerMessage"
               class="q-mb-md" 
               :field="formFields.banner"
             />
@@ -21,15 +21,11 @@
               @input="setCustomerForm"
               @filter="setCustomerName"
             >
-              <template v-slot:selected>
-                  {{ selectCustomers.label }}
-              </template>
               <div slot="before-options">
-                <div class="q-py-md q-px-md">
-                  <div class="row">
+                <div class="q-py-md q-px-md" @click="addCustumers">
+                  <div class="row cursor-pointer" >
                     <div class="q-pr-md">
                        <q-btn 
-                          @click="addCustumers" 
                           push color="primary" 
                           round 
                           icon="fas fa-plus" 
@@ -37,7 +33,7 @@
                         /> 
                     </div>
                     <div class="q-py-xs">
-                      <label>Create new customer</label>
+                      <label class="cursor-pointer">Create new customer</label>
                     </div>
                   </div>
                 </div> 
@@ -181,12 +177,7 @@ export default {
       type:'',
       dataTable:[],
       mainData:[],
-      selectCustomers: {
-        id: null,
-        label: null,
-        contractId: null,
-        value: null,
-      },
+      selectCustomers: '',
       bannerMessage: null,
       customerName: '',
       newCustumerAdHoc: [],
@@ -195,7 +186,7 @@ export default {
   watch:{
     'form.customCustomer'(newVal) {
       if(newVal){
-        this.form.customerId = ''
+        this.form.customerId = null
       } else {
         this.form.customCustomerName = ''
       }
@@ -739,7 +730,6 @@ export default {
           label:  updateForm.customerName,
           contractId: updateForm.contractId
         }
-        console.log(this.selectCustomerComputed)
         this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gate = updateForm.gate
@@ -902,7 +892,7 @@ export default {
       return !!val || this.$tr('isite.cms.message.fieldRequired');
     },
     setCustomerForm() {
-      const selectCustomers = this.selectCustomers || {};
+      const selectCustomers = this.selectCustomers === '' ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
@@ -918,17 +908,20 @@ export default {
     },
     addCustumers() {
       if(this.customerName !== '') {
-        const id = this.numberInRange(8000, 1000);
+        const id = `customer-${this.numberInRange(8000, 1000)}`;
         this.newCustumerAdHoc = [{id, label: this.customerName}];
-        this.customerName = '';
         this.form.adHoc = true;
         this.form.customCustomer = true;
-        this.bannerMessage =  'Creaste un  nuevo customer';
+        this.bannerMessage =  'You request a new customer, the Work Order will be created as a Ad Hoc';
         this.selectCustomerComputed = {
           id,
           value: this.customerName,
           label:  this.customerName,
         }
+        this.form.customCustomerName = this.customerName;
+        this.form.customerId = null;
+        this.form.contractId = null;
+        this.customerName = '';
         return;
       }
       this.$alert.error({message: 'In order to add a new record it is necessary to write in the customer field'});
