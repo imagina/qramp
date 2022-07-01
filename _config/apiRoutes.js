@@ -20,4 +20,5 @@ export default {
   products: `${urlBase}/products`,
   attributes: `${urlBase}/attributes`,
   workOrderTransactions: `${urlBase}/workday-transactions`,
+  setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
 }

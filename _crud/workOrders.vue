@@ -170,7 +170,7 @@ export default {
               {
                 name: 'contractLineWorkdayId',
                 label: 'Contract LI Id',
-                field: 'product',
+                field: 'contractLine',
                 format: val => val?.contractLineWorkdayId || '-'
               },
               {
@@ -180,7 +180,7 @@ export default {
               },
               {
                 name: 'transactionId',
-                label: 'Transaction',
+                label: 'Transaction Id',
                 field: 'transactionId'
               },
               {
