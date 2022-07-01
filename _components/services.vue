@@ -22,7 +22,7 @@ export default {
   data(){
     return{
       form:{
-        services:{},
+        services: [],
       },
       products:[],
     }
