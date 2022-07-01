@@ -184,6 +184,9 @@ export default {
           ...data.crew,
         ]
       }
+      if (this.data.update) {
+        formatData.id = this.data.workOrderId;
+      }
       this.sendWorkOrder(formatData);
     },
     clean(){
@@ -206,6 +209,7 @@ export default {
     },
     sendWorkOrder(formatData) {
       const route = 'apiRoutes.qramp.workOrders';
+      console.log(this.data.workOrderId);
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
         :this.$crud.create(route, formatData);
       request.then(res => {
