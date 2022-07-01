@@ -33,7 +33,7 @@
                         /> 
                     </div>
                     <div class="q-py-xs">
-                      <label class="cursor-pointer">Create new customer</label>
+                      <label class="cursor-pointer">{{ $tr('ifly.cms.label.createNewCustomer') }}</label>
                     </div>
                   </div>
                 </div> 
@@ -897,8 +897,8 @@ export default {
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
-      const message = this.form.contractId ? 'You selected a customer with contract' 
-        : 'You selected a customer without a contract';
+      const message = this.form.contractId ? this.$tr('ifly.cms.message.selectedCustomerWithContract') 
+        : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
       this.bannerMessage =  selectCustomers ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
@@ -912,7 +912,7 @@ export default {
         this.newCustumerAdHoc = [{id, label: this.customerName}];
         this.form.adHoc = true;
         this.form.customCustomer = true;
-        this.bannerMessage =  'You request a new customer, the Work Order will be created as a Ad Hoc';
+        this.bannerMessage =  this.$tr('ifly.cms.message.requestNewCustomer');
         this.selectCustomerComputed = {
           id,
           value: this.customerName,
@@ -924,7 +924,7 @@ export default {
         this.customerName = '';
         return;
       }
-      this.$alert.error({message: 'In order to add a new record it is necessary to write in the customer field'});
+      this.$alert.error({message: this.$tr('ifly.cms.message.orderaddNewrecord')});
     },
     numberInRange(max, min) {
         return Math.floor(Math.random() * (max - min + 1) + min);
