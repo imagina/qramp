@@ -7,7 +7,7 @@ const setupUrlBase = `/${setupModuleName}/${moduleVersion}`
 
 
 export default {
-  urlBase : urlBase,
+  urlBase: urlBase,
   version: moduleVersion,
   workOrders: `${urlBase}/work-orders`,
   workOrderStatuses: `${urlBase}/work-order-statuses`,
@@ -18,5 +18,6 @@ export default {
   setupBuildings: `${setupUrlBase}/buildings`,
   setupStations: `${setupUrlBase}/stations`,
   products: `${urlBase}/products`,
-  attributes: `${urlBase}/attributes`
+  attributes: `${urlBase}/attributes`,
+  workOrderTransactions: `${urlBase}/workday-transactions`,
 }

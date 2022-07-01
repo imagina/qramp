@@ -1,11 +1,12 @@
 <template>
-  <form-orders ref="formOrders" />
+  <form-orders ref="formOrders"/>
 </template>
 <script>
 import formOrders from "@imagina/qramp/_components/formOrders.vue"
+
 export default {
-  name:'RampCrud',
-  components:{
+  name: 'RampCrud',
+  components: {
     formOrders
   },
   data() {
@@ -26,7 +27,7 @@ export default {
             this.$refs.formOrders.loadform({
               modalProps: {
                 title: this.$tr('ifly.cms.form.newWorkOrder'),
-                update:false
+                update: false
               }
             })
           }
@@ -34,9 +35,9 @@ export default {
         read: {
           columns: [
             {
-              name: 'id', 
-              label: this.$tr('isite.cms.form.id'), 
-              field: 'id', 
+              name: 'id',
+              label: this.$tr('isite.cms.form.id'),
+              field: 'id',
               style: 'width: 50px'
             },
             {
@@ -61,7 +62,7 @@ export default {
             },
             {
               name: 'statusName',
-              label: this.$tr('isite.cms.form.status'), 
+              label: this.$tr('isite.cms.form.status'),
               field: 'workOrderStatus',
               format: val => val ? val.statusName : '-',
               align: 'left'
@@ -98,8 +99,8 @@ export default {
             {name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left'},
           ],
           filters: {
-            date: {name : "createdAt",quickFilter: true},
-            customerId:{
+            date: {name: "createdAt", quickFilter: true},
+            customerId: {
               value: null,
               type: 'select',
               quickFilter: true,
@@ -112,7 +113,7 @@ export default {
                 'clearable': true
               },
             },
-            statusId:{
+            statusId: {
               value: null,
               type: 'select',
               quickFilter: true,
@@ -138,18 +139,66 @@ export default {
                 this.$refs.formOrders.loadform({
                   modalProps: {
                     title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
-                    update:true
+                    update: true
                   },
                   data: item,
                 })
               }
             },
-          ]
+          ],
+          relation: {
+            apiRoute: 'apiRoutes.qramp.workOrderTransactions',
+            requestParams: (row) => {
+              return {
+                filter: {workOrderId: row.id},
+                include: 'product,contractLine'
+              }
+            },
+            columns: [
+              {
+                name: 'productId',
+                label: 'Sale Item Id',
+                field: 'product',
+                format: val => val?.externalId || '-'
+              },
+              {
+                name: 'productName',
+                label: 'Sale Item Name',
+                field: 'product',
+                format: val => val?.name || '-'
+              },
+              {
+                name: 'contractLineWorkdayId',
+                label: 'Contract LI Id',
+                field: 'product',
+                format: val => val?.contractLineWorkdayId || '-'
+              },
+              {
+                name: 'quantity',
+                label: 'Quantity',
+                field: 'quantity'
+              },
+              {
+                name: 'transactionId',
+                label: 'Transaction',
+                field: 'transactionId'
+              },
+              {
+                name: 'postedAt',
+                label: 'Date Posted',
+                field: 'postedAt'
+              },
+              {
+                name: 'amount',
+                label: 'Amount',
+                field: 'amount'
+              }
+            ]
+          }
         },
         update: false,
         delete: true,
-        formLeft: {
-        }
+        formLeft: {}
       }
     },
     //Crud info
