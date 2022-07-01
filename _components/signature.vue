@@ -65,7 +65,7 @@ export default {
             },
           },
           printName:{
-            name:'costumerName',
+            name:'custumerName',
             value: '',
             type: this.readonly ? 'inputStandard': 'input',
             'icon-right': 'fas fa-user',
@@ -75,7 +75,7 @@ export default {
             },
           },
           title:{
-            name:'costumerTitle',
+            name:'custumerTitle',
             value: '',
             type: this.readonly ? 'inputStandard': 'input',
             'icon-right': 'fas fa-user',

@@ -172,8 +172,8 @@ export default {
       this.remark.remark = updateData.data['remark']
       this.remark.safetyMessage = updateData.data['safetyMessage']
 
-      this.signature.costumerName = updateData.data['costumerName']
-      this.signature.costumerTitle = updateData.data['costumerTitle']
+      this.signature.custumerName = updateData.data['custumerName']
+      this.signature.custumerTitle = updateData.data['custumerTitle']
       this.signature.representativeName = updateData.data['representativeName']
       this.signature.representativeTitle = updateData.data['representativeTitle']
       this.signature.customerSignature = updateData.data['customerSignature']
