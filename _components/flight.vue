@@ -4,47 +4,46 @@
       <table-flight @cancel="dialog = $event" :dialog="dialog" :dataTable="dataTable" @flightSelect="setDataTable($event)"/>
       <div class="col-12 col-md-6 q-px-md">
         <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
-          <label v-if="!form.customCustomer && keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+            <dynamic-field 
+              v-if="selectCustomers.id"
+              class="q-mb-md" 
+              :field="formFields.banner"
+            />
             <dynamic-field
               :key="keyField"
               :id="keyField"
               :field="field"
               :class="`${readonly ? 'col-7': ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
-              v-model="form[keyField]" 
-            />
+              v-model="selectCustomers"
+              @input="setCustomerForm"
+              @filter="setCustomerName"
+            >
+              <template v-slot:selected>
+                  {{ selectCustomers.label }}
+              </template>
+              <div slot="before-options">
+                <div class="q-py-md q-px-md">
+                  <div class="row">
+                    <div class="q-pr-md">
+                       <q-btn 
+                          @click="addCustumers" 
+                          push color="primary" 
+                          round 
+                          icon="fas fa-plus" 
+                          size="xs"
+                        /> 
+                    </div>
+                    <div class="q-py-xs">
+                      <label>Create new customer</label>
+                    </div>
+                  </div>
+                </div> 
+              </div>
+            </dynamic-field>
           </label>
-          <label v-if="form.customCustomer && keyField == 'customCustomerName'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
-            <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
-            <dynamic-field
-              :key="keyField"
-              :id="keyField"
-              :field="field"
-              :class="`${readonly ? 'col-7': ''}`"
-              :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
-              v-model="form[keyField]" 
-            />
-          </label>
-          <hr v-if="readonly" class="label-container"/>
-          <div  :class="`flex q-px-sm row`" v-if="(!form.customCustomer && keyField == 'customerId') || (form.customCustomer && keyField == 'customCustomerName')">
-            <div v-for="(field, keyField) in formFields.checkFields" :style="`${readonly ? 'height: 50px' : ''}`">
-              <dynamic-field
-                v-if="keyField == 'adHoc'"
-                :key="keyField"
-                :id="keyField"
-                :field="field"
-                v-model="form[keyField]" 
-              />
-              <dynamic-field
-                v-if="keyField == 'customCustomer' && form.adHoc"
-                :key="keyField"
-                :id="keyField"
-                :field="field"
-                v-model="form[keyField]" 
-              />
-            </div>
-          </div>
           <label v-if="keyField != 'customerId' && keyField != 'customCustomerName'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
@@ -135,6 +134,7 @@
 <script>
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 import tableFlight from '@imagina/qramp/_components/modal/tableFlight.vue'
+import factoryCustomerWithContracts from '@imagina/qramp/_components/factories/factoryCustomerWithContracts.js';
 export default {
   props:{
     readonly: true,
@@ -179,9 +179,17 @@ export default {
       inOutBound:null,
       timeoutID: '',
       type:'',
-      
       dataTable:[],
-      mainData:[]
+      mainData:[],
+      selectCustomers: {
+        id: null,
+        label: null,
+        contractId: null,
+        value: null,
+      },
+      bannerMessage: null,
+      customerName: '',
+      newCustumerAdHoc: [],
     }
   },
   watch:{
@@ -241,6 +249,14 @@ export default {
     }
   },
   computed: {
+    selectCustomerComputed: {
+      get() {
+        return this.selectCustomers;
+      },
+      set(value) {
+        this.selectCustomers = value;
+      }
+    },
     showLabel(){
       if(this.readonly && !this.responsive ){
         return true
@@ -267,11 +283,22 @@ export default {
     },
     formFields(){
       return{
+        banner: {
+          type: 'banner',
+          props: {
+            color: 'info',
+            icon: 'fas fa-exclamation-triangle',
+            message: this.bannerMessage,
+          }
+        },
         flyFormLeft:{
           customerId: {
             name:'customerId',
             value: '',
             type: this.readonly ? 'inputStandard': 'select',
+            help: {
+                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium ad amet aspernatur atque, error harum ipsa magni odit recusandae, repellat totam vitae? Impedit inventore necessitatibus reiciendis soluta! Deserunt, harum, sunt.'
+            },
             props: {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
@@ -282,18 +309,12 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customer')}`,
               clearable: true,
               color:"primary",
-              'hide-bottom-space': false
+              'hide-bottom-space': false,
+              emitValue: false,
+              options: this.newCustumerAdHoc,
             },
             loadOptions: {
-              apiRoute: 'apiRoutes.qramp.setupContracts',
-              select: {label: 'customerName', id: 'customerId'},
-              requestParams: {
-                include:'customer',
-                filter: {
-                  status: 1,
-                  allCustomers: this.form.adHoc == 1 ? true : false
-                }
-              }
+              delayed: this.getCustomerList,
             },
             label: this.$tr('ifly.cms.form.customer'),
           },
@@ -669,30 +690,6 @@ export default {
             label: this.$tr('ifly.cms.form.blockOut'),
           },
         },
-        checkFields: {
-          adHoc : {
-            name:'adHoc ',
-            value: false,
-            type: this.readonly ? 'inputStandard':'checkbox',
-            props: {
-              readonly: this.readonly,
-              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.adHoc')}`,
-              color:"primary"
-            },
-            label: this.$tr('ifly.cms.form.adHoc'),
-          },
-          customCustomer : {
-            name:'customCustomer ',
-            value: false,
-            type: this.readonly ? 'inputStandard':'checkbox',
-            props: {
-              readonly: this.readonly,
-              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.customCustomer')}`,
-              color:"primary"
-            },
-            label: this.$tr('ifly.cms.form.customCustomer'),
-          },
-        },
         customerField: {
           customCustomerName: {
             name:'customCustomerName',
@@ -735,6 +732,15 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
+        console.log(updateForm);
+        this.selectCustomerComputed = {
+          id: updateForm.customerId,
+          value: updateForm.customerName,
+          label:  updateForm.customerName,
+          contractId: updateForm.contractId
+        }
+        console.log(this.selectCustomerComputed)
+        this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gate = updateForm.gate
         this.form.operationTypeId = updateForm.operationTypeId
@@ -894,6 +900,70 @@ export default {
         return this.$tr('isite.cms.message.specialCharactersAreNotAllowed');
       }
       return !!val || this.$tr('isite.cms.message.fieldRequired');
+    },
+    setCustomerForm() {
+      const selectCustomers = this.selectCustomers || {};
+      this.form.customerId = selectCustomers.id || null;
+      const customCustomerName = selectCustomers.label || null;
+      this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
+      this.form.contractId = selectCustomers.contractId || null;
+      const message = this.form.contractId ? 'You selected a customer with contract' 
+        : 'You selected a customer without a contract';
+      this.bannerMessage =  selectCustomers ? message : null;
+      this.form.adHoc = this.form.contractId ? false : true;
+      this.form.customCustomer = this.form.contractId ? false : true;
+    },
+    setCustomerName(query) {
+      this.customerName = query !== '' ? query : '';
+    },
+    addCustumers() {
+      if(this.customerName !== '') {
+        const id = this.numberInRange(8000, 1000);
+        this.newCustumerAdHoc = [{id, label: this.customerName}];
+        this.customerName = '';
+        this.form.adHoc = true;
+        this.form.customCustomer = true;
+        this.bannerMessage =  'Creaste un  nuevo customer';
+        this.selectCustomerComputed = {
+          id,
+          value: this.customerName,
+          label:  this.customerName,
+        }
+        return;
+      }
+      this.$alert.error({message: 'In order to add a new record it is necessary to write in the customer field'});
+    },
+    numberInRange(max, min) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    },
+    getCustomerList() {
+      return new Promise(async(resolve) => {
+        const custemerParams = {
+            params: {
+              filter: {
+                withoutContracts: true,
+                adHocWorkOrders: true,
+                customerStatusId: 1
+              }
+            },
+            refresh: true,
+        }
+        const contractParams = {
+            params: {
+              filter: {
+                contractStatusId: 1
+              }
+            },
+            refresh: true,
+        }
+        const customersData = await Promise.all([
+          this.$crud.index('apiRoutes.qramp.setupCustomers', custemerParams),
+          this.$crud.index('apiRoutes.qramp.setupContracts', contractParams)
+        ]);
+        const customerList = factoryCustomerWithContracts(customersData);
+
+        return resolve(customerList);
+      })
     },
   },
 }

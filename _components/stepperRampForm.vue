@@ -173,7 +173,7 @@ export default {
     },
     sendInfo() {
       const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
-      const formatData = this.formatData({
+      const formatData = {
         ...data.form,
         adHoc: data.form.adHoc == 1,
         customCustomer: data.form.customCustomer  == 1,
@@ -183,20 +183,8 @@ export default {
           ...data.equipments,
           ...data.crew,
         ]
-      })
-      this.$crud.post('apiRoutes.qramp.workOrders',{attributes: formatData})
-      .then(res => {
-        this.$emit('loading', true)
-        this.clean()
-        this.$emit('close-modal', false)
-        this.$alert.info({message: `${this.$tr('isite.cms.message.recordCreated')}`})
-         this.$emit('loading', false)
-      })
-      .catch(err => {
-         this.$emit('loading', false)
-        this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
-        console.log('SEND INFO ERROR:', err)
-      })
+      }
+      this.sendWorkOrder(formatData);
     },
     clean(){
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
@@ -215,7 +203,26 @@ export default {
     },
     previous(){
       this.$refs.stepper.previous()
-    }
+    },
+    sendWorkOrder(formatData) {
+      const route = 'apiRoutes.qramp.workOrders';
+      const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
+        :this.$crud.create(route, formatData);
+      request.then(res => {
+        this.$emit('loading', true)
+        this.clean()
+        this.$emit('close-modal', false)
+        const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}` 
+          : `${this.$tr('isite.cms.message.recordCreated')}`;
+        this.$alert.info({message})
+         this.$emit('loading', false)
+      })
+      .catch(err => {
+         this.$emit('loading', false)
+        this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
+        console.log('SEND INFO ERROR:', err)
+      })
+    },
   },
 }
 </script>

@@ -17,6 +17,7 @@ export default {
   setupCompanies: `${setupUrlBase}/companies`,
   setupBuildings: `${setupUrlBase}/buildings`,
   setupStations: `${setupUrlBase}/stations`,
+  workOrderDelays: `${urlBase}/work-order-delays`,
   products: `${urlBase}/products`,
   attributes: `${urlBase}/attributes`
 }

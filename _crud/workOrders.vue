@@ -138,7 +138,8 @@ export default {
                 this.$refs.formOrders.loadform({
                   modalProps: {
                     title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
-                    update:true
+                    update:true,
+                    workOrderId: item.id,
                   },
                   data: item,
                 })
