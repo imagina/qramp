@@ -49,8 +49,8 @@ export default {
             {
               name: 'customer',
               label: this.$tr('isite.cms.label.customer'),
-              field: 'customer',
-              format: val => val ? val.customerName : '-',
+              field: item => item.customCustomerName || item.customer,
+              format: val => this.getCustomerName(val),
               align: 'left'
             },
             {
@@ -202,11 +202,20 @@ export default {
         formLeft: {}
       }
     },
+    getCustomerName() {
+      return (item) => {
+        let customerName = item;
+        if(item) {
+          customerName = typeof item === 'object' ? item.customerName : item;
+        }
+        return customerName || '-';
+      };
+    },
     //Crud info
     crudInfo() {
       return this.$store.state.qcrudComponent.component[this.crudId] || {}
     }
-  }
+  },
 }
 </script>
 <style lang="stylus">
