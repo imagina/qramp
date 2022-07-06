@@ -37,6 +37,7 @@ export default {
     toolbar:{},
     signatureData:{}
   },
+  inject: ['disabledReadonly'],
   mixins:[responsive],
   data(){
     return{
@@ -60,7 +61,7 @@ export default {
             props: {
               btnFullscreen: true,
               btnFullscreenIcon: this.isFull ? 'zoom_in_map':'zoom_out_map',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               label: this.$tr('ifly.cms.form.customerRepresentativeSignature'),
             },
           },
@@ -70,7 +71,7 @@ export default {
             type: this.readonly ? 'inputStandard': 'input',
             'icon-right': 'fas fa-user',
             props: {
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
                label: `${this.$tr('isite.cms.form.printName')}`,
             },
           },
@@ -80,7 +81,7 @@ export default {
             type: this.readonly ? 'inputStandard': 'input',
             'icon-right': 'fas fa-user',
             props: {
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
                label: `${this.$tr('isite.cms.form.title')}`,
             },
           },
@@ -93,7 +94,7 @@ export default {
             props: {
               btnFullscreen: true,
               btnFullscreenIcon: this.isFull ? 'zoom_in_map':'zoom_out_map',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               label: this.$tr('ifly.cms.form.AgiRepresentativeSignature'),
             },
           },
@@ -103,7 +104,7 @@ export default {
             type: this.readonly ? 'inputStandard': 'input',
             'icon-right': 'fas fa-user',
             props: {
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
                label: `${this.$tr('isite.cms.form.printName')}`,
             },
           },
@@ -113,7 +114,7 @@ export default {
             type: this.readonly ? 'inputStandard': 'input',
             'icon-right': 'fas fa-user',
             props: {
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
                label: `${this.$tr('isite.cms.form.title')}`,
             },
           },

@@ -84,6 +84,7 @@ export default {
     toolbar:{},
     cargoData:{}
   },
+  inject: ['disabledReadonly'],
   mixins:[responsive],
   data(){
     return{
@@ -112,7 +113,7 @@ export default {
             type: this.readonly ? 'inputStandard':'select',
             props: {
               options: this.codeList,
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('icommerce.cms.sidebar.code'),
@@ -126,7 +127,7 @@ export default {
             value: delay.hours,
             type: this.readonly ? 'inputStandard':'hour',
             props: {
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
@@ -147,7 +148,7 @@ export default {
             type: 'inputStandard',
             props: {
               mask:'###################',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly
             },
@@ -158,7 +159,7 @@ export default {
             type: 'inputStandard',
             props: {
               mask:'###################',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly
             },
@@ -169,7 +170,7 @@ export default {
             type: 'inputStandard',
             props: {
               mask:'###################',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly
             },
@@ -182,7 +183,7 @@ export default {
             type: 'inputStandard',
             props: {
               mask:'###################',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly
             },
@@ -193,7 +194,7 @@ export default {
             type: 'inputStandard',
             props: {
               mask:'###################',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly
             },
@@ -204,7 +205,7 @@ export default {
             type: 'inputStandard',
             props: {
               mask:'###################',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly
             },

@@ -15,6 +15,7 @@ export default {
     toolbar:{},
     remarksData:{}
   },
+  inject: ['disabledReadonly'],
   mixins:[responsive],
   data(){
     return{
@@ -33,7 +34,7 @@ export default {
           value: '',
           type: this.readonly ? 'inputStandard':'input',
           props: {
-            readonly: this.readonly,
+            readonly: this.readonly || this.disabledReadonly,
             outlined: !this.readonly,
             label: this.$tr('ifly.cms.form.remark'),
             type: 'textarea',
@@ -45,7 +46,7 @@ export default {
           value: '',
           type: this.readonly ? 'inputStandard':'input',
           props: {
-            readonly: this.readonly,
+            readonly: this.readonly || this.disabledReadonly,
             outlined: !this.readonly,
             label: this.$tr('ifly.cms.form.safetyMessage'),
             type: 'textarea',

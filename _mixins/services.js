@@ -1,4 +1,5 @@
 export default {
+  inject: ['disabledReadonly'],
   mounted() {
     this.$nextTick(function () {
       this.init()
@@ -124,11 +125,11 @@ export default {
     setProps(type, name, options) {
       if (type == 'quantity') {
         return {
-          readonly: this.readonly
+          readonly: this.readonly || this.disabledReadonly
         }
       }else if(type == 'select') {
         return {
-          readonly: this.readonly,
+          readonly: this.readonly || this.disabledReadonly,
           label: name,
           options: options.map((item) => {
             item.label = item.name
@@ -138,7 +139,7 @@ export default {
         }
       }else if(type == 'fullDate') {
         return {
-          readonly: this.readonly,
+          readonly: this.readonly || this.disabledReadonly,
           label: name,
           hint:'Format: MM/DD/YYYY HH:mm',
           mask:'MM/DD/YYYY HH:mm',
@@ -146,7 +147,7 @@ export default {
         }
       } else {
         return {
-          readonly: this.readonly,
+          readonly: this.readonly || this.disabledReadonly,
           label: name,
         }
       }
