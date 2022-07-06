@@ -140,6 +140,7 @@ export default {
       default:()=>{}
     }
   },
+  inject: ['disabledReadonly'],
   components:{tableFlight},
   mixins:[responsive],
   mounted() {
@@ -270,7 +271,7 @@ export default {
       return false
     },
     readStatus(){
-      return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly
+      return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly || this.disabledReadonly
     },
     formFields(){
       return{
@@ -294,7 +295,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customer')}`,
@@ -317,7 +318,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customer')}`,
@@ -336,7 +337,7 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               selectByDefault : true,
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.station')}`,
@@ -357,7 +358,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.acType')}`,
@@ -380,7 +381,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
@@ -405,7 +406,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.carrier')}`,
@@ -431,7 +432,7 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.date')}`,
@@ -448,7 +449,7 @@ export default {
               rules: [
                 val => this.validateSpecialCharacters(val)
               ],
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.gate')}`,
@@ -491,7 +492,7 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               loading: this.loadingState,
-              readonly: this.readonly || this.loadingState,
+              readonly: this.readonly || this.disabledReadonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.flight')}`,
@@ -509,7 +510,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newInbound,
+              readonly: this.newInbound || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.origin')}`,
@@ -531,7 +532,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newInbound,
+              readonly: this.newInbound || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
@@ -551,7 +552,7 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.newInbound,
+              readonly: this.newInbound || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
@@ -571,7 +572,7 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
@@ -591,7 +592,7 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               loading: this.loadingState,
-              readonly: this.readonly || this.loadingState,
+              readonly: this.readonly || this.disabledReadonly || this.loadingState,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.flight')}`,
@@ -609,7 +610,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newOutbound,
+              readonly: this.newOutbound || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.destination')}`,
@@ -631,7 +632,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newOutbound,
+              readonly: this.newOutbound || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
@@ -651,7 +652,7 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.newOutbound,
+              readonly: this.newOutbound || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
@@ -671,7 +672,7 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
@@ -690,7 +691,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.readonly,
+              readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.customCustomerName')}`,

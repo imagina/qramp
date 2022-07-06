@@ -21,9 +21,16 @@
   </master-modal>
 </template>
 <script>
+import { computed } from 'vue';
 import stepperRampForm from '@imagina/qramp/_components/stepperRampForm.vue'
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 import services from '../_mixins/services.js';
+import { 
+  STATUS_DRAFT,
+  STATUS_POSTED,
+  STATUS_SUBMITTED 
+} from '@imagina/qramp/_components/model/constants.js'
+
 export default {
   name:'formOrders',
   components: { stepperRampForm },
@@ -40,7 +47,17 @@ export default {
       equipment:[],
       crew:[],
       remark:[],
-      signature:[]
+      signature:[],
+      statusId: STATUS_DRAFT,
+      needToBePosted: false,
+      STATUS_DRAFT,
+      STATUS_POSTED,
+      STATUS_SUBMITTED
+    }
+  },
+  provide() {
+    return {
+      disabledReadonly: computed(() => this.disabledReadonly()),
     }
   },
   computed:{
@@ -121,6 +138,17 @@ export default {
     }
   },
   methods: {
+    disabledReadonly() {
+      if(this.statusId === STATUS_DRAFT && this.needToBePosted) {
+        return true;
+      }
+      if(this.statusId === STATUS_POSTED 
+        || this.statusId === STATUS_SUBMITTED
+      ) {
+        return true;
+      }
+      return false;
+    },
     close(show) {
       this.show = show
       this.$root.$emit('crud.data.refresh')
@@ -134,8 +162,12 @@ export default {
       this.cargo = {}
       this.remark = {}
       this.signature = {}
+      this.statusId = STATUS_DRAFT
+      this.needToBePosted = false
       if(!updateData.data) return;
       console.log(updateData)
+      this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
+      this.needToBePosted = updateData.data['needToBePosted'] || false; 
       this.flight.operationTypeId = updateData.data['operationTypeId'] ? updateData.data['operationTypeId'].toString() : ''
       this.flight.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : ''
       this.flight.inboundCustomFlightNumber = updateData.data['inboundCustomFlightNumber'] ? updateData.data['inboundCustomFlightNumber'] : ''
