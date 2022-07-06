@@ -146,6 +146,19 @@ export default {
                 })
               }
             },
+            {
+              name: 'submit',
+              icon: 'fas fa-check',
+              label: this.$tr('isite.cms.label.submit'),
+              action: null,
+            },
+            {
+              name: 'post',
+              icon: 'fas fa-paper-plane',
+              label: this.$tr('isite.cms.label.post'),
+              action: null,
+              format: item => ({ vIf: !item.adHoc }),
+            },
           ],
           relation: {
             apiRoute: 'apiRoutes.qramp.workOrderTransactions',
