@@ -31,6 +31,7 @@
           :rounded="!responsive"
           :round="responsive"
           @click="$emit('send-info')"
+          :disable="disabledReadonly"
         >
           <span class="text-primary q-mr-sm" v-if="!responsive">Send</span>
           <q-icon name="send" color="primary" />
@@ -67,6 +68,7 @@ export default {
       default: false
     }
   },
+  inject: ['disabledReadonly'],
   data(){
     return{
       edit: false,

@@ -123,6 +123,7 @@ export default {
       STEP_SIGNATURE,
     }
   },
+  inject: ['disabledReadonly'],
   mounted() {
     this.$nextTick(function () {
       this.init()
@@ -209,7 +210,11 @@ export default {
     },
     sendWorkOrder(formatData) {
       const route = 'apiRoutes.qramp.workOrders';
-      console.log(this.data.workOrderId);
+      if(this.disabledReadonly) {
+        this.$emit('close-modal', false);
+        this.$emit('loading', false);
+        return;
+      }
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
         :this.$crud.create(route, formatData);
       request.then(res => {
