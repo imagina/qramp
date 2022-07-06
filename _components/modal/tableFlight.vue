@@ -49,8 +49,11 @@
 </template>
 <script>
 export default {
-  props:{
-    dataTable:[],
+  props: {
+    dataTable: {
+      type: Array,
+      default: () => [],
+    },
     dialog: {
       type: Boolean,
       default: false

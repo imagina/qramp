@@ -872,13 +872,14 @@ export default {
     setTable(data) {
       data.forEach((items, index) => {
         const date = this.dateFormatter(items.scheduledOn.split("T")[0])
-        const time = items.scheduledOn.split("T")[1].substr(0, 5)
+        const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
+        const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
         const flight = {
           index,
           date,
           registration: items.registration,
-          inbound: `${time} - ${items.originAirport.airportName}`,
-          outbound: `${time} - ${items.destinationAirport.airportName}`,
+          inbound: `${inboundTime} - ${items.originAirport.airportName}`,
+          outbound: `${outboundTime} - ${items.destinationAirport.airportName}`,
           aircraftType: items.aircraftType,
         }
         this.dataTable.push(flight)
