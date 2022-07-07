@@ -1,8 +1,12 @@
+import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+
 export default {
-  inject: ['disabledReadonly'],
   mounted() {
     this.$nextTick(function () {
-      this.init()
+      const _this = this;
+      if(_this.hasOwnProperty('init')){
+        _this.init()
+      }
     })
   },
   data(){
@@ -26,6 +30,9 @@ export default {
           })
       }
       return this.services
+    },
+    disabledReadonly() {
+      return qRampStore().disabledReadonly();
     }
   },
   methods: {
@@ -151,6 +158,6 @@ export default {
           label: name,
         }
       }
-    }
+    },
   },
 }

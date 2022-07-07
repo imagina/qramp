@@ -30,6 +30,7 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED 
 } from '@imagina/qramp/_components/model/constants.js'
+import qRampStore from '@imagina/qramp/_store/qRampStore.js'
 
 export default {
   name:'formOrders',
@@ -57,7 +58,7 @@ export default {
   },
   provide() {
     return {
-      disabledReadonly: computed(() => this.disabledReadonly()),
+      disabledReadonly: computed(() => qRampStore().disabledReadonly()),
     }
   },
   computed:{
@@ -138,17 +139,6 @@ export default {
     }
   },
   methods: {
-    disabledReadonly() {
-      if(this.statusId === STATUS_DRAFT && this.needToBePosted) {
-        return true;
-      }
-      if(this.statusId === STATUS_POSTED 
-        || this.statusId === STATUS_SUBMITTED
-      ) {
-        return true;
-      }
-      return false;
-    },
     close(show) {
       this.show = show
       this.$root.$emit('crud.data.refresh')
@@ -164,10 +154,13 @@ export default {
       this.signature = {}
       this.statusId = STATUS_DRAFT
       this.needToBePosted = false
+      qRampStore().setStatusId(this.statusId);
+      qRampStore().setNeedToBePosted(this.needToBePosted);
       if(!updateData.data) return;
-      console.log(updateData)
       this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
-      this.needToBePosted = updateData.data['needToBePosted'] || false; 
+      this.needToBePosted = updateData.data['needToBePosted'] || false;
+      qRampStore().setStatusId(this.statusId);
+      qRampStore().setNeedToBePosted(this.needToBePosted); 
       this.flight.operationTypeId = updateData.data['operationTypeId'] ? updateData.data['operationTypeId'].toString() : ''
       this.flight.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : ''
       this.flight.inboundCustomFlightNumber = updateData.data['inboundCustomFlightNumber'] ? updateData.data['inboundCustomFlightNumber'] : ''

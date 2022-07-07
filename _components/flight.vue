@@ -706,7 +706,6 @@ export default {
   },
   methods: {
     showInputs(keyField){
-      console.log((keyField == 'customCustomer' && this.form.adHoc) || keyField == 'adHoc')
       return (keyField == 'customCustomer' && this.form.adHoc) || keyField == 'adHoc'
     },
     init() {
@@ -724,7 +723,6 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        console.log(updateForm);
         this.selectCustomerComputed = {
           id: updateForm.customerId,
           value: updateForm.customerName,
