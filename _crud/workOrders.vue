@@ -3,6 +3,7 @@
 </template>
 <script>
 import formOrders from "@imagina/qramp/_components/formOrders.vue"
+import {STATUS_POSTED,STATUS_SUBMITTED} from "@imagina/qramp/_components/model/constants"
 
 export default {
   name: 'RampCrud',
@@ -150,14 +151,24 @@ export default {
               name: 'submit',
               icon: 'fas fa-check',
               label: this.$tr('isite.cms.label.submit'),
-              action: null,
+              format: item => ({ vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![2,3].includes(item.statusId) }),
+              action: (item) => {
+                this.changeStatus(STATUS_SUBMITTED,item.id)
+              },
             },
             {
               name: 'post',
               icon: 'fas fa-paper-plane',
               label: this.$tr('isite.cms.label.post'),
-              action: null,
-              format: item => ({ vIf: !item.adHoc }),
+              action: (item) => {
+                this.changeStatus(STATUS_POSTED,item.id)
+              },
+              format: item => (
+                  {
+                    vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc,
+                    label: item.statusId != '2' ? this.$tr('isite.cms.label.post') : 'Repost'
+
+                  }),
             },
           ],
           relation: {
@@ -215,6 +226,7 @@ export default {
         formLeft: {}
       }
     },
+
     getCustomerName() {
       return (item) => {
         let customerName = item;
@@ -229,6 +241,27 @@ export default {
       return this.$store.state.qcrudComponent.component[this.crudId] || {}
     }
   },
+  methods:{
+    changeStatus(status, itemId){
+
+      const route = 'apiRoutes.qramp.workOrderChangeStatus';
+      const payload = {
+          id: itemId,
+          statusId: status
+      }
+      this.$emit('loading', true)
+      const request = this.$crud.create(route, payload);
+      request.then(res => {
+        this.$root.$emit('crud.data.refresh')
+        this.$emit('loading', false)
+      })
+          .catch(err => {
+            this.$emit('loading', false)
+            this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
+
+          })
+    },
+  }
 }
 </script>
 <style lang="stylus">
