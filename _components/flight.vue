@@ -813,8 +813,8 @@ export default {
                   label: _this.$tr('isite.cms.label.yes'),
                   color: 'primary',
                   handler: () => {
-                    if(name.includes('Outbound')) {
-                      _this.form.outboundCustomFlightNumber= true
+                    if(name.includes('outboundFlightNumber')) {
+                      _this.form.outboundCustomFlightNumber = true
                       _this.newOutbound = false
                     } else {
                       _this.form.inboundCustomFlightNumber= true

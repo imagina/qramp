@@ -121,6 +121,7 @@ export default {
       STEP_CREW,
       STEP_REMARKS,
       STEP_SIGNATURE,
+      disabled: false,
     }
   },
   inject: ['disabledReadonly'],
@@ -215,9 +216,12 @@ export default {
         this.$emit('loading', false);
         return;
       }
+      if(this.disabled) return;
+
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
         :this.$crud.create(route, formatData);
       request.then(res => {
+         this.disabled = true;
         this.$emit('loading', true)
         this.clean()
         this.$emit('close-modal', false)
@@ -225,8 +229,10 @@ export default {
           : `${this.$tr('isite.cms.message.recordCreated')}`;
         this.$alert.info({message})
          this.$emit('loading', false)
+         this.disabled = false;
       })
       .catch(err => {
+         this.disabled = false;
          this.$emit('loading', false)
         this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
         console.log('SEND INFO ERROR:', err)
