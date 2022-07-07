@@ -165,7 +165,7 @@ export default {
       this.statusId = STATUS_DRAFT
       this.needToBePosted = false
       if(!updateData.data) return;
-      console.log(updateData)
+
       this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
       this.needToBePosted = updateData.data['needToBePosted'] || false; 
       this.flight.operationTypeId = updateData.data['operationTypeId'] ? updateData.data['operationTypeId'].toString() : ''
