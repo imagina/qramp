@@ -217,11 +217,10 @@ export default {
         return;
       }
       if(this.disabled) return;
-
+      this.disabled = true;
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
         :this.$crud.create(route, formatData);
       request.then(res => {
-         this.disabled = true;
         this.$emit('loading', true)
         this.clean()
         this.$emit('close-modal', false)
