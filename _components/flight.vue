@@ -26,6 +26,7 @@
               v-model="selectCustomers"
               @input="setCustomerForm"
               @filter="setCustomerName"
+              ref="customerId"
             >
               <div slot="before-options">
                 <div class="q-py-md q-px-md" @click="addCustumers">
@@ -150,6 +151,8 @@ export default {
   mixins:[responsive],
   mounted() {
      this.$nextTick(function () {
+      document.querySelector('.master-dialog__body')
+      .addEventListener('scroll', this.handleScroll);
       this.init()
     })
   },
@@ -975,6 +978,11 @@ export default {
 
         return resolve(customerList);
       })
+    },
+    handleScroll(event) {
+      if(this.$refs.customerId || this.$refs.customerId.length > 0){
+        this.$refs.customerId[0].tooltip = false;
+      }
     },
   },
 }
