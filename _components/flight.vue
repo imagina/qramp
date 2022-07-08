@@ -89,7 +89,6 @@
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
                 v-model="form[keyField]"
-                @input="search(field)"
                 @enter="search(field)"
               />
             </label>
@@ -115,8 +114,7 @@
                 :id="keyField"
                 :field="field"
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                v-model="form[keyField]" 
-                @input="search(field)"
+                v-model="form[keyField]"
                 @enter="search(field)"
               />
             </label>
