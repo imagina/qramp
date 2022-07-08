@@ -31,6 +31,13 @@
       <q-card-actions align="right" class="q-mr-sm">
         <q-btn
           rounded
+          label="not exist the flight"
+          class="q-ml-sm text-capitalize"
+          color="grey-6"
+          @click="$emit('validateBound')"
+        />
+        <q-btn
+          rounded
           label="cancel"
           color="grey-6"
           class="text-capitalize"
@@ -42,13 +49,6 @@
           class="q-ml-sm text-capitalize"
           color="primary"
           @click="setForm()"
-        />
-        <q-btn
-          rounded
-          label="not exist the flight"
-          class="q-ml-sm text-capitalize"
-          color="primary"
-          @click="$emit('validateBound')"
         />
       </q-card-actions>
     </q-card>
