@@ -43,6 +43,13 @@
           color="primary"
           @click="setForm()"
         />
+        <q-btn
+          rounded
+          label="not exist the flight"
+          class="q-ml-sm text-capitalize"
+          color="primary"
+          @click="$emit('validateBound')"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>

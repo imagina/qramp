@@ -1,7 +1,13 @@
 <template>
   <div id="formFlyStep">
     <q-form @submit.prevent.stop="saveInfo" ref="myForm" id="rowContainer" class="row">
-      <table-flight @cancel="dialog = $event" :dialog="dialog" :dataTable="dataTable" @flightSelect="setDataTable($event)"/>
+      <table-flight 
+        @cancel="dialog = $event" 
+        :dialog="dialog" 
+        :dataTable="dataTable" 
+        @flightSelect="setDataTable($event)"
+        @validateBound="validateBound(flightNumberField)"
+      />
       <div class="col-12 col-md-6 q-px-md">
         <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
@@ -129,6 +135,7 @@
 import responsive from '@imagina/qramp/_mixins/responsive.js'
 import tableFlight from '@imagina/qramp/_components/modal/tableFlight.vue'
 import factoryCustomerWithContracts from '@imagina/qramp/_components/factories/factoryCustomerWithContracts.js';
+import qRampStore from '@imagina/qramp/_store/qRampStore.js'
 export default {
   props:{
     readonly: true,
@@ -239,6 +246,9 @@ export default {
     }
   },
   computed: {
+    flightNumberField() {
+      return qRampStore().getFlightNumberField();
+    },
     selectCustomerComputed: {
       get() {
         return this.selectCustomers;
@@ -772,7 +782,7 @@ export default {
       const date = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1)
       this.form.date = this.dateFormatterFull(date)
     },
-    search({type, name}, criteria = null){
+    search({type, name}, criteria = null) {
       if(type != 'search') return;
       if (this.timeoutID) {
         clearTimeout(this.timeoutID)
@@ -804,7 +814,7 @@ export default {
             _this.loadingState = false
             _this.setTable(response.data)
            _this.dialog = true
-            
+            qRampStore().setFlightNumberField(name);
           } else if (response.status == 204) {
             _this.$alert.warning({
               mode:'modal',
@@ -816,13 +826,7 @@ export default {
                   label: _this.$tr('isite.cms.label.yes'),
                   color: 'primary',
                   handler: () => {
-                    if(name.includes('outboundFlightNumber')) {
-                      _this.form.outboundCustomFlightNumber = true
-                      _this.newOutbound = false
-                    } else {
-                      _this.form.inboundCustomFlightNumber= true
-                      _this.newInbound = false
-                    }
+                    _this.validateBound(name);
                   }
                 },
               ]
@@ -832,6 +836,17 @@ export default {
           console.log('error', error)
         })
       },1500) 
+    },
+    validateBound(name) {
+      if(!name) return;
+       if(name.includes('outboundFlightNumber')) {
+          this.form.outboundCustomFlightNumber = true
+          this.newOutbound = false
+       } else {
+          this.form.inboundCustomFlightNumber= true
+          this.newInbound = false
+      }
+      this.dialog = false;
     },
     setForm(data) {
       this.refresh = 0
@@ -852,7 +867,7 @@ export default {
       this.setForm(this.mainData.find((item,index) => {
         return index === select.index 
       }))
-      this.name = this.name == 'inboundFlightNumber' ?  'outboundFlightNumber' : 'inboundFlightNumber'
+      this.name = this.name == 'inboundFlightNumber' ?  'outboundFlightNumber' : 'inboundFlightNumber';
       if(!this.inOutBound && this.openAlert){
         this.setForm(this.mainData.find((item,index) => {
           return index === select.index 

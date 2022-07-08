@@ -8,6 +8,7 @@ import {
 const state = reactive({
     statusId: STATUS_DRAFT,
     needToBePosted: false,
+    flightNumberField: null,
 });
 
 export default function qRampStore() {
@@ -28,9 +29,17 @@ export default function qRampStore() {
         }
         return false;
     }
+    function setFlightNumberField(value) {
+        state.flightNumberField = value;
+    }
+    function getFlightNumberField() {
+        return state.flightNumberField;
+    }
     return {
         disabledReadonly,
         setStatusId,
         setNeedToBePosted,
+        setFlightNumberField,
+        getFlightNumberField,
     }
 }
