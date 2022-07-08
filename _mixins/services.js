@@ -151,6 +151,7 @@ export default {
           hint:'Format: MM/DD/YYYY HH:mm',
           mask:'MM/DD/YYYY HH:mm',
           'place-holder': 'MM/DD/YYYY HH:mm',
+          format24h: true,
         }
       } else {
         return {

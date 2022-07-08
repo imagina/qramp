@@ -435,7 +435,8 @@ export default {
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.date')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
+              format24h: true,
             },
             label: this.$tr('ifly.cms.form.date'),
           },
@@ -555,7 +556,8 @@ export default {
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
+              format24h: true
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
@@ -575,7 +577,8 @@ export default {
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
+              format24h: true
             },
             label: this.$tr('ifly.cms.form.blockIn'),
           },
@@ -655,7 +658,8 @@ export default {
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
+              format24h: true
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
@@ -675,7 +679,8 @@ export default {
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
+              format24h: true
             },
             label: this.$tr('ifly.cms.form.blockOut'),
           },
