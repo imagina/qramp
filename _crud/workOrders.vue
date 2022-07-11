@@ -129,7 +129,7 @@ export default {
             }
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType'
+            include: 'customer,workOrderStatus,operationType,station'
           },
           actions: [
             {
@@ -151,7 +151,10 @@ export default {
               name: 'submit',
               icon: 'fas fa-check',
               label: this.$tr('isite.cms.label.submit'),
-              format: item => ({ vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![2,3].includes(item.statusId) }),
+              format: item => ({
+              //must have the submit permission and the work order can't be submited or posted
+                vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED,STATUS_SUBMITTED].includes(item.statusId)
+              }),
               action: (item) => {
                 this.changeStatus(STATUS_SUBMITTED,item.id)
               },
@@ -166,8 +169,21 @@ export default {
               format: item => (
                   {
                     vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc,
-                    label: item.statusId != '2' ? this.$tr('isite.cms.label.post') : 'Repost'
+                    label: item.statusId != STATUS_POSTED ? this.$tr('isite.cms.label.post') : 'Repost'
 
+                  }),
+            },
+            {
+              name: 'repost',
+              icon: 'fas fa-paper-plane',
+              label: 'Repost',
+              action: (item) => {
+                this.changeStatus(STATUS_POSTED,item.id)
+              },
+              format: item => (
+                  {
+                    //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
+                    vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                   }),
             },
           ],

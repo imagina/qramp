@@ -26,12 +26,12 @@
             ref="flight" 
             @isError="error = $event" 
             v-if="step.step == STEP_FLIGTH" 
-            :flightData="step.form" 
+            :flightData="step.form"
             :readonly="readonly"
           />
           <i-cargo 
             ref="cargo" 
-            v-if="step.step == STEP_CARGO" 
+            v-if="step.step == STEP_CARGO"
             :cargoData="step.form" 
             :readonly="readonly"
           />
