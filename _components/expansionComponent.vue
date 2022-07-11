@@ -26,16 +26,14 @@
     </div> 
     <q-list v-for="(item, index) in data" :key="index" v-else>
         <div class="q-py-sm row">
-          <div class="row q-py-md" style="min-width: 100px;">
-            <div class="q-py-sm">
-              <q-item-section avatar class="q-pr-none " style="min-width: 45px;">
+          <div class="row q-py-md">
+            <div class="q-py-sm" style="width: 220px; display: flex;">
+              <div class="q-px-sm">
                 <q-avatar size="32px" font-size="25px" :icon="item.icon" color="primary" text-color="white" />
-              </q-item-section>
-            </div>
-            <div class="q-py-md">
-              <q-item-section>
+              </div>
+              <div>
                 {{item.title}}
-              </q-item-section>
+              </div>
             </div>
           </div>
           <div class="row">
