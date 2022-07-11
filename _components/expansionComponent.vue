@@ -15,7 +15,6 @@
           <q-card class="flex card-color rounted-3 q-px-lg q-mx-md">
             <q-card-section class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center" >
-                <span v-if="field.props.label" :style="`${field.props.type == 'select' ? 'margin-bottom:20px': ''}`" class="q-pl-lg">{{field.props.label}}</span>
                 <dynamic-field class="q-ml-sm marginzero" v-model="data[index]['formField'][keyfield]['value']" :field="field"></dynamic-field>
               </label>
             </q-card-section>
@@ -39,7 +38,6 @@
           <div class="row">
             <div class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <div class="flex no-wrap items-center" >
-                <span v-if="field.props.label" :style="`${field.props.type == 'select' ? 'margin-bottom:20px': ''}`" class="q-pl-lg">{{field.props.label}}</span>
                 <dynamic-field class="q-ml-sm marginzero" v-model="data[index]['formField'][keyfield]['value']" :field="field"></dynamic-field>
               </div>
             </div>
