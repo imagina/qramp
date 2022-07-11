@@ -1,5 +1,5 @@
 <template>
-  <div id="expansion-container"  style="max-width: 100%">
+  <div id="expansion-container" style="max-width: 100%">
     <div v-if="!isDesktop">
         <q-list v-for="(item, index) in data" :key="index">
         <q-expansion-item class="q-py-sm">
@@ -12,7 +12,7 @@
               <span class="spanCaption text-caption">{{showValue(item.formField.quantity)}}</span>
             </q-item-section>
           </template>
-          <q-card class="flex card-color rounted-3 q-px-lg q-mx-md">
+          <q-card class="flex card-color rounted-3 q-px-lg q-card justify-center">
             <q-card-section class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center" >
                 <dynamic-field class="q-ml-sm marginzero" v-model="data[index]['formField'][keyfield]['value']" :field="field"></dynamic-field>

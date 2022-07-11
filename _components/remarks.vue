@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row q-px-xs">
-      <dynamic-field :class="`col-12 col-md-6 ${readonly ? 'q-px-md':'q-px-sm'}`" v-for="(field, keyField) in formFields" :key="keyField" :field="field"
+      <dynamic-field :class="`col-12 col-md-6 q-pb-md ${readonly ? 'q-px-md':'q-px-sm'}`" v-for="(field, keyField) in formFields" :key="keyField" :field="field"
         v-model="form[field.name || keyField]"/>
     </div>
   </div>

@@ -9,8 +9,17 @@
                 v-model="form[field.name || keyField]" @fullscreenAction="isFull ? cancelFullScreen('sig1') : launchFullScreen('sig1')"/>
           </div>
           <div class="row">
-              <dynamic-field v-if="field.type !== 'signature'" class="col-6 q-mt-sm q-pa-sm" v-for="(field, keyField) in formField.customer" :key="keyField" :field="field"
-                v-model="form[field.name || keyField]" />
+              <dynamic-field 
+                v-if="field.type !== 'signature'" 
+                class="q-mt-sm q-pa-sm"
+                :class="{
+                  'col-12': !isDesktop,
+                  'col-6': isDesktop
+                }"
+                v-for="(field, keyField) in formField.customer" 
+                :key="keyField" :field="field"
+                v-model="form[field.name || keyField]" 
+              />
           </div>
         </div>
         <div class="col-12 col-md-6">
@@ -19,8 +28,17 @@
                 v-model="form[field.name || keyField]" @fullscreenAction="isFull ? cancelFullScreen('sig2') : launchFullScreen('sig2')"/>
           </div>
           <div class="row">
-              <dynamic-field v-if="field.type !== 'signature'" class="col-6 q-mt-sm q-pa-sm" v-for="(field, keyField) in formField.representative" :key="keyField" :field="field"
-                v-model="form[field.name || keyField]" />
+              <dynamic-field 
+                v-if="field.type !== 'signature'" 
+                class="q-mt-sm q-pa-sm"
+                :class="{
+                  'col-12': !isDesktop,
+                  'col-6': isDesktop
+                }" 
+                v-for="(field, keyField) in formField.representative" 
+                :key="keyField" :field="field"
+                v-model="form[field.name || keyField]" 
+              />
           </div>
         </div>
       </div>  
@@ -51,6 +69,9 @@ export default {
     })
   },
   computed: {
+    isDesktop() {
+      return window.innerWidth >= '900';
+    },
     formField(){
       return{
         customer:{
