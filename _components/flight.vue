@@ -745,7 +745,8 @@ export default {
           id: updateForm.customerId,
           value: updateForm.customerName,
           label:  updateForm.customerName,
-          contractId: updateForm.contractId
+          contractId: updateForm.contractId,
+          contractName: updateForm.contractName,
         }
         this.setCustomerForm();
         this.form.date = updateForm.date
