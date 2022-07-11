@@ -28,12 +28,11 @@
           v-if="update"
           flat
           class="bg-white text-capitalize" 
-          :rounded="!responsive"
-          :round="responsive"
+          :rounded="true"
           @click="$emit('send-info')"
           :disable="disabledReadonly"
         >
-          <span class="text-primary q-mr-sm" v-if="!responsive">Send</span>
+          <span class="text-primary q-mr-sm">Send</span>
           <q-icon name="send" color="primary" />
         </q-btn>
       </div>
