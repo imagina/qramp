@@ -248,12 +248,15 @@ export default {
       width 50%
       left 73%
       top 11%
+    .q-stepper--horizontal .q-stepper__step-inner
+      padding: 10px;
     .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot
       transform: translateX(6px)
     .q-stepper__header--contracted .q-stepper__tab:last-child .q-stepper__dot
       transform: translateX(-6px)
     .q-stepper--horizontal .q-stepper__line 
       padding 17px
+    
       
       span
         position absolute

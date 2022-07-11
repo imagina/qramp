@@ -13,7 +13,8 @@ export default function getListCustomerWithContracts(data) {
             id: contract.customerId,
             label: contract.customerName,
             contractId: contract.id,
-            value: contract.customerName
+            value: contract.customerName,
+            contractName: contract.contractName
         }) 
     }); 
     return customers;

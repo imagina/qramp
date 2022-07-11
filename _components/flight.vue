@@ -8,7 +8,7 @@
         @flightSelect="setDataTable($event)"
         @validateBound="validateBound(flightNumberField)"
       />
-      <div class="col-12 col-md-6 q-px-md">
+      <div class="col-12 col-md-6">
         <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
@@ -503,6 +503,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              hint:'Enter the fight number and press enter or press the search icon',
               loading: this.loadingState,
               readonly: this.readonly || this.disabledReadonly || this.loadingState,
               outlined: !this.readonly,
@@ -605,6 +606,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
+              hint:'Enter the fight number and press enter or press the search icon',
               loading: this.loadingState,
               readonly: this.readonly || this.disabledReadonly || this.loadingState,
               outlined: !this.readonly,
@@ -918,7 +920,8 @@ export default {
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
-      const message = this.form.contractId ? this.$tr('ifly.cms.message.selectedCustomerWithContract') 
+      const message = this.form.contractId 
+        ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}: ${this.selectCustomers.contractName}` 
         : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
       this.bannerMessage =  selectCustomers ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
