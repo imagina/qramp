@@ -65,7 +65,7 @@ export default {
               name: 'statusName',
               label: this.$tr('isite.cms.form.status'),
               field: 'workOrderStatus',
-              format: val => val ? val.statusName : '-',
+              format: (val,item) => val ? val.statusName+(item.needToBePosted ? "(Posting)" : "") : '-',
               align: 'left'
             },
             {
@@ -168,8 +168,8 @@ export default {
               },
               format: item => (
                   {
-                    vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc,
-                    label: item.statusId != STATUS_POSTED ? this.$tr('isite.cms.label.post') : 'Repost'
+                    vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted,
+                    label:  this.$tr('isite.cms.label.post')
 
                   }),
             },
@@ -186,6 +186,26 @@ export default {
                     vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                   }),
             },
+          ],
+          bulkActions:[
+            {
+              apiRoute: "/ramp/v1/work-orders/bulk-post",
+              permission: "ramp.work-orders.bulk-post",
+              criteria: "id",
+              props:{
+                icon: "fas fa-paper-plane",
+                label: "Post"
+              }
+            },
+            {
+              apiRoute: "/ramp/v1/work-orders/bulk-submit",
+              permission: "ramp.work-orders.bulk-submit",
+              criteria: "id",
+              props:{
+                icon: "fas fa-check",
+                label: "Submit"
+              }
+            }
           ],
           relation: {
             apiRoute: 'apiRoutes.qramp.workOrderTransactions',
