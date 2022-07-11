@@ -188,7 +188,7 @@ export default {
       const customCustomerName =  updateData.data.customCustomerName ? updateData.data.customCustomerName : null;
       this.flight.customerName = customerName || customCustomerName;
       this.flight.contractId = updateData.data.contractId ? updateData.data.contractId : null;
-      this.flight.contractName = updateData.data.contractName ? updateData.data.contractName : null;
+      this.flight.contractName = updateData.data.contract ? updateData.data.contract.contractName : null;
       this.cargo.inboundCargoTotalUldsUnloaded = updateData.data['inboundCargoTotalUldsUnloaded'] ? updateData.data['inboundCargoTotalUldsUnloaded'].toString() : ''
       this.cargo.inboundCargoBulkUnloaded = updateData.data['inboundCargoBulkUnloaded'] ? updateData.data['inboundCargoBulkUnloaded'].toString() : ''
       this.cargo.outboundCargoTotalUldsLoaded = updateData.data['outboundCargoTotalUldsLoaded'] ? updateData.data['outboundCargoTotalUldsLoaded'].toString() : ''

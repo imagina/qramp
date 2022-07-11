@@ -129,7 +129,7 @@ export default {
             }
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType,station'
+            include: 'customer,workOrderStatus,operationType,station,contract'
           },
           actions: [
             {
