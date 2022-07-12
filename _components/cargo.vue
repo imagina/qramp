@@ -145,6 +145,7 @@ export default {
             value: delay.hours,
             type: 'inputStandard',
             props: {
+              hint:'Enter the Time in minutes',
               mask:'###################',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
