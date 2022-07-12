@@ -921,6 +921,7 @@ export default {
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
+      qRampStore().setContractId(this.form.contractId);
       const message = this.form.contractId 
         ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}: ${this.selectCustomers.contractName}` 
         : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');

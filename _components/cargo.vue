@@ -10,7 +10,13 @@
           <div class="q-pa-md">
             <template v-for="(field, keyField) in formFields.inbound" >
               <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
-                <p class="text-primary text-right q-mb-none span q-mr-sm col-5">{{field.label}}<span v-if="readonly">:</span></p>
+                <p 
+                  class="text-primary text-right q-mb-none span q-mr-sm col-5"
+                  v-if="field.props.vIf"
+                >
+                  <span>{{field.label}}</span>
+                  <span v-if="readonly">:</span>
+                </p>
                 <dynamic-field
                   class="col-7"
                   :field="field"
@@ -30,7 +36,13 @@
           <div class="q-pa-md">
             <template v-for="(field, keyField) in formFields.outbound" >
               <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
-                <p class="text-primary text-right q-mb-none span q-mr-sm col-5">{{field.label}}<span v-if="readonly">:</span></p>
+                <p 
+                  class="text-primary text-right q-mb-none span q-mr-sm col-5"
+                  v-if="field.props.vIf"
+                >
+                  {{field.label}}
+                  <span v-if="readonly">:</span>
+                </p>
                 <dynamic-field
                   class="col-7"
                   :field="field"
@@ -78,6 +90,8 @@
 
 <script>
 import responsive from '@imagina/qramp/_mixins/responsive.js'
+import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+
 export default {
   props:{
     readonly: true,
@@ -105,6 +119,10 @@ export default {
     })
   },
   computed:{
+    showKilosFiels() {
+      const contractsWithKilosFiels = this.$store.getters['qsiteApp/getSettingValueByName']('setup::contractsWithKilosFiels');
+      return contractsWithKilosFiels.some((item) => item === qRampStore().getContractId());
+    },
     delayFields(){
       const obj = {}
       this.delayList.forEach((delay,index) => {
@@ -148,6 +166,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              vIf: true,
               mask:'###################',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
@@ -159,6 +178,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              vIf: true,
               mask:'###################',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
@@ -170,6 +190,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              vIf: this.showKilosFiels,
               mask:'###################',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
@@ -183,6 +204,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              vIf: true,
               mask:'###################',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
@@ -194,6 +216,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              vIf: true,
               mask:'###################',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
@@ -205,6 +228,7 @@ export default {
             value: '',
             type: 'inputStandard',
             props: {
+              vIf: this.showKilosFiels,
               mask:'###################',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
