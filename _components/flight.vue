@@ -300,7 +300,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard': 'select',
             help: {
-                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium ad amet aspernatur atque, error harum ipsa magni odit recusandae, repellat totam vitae? Impedit inventore necessitatibus reiciendis soluta! Deserunt, harum, sunt.'
+                description: 'You can add a new customer to the list if it\'s not available. Type the Customer Name and click on "Create new customer". The Work Order will be created as Ad-Hoc.'
             },
             props: {
               rules: [
