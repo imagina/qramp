@@ -1,6 +1,6 @@
 export default {
   workOrders: {
-    //permission: 'ifly.aircraftType.manage',
+    permission: 'ramp.work-orders.manage',
     activated: true,
     authenticated: true,
     path: '/ramp/work-orders/index',
