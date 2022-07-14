@@ -31,7 +31,7 @@
       <q-card-actions align="right" class="q-mr-sm">
         <q-btn
           rounded
-          label="Add mannually"
+          label="Add manually"
           class="q-ml-sm text-capitalize"
           color="grey-6"
           @click="$emit('validateBound')"
