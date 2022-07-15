@@ -204,6 +204,15 @@ export default {
                 icon: "fas fa-check",
                 label: "Submit"
               }
+            },
+            {
+              apiRoute: "/ramp/v1/work-orders/bulk-export-pdf",
+              permission: "ramp.work-orders.bulk-export-pdf",
+              criteria: "id",
+              props:{
+                icon: "fas fa-download",
+                label: "Print Bulk(PDF)"
+              }
             }
           ],
           relation: {
