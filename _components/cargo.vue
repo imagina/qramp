@@ -119,6 +119,14 @@ export default {
     })
   },
   computed:{
+    formComputed: {
+      get() {
+        return this.form;
+      },
+      set(value) {
+        this.form = value;
+      }
+    },
     showKilosFiels() {
       const contractsWithKilosFiels = this.$store.getters['qsiteApp/getSettingValueByName']('setup::contractsWithKilosFiels');
       return contractsWithKilosFiels.some((item) => item === qRampStore().getContractId());
@@ -244,12 +252,14 @@ export default {
   methods: {
     init() {
       if(Object.keys(this.cargoData).length > 0) {
-        this.form.inboundCargoTotalUldsUnloaded = this.cargoData.inboundCargoTotalUldsUnloaded
-        this.form.inboundCargoBulkUnloaded = this.cargoData.inboundCargoBulkUnloaded
-        this.form.outboundCargoTotalUldsLoaded = this.cargoData.outboundCargoTotalUldsLoaded
-        this.form.outboundCargoBulkLoaded = this.cargoData.outboundCargoBulkLoaded
-        this.form.cargoTotalKilosUnloaded = this.cargoData.cargoTotalKilosUnloaded
-        this.form.cargoTotalKilosLoaded = this.cargoData.cargoTotalKilosLoaded
+        const data = {};
+        data.inboundCargoTotalUldsUnloaded = this.cargoData.inboundCargoTotalUldsUnloaded
+        data.inboundCargoBulkUnloaded = this.cargoData.inboundCargoBulkUnloaded
+        data.outboundCargoTotalUldsLoaded = this.cargoData.outboundCargoTotalUldsLoaded
+        data.outboundCargoBulkLoaded = this.cargoData.outboundCargoBulkLoaded
+        data.cargoTotalKilosUnloaded = this.cargoData.cargoTotalKilosUnloaded
+        data.cargoTotalKilosLoaded = this.cargoData.cargoTotalKilosLoaded
+        this.formComputed = data;
         this.delay = this.cargoData.delayList.length > 0
         if(this.cargoData.delayList.length > 0) {
           this.delayList = this.cargoData.delayList

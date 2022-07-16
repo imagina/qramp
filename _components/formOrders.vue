@@ -157,7 +157,6 @@ export default {
       qRampStore().setStatusId(this.statusId);
       qRampStore().setNeedToBePosted(this.needToBePosted);
       if(!updateData.data) return;
-      console.log(updateData.data);
       this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
       this.needToBePosted = updateData.data['needToBePosted'] || false;
       qRampStore().setStatusId(this.statusId);
@@ -193,6 +192,8 @@ export default {
       this.cargo.inboundCargoBulkUnloaded = updateData.data['inboundCargoBulkUnloaded'] ? updateData.data['inboundCargoBulkUnloaded'].toString() : ''
       this.cargo.outboundCargoTotalUldsLoaded = updateData.data['outboundCargoTotalUldsLoaded'] ? updateData.data['outboundCargoTotalUldsLoaded'].toString() : ''
       this.cargo.outboundCargoBulkLoaded = updateData.data['outboundCargoBulkLoaded'] ? updateData.data['outboundCargoBulkLoaded'].toString() : ''
+      this.cargo.cargoTotalKilosLoaded = updateData.data['cargoTotalKilosLoaded'] ? updateData.data['cargoTotalKilosLoaded'].toString() : ''
+      this.cargo.cargoTotalKilosUnloaded = updateData.data['cargoTotalKilosUnloaded'] ? updateData.data['cargoTotalKilosUnloaded'].toString() : ''
       this.cargo.delayList = updateData.data['delay']
 
       this.services = updateData.data['workOrderItems']
