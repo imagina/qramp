@@ -157,6 +157,10 @@ export default {
       this.signature = {}
       this.statusId = STATUS_DRAFT
       this.needToBePosted = false
+      this.services = []
+      this.equipments = []
+      this.crew = []
+      qRampStore().setWorkOrderItems([]);
       qRampStore().setStatusId(this.statusId);
       qRampStore().setNeedToBePosted(this.needToBePosted);
       if(!updateData.data) return;
