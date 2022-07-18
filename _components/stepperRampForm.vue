@@ -91,6 +91,8 @@ import {
   STEP_REMARKS,
   STEP_SIGNATURE
 }  from '@imagina/qramp/_components/model/constants.js'
+import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+
 export default {
   name:'stepperRampForm',
   components:{
@@ -174,6 +176,7 @@ export default {
       return obj
     },
     sendInfo() {
+      qRampStore().showLoading();
       const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
       const formatData = {
         ...data.form,
@@ -229,8 +232,10 @@ export default {
         this.$alert.info({message})
          this.$emit('loading', false)
          this.disabled = false;
+         qRampStore().hideLoading();
       })
       .catch(err => {
+        qRampStore().hideLoading();
          this.disabled = false;
          this.$emit('loading', false)
         this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})

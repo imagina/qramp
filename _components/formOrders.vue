@@ -4,7 +4,7 @@
     v-model="show" 
     v-bind="modalProps" 
     :persistent="true"
-    :loading="loading" 
+    :loading="loading || loadingComputed" 
     @hide="clear" 
     :actions="actions" 
     :width="'90vw'" 
@@ -110,6 +110,9 @@ export default {
     },
     nextLabel(){
       return this.sp === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
+    },
+    loadingComputed() {
+      return qRampStore().getLoading();
     },
     actions(){
       return[
