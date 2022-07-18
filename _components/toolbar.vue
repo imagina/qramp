@@ -1,6 +1,6 @@
 <template>
   <div class="q-mb-md">
-    <div class="bg-primary text-white q-px-md q-py-sm" :style="update ? '' : 'padding: 25px'">
+    <div class="bg-primary text-white q-px-md q-py-sm" style="padding: 25px">
       <div v-if="!edit" class="flex justify-end">
         <q-space />
         <q-btn 
@@ -27,7 +27,7 @@
         <q-btn 
           v-if="update"
           flat
-          class="bg-white text-capitalize" 
+          class="bg-white text-capitalize hidden" 
           :rounded="true"
           @click="$emit('send-info')"
           :disable="disabledReadonly"
