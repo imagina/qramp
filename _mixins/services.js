@@ -80,7 +80,7 @@ export default {
       })
     },
     formatData(data, id) {
-      const productData = id == 1 ? this.servicesData : id == 2 ? this.equipmentData : this.crewData
+      const productData = qRampStore().getWorkOrderItems();
       if(productData.length > 0) {
         return data.map(product => {
           productData.map(sw => {

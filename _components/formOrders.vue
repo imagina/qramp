@@ -199,7 +199,7 @@ export default {
       this.services = updateData.data['workOrderItems']
       this.equipments = updateData.data['workOrderItems']
       this.crew = updateData.data['workOrderItems']
-
+      qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
       this.remark.remark = updateData.data['remark']
       this.remark.safetyMessage = updateData.data['safetyMessage']
 

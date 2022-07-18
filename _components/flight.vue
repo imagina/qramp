@@ -910,7 +910,7 @@ export default {
         
     }, 
     validateSpecialCharacters(val) {
-      if(/[^a-zA-Z0-9]/.test(val)) {
+      if(/[^a-zA-Z0-9-]/.test(val)) {
         return this.$tr('isite.cms.message.specialCharactersAreNotAllowed');
       }
       return !!val || this.$tr('isite.cms.message.fieldRequired');

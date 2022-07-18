@@ -10,6 +10,7 @@ const state = reactive({
     needToBePosted: false,
     flightNumberField: null,
     contractId: 0,
+    workOrderItems: [],
 });
 
 export default function qRampStore() {
@@ -42,6 +43,12 @@ export default function qRampStore() {
     function getContractId() {
         return state.contractId;
     }
+    function setWorkOrderItems(data) {
+        state.workOrderItems = data;
+    }
+    function getWorkOrderItems() {
+        return state.workOrderItems;
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -50,5 +57,7 @@ export default function qRampStore() {
         getFlightNumberField,
         setContractId,
         getContractId,
+        setWorkOrderItems,
+        getWorkOrderItems,
     }
 }
