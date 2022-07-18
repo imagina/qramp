@@ -9,7 +9,7 @@
         @validateBound="validateBound(flightNumberField)"
       />
       <div class="col-12 col-md-6">
-        <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6 q-px-md" :style="`${readonly ? 'height: 50px' : ''}`">
+        <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6" :style="`${readonly ? 'height: 50px' : ''}`">
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
