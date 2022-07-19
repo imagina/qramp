@@ -270,12 +270,15 @@ export default {
       return false
     },
     isOutbound() {
+      this.resetBound();
       if(this.form.operationTypeId){
+        
         return this.form.operationTypeId == 4 || this.form.operationTypeId != 3
       }
       return false
     },
     isInbound() {
+      this.resetBound();
       if(this.form.operationTypeId){
         return this.form.operationTypeId == 3 || this.form.operationTypeId != 4
       }
@@ -845,13 +848,10 @@ export default {
     },
     validateBound(name) {
       if(!name) return;
-       if(name.includes('outboundFlightNumber')) {
-          this.form.outboundCustomFlightNumber = true
-          this.newOutbound = false
-       } else {
-          this.form.inboundCustomFlightNumber= true
-          this.newInbound = false
-      }
+      this.form.outboundCustomFlightNumber = true
+      this.newOutbound = false
+      this.form.inboundCustomFlightNumber= true
+      this.newInbound = false
       this.dialog = false;
     },
     setForm(data) {
@@ -988,6 +988,12 @@ export default {
       if(this.$refs.customerId || this.$refs.customerId.length > 0){
         this.$refs.customerId[0].tooltip = false;
       }
+    },
+    resetBound() {
+      this.form.outboundCustomFlightNumber = false
+      this.newOutbound = true
+      this.form.inboundCustomFlightNumber= false
+      this.newInbound = true
     },
   },
 }
