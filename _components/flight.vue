@@ -55,7 +55,8 @@
               :field="field"
               :class="`${readonly ? 'col-7': ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
-              v-model="form[keyField]" 
+              v-model="form[keyField]"
+              @input="resetField()"
             />
           </label>
           <hr v-if="readonly" class="label-container"/>
@@ -71,7 +72,8 @@
             :field="field"
             :class="`${readonly ? 'col-7': ''}`"
             :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
-            v-model="form[keyField]" 
+            v-model="form[keyField]"
+            @input="resetField()"
           />
         </label>
         <hr v-if="readonly" class="label-container"/>
@@ -249,6 +251,9 @@ export default {
     }
   },
   computed: {
+    flightBoundFormStatus() {
+      return qRampStore().getFlightBoundFormStatus();
+    },
     flightNumberField() {
       return qRampStore().getFlightNumberField();
     },
@@ -270,15 +275,12 @@ export default {
       return false
     },
     isOutbound() {
-      this.resetBound();
       if(this.form.operationTypeId){
-        
         return this.form.operationTypeId == 4 || this.form.operationTypeId != 3
       }
       return false
     },
     isInbound() {
-      this.resetBound();
       if(this.form.operationTypeId){
         return this.form.operationTypeId == 3 || this.form.operationTypeId != 4
       }
@@ -526,7 +528,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newInbound || this.disabledReadonly,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.origin')}`,
@@ -548,7 +550,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newInbound || this.disabledReadonly,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundTailNumber,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
@@ -568,7 +570,7 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.newInbound || this.disabledReadonly,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundScheduled,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
@@ -629,7 +631,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newOutbound || this.disabledReadonly,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.destination')}`,
@@ -651,7 +653,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.newOutbound || this.disabledReadonly,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundTailNumber,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
@@ -671,7 +673,7 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.newOutbound || this.disabledReadonly,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundScheduledDeparture,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
@@ -849,9 +851,8 @@ export default {
     validateBound(name) {
       if(!name) return;
       this.form.outboundCustomFlightNumber = true
-      this.newOutbound = false
+      qRampStore().showFielFlightBoundFormStatus();
       this.form.inboundCustomFlightNumber= true
-      this.newInbound = false
       this.dialog = false;
     },
     setForm(data) {
@@ -867,6 +868,7 @@ export default {
         this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.estimatedOff))
         this.$set(this.form, "inboundTailNumber", data.registration)
       }
+      qRampStore().validateStatusSelectedFlight(data);
     },
     setDataTable({select, dialog}) {
       this.dialog = dialog
@@ -985,15 +987,20 @@ export default {
       })
     },
     handleScroll(event) {
-      if(this.$refs.customerId || this.$refs.customerId.length > 0){
-        this.$refs.customerId[0].tooltip = false;
+      if(this.$refs.customerId || this.$refs.customerId.length > 0) {
+        if(this.$refs.customerId.some(item => item.tooltip)) {
+          this.$refs.customerId[0].tooltip = false;
+        }
       }
     },
     resetBound() {
       this.form.outboundCustomFlightNumber = false
-      this.newOutbound = true
       this.form.inboundCustomFlightNumber= false
-      this.newInbound = true
+      qRampStore().resetFlightBoundFormStatus();
+    },
+    resetField() {
+      if(!this.form.operationTypeId) return;
+      this.resetBound();
     },
   },
 }

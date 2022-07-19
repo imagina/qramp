@@ -2,7 +2,8 @@ import { reactive } from '@vue/composition-api';
 import { 
     STATUS_DRAFT,
     STATUS_POSTED,
-    STATUS_SUBMITTED 
+    STATUS_SUBMITTED,
+    modelFlightBoundFormStatus
 } from '@imagina/qramp/_components/model/constants.js'
 
 const state = reactive({
@@ -12,6 +13,7 @@ const state = reactive({
     contractId: 0,
     workOrderItems: [],
     loading: false,
+    flightBoundFormStatus: {...modelFlightBoundFormStatus},
 });
 
 export default function qRampStore() {
@@ -59,6 +61,27 @@ export default function qRampStore() {
     function showLoading() {
         state.loading = true;
     }
+    function validateStatusSelectedFlight(data) {
+        state.flightBoundFormStatus.boundOriginAirportId = !!data.destinationAirport.id;
+        state.flightBoundFormStatus.boundTailNumber = !!data.estimatedOff;
+        state.flightBoundFormStatus.boundScheduled = !!data.registration;
+        state.flightBoundFormStatus.boundScheduledDeparture = !!data.estimatedOn;
+    }
+    function resetFlightBoundFormStatus() {
+        state.flightBoundFormStatus = {...modelFlightBoundFormStatus};
+    }
+    function showFielFlightBoundFormStatus() {
+        const status = {
+            boundOriginAirportId: false,
+            boundTailNumber: false,
+            boundScheduled: false,
+            boundScheduledDeparture: false,
+        }
+        state.flightBoundFormStatus = status;
+    }
+    function getFlightBoundFormStatus() {
+        return state.flightBoundFormStatus;
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -72,5 +95,9 @@ export default function qRampStore() {
         getLoading,
         hideLoading,
         showLoading,
+        validateStatusSelectedFlight,
+        getFlightBoundFormStatus,
+        resetFlightBoundFormStatus,
+        showFielFlightBoundFormStatus,
     }
 }
