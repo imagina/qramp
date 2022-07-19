@@ -12,6 +12,9 @@ export const modelDataBound = {
     destinationAirport: {
         id: null,
     },
+    originAirport: {
+        id: null,
+    },
     estimatedOff: null,
     registration: null,
     estimatedOn: null,
@@ -21,4 +24,5 @@ export const modelFlightBoundFormStatus = {
     boundTailNumber: true,
     boundScheduled: true,
     boundScheduledDeparture: true,
+    boundDestinationAirport: true,
 };

@@ -631,7 +631,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.destination')}`,
@@ -867,6 +867,9 @@ export default {
         this.$set(this.form, "inboundOriginAirportId", data.originAirport.id)
         this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.estimatedOff))
         this.$set(this.form, "inboundTailNumber", data.registration)
+        if(this.form.outboundTailNumber) {
+          this.$set(this.form, "outboundTailNumber",  data.registration);
+        }
       }
       qRampStore().validateStatusSelectedFlight(data);
     },
