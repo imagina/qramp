@@ -62,8 +62,13 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-      <div class="col-12 col-md-6 q-px-md">
-        <div v-for="(field, keyField) in formFields.flyFormRight" class="col-12 col-md-6 q-px-md " :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`">
+      <div class="col-12 col-md-6">
+        <div 
+          v-for="(field, keyField) in formFields.flyFormRight" 
+          class="col-12 col-md-6" 
+          :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`"
+          :class="{'q-px-md': isDesktop}"
+        >
         <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
           <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
           <dynamic-field
@@ -71,7 +76,7 @@
             :id="keyField"
             :field="field"
             :class="`${readonly ? 'col-7': ''}`"
-            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:20px' : 'padding-bottom:0px'}`"
+            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:1px' : 'padding-bottom:0px'}`"
             v-model="form[keyField]"
             @input="resetField()"
           />
@@ -251,6 +256,9 @@ export default {
     }
   },
   computed: {
+    isDesktop() {
+      return window.innerWidth >= '900';
+    },
     flightBoundFormStatus() {
       return qRampStore().getFlightBoundFormStatus();
     },
