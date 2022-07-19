@@ -1000,6 +1000,7 @@ export default {
     },
     resetField() {
       if(!this.form.operationTypeId) return;
+      this.$refs.myForm.reset();
       this.resetBound();
     },
   },
