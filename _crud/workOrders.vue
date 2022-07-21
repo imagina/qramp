@@ -136,15 +136,7 @@ export default {
               icon: 'fas fa-pen',
               label: this.$tr('isite.cms.label.edit'),
               action: (item) => {
-                //this.showWorkOrder(item)
-                this.$refs.formOrders.loadform({
-                  modalProps: {
-                    title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
-                    update: true,
-                    workOrderId: item.id,
-                  },
-                  data: item,
-                })
+                this.showWorkOrder(item)
               }
             },
             {
@@ -314,12 +306,11 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract"
           }
         }).then((item) => {
-
           this.$refs.formOrders.loadform({
             modalProps: {
-              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
               update: true,
-              workOrderId: item.id,
+              workOrderId: data.id,
             },
             data: item.data,
           })
