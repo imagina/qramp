@@ -24,11 +24,12 @@ export default function qRampStore() {
         state.needToBePosted = value;
     }
     function disabledReadonly() {
-        if(state.statusId === STATUS_DRAFT && state.needToBePosted) {
+        const statusId = Number(state.statusId);
+        if(statusId === STATUS_DRAFT && state.needToBePosted) {
           return true;
         }
-        if(state.statusId === STATUS_POSTED 
-          || state.statusId === STATUS_SUBMITTED
+        if(statusId === STATUS_POSTED 
+          || statusId === STATUS_SUBMITTED
         ) {
           return true;
         }
