@@ -209,6 +209,7 @@ export default {
             }
           ],
           relation: {
+            permission: "ramp.work-orders.see-workday-transactions",
             apiRoute: 'apiRoutes.qramp.workOrderTransactions',
             requestParams: (row) => {
               return {
