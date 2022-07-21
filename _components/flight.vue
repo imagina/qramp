@@ -936,7 +936,7 @@ export default {
       this.form.contractId = selectCustomers.contractId || null;
       qRampStore().setContractId(this.form.contractId);
       const message = this.form.contractId 
-        ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}: ${this.selectCustomers.contractName}` 
+        ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}` 
         : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
       this.bannerMessage =  selectCustomers ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
