@@ -136,7 +136,15 @@ export default {
               icon: 'fas fa-pen',
               label: this.$tr('isite.cms.label.edit'),
               action: (item) => {
-                this.showWorkOrder(item)
+                //this.showWorkOrder(item)
+                this.$refs.formOrders.loadform({
+                  modalProps: {
+                    title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+                    update: true,
+                    workOrderId: item.id,
+                  },
+                  data: item,
+                })
               }
             },
             {
@@ -298,8 +306,8 @@ export default {
 
         })
     },
-    showWorkOrder(item) {
-      this.$crud.show('apiRoutes.qramp.workOrders', item.id,
+    showWorkOrder(data) {
+      this.$crud.show('apiRoutes.qramp.workOrders', data.id,
         {
           refresh: true,
           params: {
