@@ -1,9 +1,9 @@
 <template>
-  <form-orders ref="formOrders"/>
+  <form-orders ref="formOrders" />
 </template>
 <script>
 import formOrders from "@imagina/qramp/_components/formOrders.vue"
-import {STATUS_POSTED,STATUS_SUBMITTED} from "@imagina/qramp/_components/model/constants"
+import { STATUS_POSTED, STATUS_SUBMITTED } from "@imagina/qramp/_components/model/constants"
 
 export default {
   name: 'RampCrud',
@@ -64,7 +64,7 @@ export default {
               name: 'statusName',
               label: this.$tr('isite.cms.form.status'),
               field: 'workOrderStatus',
-              format: (val,item) => val ? val.statusName+(item.needToBePosted ? "(Posting)" : "") : '-',
+              format: (val, item) => val ? val.statusName + (item.needToBePosted ? "(Posting)" : "") : '-',
               align: 'left'
             },
             {
@@ -96,17 +96,17 @@ export default {
               align: "left",
               format: (val) => (val ? this.$trd(val) : "-"),
             },
-            {name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left'},
+            { name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left' },
           ],
           filters: {
-            date: {name: "createdAt", quickFilter: true},
+            date: { name: "createdAt", quickFilter: true },
             customerId: {
               value: null,
               type: 'select',
               quickFilter: true,
               loadOptions: {
                 apiRoute: 'apiRoutes.qramp.setupCustomers',
-                select: {'label': 'customerName', 'id': 'id'},
+                select: { 'label': 'customerName', 'id': 'id' },
               },
               props: {
                 label: 'Customer',
@@ -119,7 +119,7 @@ export default {
               quickFilter: true,
               loadOptions: {
                 apiRoute: 'apiRoutes.qramp.workOrderStatuses',
-                select: {'label': 'statusName', 'id': 'id'},
+                select: { 'label': 'statusName', 'id': 'id' },
               },
               props: {
                 label: 'Status',
@@ -136,14 +136,7 @@ export default {
               icon: 'fas fa-pen',
               label: this.$tr('isite.cms.label.edit'),
               action: (item) => {
-                this.$refs.formOrders.loadform({
-                  modalProps: {
-                    title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
-                    update:true,
-                    workOrderId: item.id,
-                  },
-                  data: item,
-                })
+                this.showWorkOrder(item)
               }
             },
             {
@@ -151,11 +144,11 @@ export default {
               icon: 'fas fa-check',
               label: this.$tr('isite.cms.label.submit'),
               format: item => ({
-              //must have the submit permission and the work order can't be submited or posted
-                vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED,STATUS_SUBMITTED].includes(item.statusId)
+                //must have the submit permission and the work order can't be submited or posted
+                vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
               }),
               action: (item) => {
-                this.changeStatus(STATUS_SUBMITTED,item.id)
+                this.changeStatus(STATUS_SUBMITTED, item.id)
               },
             },
             {
@@ -163,35 +156,35 @@ export default {
               icon: 'fas fa-paper-plane',
               label: this.$tr('isite.cms.label.post'),
               action: (item) => {
-                this.changeStatus(STATUS_POSTED,item.id)
+                this.changeStatus(STATUS_POSTED, item.id)
               },
               format: item => (
-                  {
-                    vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted,
-                    label:  this.$tr('isite.cms.label.post')
+                {
+                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted,
+                  label: this.$tr('isite.cms.label.post')
 
-                  }),
+                }),
             },
             {
               name: 'repost',
               icon: 'fas fa-paper-plane',
               label: 'Repost',
               action: (item) => {
-                this.changeStatus(STATUS_POSTED,item.id)
+                this.changeStatus(STATUS_POSTED, item.id)
               },
               format: item => (
-                  {
-                    //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
-                    vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
-                  }),
+                {
+                  //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
+                  vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
+                }),
             },
           ],
-          bulkActions:[
+          bulkActions: [
             {
               apiRoute: "/ramp/v1/work-orders/bulk-post",
               permission: "ramp.work-orders.bulk-post",
               criteria: "id",
-              props:{
+              props: {
                 icon: "fas fa-paper-plane",
                 label: "Post"
               }
@@ -200,7 +193,7 @@ export default {
               apiRoute: "/ramp/v1/work-orders/bulk-submit",
               permission: "ramp.work-orders.bulk-submit",
               criteria: "id",
-              props:{
+              props: {
                 icon: "fas fa-check",
                 label: "Submit"
               }
@@ -209,7 +202,7 @@ export default {
               apiRoute: "/ramp/v1/work-orders/bulk-export-pdf",
               permission: "ramp.work-orders.bulk-export-pdf",
               criteria: "id",
-              props:{
+              props: {
                 icon: "fas fa-download",
                 label: "Print Bulk(PDF)"
               }
@@ -219,7 +212,7 @@ export default {
             apiRoute: 'apiRoutes.qramp.workOrderTransactions',
             requestParams: (row) => {
               return {
-                filter: {workOrderId: row.id},
+                filter: { workOrderId: row.id },
                 include: 'product,contractLine'
               }
             },
@@ -274,7 +267,7 @@ export default {
     getCustomerName() {
       return (item) => {
         let customerName = item;
-        if(item) {
+        if (item) {
           customerName = typeof item === 'object' ? item.customerName : item;
         }
         return customerName || '-';
@@ -285,13 +278,13 @@ export default {
       return this.$store.state.qcrudComponent.component[this.crudId] || {}
     }
   },
-  methods:{
-    changeStatus(status, itemId){
+  methods: {
+    changeStatus(status, itemId) {
 
       const route = 'apiRoutes.qramp.workOrderChangeStatus';
       const payload = {
-          id: itemId,
-          statusId: status
+        id: itemId,
+        statusId: status
       }
       this.$emit('loading', true)
       const request = this.$crud.create(route, payload);
@@ -299,11 +292,32 @@ export default {
         this.$root.$emit('crud.data.refresh')
         this.$emit('loading', false)
       })
-          .catch(err => {
-            this.$emit('loading', false)
-            this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
+        .catch(err => {
+          this.$emit('loading', false)
+          this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
 
+        })
+    },
+    showWorkOrder(item) {
+      this.$crud.show('apiRoutes.qramp.workOrders', item.id,
+        {
+          refresh: true,
+          params: {
+            include: "customer,workOrderStatus,operationType,station,contract"
+          }
+        }).then((item) => {
+
+          this.$refs.formOrders.loadform({
+            modalProps: {
+              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+              update: true,
+              workOrderId: item.id,
+            },
+            data: item.data,
           })
+        }).catch((err) => {
+          console.log(err);
+        });
     },
   }
 }
