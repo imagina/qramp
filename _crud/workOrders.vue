@@ -160,7 +160,7 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted,
+                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted  && ![STATUS_POSTED].includes(item.statusId),
                   label: this.$tr('isite.cms.label.post')
 
                 }),
