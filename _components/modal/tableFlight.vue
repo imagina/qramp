@@ -7,7 +7,7 @@
     transition-hide="slide-down"
   >
     <q-card flat>
-      <q-card-section>
+      <q-card-section :class="{'cardResponsive': responsive}">
         <q-table
           :data="dataTable"
           :columns="columns"
@@ -103,6 +103,9 @@ export default {
 }
 </script>
 <style lang="stylus">
+  .cardResponsive
+    overflow-y: scroll;
+    height: 500px;
   .my-sticky-header-column-table
     tr th
       position: sticky

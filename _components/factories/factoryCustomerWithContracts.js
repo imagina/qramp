@@ -1,4 +1,4 @@
-export default function getListCustomerWithContracts(data) {
+export default function getListCustomerWithContracts(data, permisition) {
     const customerList = data[0].data || [];
     const contractsList = data[1].data || [];
     const customers = customerList.map((customer) => {
@@ -8,12 +8,14 @@ export default function getListCustomerWithContracts(data) {
             value: customer.customerName + ' (Ad Hoc)'
         }
     });
-    contractsList.forEach(contract => {
+    contractsList.forEach((contract, index) => {
+        const label = permisition ? `${contract.customerName} - ${contract.contractName}` : contract.customerName;
         customers.push({
             id: contract.customerId,
-            label: contract.customerName,
+            customerId: contract.customerId,
+            label,
             contractId: contract.id,
-            value: contract.customerName,
+            value: `${contract.customerName} - ${contract.contractName}-${index}`,
             contractName: contract.contractName
         }) 
     }); 
