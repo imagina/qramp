@@ -297,6 +297,9 @@ export default {
     readStatus(){
       return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly || this.disabledReadonly
     },
+    allowContractName() {
+      return this.$auth.hasAccess('ramp.work-orders.see-contract-name');
+    },
     formFields(){
       return{
         banner: {
@@ -938,7 +941,8 @@ export default {
       const message = this.form.contractId 
         ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}` 
         : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
-      this.bannerMessage =  selectCustomers ? message : null;
+       
+      this.bannerMessage =  selectCustomers && !this.form.contractId ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
     },
@@ -992,7 +996,7 @@ export default {
           this.$crud.index('apiRoutes.qramp.setupCustomers', custemerParams),
           this.$crud.index('apiRoutes.qramp.setupContracts', contractParams)
         ]);
-        const customerList = factoryCustomerWithContracts(customersData);
+        const customerList = factoryCustomerWithContracts(customersData, this.allowContractName);
 
         return resolve(customerList);
       })
