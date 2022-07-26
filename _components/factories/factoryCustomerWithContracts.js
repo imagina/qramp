@@ -9,13 +9,13 @@ export default function getListCustomerWithContracts(data, permisition) {
         }
     });
     contractsList.forEach((contract, index) => {
-        const label = permisition ? `${contract.customerName} - ${contract.contractName}` : contract.customerName;
+        const label = permisition ? `${contract.customerName} (${contract.contractName})` : contract.customerName;
         customers.push({
             id: contract.customerId,
             customerId: contract.customerId,
             label,
             contractId: contract.id,
-            value: `${contract.customerName} - ${contract.contractName}-${index}`,
+            value: `${contract.customerName}-${contract.contractName}-${index}`,
             contractName: contract.contractName
         }) 
     }); 

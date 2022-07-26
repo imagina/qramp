@@ -757,10 +757,11 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
+        const label = (this.allowContractName && updateForm.contractId) ? `${updateForm.customerName} (${updateForm.contractName})` : updateForm.customerName;
         this.selectCustomerComputed = {
           id: updateForm.customerId,
           value: updateForm.customerName,
-          label:  updateForm.customerName,
+          label,
           contractId: updateForm.contractId,
           contractName: updateForm.contractName,
         }
