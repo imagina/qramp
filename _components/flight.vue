@@ -357,9 +357,14 @@ export default {
           },
           stationId: {
             name:'stationId',
-            value: '',
-            type: this.readonly ? 'inputStandard':'select',
+            value: null,
+            type: 'crud',
             props: {
+              crudType: 'select',
+              crudData: import('@imagina/qsetupagione/_crud/stations'),
+              crudProps: {
+                label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.station')}`,
+              },
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
@@ -367,15 +372,10 @@ export default {
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.station')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
+              config: {options: {label: 'stationName', value: 'id'}},
             },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qramp.setupStations',
-              select: {label: 'stationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
-            }
           },
           acTypeId: {
             name:'acTypeId',
