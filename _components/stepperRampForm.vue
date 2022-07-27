@@ -73,15 +73,15 @@
   </div>
 </template>
 <script>
-import iFlight from '@imagina/qramp/_components/flight.vue'
-import iCargo from '@imagina/qramp/_components/cargo.vue'
-import iCrew from '@imagina/qramp/_components/crew.vue'
-import iEquipment from '@imagina/qramp/_components/equipment.vue'
-import iServices from '@imagina/qramp/_components/services.vue'
-import iRemarks from '@imagina/qramp/_components/remarks.vue'
-import iSignature from '@imagina/qramp/_components/signature.vue'
-import responsive from '@imagina/qramp/_mixins/responsive.js'
-import iToolbar from '@imagina/qramp/_components/toolbar.vue'
+import iFlight from '../_components/flight.vue'
+import iCargo from '../_components/cargo.vue'
+import iCrew from '../_components/crew.vue'
+import iEquipment from '../_components/equipment.vue'
+import iServices from '../_components/services.vue'
+import iRemarks from '../_components/remarks.vue'
+import iSignature from '../_components/signature.vue'
+import responsive from '../_mixins/responsive.js'
+import iToolbar from '../_components/toolbar.vue'
 import { 
   STEP_FLIGTH, 
   STEP_CARGO,
@@ -90,8 +90,8 @@ import {
   STEP_CREW,
   STEP_REMARKS,
   STEP_SIGNATURE
-}  from '@imagina/qramp/_components/model/constants.js'
-import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+}  from '../_components/model/constants.js'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   name:'stepperRampForm',

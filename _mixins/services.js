@@ -1,4 +1,4 @@
-import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   mounted() {

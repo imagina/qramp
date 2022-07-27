@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import responsive from '@imagina/qramp/_mixins/responsive.js'
-import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+import responsive from '../_mixins/responsive.js'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   props:{

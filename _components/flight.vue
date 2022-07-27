@@ -140,10 +140,10 @@
   </div>
 </template>
 <script>
-import responsive from '@imagina/qramp/_mixins/responsive.js'
-import tableFlight from '@imagina/qramp/_components/modal/tableFlight.vue'
-import factoryCustomerWithContracts from '@imagina/qramp/_components/factories/factoryCustomerWithContracts.js';
-import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+import responsive from '../_mixins/responsive.js'
+import tableFlight from '../_components/modal/tableFlight.vue'
+import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts.js';
+import qRampStore from '../_store/qRampStore.js'
 export default {
   props:{
     readonly: true,
@@ -361,7 +361,7 @@ export default {
             type: 'crud',
             props: {
               crudType: 'select',
-              crudData: import('@imagina/qsetupagione/_crud/stations'),
+              crudData: import('src/modules/qsetupagione/_crud/stations'),
               crudProps: {
                 label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.station')}`,
               },

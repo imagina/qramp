@@ -2,8 +2,8 @@
   <form-orders ref="formOrders" />
 </template>
 <script>
-import formOrders from "@imagina/qramp/_components/formOrders.vue"
-import { STATUS_POSTED, STATUS_SUBMITTED } from "@imagina/qramp/_components/model/constants"
+import formOrders from "../_components/formOrders.vue"
+import { STATUS_POSTED, STATUS_SUBMITTED } from "../_components/model/constants"
 
 export default {
   name: 'RampCrud',

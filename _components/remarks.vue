@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import responsive from '@imagina/qramp/_mixins/responsive.js'
+import responsive from '../_mixins/responsive.js'
 export default {
   props:{
     readonly: true,

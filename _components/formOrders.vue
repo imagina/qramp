@@ -22,15 +22,15 @@
 </template>
 <script>
 import { computed } from 'vue';
-import stepperRampForm from '@imagina/qramp/_components/stepperRampForm.vue'
-import responsive from '@imagina/qramp/_mixins/responsive.js'
+import stepperRampForm from '../_components/stepperRampForm.vue'
+import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js';
 import { 
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED 
-} from '@imagina/qramp/_components/model/constants.js'
-import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+} from '../_components/model/constants.js'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   name:'formOrders',

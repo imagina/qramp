@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import expansionComponent from '@imagina/qramp/_components/expansionComponent.vue'
-import searchLocal from '@imagina/qramp/_components/searchLocal'
-import responsive from '@imagina/qramp/_mixins/responsive.js'
-import services from '@imagina/qramp/_mixins/services.js'
+import expansionComponent from '../_components/expansionComponent.vue'
+import searchLocal from '../_components/searchLocal'
+import responsive from '../_mixins/responsive.js'
+import services from '../_mixins/services.js'
 export default {
   props:{
     readonly: true,

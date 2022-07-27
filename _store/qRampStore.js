@@ -4,7 +4,7 @@ import {
     STATUS_POSTED,
     STATUS_SUBMITTED,
     modelFlightBoundFormStatus
-} from '@imagina/qramp/_components/model/constants.js'
+} from '../_components/model/constants.js'
 
 const state = reactive({
     statusId: STATUS_DRAFT,
