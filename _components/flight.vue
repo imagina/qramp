@@ -143,7 +143,7 @@
 import responsive from '../_mixins/responsive.js'
 import tableFlight from '../_components/modal/tableFlight.vue'
 import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts.js';
-import qRampStore from '../_store/qRampStore.js'
+import qRampStore from '../_store/qRampStore.js';
 export default {
   props:{
     readonly: true,
@@ -608,7 +608,8 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
               clearable: true,
               color:"primary",
-              format24h: true
+              format24h: true,
+              options: this.validateDate,
             },
             label: this.$tr('ifly.cms.form.blockIn'),
           },
@@ -711,7 +712,8 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
               clearable: true,
               color:"primary",
-              format24h: true
+              format24h: true,
+              options: this.validateDateOutboundBlockOut,
             },
             label: this.$tr('ifly.cms.form.blockOut'),
           },
@@ -1018,6 +1020,13 @@ export default {
       if(!this.form.operationTypeId) return;
       this.$refs.myForm.reset();
       this.resetBound();
+    },
+    validateDate(date) {
+      return date <= this.$moment(this.form.date).format('YYYY/MM/DD');
+    },
+    validateDateOutboundBlockOut(date) {
+      return date <= this.$moment(this.form.date).format('YYYY/MM/DD') 
+      && date >= this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
     },
   },
 }
