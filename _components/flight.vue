@@ -1025,8 +1025,11 @@ export default {
       return date <= this.$moment(this.form.date).format('YYYY/MM/DD');
     },
     validateDateOutboundBlockOut(date) {
-      return date <= this.$moment(this.form.date).format('YYYY/MM/DD') 
-      && date >= this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
+      if(this.form.inboundBlockIn) {
+        return date <= this.$moment(this.form.date).format('YYYY/MM/DD') 
+        && date >= this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
+      }
+      return date <= this.$moment(this.form.date).format('YYYY/MM/DD');
     },
   },
 }
