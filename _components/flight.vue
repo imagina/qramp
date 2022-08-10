@@ -1036,33 +1036,36 @@ export default {
           ? this.$moment(this.form.inboundScheduledArrival) : this.$moment();
         const today = date.format('YYYY/MM/DD');
         const hour = date.format('H');
-        const min = date.format('mm')
+        const min = date.format('mm');
+        const validateDate = today === this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
         if (isNaN(dateTime)) {
             return dateTime <= this.$moment().format('YYYY/MM/DD') && dateTime >= today;
         }
         if(dateMin) {
-            return Number(dateMin) <= min;
+            return validateDate ? Number(dateMin) <= min : true;
         }
-        return dateTime <= hour;
+        return validateDate ? dateTime <= hour : true;
     },
     validateDateOutboundBlockOut(dateTime, dateMin = null) {
       const outboundScheduledDepartureDate = this.form.outboundScheduledDeparture 
           ? this.$moment(this.form.outboundScheduledDeparture) : this.$moment();
+      const today =  outboundScheduledDepartureDate.format('YYYY/MM/DD')  
       const hour = outboundScheduledDepartureDate.format('H');
       const min = outboundScheduledDepartureDate.format('mm');
+      const validateDate = today === this.$moment(this.form.outboundBlockOut).format('YYYY/MM/DD');
       if (isNaN(dateTime)) {    
         if(this.form.inboundBlockIn) {
           return dateTime <= this.$moment().format('YYYY/MM/DD') 
           && dateTime >= this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD') 
-          && dateTime <= outboundScheduledDepartureDate.format('YYYY/MM/DD');
+          && dateTime <= today;
         }
         return dateTime <= this.$moment().format('YYYY/MM/DD') 
-        && dateTime >= outboundScheduledDepartureDate.format('YYYY/MM/DD');
+        && dateTime >= today;
       }
       if(dateMin) {
-        return Number(dateMin) <= min;
+        return validateDate ? Number(dateMin) <= min : true;
       }
-      return dateTime <= hour;
+      return validateDate ? dateTime <= hour : true;
     },
   },
 }
