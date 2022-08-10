@@ -94,18 +94,19 @@ export default function qRampStore() {
     function getFlightBoundFormStatus() {
         return state.flightBoundFormStatus;
     }
-    function validateFutureDateTime(dateTime, dateMin = null) {
+    function validateFutureDateTime(dateTime, dateMin = null, currentDate) {
+        const current = moment(currentDate).format('YYYY/MM/DD');
         const date = moment();
         const today = date.format('YYYY/MM/DD');
         const hour = date.format('H');
-        const min = date.format('mm')
+        const min = date.format('mm');
         if (isNaN(dateTime)) {
             return dateTime <= today
         }
         if(dateMin) {
-            return Number(dateMin) <= min;
+           return today === current ? Number(dateMin) <= min : true;
         }
-        return dateTime <= hour;
+        return today === current ? dateTime <= hour: true;
     }
     function setDateInboundBlockIn(value) {
         state.dateBoundBlock.inboundBlockIn = value;

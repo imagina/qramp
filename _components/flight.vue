@@ -466,7 +466,7 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
-              options: this.validateFutureDateTime,
+              options: (date, min) => this.validateFutureDateTime(date, min, this.form.date),
             },
             label: this.$tr('ifly.cms.form.date'),
           },
@@ -589,7 +589,7 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
-              options: this.validateFutureDateTime,
+              options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundScheduledArrival),
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
@@ -694,7 +694,7 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
-              options: this.validateFutureDateTime,
+              options: (date, min) => this.validateFutureDateTime(date, min, this.form.outboundScheduledDeparture),
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
@@ -743,7 +743,7 @@ export default {
       }
     },
     validateFutureDateTime() {
-      return (dateTime, min) => qRampStore().validateFutureDateTime(dateTime, min);
+      return (dateTime, min, currentDate) => qRampStore().validateFutureDateTime(dateTime, min, currentDate);
     },
   },
   methods: {
