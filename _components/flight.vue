@@ -466,6 +466,7 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
+              options: this.validateFutureDateTime,
             },
             label: this.$tr('ifly.cms.form.date'),
           },
@@ -587,7 +588,8 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
               clearable: true,
               color:"primary",
-              format24h: true
+              format24h: true,
+              options: this.validateFutureDateTime,
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
@@ -691,7 +693,8 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
               clearable: true,
               color:"primary",
-              format24h: true
+              format24h: true,
+              options: this.validateFutureDateTime,
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
@@ -738,7 +741,10 @@ export default {
           },
         }
       }
-    }
+    },
+    validateFutureDateTime() {
+      return (dateTime, min) => qRampStore().validateFutureDateTime(dateTime, min);
+    },
   },
   methods: {
     showInputs(keyField){
@@ -792,6 +798,10 @@ export default {
         if (success) {
           // yay, models are correct
           this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
+          qRampStore().setDateInboundBlockIn(this.form.inboundBlockIn);
+          qRampStore().setDateOutboundBlockOut(this.form.outboundBlockOut);
+          qRampStore().setDateOutboundScheduledDeparture(this.form.outboundScheduledDeparture);
+          qRampStore().setDateinboundScheduledArrival(this.form.inboundScheduledArrival);
           this.$emit('isError', false)
         }
         else {
@@ -1021,15 +1031,38 @@ export default {
       this.$refs.myForm.reset();
       this.resetBound();
     },
-    validateDate(date) {
-      return date <= this.$moment(this.form.date).format('YYYY/MM/DD');
+    validateDate(dateTime, dateMin = null) {
+        const date = this.form.inboundScheduledArrival 
+          ? this.$moment(this.form.inboundScheduledArrival) : this.$moment();
+        const today = date.format('YYYY/MM/DD');
+        const hour = date.format('H');
+        const min = date.format('mm')
+        if (isNaN(dateTime)) {
+            return dateTime <= this.$moment().format('YYYY/MM/DD') && dateTime >= today;
+        }
+        if(dateMin) {
+            return Number(dateMin) <= min;
+        }
+        return dateTime <= hour;
     },
-    validateDateOutboundBlockOut(date) {
-      if(this.form.inboundBlockIn) {
-        return date <= this.$moment(this.form.date).format('YYYY/MM/DD') 
-        && date >= this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
+    validateDateOutboundBlockOut(dateTime, dateMin = null) {
+      const outboundScheduledDepartureDate = this.form.outboundScheduledDeparture 
+          ? this.$moment(this.form.outboundScheduledDeparture) : this.$moment();
+      const hour = outboundScheduledDepartureDate.format('H');
+      const min = outboundScheduledDepartureDate.format('mm');
+      if (isNaN(dateTime)) {    
+        if(this.form.inboundBlockIn) {
+          return dateTime <= this.$moment().format('YYYY/MM/DD') 
+          && dateTime >= this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD') 
+          && dateTime <= outboundScheduledDepartureDate.format('YYYY/MM/DD');
+        }
+        return dateTime <= this.$moment().format('YYYY/MM/DD') 
+        && dateTime >= outboundScheduledDepartureDate.format('YYYY/MM/DD');
       }
-      return date <= this.$moment(this.form.date).format('YYYY/MM/DD');
+      if(dateMin) {
+        return Number(dateMin) <= min;
+      }
+      return dateTime <= hour;
     },
   },
 }

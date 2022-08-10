@@ -1,10 +1,11 @@
 import { reactive } from '@vue/composition-api';
-import { 
+import {
     STATUS_DRAFT,
     STATUS_POSTED,
     STATUS_SUBMITTED,
     modelFlightBoundFormStatus
 } from '../_components/model/constants.js'
+import * as moment from 'moment';
 
 const state = reactive({
     statusId: STATUS_DRAFT,
@@ -13,7 +14,13 @@ const state = reactive({
     contractId: 0,
     workOrderItems: [],
     loading: false,
-    flightBoundFormStatus: {...modelFlightBoundFormStatus},
+    flightBoundFormStatus: { ...modelFlightBoundFormStatus },
+    dateBoundBlock: {
+        outboundBlockOut: null,
+        inboundBlockIn: null,
+        outboundScheduledDeparture: null,
+        inboundScheduledArrival: null,
+    },
 });
 
 export default function qRampStore() {
@@ -25,13 +32,13 @@ export default function qRampStore() {
     }
     function disabledReadonly() {
         const statusId = Number(state.statusId);
-        if(statusId === STATUS_DRAFT && state.needToBePosted) {
-          return true;
+        if (statusId === STATUS_DRAFT && state.needToBePosted) {
+            return true;
         }
-        if(statusId === STATUS_POSTED 
-          || statusId === STATUS_SUBMITTED
+        if (statusId === STATUS_POSTED
+            || statusId === STATUS_SUBMITTED
         ) {
-          return true;
+            return true;
         }
         return false;
     }
@@ -73,7 +80,7 @@ export default function qRampStore() {
         return data ? true : false;
     }
     function resetFlightBoundFormStatus() {
-        state.flightBoundFormStatus = {...modelFlightBoundFormStatus};
+        state.flightBoundFormStatus = { ...modelFlightBoundFormStatus };
     }
     function showFielFlightBoundFormStatus() {
         const status = {
@@ -86,6 +93,80 @@ export default function qRampStore() {
     }
     function getFlightBoundFormStatus() {
         return state.flightBoundFormStatus;
+    }
+    function validateFutureDateTime(dateTime, dateMin = null) {
+        const date = moment();
+        const today = date.format('YYYY/MM/DD');
+        const hour = date.format('H');
+        const min = date.format('mm')
+        if (isNaN(dateTime)) {
+            return dateTime <= today
+        }
+        if(dateMin) {
+            return Number(dateMin) <= min;
+        }
+        return dateTime <= hour;
+    }
+    function setDateInboundBlockIn(value) {
+        state.dateBoundBlock.inboundBlockIn = value;
+    }
+    function getDateInboundBlockIn() {
+        return state.dateBoundBlock.inboundBlockIn;
+    }
+    function setDateOutboundBlockOut(value) {
+        state.dateBoundBlock.outboundBlockOut = value;
+    }
+    function getDateOutboundBlockOut() {
+        return state.dateBoundBlock.outboundBlockOut;
+    }
+
+    function setDateOutboundScheduledDeparture(value) {
+        state.dateBoundBlock.outboundScheduledDeparture = value;
+    }
+    function getDateOutboundScheduledDeparture() {
+        return state.dateBoundBlock.outboundScheduledDeparture;
+    }
+    function setDateinboundScheduledArrival(value) {
+        state.dateBoundBlock.inboundScheduledArrival = value;
+    }
+    function getDateinboundScheduledArrival() {
+        return state.dateBoundBlock.inboundScheduledArrival;
+    }
+
+    function validateDateInboundBlockIn(dateTime, dateMin = null) {
+        const date = getDateInboundBlockIn() 
+          ? moment(getDateInboundBlockIn()) : moment();
+        const today = date.format('YYYY/MM/DD');
+        const hour = date.format('H');
+        const min = date.format('mm')
+        if (isNaN(dateTime)) {
+            if(getDateInboundBlockIn()) {
+                return dateTime <= today; 
+            }
+            return dateTime <= moment().format('YYYY/MM/DD');
+        }
+        if(dateMin) {
+            return Number(dateMin) <= min;
+        }
+        return dateTime <= hour;
+    }
+    function validateDateOutboundBlockOut(dateTime, dateMin = null) {
+      const date = getDateOutboundBlockOut()
+          ? moment(getDateOutboundBlockOut()) : moment();
+      const hour = date.format('H');
+      const min = date.format('mm');
+      if (isNaN(dateTime)) {    
+        if(getDateOutboundBlockOut()) {
+          return dateTime <= date.format('YYYY/MM/DD') 
+          && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
+        }
+        return dateTime <= moment().format('YYYY/MM/DD') 
+        && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
+      }
+      if(dateMin) {
+        return Number(dateMin) <= min;
+      }
+      return dateTime <= hour;
     }
     return {
         disabledReadonly,
@@ -105,5 +186,16 @@ export default function qRampStore() {
         resetFlightBoundFormStatus,
         showFielFlightBoundFormStatus,
         isData,
+        validateFutureDateTime,
+        setDateInboundBlockIn,
+        getDateInboundBlockIn,
+        setDateOutboundBlockOut,
+        getDateOutboundBlockOut,
+        setDateOutboundScheduledDeparture,
+        setDateinboundScheduledArrival,
+        getDateOutboundScheduledDeparture,
+        getDateinboundScheduledArrival,
+        validateDateOutboundBlockOut,
+        validateDateInboundBlockIn
     }
 }

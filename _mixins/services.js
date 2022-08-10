@@ -59,7 +59,7 @@ export default {
             categoryId: item.categoryId,
             formField: {
               ...item.attributes.reduce((previousValue, currentValue, currentIndex, array) => {
-                const props = this.setProps(currentValue.type, currentValue.name, currentValue.values)
+                const props = this.setProps(currentValue.type, currentValue.name, currentValue.values, currentIndex)
                   previousValue = {
                     ...previousValue,
                       [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
@@ -129,7 +129,7 @@ export default {
         this.$emit('isError', true)
       }
     },
-    setProps(type, name, options) {
+    setProps(type, name, options, index) {
       if (type == 'quantity') {
         return {
           readonly: this.readonly || this.disabledReadonly
@@ -145,6 +145,8 @@ export default {
           type
         }
       }else if(type == 'fullDate') {
+        const options = index === 0 ? qRampStore().validateDateInboundBlockIn
+        : qRampStore().validateDateOutboundBlockOut;
         return {
           readonly: this.readonly || this.disabledReadonly,
           label: name,
@@ -152,6 +154,7 @@ export default {
           mask:'MM/DD/YYYY HH:mm',
           'place-holder': 'MM/DD/YYYY HH:mm',
           format24h: true,
+          options,
         }
       } else {
         return {
