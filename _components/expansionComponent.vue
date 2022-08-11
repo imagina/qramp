@@ -15,8 +15,18 @@
           <q-card class="flex card-color rounted-3 q-px-lg q-card justify-center">
             <q-card-section class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center" >
-                <dynamic-field class="q-ml-sm marginzero" v-model="data[index]['formField'][keyfield]['value']" :field="field"></dynamic-field>
+                <dynamic-field 
+                  class="q-ml-sm marginzero" 
+                  v-model="data[index]['formField'][keyfield]['value']" 
+                  :field="field"></dynamic-field>
               </label>
+              <div
+                  class="tw--mt-4 tw-px-3 tw-font-semibold tw-mt-5 tw-text-center"
+                  v-if="field.type === 'fullDate' 
+                  && field.props.typeIndexDate === 1"
+                >
+                  Difference (hours): {{ 1 }}
+                </div>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -38,7 +48,18 @@
           <div class="row">
             <div class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <div class="flex no-wrap items-center" >
-                <dynamic-field class="q-ml-sm marginzero" v-model="data[index]['formField'][keyfield]['value']" :field="field"></dynamic-field>
+                <dynamic-field 
+                  class="q-ml-sm marginzero" 
+                  v-model="data[index]['formField'][keyfield]['value']" 
+                  :field="field" 
+                />
+                <div
+                  class="tw--mt-4 tw-px-3 tw-font-semibold"
+                  v-if="field.type === 'fullDate' 
+                  && field.props.typeIndexDate === 1"
+                >
+                  Difference (hours): {{ 1 }}
+                </div>
               </div>
             </div>
           </div>
@@ -57,6 +78,9 @@ export default {
     return{
       form:{}
     }
+  },
+  mounted() {
+
   },
   computed:{
     isDesktop() {

@@ -155,6 +155,7 @@ export default {
           'place-holder': 'MM/DD/YYYY HH:mm',
           format24h: true,
           options,
+          typeIndexDate: index,
         }
       } else {
         return {
