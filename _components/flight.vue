@@ -301,12 +301,14 @@ export default {
     },
     isOutbound() {
       if(this.form.operationTypeId){
+        this.differenceHour = 0;
         return this.form.operationTypeId == 4 || this.form.operationTypeId != 3
       }
       return false
     },
     isInbound() {
       if(this.form.operationTypeId){
+        this.differenceHour = 0;
         return this.form.operationTypeId == 3 || this.form.operationTypeId != 4
       }
       return false
