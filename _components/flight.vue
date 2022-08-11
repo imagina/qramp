@@ -130,10 +130,23 @@
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
                 v-model="form[keyField]"
                 @enter="search(field)"
+                @input="changeDate(field)"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
           </div>
+        </div>
+      </div>
+      <div v-if="isInbound && isOutbound">
+        <div 
+          class="
+            tw-p-4 
+            tw-border 
+            tw-border-gray-200 
+            tw-w-full
+            tw-mx-4"
+          >
+            Difference (hours): {{ differenceHour }}
         </div>
       </div>
     </q-form>
@@ -197,6 +210,7 @@ export default {
       bannerMessage: null,
       customerName: '',
       newCustumerAdHoc: [],
+      differenceHour: 0,
     }
   },
   watch:{
@@ -1066,6 +1080,11 @@ export default {
         return validateDate ? Number(dateMin) <= min : true;
       }
       return validateDate ? dateTime <= hour : true;
+    },
+    changeDate(field) {
+      if(field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
+        this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
+      }
     },
   },
 }

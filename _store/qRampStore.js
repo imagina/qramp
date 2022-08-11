@@ -169,6 +169,14 @@ export default function qRampStore() {
       }
       return dateTime <= hour;
     }
+    function getDifferenceInHours(start, end) {
+        if(start) {
+            const dateStart = moment(start);
+            const dateEnd = moment(end);
+            return dateEnd.diff(dateStart, 'minutes') / 60;
+        }
+        return 0;
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -197,6 +205,7 @@ export default function qRampStore() {
         getDateOutboundScheduledDeparture,
         getDateinboundScheduledArrival,
         validateDateOutboundBlockOut,
-        validateDateInboundBlockIn
+        validateDateInboundBlockIn,
+        getDifferenceInHours,
     }
 }
