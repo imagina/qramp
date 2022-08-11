@@ -173,7 +173,8 @@ export default function qRampStore() {
         if(start) {
             const dateStart = moment(start);
             const dateEnd = moment(end);
-            return dateEnd.diff(dateStart, 'minutes') / 60;
+            const hour = dateEnd.diff(dateStart, 'minutes') / 60;
+            return Math.round(hour * 100) / 100;
         }
         return 0;
     }

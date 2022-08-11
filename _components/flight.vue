@@ -137,14 +137,17 @@
           </div>
         </div>
       </div>
-      <div v-if="isInbound && isOutbound">
+      <div 
+        v-if="isInbound && isOutbound"
+        class="col-12 tw-mx-0 tw-font-semibold"
+      >
         <div 
           class="
             tw-p-4 
             tw-border 
-            tw-border-gray-200 
-            tw-w-full
-            tw-mx-4"
+            tw-border-gray-200
+            tw-mx-4 
+            tw-text-center"
           >
             Difference (hours): {{ differenceHour }}
         </div>
@@ -804,6 +807,8 @@ export default {
           this.form.outboundTailNumber = updateForm.outboundTailNumber
           this.form.outboundScheduledDeparture = this.dateFormatterFull(updateForm.outboundScheduledDeparture)
           this.form.outboundBlockOut = this.dateFormatterFull(updateForm.outboundBlockOut)
+          this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
+          console.log(this.differenceHour);
         },1000)
       }
     },
