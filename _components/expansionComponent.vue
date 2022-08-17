@@ -21,7 +21,7 @@
                   :field="field"></dynamic-field>
               </label>
               <div
-                  class="tw--mt-4 tw-px-3 tw-font-semibold tw-mt-5 tw-text-center"
+                  class="tw--mt-4 tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden"
                   v-if="field.type === 'fullDate' 
                   && field.props.typeIndexDate === 1"
                 >
@@ -54,7 +54,7 @@
                   :field="field" 
                 />
                 <div
-                  class="tw--mt-4 tw-px-3 tw-font-semibold"
+                  class="tw--mt-4 tw-px-3 tw-font-semibold tw-hidden"
                   v-if="field.type === 'fullDate' 
                   && field.props.typeIndexDate === 1"
                 >
