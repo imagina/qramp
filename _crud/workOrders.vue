@@ -40,12 +40,12 @@ export default {
               field: 'id',
               style: 'width: 50px'
             },
-            {
+            /*{
               name: 'referenceId',
               label: 'Reference Id',
               field: 'referenceId',
               align: 'left'
-            },
+            },*/
             {
               name: 'customer',
               label: this.$tr('isite.cms.label.customer'),
@@ -81,7 +81,30 @@ export default {
               format: val => val ? val.stationName : '-',
               align: 'left'
             },
-
+            {
+              name: "inboundFlightNumber",
+              label: 'Inbound Flight Number',
+              field: "inboundFlightNumber",
+              align: "left",
+            },
+            {
+              name: "inboundScheduledArrival",
+              label: 'Arrival',
+              field: "inboundScheduledArrival",
+              align: "left",
+            },
+            {
+              name: "outboundFlightNumber",
+              label: 'Outbound Flight Number',
+              field: "outboundFlightNumber",
+              align: "left",
+            },
+            {
+              name: "outboundScheduledDeparture",
+              label: 'Departure',
+              field: "outboundScheduledDeparture",
+              align: "left",
+            },
             {
               name: "created_at",
               label: this.$tr("isite.cms.form.createdAt"),
