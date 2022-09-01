@@ -54,6 +54,32 @@ export default {
               align: 'left'
             },
             {
+              name: "inboundFlightNumber",
+              label: 'Inbound Flight Number',
+              field: "inboundFlightNumber",
+              align: "left",
+            },
+            {
+              name: "inboundScheduledArrival",
+              label: 'Arrival',
+              field: "inboundScheduledArrival",
+              align: "left",
+              format: (val) => (val ? this.$trd(val) : "-"),
+            },
+            {
+              name: "outboundFlightNumber",
+              label: 'Outbound Flight Number',
+              field: "outboundFlightNumber",
+              align: "left",
+            },
+            {
+              name: "outboundScheduledDeparture",
+              label: 'Departure',
+              field: "outboundScheduledDeparture",
+              align: "left",
+              format: (val) => (val ? this.$trd(val) : "-"),
+            },
+            {
               name: 'adHoc',
               label: 'Ad Hoc',
               field: 'adHoc',
@@ -81,30 +107,7 @@ export default {
               format: val => val ? val.stationName : '-',
               align: 'left'
             },
-            {
-              name: "inboundFlightNumber",
-              label: 'Inbound Flight Number',
-              field: "inboundFlightNumber",
-              align: "left",
-            },
-            {
-              name: "inboundScheduledArrival",
-              label: 'Arrival',
-              field: "inboundScheduledArrival",
-              align: "left",
-            },
-            {
-              name: "outboundFlightNumber",
-              label: 'Outbound Flight Number',
-              field: "outboundFlightNumber",
-              align: "left",
-            },
-            {
-              name: "outboundScheduledDeparture",
-              label: 'Departure',
-              field: "outboundScheduledDeparture",
-              align: "left",
-            },
+
             {
               name: "created_at",
               label: this.$tr("isite.cms.form.createdAt"),
@@ -228,6 +231,15 @@ export default {
               props: {
                 icon: "fas fa-download",
                 label: "Print Bulk(PDF)"
+              }
+            },
+            {
+              apiRoute: "/ramp/v1/work-orders/bulk-export-csv",
+              permission: "ramp.work-orders.bulk-export-csv",
+              criteria: "id",
+              props: {
+                icon: "fas fa-download",
+                label: "Bulk(CSV)"
               }
             }
           ],
