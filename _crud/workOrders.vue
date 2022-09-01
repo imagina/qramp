@@ -64,6 +64,7 @@ export default {
               label: 'Arrival',
               field: "inboundScheduledArrival",
               align: "left",
+              format: (val) => (val ? this.$trd(val) : "-"),
             },
             {
               name: "outboundFlightNumber",
@@ -76,6 +77,7 @@ export default {
               label: 'Departure',
               field: "outboundScheduledDeparture",
               align: "left",
+              format: (val) => (val ? this.$trd(val) : "-"),
             },
             {
               name: 'adHoc',
