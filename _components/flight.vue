@@ -634,6 +634,29 @@ export default {
             },
             label: this.$tr('ifly.cms.form.blockIn'),
           },
+          outboundBlockOut: {
+            name:'outboundBlockOut',
+            value: '',
+            type: this.readonly ? 'inputStandard':'fullDate',
+            props: {
+              vIf: this.form.operationTypeId === '3' || this.form.operationTypeId === '4',
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
+              readonly: this.readonly || this.disabledReadonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
+              clearable: true,
+              color:"primary",
+              format24h: true,
+              options: this.validateDateOutboundBlockOut,
+            },
+            label: this.$tr('ifly.cms.form.blockOut'),
+          },
         },
         outboundRight:{
           outboundFlightNumber: {
@@ -716,6 +739,29 @@ export default {
               options: (date, min) => this.validateFutureDateTime(date, min, this.form.outboundScheduledDeparture),
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
+          },
+          inboundBlockIn: {
+            name:'inboundBlockIn',
+            value: '',
+            type: this.readonly ? 'inputStandard':'fullDate',
+            props: {
+              vIf: this.form.operationTypeId === '3' || this.form.operationTypeId === '4',
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
+              readonly: this.readonly || this.disabledReadonly,
+              outlined: !this.readonly,
+              borderless: this.readonly,
+              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
+              clearable: true,
+              color:"primary",
+              format24h: true,
+              options: this.validateDate,
+            },
+            label: this.$tr('ifly.cms.form.blockIn'),
           },
           outboundBlockOut: {
             name:'outboundBlockOut',
