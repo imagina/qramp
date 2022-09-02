@@ -866,6 +866,7 @@ export default {
         && this.form.inboundTailNumber
         && this.form.inboundScheduledArrival
         && this.form.inboundBlockIn
+        && (this.form.outboundBlockOut === '' ||  this.form.outboundBlockOut === null)
       ) {
         if(await new Promise(resolve=>this.$q.dialog({
           ok: this.$tr('isite.cms.label.yes'),
@@ -877,6 +878,7 @@ export default {
         }else{
         error = true;
         const out = this.$refs.outboundBlockOut[0];
+        console.log(out);
         out.$refs.outboundBlockOutInboundLeft.focus();
         }
       }
