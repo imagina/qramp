@@ -24,7 +24,7 @@
           />
           <i-flight 
             ref="flight" 
-            @isError="error = $event" 
+            @isError="error = $event"
             v-if="step.step == STEP_FLIGTH" 
             :flightData="step.form"
             :readonly="readonly"
@@ -141,10 +141,11 @@ export default {
     init(){
       this.$emit('sp', this.sp)
     },
-    setData() {
+    async setData() {
       switch (this.sp) {
         case 1:
-          this.$refs.flight[0].saveInfo()
+          const error = await this.$refs.flight[0].menssageValidate();
+          await this.$refs.flight[0].saveInfo(error);
           break;
         case 2:
           this.$refs.cargo[0].saveInfo()
@@ -202,8 +203,8 @@ export default {
       this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
       this.$emit('close', false)
     },
-    next(){
-      this.setData()
+    async next() {
+      await this.setData();
       setTimeout(()=>{
         if(this.error) return;
         this.$refs.stepper.next()

@@ -104,6 +104,7 @@
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
                 v-model="form[keyField]"
                 @enter="search(field)"
+                :ref="`${keyField}`"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
@@ -639,10 +640,9 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              vIf: this.form.operationTypeId === '3' || this.form.operationTypeId === '4',
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
+              vIf: this.form.operationTypeId === '3',
+              ref:'outboundBlockOutInboundLeft',
+              rules: [],
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
@@ -739,29 +739,6 @@ export default {
               options: (date, min) => this.validateFutureDateTime(date, min, this.form.outboundScheduledDeparture),
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
-          },
-          inboundBlockIn: {
-            name:'inboundBlockIn',
-            value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
-            props: {
-              vIf: this.form.operationTypeId === '3' || this.form.operationTypeId === '4',
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
-              hint:'Format: MM/DD/YYYY HH:mm',
-              mask:'MM/DD/YYYY HH:mm',
-              'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.readonly || this.disabledReadonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
-              clearable: true,
-              color:"primary",
-              format24h: true,
-              options: this.validateDate,
-            },
-            label: this.$tr('ifly.cms.form.blockIn'),
           },
           outboundBlockOut: {
             name:'outboundBlockOut',
@@ -861,8 +838,8 @@ export default {
         },1000)
       }
     },
-    saveInfo() {
-      this.$refs.myForm.validate().then(success => {
+    saveInfo(error) {
+      this.$refs.myForm.validate().then(async (success) => {
         if (success) {
           // yay, models are correct
           this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form )
@@ -870,7 +847,7 @@ export default {
           qRampStore().setDateOutboundBlockOut(this.form.outboundBlockOut);
           qRampStore().setDateOutboundScheduledDeparture(this.form.outboundScheduledDeparture);
           qRampStore().setDateinboundScheduledArrival(this.form.inboundScheduledArrival);
-          this.$emit('isError', false)
+          this.$emit('isError', error);
         }
         else {
           // oh no, user has filled in
@@ -879,6 +856,32 @@ export default {
           this.$emit('isError', true)
         }
       })
+    },
+    async menssageValidate() {
+      let error = false;
+      if(
+        this.form.operationTypeId === '3' 
+        && this.form.inboundFlightNumber
+        && this.form.inboundOriginAirportId
+        && this.form.inboundTailNumber
+        && this.form.inboundScheduledArrival
+        && this.form.inboundBlockIn
+      ) {
+        if(await new Promise(resolve=>this.$q.dialog({
+          ok: this.$tr('isite.cms.label.yes'),
+          message: 'Are you sure there is no data for block out?',
+          cancel: true,
+          persistent: true
+        }).onOk(()=>resolve(true)).onCancel(()=>resolve(false)))){
+        error = false
+        }else{
+        error = true;
+        const out = this.$refs.outboundBlockOut[0];
+        out.$refs.outboundBlockOutInboundLeft.focus();
+        }
+      }
+      
+      return error; 
     },
     currentDate() {
       const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
