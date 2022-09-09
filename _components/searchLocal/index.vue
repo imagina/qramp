@@ -1,7 +1,7 @@
 <template lang="">
   <q-input borderless standout dense rounded style="max-width: 100%"
     color="primary" :placeholder="`${$tr('ifly.cms.label.search',{capitalize : true})}...`"
-    class="q-my-md q-ml-md q-mr-xs search" @input="$emit('value', value)" v-model="value">
+    class="tw-mb-6 search tw-shadow-inner" @input="$emit('value', value)" v-model="value">
     <template v-slot:prepend>
       <q-icon color="primary" class="q-pl-sm" name="search" />
     </template>

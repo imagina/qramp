@@ -1,60 +1,70 @@
 <template>
-  <div class="q-mb-md">
-    <div class="bg-primary text-white q-px-md q-py-sm" style="padding: 25px">
-      <div v-if="!edit" class="flex justify-end">
+  <div class="">
+    <div class="tw-flex bg-primary text-white tw-px-6 tw-py-1
+                tw-items-center tw-justify-end 
+      ">   
+      <div v-if="!edit">
         <q-space />
         <q-btn 
           v-if="false"
-          class="q-mr-sm text-capitalize" 
+          class="q-ml-sm tw-my-4 text-capitalize tw-font-bold tw-text-base" 
           color="white"
           rounded
-          text-color="primary" 
-          label="Summary Report" 
+          text-color="primary"
         >
-          <q-icon v-if="!responsive" color="primary" class="q-pl-sm" name="assessment" />
+          <span class="tw-hidden lg:tw-block q-pr-sm">Summary Report</span>
+          <q-icon name="assessment" color="primary" />
+          <q-tooltip>Summary Report</q-tooltip>
         </q-btn>
         <q-btn 
           v-if="false"
-          flat
-          class="bg-white q-mr-sm text-capitalize"
-          :rounded="!responsive"
-          :round="responsive"
+          class="q-ml-sm tw-my-4 text-capitalize tw-font-bold tw-text-base"
+          color="white"
+          rounded
+          text-color="primary" 
           @click="() => {this.edit = true; $emit('edit', false)}"
         >
-          <span class="text-primary q-mr-sm" v-if="!responsive">Edit</span>
+          <span class="tw-hidden lg:tw-block q-pr-sm">Edit</span>
           <q-icon name="mode_edit_outline" color="primary" />
+          <q-tooltip>Edit</q-tooltip>
         </q-btn>
         <q-btn 
           v-if="update"
-          flat
-          class="bg-white text-capitalize hidden" 
-          :rounded="true"
+          class="q-ml-sm tw-my-4 text-capitalize tw-font-bold tw-text-base" 
+          color="white"
+          rounded
+          text-color="primary"
           @click="$emit('send-info')"
           :disable="disabledReadonly"
         >
-          <span class="text-primary q-mr-sm">Send</span>
+          <span class="tw-hidden lg:tw-block q-pr-sm">Submit</span>
           <q-icon name="send" color="primary" />
+          <q-tooltip>Submit</q-tooltip>
         </q-btn>
       </div>
-      <div v-else class="flex justify-end">
+      <div v-else>
         <q-btn 
-          class="q-mr-sm text-capitalize" 
+          class="q-ml-sm tw-my-4 text-capitalize tw-font-bold tw-text-base" 
           color="white"
-          rounded-borders
-          text-color="primary" 
-          label="Cancel" 
-          icon-right="close"
+          rounded
+          outline
           @click="() => { this.edit = false; $emit('edit', true)}"
-        />
+        >
+          <span class="tw-hidden lg:tw-block q-pr-sm">Cancel</span>
+          <q-icon name="close" />
+          <q-tooltip>Cancel</q-tooltip>
+        </q-btn>
         <q-btn 
-          class="q-mr-sm text-capitalize" 
-          color="white" 
-          rounded-borders
-          text-color="primary" 
-          label="Update" 
-          icon-right="update"
+          class="q-ml-sm tw-my-4 text-capitalize tw-font-bold tw-text-base" 
+          color="white"
+          rounded
+          text-color="primary"
           @click="() => { this.edit = false; $emit('edit', true)}"
-        />
+        >
+          <span class="tw-hidden lg:tw-block q-pr-sm">Update</span>
+          <q-icon name="update" color="primary" />
+          <q-tooltip>Update</q-tooltip>
+        </q-btn>
       </div>
     </div>
   </div>

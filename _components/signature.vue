@@ -1,6 +1,6 @@
 <template>
   <div id="signatureForm">
-    <div id="signatureContainer" class="q-pa-md">
+    <div id="signatureContainer" class="q-pa-md tw-mb-12">
       <div id="disableSignature" :class="readonly ? 'disableEdit': ''"></div>
       <div class="row">
         <div class="col-12 col-md-6">
@@ -189,16 +189,17 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  #signatureContainer 
-    position relative
-    
-    .disableEdit
-      position: absolute;
-      background: transparent;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 1;
+<style>
+  #signatureContainer {
+    @apply tw-relative;
+  }
+  #signatureContainer .disableEdit {
+    @apply tw-absolute tw-bg-transparent tw-inset-0 tw-z-10;
+  }    
+  #signatureContainer #vueSiganture .bg-grey-2 {
+    @apply tw-h-64;
+  }
+  #signatureContainer #vueSiganture .bg-grey-2 img{
+    @apply tw-object-contain tw-h-full !important;
+  }
 </style>
