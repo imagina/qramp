@@ -13,7 +13,7 @@
             </q-item-section>
           </template>
           <q-card class="row card-color justify-center">
-            <q-card-section class=" q-py-md col" v-for="(field, keyfield) in item.formField" :key="keyfield">
+            <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
                 <dynamic-field 
                   class="marginzero tw-w-full" 
