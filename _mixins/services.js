@@ -132,7 +132,8 @@ export default {
     setProps(type, name, options, index) {
       if (type == 'quantity') {
         return {
-          readonly: this.readonly || this.disabledReadonly
+          readonly: this.readonly || this.disabledReadonly,
+          mask:'###################',
         }
       }else if(type == 'select') {
         return {
