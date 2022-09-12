@@ -263,7 +263,13 @@ export default {
   @apply tw-border-b-0;
 }
 .stepper-modal .q-stepper__tab  .q-stepper__dot {
-  @apply tw-w-10 tw-h-10 tw-font-bold tw-text-base tw-border-0;
+  @apply md:tw-w-10 md:tw-h-10 tw-font-bold md:tw-text-base tw-border-0;
+}
+.stepper-modal .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot {
+  @apply tw-transform tw-translate-x-3.5;
+}
+.stepper-modal .q-stepper__header--contracted .q-stepper__tab:last-child .q-stepper__dot {
+  @apply tw-transform tw--translate-x-3.5;
 }
 .stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot {
   @apply tw-border-2;
