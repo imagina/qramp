@@ -1,7 +1,6 @@
 <template>
-  <div id="expansion-container" style="max-width: 100%">
-    <!-- <div v-if="!isDesktop"> -->
-    <div v-if="true" class="tw-mb-12">
+  <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
+    <div v-if="!isDesktop">
       <q-list v-for="(item, index) in data" :key="index">
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
