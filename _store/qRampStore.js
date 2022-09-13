@@ -178,6 +178,11 @@ export default function qRampStore() {
         }
         return 0;
     }
+    function dateFormatter(date) {
+        if (!date) return null
+        const [year, month, day] = date.substr(0, 10).split('-')
+        return `${month}/${day}/${year}`
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -208,5 +213,6 @@ export default function qRampStore() {
         validateDateOutboundBlockOut,
         validateDateInboundBlockIn,
         getDifferenceInHours,
+        dateFormatter,
     }
 }

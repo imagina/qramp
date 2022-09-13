@@ -1,5 +1,11 @@
 <template>
   <div>
+    <table-flight 
+        @cancel="dialog = $event" 
+        :dialog="dialog" 
+        :dataTable="dataTable" 
+        @flightSelect="setDataTable($event)"
+    />
     <q-form
       ref="formSimpleWorkOrders"
       id="simpleWordOrder"
@@ -27,7 +33,7 @@
           />
           <dynamic-field
             :field="field"
-            v-model="selectCustomers"
+            v-model="selectCustomerComputed"
             @input="setCustomerForm"
             @filter="setCustomerName"
             ref="customerId"
@@ -60,6 +66,7 @@
             :id="keyField"
             :field="field"
             v-model="form[keyField]"
+            @enter="search(field)"
           />
         </div>
       </div>
@@ -69,27 +76,43 @@
 <script>
 import factoryCustomerWithContracts from "../_components/factories/factoryCustomerWithContracts.js";
 import qRampStore from "../_store/qRampStore.js";
+import tableFlight from '../_components/modal/tableFlight.vue';
 
 export default {
+  components: {
+    tableFlight
+  },
   data() {
     return {
       newCustumerAdHoc: [],
       form: {
         customerId: null,
         contractId: null,
-        preFlightNumber: null,
+        flightNumber: null,
         stationId: null,
         adHoc: null,
         customCustomerName: null,
         customCustomer: null,
+        faFlightId: null
       },
       bannerMessage: null,
       selectCustomers: '',
       customerName: null,
+      loadingState: false,
+      dataTable: [],
+      dialog: false,
     };
   },
   inject:['showWorkOrder', 'closeModal'],
   computed: {
+    selectCustomerComputed: {
+      get() {
+        return this.selectCustomers;
+      },
+      set(value) {
+        this.selectCustomers = value;
+      }
+    },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
     },
@@ -133,18 +156,22 @@ export default {
             },
             label: this.$tr("ifly.cms.form.customer"),
           },
-          preFlightNumber: {
-            name: "preFlightNumber",
-            value: null,
-            type: "input",
+          flightNumber: {
+            name:'flightNumber',
+            value: '',
+            type: 'search',
             props: {
               rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              label: "Pre Flight Number",
+              hint:'Enter the fight number and press enter or press the search icon',
+              loading: this.loadingState,
+              label: `*${this.$tr('ifly.cms.form.flight')}`,
               clearable: true,
-              color: "primary",
+              maxlength: 7,
+              color:"primary"
             },
+            label: this.$tr('ifly.cms.form.flight'),
           },
           stationId: {
             name:'stationId',
@@ -155,7 +182,6 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               selectByDefault : true,
-              readonly: this.disabledReadonly,
               label: `*${this.$tr('ifly.cms.form.station')}`,
               clearable: true,
               color:"primary"
@@ -258,20 +284,88 @@ export default {
         }
       })
     },
-    orderConfirmationMessage() {
+    async orderConfirmationMessage() {
+        const response = await this.saveRequestSimpleWorkOrder();
         this.$q.dialog({
           title: 'Confirm',
           ok: 'Ok',
           message: 'You want to continue editing the order?',
           cancel: true,
           persistent: true
-        }).onOk(() => {
-            console.log('saveFomr')
-            //this.showWorkOrder(item);
-        }).onCancel(() => {
-            this.closeModal();
+        }).onOk(async () => {
+            await this.showWorkOrder(response);
+        }).onCancel(async() => {
+            await this.closeModal();
         })
-    }
+    },
+    search({type, name}) {
+      if(type != 'search' 
+        && (this.form.flightNumber !== '' 
+        || this.form.flightNumber !== null)) return;
+        this.dataTable = [];
+        const params = {
+          refresh: true,
+          params: {
+            filter: {search: this.form.flightNumber.toUpperCase()}
+          }
+        }
+        this.loadingState = true
+        //Request
+        this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
+          if (response.status == 200) {
+            this.setTable(response.data);
+            this.dialog = true
+          }
+          if (response.status == 204) {
+            this.$alert.warning({
+              mode:'modal',
+              title: this.$tr('ifly.cms.form.flight'),
+              message: this.$tr('ifly.cms.label.flightMessage'),
+              actions: [
+                {
+                  label: this.$tr('isite.cms.label.yes'),
+                  color: 'primary',
+                  handler: () => {
+                    this.form.faFlightId = null;
+                  }
+                },
+              ]
+            })
+         }
+         this.loadingState = false
+        }).catch(error => {
+          console.log('error', error)
+        })
+    },
+    setTable(data) {
+      data.forEach((items, index) => {
+        const date = qRampStore().dateFormatter(items.scheduledOn.split("T")[0]);
+        const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
+        const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
+        const flight = {
+          index,
+          date,
+          registration: items.registration,
+          inbound: `${inboundTime} - ${items.originAirport.airportName}`,
+          outbound: `${outboundTime} - ${items.destinationAirport.airportName}`,
+          aircraftType: items.aircraftType,
+          faFlightId: items.faFlightId,
+        }
+        this.dataTable.push(flight)
+      })   
+    },
+    setDataTable({select, dialog}) {
+      this.form.faFlightId = select.faFlightId || null;
+      this.dialog = dialog;
+    },
+    async saveRequestSimpleWorkOrder() {
+        try {
+            const response = await this.$crud.create('apiRoutes.qramp.simpleWorkOrders', this.form);
+            return response; 
+        } catch (error) {
+           console.error(error);    
+        }  
+    },
   },
 };
 </script>
