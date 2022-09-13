@@ -1,24 +1,25 @@
 <template>
   <div>
-    <table-flight 
-        @cancel="dialog = $event" 
-        :dialog="dialog" 
-        :dataTable="dataTable" 
-        @flightSelect="setDataTable($event)"
+    <table-flight
+      @cancel="dialog = $event"
+      :dialog="dialog"
+      :dataTable="dataTable"
+      @flightSelect="setDataTable($event)"
     />
     <q-form
       ref="formSimpleWorkOrders"
       id="simpleWordOrder"
       class="
-        tw-px-8 
-        tw-pt-8 
+        tw-px-8
+        tw-pt-8
         tw-pb-10
         tw-my-4
         tw-mx-8
         tw-mb-32
-        tw-border 
+        tw-border
         tw-border-gray-200
-        tw-rounded-lg"
+        tw-rounded-lg
+      "
     >
       <div
         class="col-12 col-md-6"
@@ -76,11 +77,11 @@
 <script>
 import factoryCustomerWithContracts from "../_components/factories/factoryCustomerWithContracts.js";
 import qRampStore from "../_store/qRampStore.js";
-import tableFlight from '../_components/modal/tableFlight.vue';
+import tableFlight from "../_components/modal/tableFlight.vue";
 
 export default {
   components: {
-    tableFlight
+    tableFlight,
   },
   data() {
     return {
@@ -93,17 +94,17 @@ export default {
         adHoc: null,
         customCustomerName: null,
         customCustomer: null,
-        faFlightId: null
+        faFlightId: null,
       },
       bannerMessage: null,
-      selectCustomers: '',
+      selectCustomers: "",
       customerName: null,
       loadingState: false,
       dataTable: [],
       dialog: false,
     };
   },
-  inject:['showWorkOrder', 'closeModal'],
+  inject: ["showWorkOrder", "closeModal"],
   computed: {
     selectCustomerComputed: {
       get() {
@@ -111,7 +112,7 @@ export default {
       },
       set(value) {
         this.selectCustomers = value;
-      }
+      },
     },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
@@ -157,39 +158,39 @@ export default {
             label: this.$tr("ifly.cms.form.customer"),
           },
           flightNumber: {
-            name:'flightNumber',
-            value: '',
-            type: 'search',
+            name: "flightNumber",
+            value: "",
+            type: "search",
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
               ],
-              hint:'Enter the fight number and press enter or press the search icon',
+              hint: "Enter the fight number and press enter or press the search icon",
               loading: this.loadingState,
-              label: `*${this.$tr('ifly.cms.form.flight')}`,
+              label: `*${this.$tr("ifly.cms.form.flight")}`,
               clearable: true,
               maxlength: 7,
-              color:"primary"
+              color: "primary",
             },
-            label: this.$tr('ifly.cms.form.flight'),
+            label: this.$tr("ifly.cms.form.flight"),
           },
           stationId: {
-            name:'stationId',
-            value: '',
-            type: 'select',
+            name: "stationId",
+            value: "",
+            type: "select",
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
               ],
-              selectByDefault : true,
-              label: `*${this.$tr('ifly.cms.form.station')}`,
+              selectByDefault: true,
+              label: `*${this.$tr("ifly.cms.form.station")}`,
               clearable: true,
-              color:"primary"
+              color: "primary",
             },
             loadOptions: {
-              apiRoute: 'apiRoutes.qramp.setupStations',
-              select: {label: 'stationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              apiRoute: "apiRoutes.qramp.setupStations",
+              select: { label: "stationName", id: "id" },
+              requestParams: { filter: { status: 1 } },
             },
           },
         },
@@ -252,16 +253,20 @@ export default {
       });
     },
     setCustomerForm() {
-      const selectCustomers = this.selectCustomers === '' ? {} : this.selectCustomers;
+      const selectCustomers =
+        this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
-      this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
+      this.form.customCustomerName = this.form.customerId
+        ? null
+        : customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
-      const message = this.form.contractId 
-        ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}` 
-        : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
-       
-      this.bannerMessage =  selectCustomers && !this.form.contractId ? message : null;
+      const message = this.form.contractId
+        ? `${this.$tr("ifly.cms.message.selectedCustomerWithContract")}`
+        : this.$tr("ifly.cms.message.selectedCustomerWithoutContract");
+
+      this.bannerMessage =
+        selectCustomers && !this.form.contractId ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
     },
@@ -269,102 +274,98 @@ export default {
       return Math.floor(Math.random() * (max - min + 1) + min);
     },
     setCustomerName(query) {
-      this.customerName = query !== '' ? query : '';
+      this.customerName = query !== "" ? query : "";
     },
     saveSimpleWorkOrder() {
-        this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
+      this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
           this.orderConfirmationMessage();
+        } else {
+          this.$alert.error({
+            message: this.$tr("isite.cms.message.formInvalid"),
+          });
+          this.$emit("isError", true);
         }
-        else {
-          // oh no, user has filled in
-          // at least one invalid value
-          this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
-          this.$emit('isError', true)
-        }
-      })
+      });
     },
     async orderConfirmationMessage() {
-        const response = await this.saveRequestSimpleWorkOrder();
-        this.$q.dialog({
-          title: 'Confirm',
-          ok: 'Ok',
-          message: 'You want to continue editing the order?',
+      const response = await this.saveRequestSimpleWorkOrder();
+      this.$q
+        .dialog({
+          title: "Confirm",
+          ok: "Ok",
+          message: "You want to continue editing the order?",
           cancel: true,
-          persistent: true
-        }).onOk(async () => {
-            await this.showWorkOrder(response);
-        }).onCancel(async() => {
-            await this.closeModal();
+          persistent: true,
         })
-    },
-    search({type, name}) {
-      if(type != 'search' 
-        && (this.form.flightNumber !== '' 
-        || this.form.flightNumber !== null)) return;
-        this.dataTable = [];
-        const params = {
-          refresh: true,
-          params: {
-            filter: {search: this.form.flightNumber.toUpperCase()}
-          }
-        }
-        this.loadingState = true
-        //Request
-        this.$crud.index('apiRoutes.qfly.flightaware', params).then(response => {
-          if (response.status == 200) {
-            this.setTable(response.data);
-            this.dialog = true
-          }
-          if (response.status == 204) {
-            this.$alert.warning({
-              mode:'modal',
-              title: this.$tr('ifly.cms.form.flight'),
-              message: this.$tr('ifly.cms.label.flightMessage'),
-              actions: [
-                {
-                  label: this.$tr('isite.cms.label.yes'),
-                  color: 'primary',
-                  handler: () => {
-                    this.form.faFlightId = null;
-                  }
-                },
-              ]
-            })
-         }
-         this.loadingState = false
-        }).catch(error => {
-          console.log('error', error)
+        .onOk(async () => {
+          await this.showWorkOrder(response);
         })
+        .onCancel(async () => {
+          await this.closeModal();
+        });
     },
-    setTable(data) {
-      data.forEach((items, index) => {
-        const date = qRampStore().dateFormatter(items.scheduledOn.split("T")[0]);
-        const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
-        const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
-        const flight = {
-          index,
-          date,
-          registration: items.registration,
-          inbound: `${inboundTime} - ${items.originAirport.airportName}`,
-          outbound: `${outboundTime} - ${items.destinationAirport.airportName}`,
-          aircraftType: items.aircraftType,
-          faFlightId: items.faFlightId,
-        }
-        this.dataTable.push(flight)
-      })   
+    search({ type, name }) {
+      if (
+        type != "search" &&
+        (this.form.flightNumber !== "" || this.form.flightNumber !== null)
+      )
+        return;
+      const params = {
+        refresh: true,
+        params: {
+          filter: { search: this.form.flightNumber.toUpperCase() },
+        },
+      };
+      this.loadingState = true;
+      //Request
+      this.$crud
+        .index("apiRoutes.qfly.flightaware", params)
+        .then((response) => {
+          this.responseStatus(response);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
     },
-    setDataTable({select, dialog}) {
+    setDataTable({ select, dialog }) {
       this.form.faFlightId = select.faFlightId || null;
       this.dialog = dialog;
     },
     async saveRequestSimpleWorkOrder() {
-        try {
-            const response = await this.$crud.create('apiRoutes.qramp.simpleWorkOrders', this.form);
-            return response; 
-        } catch (error) {
-           console.error(error);    
-        }  
+      try {
+        const response = await this.$crud.create(
+          "apiRoutes.qramp.simpleWorkOrders",
+          this.form
+        );
+        return response;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    responseStatus(response) {
+      this.dataTable = [];
+      if (response.status == 200) {
+        this.dataTable = qRampStore().getTableListOfFlights(response.data);
+        this.dialog = true;
+      }
+      if (response.status == 204) {
+        this.$alert.warning({
+          mode: "modal",
+          title: this.$tr("ifly.cms.form.flight"),
+          message: this.$tr("ifly.cms.label.flightMessage"),
+          actions: [
+            {
+              label: this.$tr("isite.cms.label.yes"),
+              color: "primary",
+              handler: () => {
+                this.form.faFlightId = null;
+              },
+            },
+          ],
+        });
+      }
+      this.loadingState = false;
     },
   },
 };

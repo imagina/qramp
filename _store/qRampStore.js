@@ -183,6 +183,25 @@ export default function qRampStore() {
         const [year, month, day] = date.substr(0, 10).split('-')
         return `${month}/${day}/${year}`
     }
+    function getTableListOfFlights(data) {
+        const dataTable = [];
+        data.forEach((items, index) => {
+          const date = dateFormatter(items.scheduledOn.split("T")[0]);
+          const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
+          const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
+          const flight = {
+            index,
+            date,
+            registration: items.registration,
+            inbound: `${inboundTime} - ${items.originAirport.airportName}`,
+            outbound: `${outboundTime} - ${items.destinationAirport.airportName}`,
+            aircraftType: items.aircraftType,
+            faFlightId: items.faFlightId,
+          }
+          dataTable.push(flight)
+        })
+        return dataTable;   
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -214,5 +233,6 @@ export default function qRampStore() {
         validateDateInboundBlockIn,
         getDifferenceInHours,
         dateFormatter,
+        getTableListOfFlights,
     }
 }
