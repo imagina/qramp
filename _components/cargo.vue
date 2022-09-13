@@ -1,17 +1,17 @@
 <template>
-  <div id="cargoContainer">
+  <div id="cargoContainer" class="tw-mb-20">
     <!-- toolbar -->
-    <div :class="`row justify-center items-center q-px-md ${responsive ? '':'no-wrap'}`">
-      <div class="col-12 col-md-6 q-mb-sm q-py-lg">
+    <div class="tw-grid tw-gap-10 tw-grid-cols-1 lg:tw-grid-cols-2 tw-p-4 md:tw-p-10">
+      <div class=" ">
         <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary boundColor q-py-xs text-center text-weight-bold">
+          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold">
             <div>Inbound</div>
           </div>
           <div class="q-pa-md">
             <template v-for="(field, keyField) in formFields.inbound" >
               <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
                 <p 
-                  class="text-primary text-right q-mb-none span q-mr-sm col-5"
+                  class="text-primary text-right md:tw-text-base span q-mr-sm col-5"
                   v-if="field.props.vIf"
                 >
                   <span>{{field.label}}</span>
@@ -28,16 +28,16 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-6 q-mb-sm q-ml-sm">
+      <div class=" ">
         <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary boundColor q-py-xs text-center text-weight-bold">
+          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold">
             <div>Outbound</div>
           </div>
           <div class="q-pa-md">
             <template v-for="(field, keyField) in formFields.outbound" >
               <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
                 <p 
-                  class="text-primary text-right q-mb-none span q-mr-sm col-5"
+                  class="text-primary text-right md:tw-text-base span q-mr-sm col-5"
                   v-if="field.props.vIf"
                 >
                   {{field.label}}
@@ -55,7 +55,7 @@
         </div>
       </div>
     </div>
-    <div class="flex q-px-md">
+    <div class="tw-px-6 tw-mb-8">
       <q-toggle
         v-model="delay"
         color="primary"
@@ -64,7 +64,7 @@
       />
       <q-btn v-if="delay" class="q-ml-sm" flat round icon="add" color="primary" @click="addDelay()"/>
     </div>
-    <div v-if="delay" class="q-pa-md">
+    <div v-if="delay" class="tw-px-6">
       <div flat class="row">
         <template v-for="(field,keyField) in delayFields">
           <dynamic-field
@@ -307,21 +307,9 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-  #cargoContainer
-    .card-bound
-      border: 1px solid #f1f4fa;
-      border-radius: 8px 8px 0px 0px; 
-    hr.label-container
-      position relative
-      bottom 20px
-      border-top 1px dashed #000D4726
-    #labelInput
-      .span
-        padding-bottom 22px
-    .btn-stick > .q-btn--round .q-btn__wrapper
-      padding: 0;
-      min-width: 2em;
-      min-height: 0em;
-      
+<style scoped>
+.span {
+  padding-bottom: 22px;
+}
+        
 </style>

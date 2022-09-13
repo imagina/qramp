@@ -1,5 +1,5 @@
 <template>
-  <div id="stepComponent" class="bg-white dynamicComponent" style="border-radius: 8px;">
+  <div id="stepComponent" class="bg-white dynamicComponent stepper-modal">
     <q-stepper
       v-model="sp"
       ref="stepper"
@@ -246,27 +246,76 @@ export default {
   },
 }
 </script>
-<style lang="stylus">
-  #stepComponent
-    hr.line
-      position absolute
-      border-top 1px solid #9e9e9e
-      width 50%
-      left 73%
-      top 11%
-    .q-stepper--horizontal .q-stepper__step-inner
-      padding: 10px;
-    .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot
-      transform: translateX(6px)
-    .q-stepper__header--contracted .q-stepper__tab:last-child .q-stepper__dot
-      transform: translateX(-6px)
-    .q-stepper--horizontal .q-stepper__line 
-      padding 17px
-    
-      
-      span
-        position absolute
-        font-size 20px
-
+<style>
+.stepper-modal .q-stepper .q-stepper-title {
+  @apply tw-relative tw-mb-6 tw-overflow-x-hidden;
+}
+.stepper-modal .q-stepper .q-stepper-title > h3 {
+  @apply tw-text-lg tw-font-bold tw-bg-white tw-pr-4 tw-inline-block tw-z-20 tw-relative;
+}
+.stepper-modal .q-stepper .q-stepper-title > div {
+  @apply tw-block tw-w-full tw-h-px tw-bg-gray-200 tw-top-2/4 tw-absolute tw-z-10;
+}
+.stepper-modal .q-stepper {
+  @apply tw-border-0 tw-shadow-none;
+}
+.stepper-modal  .q-stepper__header {
+  @apply tw-border-b-0;
+}
+.stepper-modal .q-stepper__tab  .q-stepper__dot {
+  @apply md:tw-w-10 md:tw-h-10 tw-font-bold md:tw-text-base tw-border-0;
+}
+.stepper-modal .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot {
+  @apply tw-transform tw-translate-x-3.5;
+}
+.stepper-modal .q-stepper__header--contracted .q-stepper__tab:last-child .q-stepper__dot {
+  @apply tw-transform tw--translate-x-3.5;
+}
+.stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot {
+  @apply tw-border-2;
+  background-color: #F1F4FA;
+  border-color: #F1F4FA;
+}
+.stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot span {
+  color: #8A98C3; font-size: 20px;
+}
+.stepper-modal .q-stepper__tab--active .q-stepper__dot {
+  @apply tw-border-current tw-border-2;
+}
+.stepper-modal .text-red.q-stepper__tab--active .q-stepper__dot {
+  @apply tw-border-current tw-border-2;
+}
+.stepper-modal .q-stepper__tab--active .q-stepper__dot span {
+  @apply tw-text-white;
+}
+.stepper-modal .q-stepper .q-stepper__dot:before {
+  @apply tw-mr-8;
+}
+.stepper-modal .q-stepper .q-stepper__dot:after {
+  @apply tw-ml-8;
+}
+.stepper-modal .q-stepper .q-stepper__line:after, 
+.stepper-modal .q-stepper .q-stepper__line:before {
+  @apply tw-h-0.5;
+}
+.stepper-modal .q-stepper__title {
+  @apply tw-text-base tw-font-normal tw-text-black;
+}
+.stepper-modal .q-stepper__step-inner {
+  @apply tw-py-4 lg:tw-py-5 tw-px-0 lg:tw-px-0;
+}
+.stepper-modal .q-stepper__step-inner .q-form {
+  @apply tw-px-4 lg:tw-px-5;
+} 
+#formRampComponent .master-dialog__actions {
+  @apply tw-py-4 tw-px-7;
+  background-color: #F1F4FA; 
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+#formRampComponent .master-dialog__body {
+  @apply tw-p-0 tw-m-0;
+}
 </style>
 

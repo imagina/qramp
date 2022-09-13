@@ -1,6 +1,6 @@
 <template>
-  <div id="formFlyStep">
-    <q-form @submit.prevent.stop="saveInfo" ref="myForm" id="rowContainer" class="row">
+  <div id="formFlyStep" class="tw-mt-6 tw-mb-20">
+    <q-form @submit.prevent.stop="saveInfo" ref="myForm" id="rowContainer" class="row q-col-gutter-lg">
       <table-flight 
         @cancel="dialog = $event" 
         :dialog="dialog" 
@@ -9,7 +9,7 @@
         @validateBound="validateBound(flightNumberField)"
       />
       <div class="col-12 col-md-6">
-        <div v-for="(field, keyField) in formFields.flyFormLeft" class="col-12 col-md-6" :style="`${readonly ? 'height: 50px' : ''}`">
+        <div v-for="(field, keyField) in formFields.flyFormLeft" :style="`${readonly ? 'height: 50px' : ''}`">
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
@@ -65,9 +65,8 @@
       <div class="col-12 col-md-6">
         <div 
           v-for="(field, keyField) in formFields.flyFormRight" 
-          class="col-12 col-md-6" 
           :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`"
-          :class="{'q-px-md': isDesktop}"
+          
         >
         <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
           <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
@@ -84,15 +83,14 @@
         <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-      <div v-if="isInbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+      <div v-if="isInbound" class="col-12 col-md-6">
         <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
+          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
             <div>{{$tr('isite.cms.label.inbound')}}</div>
           </div>
           <div
             v-for="(field, keyField) in formFields.inboundLeft"
-            :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
-            :style="`${readonly ? 'height: 50px' : ''}`"
+            class="tw-px-4"
           >
             <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
               <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
@@ -111,15 +109,14 @@
           </div>
         </div>
       </div>
-      <div v-if="isOutbound" class="col-12 col-md-6 q-px-md q-mt-lg q-pb-sm">
+      <div v-if="isOutbound" class="col-12 col-md-6">
         <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary boundColor q-py-xs q-mb-xs text-center text-weight-bold">
+          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
             <div>{{$tr('isite.cms.label.outbound')}}</div>
           </div>
           <div
             v-for="(field, keyField) in formFields.outboundRight"
-            :class="`${readonly ? 'col-12 col-md-6': 'q-px-md' }`"
-            :style="`${readonly ? 'height: 50px' : ''}`"
+            class="tw-px-4"
           >
             <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
               <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
@@ -140,7 +137,7 @@
       </div>
       <div 
         v-if="isInbound && isOutbound"
-        class="col-12 tw-mx-0 tw-font-semibold"
+        class="col-12 tw-font-semibold"
       >
         <div 
           class="
