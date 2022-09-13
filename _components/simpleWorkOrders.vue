@@ -3,6 +3,7 @@
     <q-form
       ref="formSimpleWorkOrders"
       id="simpleWordOrder"
+      class="tw-px-8 tw-pt-8 tw-pb-20"
     >
       <div
         class="col-12 col-md-6"
