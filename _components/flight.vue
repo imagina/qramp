@@ -298,6 +298,7 @@ export default {
       return false
     },
     isOutbound() {
+      this.form.outboundFlightNumber = this.flightData.outboundFlightNumber;
       if(this.form.operationTypeId){
         this.differenceHour = 0;
         return this.form.operationTypeId == 4 || this.form.operationTypeId != 3
@@ -305,6 +306,7 @@ export default {
       return false
     },
     isInbound() {
+      this.form.inboundFlightNumber = this.flightData.inboundFlightNumber;
       if(this.form.operationTypeId){
         this.differenceHour = 0;
         return this.form.operationTypeId == 3 || this.form.operationTypeId != 4

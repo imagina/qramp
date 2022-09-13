@@ -89,7 +89,7 @@ export default {
       form: {
         customerId: null,
         contractId: null,
-        flightNumber: null,
+        preFlightNumber: null,
         stationId: null,
         adHoc: null,
         customCustomerName: null,
@@ -157,8 +157,8 @@ export default {
             },
             label: this.$tr("ifly.cms.form.customer"),
           },
-          flightNumber: {
-            name: "flightNumber",
+          preFlightNumber: {
+            name: "preFlightNumber",
             value: "",
             type: "search",
             props: {
@@ -299,7 +299,8 @@ export default {
           persistent: true,
         })
         .onOk(async () => {
-          await this.showWorkOrder(response);
+          await this.showWorkOrder(response.data);
+          this.$root.$emit('crud.data.refresh');
         })
         .onCancel(async () => {
           await this.closeModal();
@@ -308,13 +309,13 @@ export default {
     search({ type, name }) {
       if (
         type != "search" &&
-        (this.form.flightNumber !== "" || this.form.flightNumber !== null)
+        (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
       )
         return;
       const params = {
         refresh: true,
         params: {
-          filter: { search: this.form.flightNumber.toUpperCase() },
+          filter: { search: this.form.preFlightNumber.toUpperCase() },
         },
       };
       this.loadingState = true;
