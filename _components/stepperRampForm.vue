@@ -17,7 +17,8 @@
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
         >
-          <i-toolbar 
+          <i-toolbar
+            class="hidden" 
             @edit="readonly = $event" 
             @send-info="sendInfo()"
             :update="data.update"
