@@ -7,7 +7,7 @@
     :loading="loading || loadingComputed" 
     @hide="clear" 
     :actions="actions" 
-    :width="'90vw'" 
+    :width="modalProps.width" 
     :maximized="$q.screen.lt.md"
   >
     <stepper-ramp-form

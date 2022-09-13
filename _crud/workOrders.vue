@@ -30,7 +30,8 @@ export default {
             this.$refs.formOrders.loadform({
               modalProps: {
                 title: this.$tr('ifly.cms.form.newWorkOrder'),
-                update: false
+                update: false,
+                width: '35vw'
               }
             })
           }
@@ -363,6 +364,7 @@ export default {
               title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
               update: true,
               workOrderId: data.id,
+              width: '90vw'
             },
             data: item.data,
           })

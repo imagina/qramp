@@ -3,7 +3,16 @@
     <q-form
       ref="formSimpleWorkOrders"
       id="simpleWordOrder"
-      class="tw-px-8 tw-pt-8 tw-pb-20"
+      class="
+        tw-px-8 
+        tw-pt-8 
+        tw-pb-10
+        tw-my-4
+        tw-mx-8
+        tw-mb-32
+        tw-border 
+        tw-border-gray-200
+        tw-rounded-lg"
     >
       <div
         class="col-12 col-md-6"
@@ -127,7 +136,7 @@ export default {
           preFlightNumber: {
             name: "preFlightNumber",
             value: null,
-            type: "inputStandard",
+            type: "input",
             props: {
               rules: [
                 (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
