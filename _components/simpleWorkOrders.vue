@@ -69,6 +69,10 @@ export default {
         customerId: null,
         contractId: null,
         preFlightNumber: null,
+        stationId: null,
+        adHoc: null,
+        customCustomerName: null,
+        customCustomer: null,
       },
       bannerMessage: null,
       selectCustomers: '',
@@ -122,7 +126,7 @@ export default {
           },
           preFlightNumber: {
             name: "preFlightNumber",
-            value: "",
+            value: null,
             type: "inputStandard",
             props: {
               rules: [
@@ -131,6 +135,26 @@ export default {
               label: "Pre Flight Number",
               clearable: true,
               color: "primary",
+            },
+          },
+          stationId: {
+            name:'stationId',
+            value: '',
+            type: 'select',
+            props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              selectByDefault : true,
+              readonly: this.disabledReadonly,
+              label: `*${this.$tr('ifly.cms.form.station')}`,
+              clearable: true,
+              color:"primary"
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.setupStations',
+              select: {label: 'stationName', id: 'id'},
+              requestParams: {filter: {status: 1}}
             },
           },
         },
