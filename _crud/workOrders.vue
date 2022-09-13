@@ -154,7 +154,20 @@ export default {
                 label: 'Status',
                 'clearable': true
               },
-            }
+            },
+            adHoc: {
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              props: {
+                label: 'Ad Hoc',
+                clearable: true,
+                options:[
+                {label: this.$tr('isite.cms.label.yes'), value: true,},
+                {label: this.$tr('isite.cms.label.no'), value: false,},
+              ],
+              },
+            },
           },
           requestParams: {
             include: 'customer,workOrderStatus,operationType,station,contract'
