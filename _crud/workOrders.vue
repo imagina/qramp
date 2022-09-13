@@ -15,6 +15,9 @@ export default {
       crudId: this.$uid(),
     }
   },
+  provide() {
+    return {showWorkOrder: this.showWorkOrder}
+  },
   computed: {
     crudData() {
       return {

@@ -650,7 +650,6 @@ export default {
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
-              clearable: true,
               color:"primary",
               format24h: true,
               options: this.validateDateOutboundBlockOut,
@@ -811,7 +810,7 @@ export default {
         this.selectCustomerComputed = {
           id: updateForm.customerId,
           value: updateForm.customerName,
-          label,
+          label: updateForm.adHoc ? `${label} (Ad Hoc)`: label,
           contractId: updateForm.contractId,
           contractName: updateForm.contractName,
         }
@@ -878,8 +877,9 @@ export default {
         }else{
         error = true;
         const out = this.$refs.outboundBlockOut[0];
-        console.log(out);
-        out.$refs.outboundBlockOutInboundLeft.focus();
+        if(out) {
+          out.$refs.outboundBlockOutInboundLeft.focus();
+        }
         }
       }
       

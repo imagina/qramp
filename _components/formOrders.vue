@@ -10,7 +10,8 @@
     :width="'90vw'" 
     :maximized="$q.screen.lt.md"
   >
-    <stepper-ramp-form 
+    <stepper-ramp-form
+      v-if="modalProps.update"
       @sp="sp = $event" 
       @loading="loading = $event" 
       ref="stepper" 
@@ -18,6 +19,7 @@
       :data="modalProps" 
       @close-modal="close($event)"
     />
+    <simpleWorkOrders ref="simpleWorkOrder" v-else/>
   </master-modal>
 </template>
 <script>
@@ -31,10 +33,11 @@ import {
   STATUS_SUBMITTED 
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
+import simpleWorkOrders from './simpleWorkOrders.vue'
 
 export default {
   name:'formOrders',
-  components: { stepperRampForm },
+  components: { stepperRampForm, simpleWorkOrders },
   mixins:[responsive, services],
   data() {
     return {
@@ -59,6 +62,7 @@ export default {
   provide() {
     return {
       disabledReadonly: computed(() => qRampStore().disabledReadonly()),
+      closeModal: this.close
     }
   },
   computed:{
@@ -114,8 +118,25 @@ export default {
     loadingComputed() {
       return qRampStore().getLoading();
     },
-    actions(){
-      return[
+    actions() {
+      return this.modalProps.update ? this.actionsStepperButtom : this.actionSimpleWorkOrder;
+    },
+    actionSimpleWorkOrder() {
+      return [
+      {
+          props:{
+            vIf: !this.modalProps.update,
+            color:'primary',
+            label: this.$tr('isite.cms.label.save'),
+          },
+          action: () => {
+            this.$refs.simpleWorkOrder.saveSimpleWorkOrder();
+          }
+        },
+      ]
+    },
+    actionsStepperButtom(){
+      return [
         {
           vIf: this.sp > 1 ,
           props:{
