@@ -312,18 +312,6 @@ export default {
           this.form.outboundTailNumber = null;
           this.form.outboundDestinationAirportId = null;
         }
-        const data = {
-          destinationAirport: {
-            id: this.form.inboundOriginAirportId,
-          },
-          registration: this.form.outboundTailNumber || this.form.inboundTailNumber,
-          originAirport: {
-            id: this.form.outboundDestinationAirportId,
-          },
-          estimatedOff: this.form.inboundScheduledArrival,
-          estimatedOn: this.form.outboundScheduledDeparture,
-        }
-        qRampStore().validateStatusSelectedFlight(data);
         return validator;
       }
       return false
@@ -343,18 +331,6 @@ export default {
           this.form.inboundTailNumber = null;
           this.form.inboundOriginAirportId = null;
         }
-        const data = {
-          destinationAirport: {
-            id: this.form.inboundOriginAirportId,
-          },
-          registration: this.form.inboundTailNumber,
-          originAirport: {
-            id: null,
-          },
-          estimatedOff: this.form.inboundScheduledArrival,
-          estimatedOn: this.form.outboundScheduledDeparture,
-        }
-        qRampStore().validateStatusSelectedFlight(data);
         return validator
       }
       return false
@@ -1147,6 +1123,18 @@ export default {
     resetField() {
       if(!this.form.operationTypeId) return;
       this.$refs.myForm.reset();
+      const data = {
+          destinationAirport: {
+            id: this.form.inboundOriginAirportId,
+          },
+          registration: this.form.outboundTailNumber || this.form.inboundTailNumber,
+          originAirport: {
+            id: this.form.outboundDestinationAirportId,
+          },
+          estimatedOff: this.form.inboundScheduledArrival,
+          estimatedOn: this.form.outboundScheduledDeparture,
+        }
+      qRampStore().validateStatusSelectedFlight(data);
       this.resetBound();
     },
     validateDate(dateTime, dateMin = null) {
