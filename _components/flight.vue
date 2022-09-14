@@ -191,6 +191,7 @@ export default {
         inboundOriginAirportId:null,
         outboundFlightNumber:null,
         outboundDestinationAirportId:null,
+        outboundBlockOut: null,
       },
       refresh: 1,
       selected:[],
@@ -306,11 +307,13 @@ export default {
           this.form.outboundScheduledDeparture = this.dateFormatterFull(this.flightData.outboundScheduledDeparture)
           this.form.outboundTailNumber = this.flightData.outboundTailNumber;
           this.form.outboundDestinationAirportId = this.flightData.outboundDestinationAirportId;
+          this.form.outboundBlockOut = this.dateFormatterFull(this.flightData.outboundBlockOut);
         } else {
           this.form.outboundFlightNumber = null;
           this.form.outboundScheduledDeparture = null;
           this.form.outboundTailNumber = null;
           this.form.outboundDestinationAirportId = null;
+          this.form.outboundBlockOut = null;
         }
         return validator;
       }
@@ -318,6 +321,7 @@ export default {
     },
     isInbound() {
       if(this.form.operationTypeId) {
+        this.form.outboundBlockOut = this.dateFormatterFull(this.flightData.outboundBlockOut);
         this.differenceHour = 0;
         const validator = this.form.operationTypeId == 3 || this.form.operationTypeId != 4;
         if(validator) {
@@ -325,11 +329,13 @@ export default {
           this.form.inboundScheduledArrival = this.dateFormatterFull(this.flightData.inboundScheduledArrival)
           this.form.inboundTailNumber = this.flightData.inboundTailNumber;
           this.form.inboundOriginAirportId = this.flightData.inboundOriginAirportId;
+          this.form.outboundBlockOut;
         } else {
           this.form.inboundFlightNumber = null;
           this.form.inboundScheduledArrival = null
           this.form.inboundTailNumber = null;
           this.form.inboundOriginAirportId = null;
+          this.form.outboundBlockOut = null;
         }
         return validator
       }

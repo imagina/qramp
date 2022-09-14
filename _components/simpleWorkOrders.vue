@@ -102,6 +102,7 @@ export default {
       loadingState: false,
       dataTable: [],
       dialog: false,
+      loading: false,
     };
   },
   inject: ["showWorkOrder", "closeModal"],
@@ -335,12 +336,15 @@ export default {
     },
     async saveRequestSimpleWorkOrder() {
       try {
+        qRampStore().showLoading();
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
           this.form
         );
+        qRampStore().hideLoading();
         return response;
       } catch (error) {
+        qRampStore().hideLoading();
         console.error(error);
       }
     },
