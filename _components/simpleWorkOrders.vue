@@ -308,10 +308,11 @@ export default {
         this.dialog = true;
       }
       if (response.status == 204) {
+        const message = this.$tr("ifly.cms.label.flightMessage").replace("#file_number", this.form.preFlightNumber)
         this.$alert.warning({
           mode: "modal",
           title: this.$tr("ifly.cms.form.flight"),
-          message: this.$tr("ifly.cms.label.flightMessage"),
+          message,
           actions: [
             {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
             {

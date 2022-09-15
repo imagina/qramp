@@ -951,10 +951,11 @@ export default {
            _this.dialog = true
             qRampStore().setFlightNumberField(name);
           } else if (response.status == 204) {
+            const message = _this.$tr("ifly.cms.label.flightMessage").replace("#file_number", criteria);
             _this.$alert.warning({
               mode:'modal',
               title: _this.$tr('ifly.cms.form.flight'),
-              message: _this.$tr('ifly.cms.label.flightMessage'),
+              message,
               actions: [
                 {label: _this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
                 {
