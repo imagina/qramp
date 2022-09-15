@@ -103,6 +103,7 @@ export default {
       dataTable: [],
       dialog: false,
       loading: false,
+      acceptSchedule: false,
     };
   },
   inject: ["showWorkOrder", "closeModal"],
@@ -280,7 +281,11 @@ export default {
     saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
-          this.orderConfirmationMessage();
+          if(this.acceptSchedule) {
+            await this.orderConfirmationMessage();
+            return;
+          }
+          this.messageWhenFlightIsNotChosen();
         } else {
           this.$alert.error({
             message: this.$tr("isite.cms.message.formInvalid"),
@@ -289,11 +294,26 @@ export default {
         }
       });
     },
+    messageWhenFlightIsNotChosen() {
+      if(!this.form.faFlightId) {
+        this.$q.dialog({
+          ok: "Select Schedule",
+          message: "if you are sure to save without choosing a specific time?",
+          cancel: 'Save Anyway',
+          persistent: true,
+        })
+        .onOk(async () => {
+          this.search({type: 'search'});
+        })
+        .onCancel(async () => {
+          this.orderConfirmationMessage();
+        });
+      }
+    },
     async orderConfirmationMessage() {
       const response = await this.saveRequestSimpleWorkOrder();
       this.$q
         .dialog({
-          title: "Confirm",
           ok: "Ok",
           message: "You want to continue editing the order?",
           cancel: true,
@@ -301,13 +321,14 @@ export default {
         })
         .onOk(async () => {
           await this.showWorkOrder(response.data);
+          this.acceptSchedule = false;
           this.$root.$emit('crud.data.refresh');
         })
         .onCancel(async () => {
           await this.closeModal();
         });
     },
-    search({ type, name }) {
+    search({ type }) {
       if (
         type != "search" &&
         (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
@@ -333,6 +354,7 @@ export default {
     setDataTable({ select, dialog }) {
       this.form.faFlightId = select.faFlightId || null;
       this.dialog = dialog;
+      this.acceptSchedule = true;
     },
     async saveRequestSimpleWorkOrder() {
       try {
@@ -350,6 +372,7 @@ export default {
     },
     responseStatus(response) {
       this.dataTable = [];
+      this.acceptSchedule = false;
       if (response.status == 200) {
         this.dataTable = qRampStore().getTableListOfFlights(response.data);
         this.dialog = true;
@@ -360,10 +383,12 @@ export default {
           title: this.$tr("ifly.cms.form.flight"),
           message: this.$tr("ifly.cms.label.flightMessage"),
           actions: [
+            {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
             {
               label: this.$tr("isite.cms.label.yes"),
               color: "primary",
               handler: () => {
+                this.acceptSchedule = true;
                 this.form.faFlightId = null;
               },
             },
