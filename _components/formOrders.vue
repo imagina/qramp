@@ -7,7 +7,7 @@
     :loading="loading || loadingComputed" 
     @hide="clear" 
     :actions="actions" 
-    :width="'90vw'" 
+    :width="modalProps.width" 
     :maximized="$q.screen.lt.md"
   >
     <stepper-ramp-form
@@ -222,7 +222,7 @@ export default {
       this.cargo.outboundCargoBulkLoaded = updateData.data['outboundCargoBulkLoaded'] ? updateData.data['outboundCargoBulkLoaded'].toString() : ''
       this.cargo.cargoTotalKilosLoaded = updateData.data['cargoTotalKilosLoaded'] ? updateData.data['cargoTotalKilosLoaded'].toString() : ''
       this.cargo.cargoTotalKilosUnloaded = updateData.data['cargoTotalKilosUnloaded'] ? updateData.data['cargoTotalKilosUnloaded'].toString() : ''
-      this.cargo.delayList = updateData.data['delay']
+      this.cargo.delayList = updateData.data['delay'] || [];
 
       this.services = updateData.data['workOrderItems']
       this.equipments = updateData.data['workOrderItems']
@@ -237,9 +237,8 @@ export default {
       this.signature.representativeTitle = updateData.data['representativeTitle']
       this.signature.customerSignature = updateData.data['customerSignature']
       this.signature.representativeSignature = updateData.data['representativeSignature']
-
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight )
-      this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList )
+      this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList)
       this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
       this.$store.commit('qrampApp/SET_FORM_SERVICES',[])
       this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )

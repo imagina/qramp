@@ -24,4 +24,5 @@ export default {
   workOrderTransactions: `${urlBase}/workday-transactions`,
   contractRules: `${urlBase}/contract-rules`,
   setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
+  simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
 }

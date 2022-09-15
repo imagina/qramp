@@ -191,6 +191,7 @@ export default {
         inboundOriginAirportId:null,
         outboundFlightNumber:null,
         outboundDestinationAirportId:null,
+        outboundBlockOut: null,
       },
       refresh: 1,
       selected:[],
@@ -300,14 +301,43 @@ export default {
     isOutbound() {
       if(this.form.operationTypeId){
         this.differenceHour = 0;
-        return this.form.operationTypeId == 4 || this.form.operationTypeId != 3
+        const validator = this.form.operationTypeId == 4 || this.form.operationTypeId != 3;
+        if(validator) {
+          this.form.outboundFlightNumber = this.flightData.outboundFlightNumber;
+          this.form.outboundScheduledDeparture = this.dateFormatterFull(this.flightData.outboundScheduledDeparture)
+          this.form.outboundTailNumber = this.flightData.outboundTailNumber;
+          this.form.outboundDestinationAirportId = this.flightData.outboundDestinationAirportId;
+          this.form.outboundBlockOut = this.dateFormatterFull(this.flightData.outboundBlockOut);
+        } else {
+          this.form.outboundFlightNumber = null;
+          this.form.outboundScheduledDeparture = null;
+          this.form.outboundTailNumber = null;
+          this.form.outboundDestinationAirportId = null;
+          this.form.outboundBlockOut = null;
+        }
+        return validator;
       }
       return false
     },
     isInbound() {
-      if(this.form.operationTypeId){
+      if(this.form.operationTypeId) {
+        this.form.outboundBlockOut = this.dateFormatterFull(this.flightData.outboundBlockOut);
         this.differenceHour = 0;
-        return this.form.operationTypeId == 3 || this.form.operationTypeId != 4
+        const validator = this.form.operationTypeId == 3 || this.form.operationTypeId != 4;
+        if(validator) {
+          this.form.inboundFlightNumber = this.flightData.inboundFlightNumber;
+          this.form.inboundScheduledArrival = this.dateFormatterFull(this.flightData.inboundScheduledArrival)
+          this.form.inboundTailNumber = this.flightData.inboundTailNumber;
+          this.form.inboundOriginAirportId = this.flightData.inboundOriginAirportId;
+          this.form.outboundBlockOut;
+        } else {
+          this.form.inboundFlightNumber = null;
+          this.form.inboundScheduledArrival = null
+          this.form.inboundTailNumber = null;
+          this.form.inboundOriginAirportId = null;
+          this.form.outboundBlockOut = null;
+        }
+        return validator
       }
       return false
     },
@@ -1099,6 +1129,18 @@ export default {
     resetField() {
       if(!this.form.operationTypeId) return;
       this.$refs.myForm.reset();
+      const data = {
+          destinationAirport: {
+            id: this.form.inboundOriginAirportId,
+          },
+          registration: this.form.outboundTailNumber || this.form.inboundTailNumber,
+          originAirport: {
+            id: this.form.outboundDestinationAirportId,
+          },
+          estimatedOff: this.form.inboundScheduledArrival,
+          estimatedOn: this.form.outboundScheduledDeparture,
+        }
+      qRampStore().validateStatusSelectedFlight(data);
       this.resetBound();
     },
     validateDate(dateTime, dateMin = null) {

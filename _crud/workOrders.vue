@@ -30,7 +30,8 @@ export default {
             this.$refs.formOrders.loadform({
               modalProps: {
                 title: this.$tr('ifly.cms.form.newWorkOrder'),
-                update: false
+                update: false,
+                width: '35vw'
               }
             })
           }
@@ -154,7 +155,20 @@ export default {
                 label: 'Status',
                 'clearable': true
               },
-            }
+            },
+            adHoc: {
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              props: {
+                label: 'Ad Hoc',
+                clearable: true,
+                options:[
+                {label: this.$tr('isite.cms.label.yes'), value: true,},
+                {label: this.$tr('isite.cms.label.no'), value: false,},
+              ],
+              },
+            },
           },
           requestParams: {
             include: 'customer,workOrderStatus,operationType,station,contract'
@@ -350,6 +364,7 @@ export default {
               title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
               update: true,
               workOrderId: data.id,
+              width: '90vw'
             },
             data: item.data,
           })
