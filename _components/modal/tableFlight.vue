@@ -30,6 +30,7 @@
       </q-card-section>
       <q-card-actions align="right" class="q-mr-sm">
         <q-btn
+          v-if="manually"
           rounded
           label="Add manually"
           class="q-ml-sm text-capitalize"
@@ -64,6 +65,10 @@ export default {
     dialog: {
       type: Boolean,
       default: false
+    },
+    manually: {
+      type: Boolean,
+      default: true,
     }
   },
   data(){

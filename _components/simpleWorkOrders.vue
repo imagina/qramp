@@ -5,6 +5,7 @@
       :dialog="dialog"
       :dataTable="dataTable"
       @flightSelect="setDataTable($event)"
+      :manually="false"
     />
     <q-form
       ref="formSimpleWorkOrders"
