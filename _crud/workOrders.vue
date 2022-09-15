@@ -58,6 +58,12 @@ export default {
               align: 'left'
             },
             {
+              name: "faFlightStatus",
+              label: 'Flight Status',
+              field: "faFlightStatus",
+              align: "left",
+            },
+            {
               name: "inboundFlightNumber",
               label: 'Inbound Flight Number',
               field: "inboundFlightNumber",
