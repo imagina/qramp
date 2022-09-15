@@ -35,7 +35,7 @@
           <dynamic-field
             :field="field"
             v-model="selectCustomerComputed"
-            @input="setCustomerForm"
+            @input="setCustomerForm(keyField)"
             @filter="setCustomerName"
             ref="customerId"
           >
@@ -78,6 +78,7 @@
 import factoryCustomerWithContracts from "../_components/factories/factoryCustomerWithContracts.js";
 import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
+import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
 
 export default {
   components: {
@@ -106,6 +107,9 @@ export default {
       acceptSchedule: false,
     };
   },
+  mixins:[
+    fieldsSimpleWorkOrders
+  ],
   inject: ["showWorkOrder", "closeModal"],
   computed: {
     selectCustomerComputed: {
@@ -121,82 +125,6 @@ export default {
     },
     allowContractName() {
       return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
-    },
-    fields() {
-      return {
-        banner: {
-          type: "banner",
-          props: {
-            color: "info",
-            icon: "fas fa-exclamation-triangle",
-            message: this.bannerMessage,
-          },
-        },
-        form: {
-          customerId: {
-            name: "customerId",
-            value: "",
-            type: this.readonly ? "inputStandard" : "select",
-            help: {
-              description:
-                'You can add a new customer to the list if it\'s not available. Type the Customer Name and click on "Create new customer". The Work Order will be created as Ad-Hoc.',
-            },
-            props: {
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              readonly: this.disabledReadonly,
-              borderless: true,
-              label: `*${this.$tr("ifly.cms.form.customer")}`,
-              clearable: true,
-              color: "primary",
-              "hide-bottom-space": false,
-              emitValue: false,
-              options: this.newCustumerAdHoc,
-            },
-            loadOptions: {
-              delayed: this.getCustomerList,
-            },
-            label: this.$tr("ifly.cms.form.customer"),
-          },
-          preFlightNumber: {
-            name: "preFlightNumber",
-            value: "",
-            type: "search",
-            props: {
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              hint: "Enter the fight number and press enter or press the search icon",
-              loading: this.loadingState,
-              label: `*${this.$tr("ifly.cms.form.flight")}`,
-              clearable: true,
-              maxlength: 7,
-              color: "primary",
-            },
-            label: this.$tr("ifly.cms.form.flight"),
-          },
-          stationId: {
-            name: "stationId",
-            value: "",
-            type: "select",
-            props: {
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              selectByDefault: true,
-              label: `*${this.$tr("ifly.cms.form.station")}`,
-              clearable: true,
-              color: "primary",
-            },
-            loadOptions: {
-              apiRoute: "apiRoutes.qramp.setupStations",
-              select: { label: "stationName", id: "id" },
-              requestParams: { filter: { status: 1 } },
-            },
-          },
-        },
-      };
     },
   },
   methods: {
@@ -254,7 +182,8 @@ export default {
         return resolve(customerList);
       });
     },
-    setCustomerForm() {
+    setCustomerForm(key) {
+      if (key !== "customerId") return;
       const selectCustomers =
         this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
