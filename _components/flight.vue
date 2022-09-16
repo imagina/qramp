@@ -894,9 +894,10 @@ export default {
         setTimeout(() => {
           this.form.date = this.dateFormatterFull(updateForm.date)
           this.update = false
-          this.responsibleList = this.optionResponsible(updateForm.responsible);
+          
           this.form.responsibleId = updateForm.responsibleId;
           const responsible = qRampStore().getResponsible();
+          this.responsibleList = this.optionResponsible(responsible);
           this.selecteResponsibleComputed = {
             id: responsible.id,
             value: responsible.fullName,
