@@ -47,7 +47,7 @@
               </div>
             </dynamic-field>
           </label>
-          <label v-if="keyField != 'customerId' && keyField != 'customCustomerName' && keyField != 'responsibleId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <label v-if="keyField != 'customerId' && keyField != 'customCustomerName' && keyField !== 'responsibleId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
               :key="keyField"
@@ -59,7 +59,7 @@
               @input="resetField()"
             />
           </label>
-          <div v-else>
+          <div v-if="keyField === 'responsibleId'">
             <dynamic-field
               :key="keyField"
               :id="keyField"
@@ -471,6 +471,27 @@ export default {
             },
             label: this.$tr('ifly.cms.form.acType'),
           },
+          responsibleId: {
+            name: "responsibleId",
+            value: '',
+            type: "select",
+            props: {
+              vIf: this.manageResponsiblePermissions,
+              rules: [
+                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
+              ],
+              label: '*Responsible',
+              clearable: true,
+              color: "primary",
+              emitValue: false,
+              options: this.responsibleList,
+            },
+            loadOptions: {
+              apiRoute: "apiRoutes.quser.users",
+              select: { label: "fullName", id: "id", value:"fullName" },
+              filterByQuery: true
+            },
+          },
           operationTypeId: {
             name:'operationTypeId',
             value: '',
@@ -493,27 +514,6 @@ export default {
               requestParams: {filter: {status: 1}}
             },
             label: this.$tr('ifly.cms.form.operation'),
-          },
-          responsibleId: {
-            name: "responsibleId",
-            value: '',
-            type: "select",
-            props: {
-              vIf: this.manageResponsiblePermissions,
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              label: '*Responsible',
-              clearable: true,
-              color: "primary",
-              emitValue: false,
-              options: this.responsibleList,
-            },
-            loadOptions: {
-              apiRoute: "apiRoutes.quser.users",
-              select: { label: "fullName", id: "id", value:"fullName" },
-              filterByQuery: true
-            },
           },
         },
         flyFormRight:{
