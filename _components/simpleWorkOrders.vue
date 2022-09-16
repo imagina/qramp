@@ -228,7 +228,7 @@ export default {
       if(!this.form.faFlightId) {
         this.$q.dialog({
           ok: "Select Schedule",
-          message: "Are you sure to save without choosing a specific flight schedule?",
+          message: "Are you sure to save without choosing a specific flight schedule? This is helpful  to keep the flight status up to date. ",
           cancel: 'Save Anyway',
           persistent: true,
         })

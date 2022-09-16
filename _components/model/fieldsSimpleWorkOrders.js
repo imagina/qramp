@@ -89,6 +89,7 @@ export default {
               label: '*Responsible',
               clearable: true,
               color: "primary",
+              hint: "If you left this field empty, the responsible will be you automatically"
             },
             loadOptions: {
               apiRoute: "apiRoutes.quser.users",
