@@ -1,5 +1,8 @@
 export default {
   computed: {
+    manageResponsiblePermissions() {
+      return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
+    },
     fields() {
       return {
         banner: {
@@ -71,6 +74,27 @@ export default {
               apiRoute: "apiRoutes.qramp.setupStations",
               select: { label: "stationName", id: "id" },
               requestParams: { filter: { status: 1 } },
+            },
+          },
+          responsibleId: {
+            name: "responsibleId",
+            value: "",
+            type: "select",
+            props: {
+              vIf: this.manageResponsiblePermissions,
+              rules: [
+                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
+              ],
+              selectByDefault: true,
+              label: '*Responsible',
+              clearable: true,
+              color: "primary",
+            },
+            loadOptions: {
+              apiRoute: "apiRoutes.quser.users",
+              select: { label: "fullName", id: "id" },
+              requestParams: { filter: { status: 1 } },
+              filterByQuery: true
             },
           },
         },

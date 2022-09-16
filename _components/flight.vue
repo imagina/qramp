@@ -47,7 +47,7 @@
               </div>
             </dynamic-field>
           </label>
-          <label v-if="keyField != 'customerId' && keyField != 'customCustomerName'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <label v-if="keyField != 'customerId' && keyField != 'customCustomerName' && keyField != 'responsibleId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
               :key="keyField"
@@ -59,6 +59,17 @@
               @input="resetField()"
             />
           </label>
+          <div v-else>
+            <dynamic-field
+              :key="keyField"
+              :id="keyField"
+              :field="field"
+              :class="`${readonly ? 'col-7': ''}`"
+              :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
+              v-model="selectResponsible"
+              @input="setSelectResponsible"
+            />
+          </div>
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
@@ -209,10 +220,12 @@ export default {
       dataTable:[],
       mainData:[],
       selectCustomers: '',
+      selectResponsible: '',
       bannerMessage: null,
       customerName: '',
       newCustumerAdHoc: [],
       differenceHour: 0,
+      responsibleList: [],
     }
   },
   watch:{
@@ -289,6 +302,14 @@ export default {
         this.selectCustomers = value;
       }
     },
+    selecteResponsibleComputed: {
+      get() {
+        return this.selectResponsible;
+      },
+      set(value) {
+        this.selectResponsible = value;
+      }
+    },
     showLabel(){
       if(this.readonly && !this.responsive ){
         return true
@@ -346,6 +367,9 @@ export default {
     },
     allowContractName() {
       return this.$auth.hasAccess('ramp.work-orders.see-contract-name');
+    },
+    manageResponsiblePermissions() {
+      return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
     },
     formFields(){
       return{
@@ -469,6 +493,27 @@ export default {
               requestParams: {filter: {status: 1}}
             },
             label: this.$tr('ifly.cms.form.operation'),
+          },
+          responsibleId: {
+            name: "responsibleId",
+            value: '',
+            type: "select",
+            props: {
+              vIf: this.manageResponsiblePermissions,
+              rules: [
+                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
+              ],
+              label: '*Responsible',
+              clearable: true,
+              color: "primary",
+              emitValue: false,
+              options: this.responsibleList,
+            },
+            loadOptions: {
+              apiRoute: "apiRoutes.quser.users",
+              select: { label: "fullName", id: "id", value:"fullName" },
+              filterByQuery: true
+            },
           },
         },
         flyFormRight:{
@@ -841,6 +886,7 @@ export default {
           contractId: updateForm.contractId,
           contractName: updateForm.contractName,
         }
+        console.log();
         this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gate = updateForm.gate
@@ -848,6 +894,14 @@ export default {
         setTimeout(() => {
           this.form.date = this.dateFormatterFull(updateForm.date)
           this.update = false
+          this.responsibleList = this.optionResponsible(updateForm.responsible);
+          this.form.responsibleId = updateForm.responsibleId;
+          const responsible = qRampStore().getResponsible();
+          this.selecteResponsibleComputed = {
+            id: responsible.id,
+            value: responsible.fullName,
+            label: responsible.fullName,
+          }
           this.form.inboundFlightNumber = updateForm.inboundFlightNumber 
           this.form.outboundFlightNumber = updateForm.outboundFlightNumber 
           this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
@@ -1184,6 +1238,14 @@ export default {
       if(field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
         this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
       }
+    },
+    optionResponsible(item) {
+      return item ? [{id: String(item.id), label: item.fullName, value: item.id}]: [];
+    },
+    setSelectResponsible() {
+      const responsibleId = this.selecteResponsibleComputed.id || null;
+      this.form.responsibleId = responsibleId;
+      console.log(this.form.responsibleId);
     },
   },
 }

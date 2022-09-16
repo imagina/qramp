@@ -177,7 +177,7 @@ export default {
             },
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType,station,contract'
+            include: 'customer,workOrderStatus,operationType,station,contract,responsible'
           },
           actions: [
             {
@@ -362,7 +362,7 @@ export default {
         {
           refresh: true,
           params: {
-            include: "customer,workOrderStatus,operationType,station,contract"
+            include: "customer,workOrderStatus,operationType,station,contract,responsible"
           }
         }).then((item) => {
           this.$refs.formOrders.loadform({

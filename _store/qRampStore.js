@@ -21,6 +21,7 @@ const state = reactive({
         outboundScheduledDeparture: null,
         inboundScheduledArrival: null,
     },
+    responsible: {},
 });
 
 export default function qRampStore() {
@@ -202,6 +203,12 @@ export default function qRampStore() {
         })
         return dataTable;   
     }
+    function setResponsible(data){
+        state.responsible = data;
+    }
+    function getResponsible() {
+        return state.responsible;
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -234,5 +241,7 @@ export default function qRampStore() {
         getDifferenceInHours,
         dateFormatter,
         getTableListOfFlights,
+        setResponsible,
+        getResponsible,
     }
 }
