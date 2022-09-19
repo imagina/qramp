@@ -117,6 +117,13 @@ export default {
               format: val => val ? val.stationName : '-',
               align: 'left'
             },
+            {
+              name: 'responsible',
+              label: 'Responsible',
+              field: 'responsible',
+              format: val => val ? val.fullName : '-',
+              align: 'left'
+            },
 
             {
               name: "created_at",
