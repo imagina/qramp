@@ -205,6 +205,7 @@ export default {
       const response = await this.saveRequestSimpleWorkOrder();
       this.$alert.info({
           mode: "modal",
+          title: '',
           message: 'You want to continue editing the order?',
           modalWidth: '600px',
           actions: [
