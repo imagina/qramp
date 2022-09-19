@@ -1,5 +1,9 @@
+import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
 export default {
   computed: {
+    allowContractName() {
+      return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
+    },
     manageResponsiblePermissions() {
       return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
     },
@@ -100,4 +104,38 @@ export default {
       };
     },
   },
+  methods:{
+    getCustomerList() {
+      return new Promise(async (resolve) => {
+        const custemerParams = {
+          params: {
+            filter: {
+              withoutContracts: true,
+              adHocWorkOrders: true,
+              customerStatusId: 1,
+            },
+          },
+          refresh: true,
+        };
+        const contractParams = {
+          params: {
+            filter: {
+              contractStatusId: 1,
+            },
+          },
+          refresh: true,
+        };
+        const customersData = await Promise.all([
+          this.$crud.index("apiRoutes.qramp.setupCustomers", custemerParams),
+          this.$crud.index("apiRoutes.qramp.setupContracts", contractParams),
+        ]);
+        const customerList = factoryCustomerWithContracts(
+          customersData,
+          this.allowContractName
+        );
+
+        return resolve(customerList);
+      });
+  }
+  }
 };

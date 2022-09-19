@@ -76,7 +76,6 @@
   </div>
 </template>
 <script>
-import factoryCustomerWithContracts from "../_components/factories/factoryCustomerWithContracts.js";
 import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
@@ -124,14 +123,11 @@ export default {
     disabledReadonly() {
       return qRampStore().disabledReadonly();
     },
-    allowContractName() {
-      return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
-    },
   },
   methods: {
     addCustumers() {
       if (this.customerName !== "") {
-        const id = `customer-${this.numberInRange(8000, 1000)}`;
+        const id = `customer-${qRampStore().numberInRange(8000, 1000)}`;
         this.newCustumerAdHoc = [{ id, label: this.customerName }];
         this.form.adHoc = true;
         this.form.customCustomer = true;
@@ -149,38 +145,6 @@ export default {
       }
       this.$alert.error({
         message: this.$tr("ifly.cms.message.orderaddNewrecord"),
-      });
-    },
-    getCustomerList() {
-      return new Promise(async (resolve) => {
-        const custemerParams = {
-          params: {
-            filter: {
-              withoutContracts: true,
-              adHocWorkOrders: true,
-              customerStatusId: 1,
-            },
-          },
-          refresh: true,
-        };
-        const contractParams = {
-          params: {
-            filter: {
-              contractStatusId: 1,
-            },
-          },
-          refresh: true,
-        };
-        const customersData = await Promise.all([
-          this.$crud.index("apiRoutes.qramp.setupCustomers", custemerParams),
-          this.$crud.index("apiRoutes.qramp.setupContracts", contractParams),
-        ]);
-        const customerList = factoryCustomerWithContracts(
-          customersData,
-          this.allowContractName
-        );
-
-        return resolve(customerList);
       });
     },
     setCustomerForm(key) {
@@ -201,9 +165,6 @@ export default {
         selectCustomers && !this.form.contractId ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
-    },
-    numberInRange(max, min) {
-      return Math.floor(Math.random() * (max - min + 1) + min);
     },
     setCustomerName(query) {
       this.customerName = query !== "" ? query : "";
@@ -242,21 +203,36 @@ export default {
     },
     async orderConfirmationMessage() {
       const response = await this.saveRequestSimpleWorkOrder();
-      this.$q
-        .dialog({
-          ok: "Ok",
-          message: "You want to continue editing the order?",
-          cancel: true,
-          persistent: true,
-        })
-        .onOk(async () => {
-          await this.showWorkOrder(response.data);
-          this.acceptSchedule = false;
-          this.$root.$emit('crud.data.refresh');
-        })
-        .onCancel(async () => {
-          await this.closeModal();
-        });
+      this.$alert.info({
+          mode: "modal",
+          message: 'You want to continue editing the order?',
+          modalWidth: '600px',
+          actions: [
+            {
+              label: 'Create a new one',
+              color:'light-blue-7',
+              handler: () => {
+                this.resetForm();
+              }
+            },
+            {
+              label: 'Go out to the list',
+              color:'light-blue-7',
+              handler: async () => {
+                await this.closeModal();
+              }
+            },
+            {
+              label: 'Continue editing',
+              color: "primary",
+              handler: async () => {
+                await this.showWorkOrder(response.data);
+                this.acceptSchedule = false;
+                this.$root.$emit('crud.data.refresh');
+              },
+            },
+          ],
+      });
     },
     search({ type }) {
       if (
@@ -328,6 +304,28 @@ export default {
       }
       this.loadingState = false;
     },
+    resetForm() {
+      this.form = {
+        customerId: null,
+        contractId: null,
+        preFlightNumber: null,
+        stationId: null,
+        adHoc: null,
+        customCustomerName: null,
+        customCustomer: null,
+        faFlightId: null,
+      }
+      this.newCustumerAdHoc= [];
+      this.bannerMessage= null;
+      this.selectCustomers= "";
+      this.customerName= null;
+      this.loadingState= false;
+      this.dataTable= [];
+      this.dialog= false;
+      this.loading= false;
+      this.acceptSchedule= false;
+      this.$refs.formSimpleWorkOrders.reset();
+    }
   },
 };
 </script>

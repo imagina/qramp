@@ -6,6 +6,8 @@ import {
     modelFlightBoundFormStatus
 } from '../_components/model/constants.js'
 import * as moment from 'moment';
+import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts';
+import baseService from '@imagina/qcrud/_services/baseService.js'
 
 const state = reactive({
     statusId: STATUS_DRAFT,
@@ -209,6 +211,9 @@ export default function qRampStore() {
     function getResponsible() {
         return state.responsible;
     }
+    function numberInRange(max, min) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -243,5 +248,6 @@ export default function qRampStore() {
         getTableListOfFlights,
         setResponsible,
         getResponsible,
+        numberInRange,
     }
 }
