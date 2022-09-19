@@ -206,31 +206,32 @@ export default {
       this.$alert.info({
           mode: "modal",
           title: '',
-          message: 'You want to continue editing the order?',
+          message: 'What do you want to do?',
           modalWidth: '600px',
           actions: [
             {
-              label: 'Create a new one',
-              color:'light-blue-7',
-              handler: () => {
-                this.resetForm();
-              }
-            },
-            {
               label: 'Go out to the list',
-              color:'light-blue-7',
+              color:'grey-6',
               handler: async () => {
                 await this.closeModal();
               }
             },
+
             {
               label: 'Continue editing',
-              color: "primary",
+              color: "light-blue-7",
               handler: async () => {
                 await this.showWorkOrder(response.data);
                 this.acceptSchedule = false;
                 this.$root.$emit('crud.data.refresh');
               },
+            },
+            {
+              label: 'Create a new one',
+              color:'positive',
+              handler: () => {
+                this.resetForm();
+              }
             },
           ],
       });
