@@ -86,9 +86,6 @@ export default {
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
               selectByDefault: true,
               label: '*Responsible',
               clearable: true,
