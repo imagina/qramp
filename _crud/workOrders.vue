@@ -395,16 +395,16 @@ export default {
     async getFlightMap(fly) {
       try {
         if(!fly.faFlightId) return;
+        qRampStore().showVisibleMapModal();
         qRampStore().setLoadingModalMap(true);
         const params = {
             refresh: true,
             params: {
-              filter: {search: fly.faFlightId}
+              filter: { search: fly.faFlightId }
             }
         }
-        const response = await this.$crud.index('apiRoutes.qramp.flightawareMap', params);
+        const response = await this.$crud.index('apiRoutes.qfly.flightawareMap', params);
         qRampStore().setFlightMap(response.data.map);
-        qRampStore().showVisibleMapModal();
         qRampStore().setLoadingModalMap(false);
       } catch (error) {
         qRampStore().setFlightMap(null);

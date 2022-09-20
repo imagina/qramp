@@ -1,17 +1,21 @@
 <template>
   <master-modal
-    title="Flight Map"
     v-model="visibleMapModal"
+    v-bind="modalProps"
     :persistent="true"
-    :loding="loading"
+    :loading="loading"
     @hide="close"
   >
-    <img 
+  <div class="tw-flex tw-justify-center">
+    <img
+        v-if="!loading" 
+        class="img-map"
         :src="imgMap" 
         alt="" 
-        srcset="" 
-        class="tw-w-24 tw-h-24"
+        srcset=""
     />
+    <div v-if="loading" class="tw-w-64 tw-h-64" />
+  </div>
   </master-modal>
 </template>
 
@@ -33,6 +37,12 @@ export default {
     loading() {
       return qRampStore().getLoadingModalMap();
     },
+    modalProps() {
+      return {
+        width: '90vw',
+        title: "Flight Map"
+      };
+    }
   },
   methods: {
     close() {
@@ -42,3 +52,11 @@ export default {
   },
 };
 </script>
+
+<style>
+  .img-map {
+    width: 70vw;
+    height: 500px;
+    border-radius: 10px;
+  }
+</style>

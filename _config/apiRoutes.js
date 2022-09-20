@@ -27,5 +27,4 @@ export default {
   contractRules: `${urlBase}/contract-rules`,
   setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
   simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
-  flightawareMap: `${flightUrlBase}/flightaware/map`,
 }
