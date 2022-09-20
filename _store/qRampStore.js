@@ -24,6 +24,9 @@ const state = reactive({
         inboundScheduledArrival: null,
     },
     responsible: {},
+    visibleMapModal: false,
+    flightMap: null,
+    loadingModalMap: false,
 });
 
 export default function qRampStore() {
@@ -214,6 +217,30 @@ export default function qRampStore() {
     function numberInRange(max, min) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
+    function hideVisibleMapModal() {
+        state.visibleMapModal = false;
+    }
+    function showVisibleMapModal() {
+        state.visibleMapModal = true;
+    }
+    function getVisibleMapModal() {
+        return state.visibleMapModal;
+    }
+    function setVisibleMapModal(value) {
+        state.visibleMapModal = value;
+    }
+    function setFlightMap(data) {
+        state.flightMap = data;
+    }
+    function getFlightMap() {
+        return state.flightMap;
+    }
+    function getLoadingModalMap() {
+        return state.loadingModalMap;
+    }
+    function setLoadingModalMap(value) {
+        state.loadingModalMap = value;
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -249,5 +276,13 @@ export default function qRampStore() {
         setResponsible,
         getResponsible,
         numberInRange,
+        hideVisibleMapModal,
+        showVisibleMapModal,
+        getVisibleMapModal,
+        setVisibleMapModal,
+        setFlightMap,
+        getFlightMap,
+        getLoadingModalMap,
+        setLoadingModalMap
     }
 }

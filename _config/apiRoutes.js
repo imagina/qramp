@@ -5,6 +5,8 @@ const urlBase = `/${moduleName}/${moduleVersion}`
 const setupModuleName = 'setup';
 const setupUrlBase = `/${setupModuleName}/${moduleVersion}`
 
+const flightModuleName = 'flight';
+const flightUrlBase = `/${flightModuleName}/${moduleVersion}`
 
 export default {
   urlBase: urlBase,
@@ -25,4 +27,5 @@ export default {
   contractRules: `${urlBase}/contract-rules`,
   setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
   simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
+  flightawareMap: `${flightUrlBase}/flightaware/map`,
 }

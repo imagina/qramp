@@ -1,14 +1,20 @@
 <template>
-  <form-orders ref="formOrders" />
+  <div>
+    <form-orders ref="formOrders" />
+    <flightMap />
+  </div>
 </template>
 <script>
 import formOrders from "../_components/formOrders.vue"
 import { STATUS_POSTED, STATUS_SUBMITTED } from "../_components/model/constants"
+import flightMap from '../_components/modal/flightMap.vue'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   name: 'RampCrud',
   components: {
-    formOrders
+    formOrders,
+    flightMap,
   },
   data() {
     return {
@@ -62,6 +68,7 @@ export default {
               label: 'Flight Status',
               field: "faFlightStatus",
               align: "left",
+              action: (item) => this.getFlightMap(item),
             },
             {
               name: "inboundFlightNumber",
@@ -384,6 +391,26 @@ export default {
         }).catch((err) => {
           console.log(err);
         });
+    },
+    async getFlightMap(fly) {
+      try {
+        if(!fly.faFlightId) return;
+        qRampStore().setLoadingModalMap(true);
+        const params = {
+            refresh: true,
+            params: {
+              filter: {search: fly.faFlightId}
+            }
+        }
+        const response = await this.$crud.index('apiRoutes.qramp.flightawareMap', params);
+        qRampStore().setFlightMap(response.data.map);
+        qRampStore().showVisibleMapModal();
+        qRampStore().setLoadingModalMap(false);
+      } catch (error) {
+        qRampStore().setFlightMap(null);
+        qRampStore().setLoadingModalMap(false);
+        console.log(error);
+      }
     },
   }
 }
