@@ -93,7 +93,7 @@ export default {
     return {
       standard: {
         min: 0,
-        max: 50,
+        max: 80,
       },
     }
   },
