@@ -172,11 +172,16 @@ export default {
     saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
-          if(this.acceptSchedule) {
-            await this.orderConfirmationMessage();
+          if(this.acceptSchedule || this.form.faFlightId) {
+            await this.messageWhenFlightIsNotChosen();
             return;
           }
-          this.messageWhenFlightIsNotChosen();
+
+          if(!this.form.faFlightId || !this.acceptSchedule) {
+            this.search({type: 'search'});
+            return;
+          }
+          
         } else {
           this.$alert.error({
             message: this.$tr("isite.cms.message.formInvalid"),
@@ -185,21 +190,25 @@ export default {
         }
       });
     },
-    messageWhenFlightIsNotChosen() {
-      if(!this.form.faFlightId) {
-        this.$q.dialog({
-          ok: "Select Schedule",
-          message: "Are you sure to save without choosing a specific flight schedule? This is helpful  to keep the flight status up to date. ",
-          cancel: 'Save Anyway',
-          persistent: true,
-        })
-        .onOk(async () => {
-          this.search({type: 'search'});
-        })
-        .onCancel(async () => {
-          this.orderConfirmationMessage();
+    async messageWhenFlightIsNotChosen() {
+      if(this.acceptSchedule) {
+        this.$alert.warning({
+            mode: "modal",
+            message: `You have to select a schedule for the flight number: ${this.form.preFlightNumber}`,
+            actions: [
+              {
+                label: 'Ok',
+                color:'positive',
+                handler: async () => {
+                  await this.orderConfirmationMessage();
+                  this.acceptSchedule = false;
+                }
+              },
+            ],
         });
+        return;
       }
+      await this.orderConfirmationMessage();  
     },
     async orderConfirmationMessage() {
       const response = await this.saveRequestSimpleWorkOrder();
@@ -262,7 +271,7 @@ export default {
     setDataTable({ select, dialog }) {
       this.form.faFlightId = select.faFlightId || null;
       this.dialog = dialog;
-      this.acceptSchedule = true;
+      this.acceptSchedule = false;
     },
     async saveRequestSimpleWorkOrder() {
       try {

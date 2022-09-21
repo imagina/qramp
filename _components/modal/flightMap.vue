@@ -1,6 +1,6 @@
 <template>
   <master-modal v-model="visibleMapModal" v-bind="modalProps" :persistent="true" :loading="loading" @hide="close">
-    <div class="flight-map tw-mx-auto tw-p-3">
+    <div class="flight-map tw-mx-auto tw-p-3 tw-hidden">
       <div class="md:tw-flex tw-mb-6 md:tw-space-x-4">
         <div class="rw-grow">
           <div class="tw-flex">
