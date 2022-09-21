@@ -1,14 +1,20 @@
 <template>
-  <form-orders ref="formOrders" />
+  <div>
+    <form-orders ref="formOrders" />
+    <flightMap />
+  </div>
 </template>
 <script>
 import formOrders from "../_components/formOrders.vue"
 import { STATUS_POSTED, STATUS_SUBMITTED } from "../_components/model/constants"
+import flightMap from '../_components/modal/flightMap.vue'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   name: 'RampCrud',
   components: {
-    formOrders
+    formOrders,
+    flightMap,
   },
   data() {
     return {
@@ -56,6 +62,13 @@ export default {
               field: item => item.customCustomerName || item.customer,
               format: val => this.getCustomerName(val),
               align: 'left'
+            },
+            {
+              name: "faFlightStatus",
+              label: 'Flight Status',
+              field: "faFlightStatus",
+              align: "left",
+              action: (item) => this.getFlightMap(item),
             },
             {
               name: "inboundFlightNumber",
@@ -109,6 +122,13 @@ export default {
               label: 'Station',
               field: 'station',
               format: val => val ? val.stationName : '-',
+              align: 'left'
+            },
+            {
+              name: 'responsible',
+              label: 'Responsible',
+              field: 'responsible',
+              format: val => val ? val.fullName : '-',
               align: 'left'
             },
 
@@ -171,7 +191,7 @@ export default {
             },
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType,station,contract'
+            include: 'customer,workOrderStatus,operationType,station,contract,responsible'
           },
           actions: [
             {
@@ -356,7 +376,7 @@ export default {
         {
           refresh: true,
           params: {
-            include: "customer,workOrderStatus,operationType,station,contract"
+            include: "customer,workOrderStatus,operationType,station,contract,responsible"
           }
         }).then((item) => {
           this.$refs.formOrders.loadform({
@@ -371,6 +391,26 @@ export default {
         }).catch((err) => {
           console.log(err);
         });
+    },
+    async getFlightMap(fly) {
+      try {
+        if(!fly.faFlightId) return;
+        qRampStore().showVisibleMapModal();
+        qRampStore().setLoadingModalMap(true);
+        const params = {
+            refresh: true,
+            params: {
+              filter: { search: fly.faFlightId }
+            }
+        }
+        const response = await this.$crud.index('apiRoutes.qfly.flightawareMap', params);
+        qRampStore().setFlightMap(response.data.map);
+        qRampStore().setLoadingModalMap(false);
+      } catch (error) {
+        qRampStore().setFlightMap(null);
+        qRampStore().setLoadingModalMap(false);
+        console.log(error);
+      }
     },
   }
 }

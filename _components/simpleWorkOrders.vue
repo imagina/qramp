@@ -5,6 +5,7 @@
       :dialog="dialog"
       :dataTable="dataTable"
       @flightSelect="setDataTable($event)"
+      :manually="false"
     />
     <q-form
       ref="formSimpleWorkOrders"
@@ -35,7 +36,7 @@
           <dynamic-field
             :field="field"
             v-model="selectCustomerComputed"
-            @input="setCustomerForm"
+            @input="setCustomerForm(keyField)"
             @filter="setCustomerName"
             ref="customerId"
           >
@@ -75,9 +76,9 @@
   </div>
 </template>
 <script>
-import factoryCustomerWithContracts from "../_components/factories/factoryCustomerWithContracts.js";
 import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
+import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
 
 export default {
   components: {
@@ -103,8 +104,12 @@ export default {
       dataTable: [],
       dialog: false,
       loading: false,
+      acceptSchedule: false,
     };
   },
+  mixins:[
+    fieldsSimpleWorkOrders
+  ],
   inject: ["showWorkOrder", "closeModal"],
   computed: {
     selectCustomerComputed: {
@@ -118,90 +123,11 @@ export default {
     disabledReadonly() {
       return qRampStore().disabledReadonly();
     },
-    allowContractName() {
-      return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
-    },
-    fields() {
-      return {
-        banner: {
-          type: "banner",
-          props: {
-            color: "info",
-            icon: "fas fa-exclamation-triangle",
-            message: this.bannerMessage,
-          },
-        },
-        form: {
-          customerId: {
-            name: "customerId",
-            value: "",
-            type: this.readonly ? "inputStandard" : "select",
-            help: {
-              description:
-                'You can add a new customer to the list if it\'s not available. Type the Customer Name and click on "Create new customer". The Work Order will be created as Ad-Hoc.',
-            },
-            props: {
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              readonly: this.disabledReadonly,
-              borderless: true,
-              label: `*${this.$tr("ifly.cms.form.customer")}`,
-              clearable: true,
-              color: "primary",
-              "hide-bottom-space": false,
-              emitValue: false,
-              options: this.newCustumerAdHoc,
-            },
-            loadOptions: {
-              delayed: this.getCustomerList,
-            },
-            label: this.$tr("ifly.cms.form.customer"),
-          },
-          preFlightNumber: {
-            name: "preFlightNumber",
-            value: "",
-            type: "search",
-            props: {
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              hint: "Enter the fight number and press enter or press the search icon",
-              loading: this.loadingState,
-              label: `*${this.$tr("ifly.cms.form.flight")}`,
-              clearable: true,
-              maxlength: 7,
-              color: "primary",
-            },
-            label: this.$tr("ifly.cms.form.flight"),
-          },
-          stationId: {
-            name: "stationId",
-            value: "",
-            type: "select",
-            props: {
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              selectByDefault: true,
-              label: `*${this.$tr("ifly.cms.form.station")}`,
-              clearable: true,
-              color: "primary",
-            },
-            loadOptions: {
-              apiRoute: "apiRoutes.qramp.setupStations",
-              select: { label: "stationName", id: "id" },
-              requestParams: { filter: { status: 1 } },
-            },
-          },
-        },
-      };
-    },
   },
   methods: {
     addCustumers() {
       if (this.customerName !== "") {
-        const id = `customer-${this.numberInRange(8000, 1000)}`;
+        const id = `customer-${qRampStore().numberInRange(8000, 1000)}`;
         this.newCustumerAdHoc = [{ id, label: this.customerName }];
         this.form.adHoc = true;
         this.form.customCustomer = true;
@@ -221,39 +147,8 @@ export default {
         message: this.$tr("ifly.cms.message.orderaddNewrecord"),
       });
     },
-    getCustomerList() {
-      return new Promise(async (resolve) => {
-        const custemerParams = {
-          params: {
-            filter: {
-              withoutContracts: true,
-              adHocWorkOrders: true,
-              customerStatusId: 1,
-            },
-          },
-          refresh: true,
-        };
-        const contractParams = {
-          params: {
-            filter: {
-              contractStatusId: 1,
-            },
-          },
-          refresh: true,
-        };
-        const customersData = await Promise.all([
-          this.$crud.index("apiRoutes.qramp.setupCustomers", custemerParams),
-          this.$crud.index("apiRoutes.qramp.setupContracts", contractParams),
-        ]);
-        const customerList = factoryCustomerWithContracts(
-          customersData,
-          this.allowContractName
-        );
-
-        return resolve(customerList);
-      });
-    },
-    setCustomerForm() {
+    setCustomerForm(key) {
+      if (key !== "customerId") return;
       const selectCustomers =
         this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
@@ -271,16 +166,17 @@ export default {
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
     },
-    numberInRange(max, min) {
-      return Math.floor(Math.random() * (max - min + 1) + min);
-    },
     setCustomerName(query) {
       this.customerName = query !== "" ? query : "";
     },
     saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
-          this.orderConfirmationMessage();
+          if(this.acceptSchedule) {
+            await this.orderConfirmationMessage();
+            return;
+          }
+          this.messageWhenFlightIsNotChosen();
         } else {
           this.$alert.error({
             message: this.$tr("isite.cms.message.formInvalid"),
@@ -289,25 +185,58 @@ export default {
         }
       });
     },
-    async orderConfirmationMessage() {
-      const response = await this.saveRequestSimpleWorkOrder();
-      this.$q
-        .dialog({
-          title: "Confirm",
-          ok: "Ok",
-          message: "You want to continue editing the order?",
-          cancel: true,
+    messageWhenFlightIsNotChosen() {
+      if(!this.form.faFlightId) {
+        this.$q.dialog({
+          ok: "Select Schedule",
+          message: "Are you sure to save without choosing a specific flight schedule? This is helpful  to keep the flight status up to date. ",
+          cancel: 'Save Anyway',
           persistent: true,
         })
         .onOk(async () => {
-          await this.showWorkOrder(response.data);
-          this.$root.$emit('crud.data.refresh');
+          this.search({type: 'search'});
         })
         .onCancel(async () => {
-          await this.closeModal();
+          this.orderConfirmationMessage();
         });
+      }
     },
-    search({ type, name }) {
+    async orderConfirmationMessage() {
+      const response = await this.saveRequestSimpleWorkOrder();
+      this.$alert.info({
+          mode: "modal",
+          title: '',
+          message: 'What do you want to do?',
+          modalWidth: '600px',
+          actions: [
+            {
+              label: 'Go out to the list',
+              color:'grey-6',
+              handler: async () => {
+                await this.closeModal();
+              }
+            },
+
+            {
+              label: 'Continue editing',
+              color: "light-blue-7",
+              handler: async () => {
+                await this.showWorkOrder(response.data);
+                this.acceptSchedule = false;
+                this.$root.$emit('crud.data.refresh');
+              },
+            },
+            {
+              label: 'Create a new one',
+              color:'positive',
+              handler: () => {
+                this.resetForm();
+              }
+            },
+          ],
+      });
+    },
+    search({ type }) {
       if (
         type != "search" &&
         (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
@@ -333,6 +262,7 @@ export default {
     setDataTable({ select, dialog }) {
       this.form.faFlightId = select.faFlightId || null;
       this.dialog = dialog;
+      this.acceptSchedule = true;
     },
     async saveRequestSimpleWorkOrder() {
       try {
@@ -350,20 +280,24 @@ export default {
     },
     responseStatus(response) {
       this.dataTable = [];
+      this.acceptSchedule = false;
       if (response.status == 200) {
         this.dataTable = qRampStore().getTableListOfFlights(response.data);
         this.dialog = true;
       }
       if (response.status == 204) {
+        const message = this.$tr("ifly.cms.label.flightMessage").replace("#file_number", this.form.preFlightNumber)
         this.$alert.warning({
           mode: "modal",
           title: this.$tr("ifly.cms.form.flight"),
-          message: this.$tr("ifly.cms.label.flightMessage"),
+          message,
           actions: [
+            {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
             {
               label: this.$tr("isite.cms.label.yes"),
               color: "primary",
               handler: () => {
+                this.acceptSchedule = true;
                 this.form.faFlightId = null;
               },
             },
@@ -372,6 +306,28 @@ export default {
       }
       this.loadingState = false;
     },
+    resetForm() {
+      this.form = {
+        customerId: null,
+        contractId: null,
+        preFlightNumber: null,
+        stationId: null,
+        adHoc: null,
+        customCustomerName: null,
+        customCustomer: null,
+        faFlightId: null,
+      }
+      this.newCustumerAdHoc= [];
+      this.bannerMessage= null;
+      this.selectCustomers= "";
+      this.customerName= null;
+      this.loadingState= false;
+      this.dataTable= [];
+      this.dialog= false;
+      this.loading= false;
+      this.acceptSchedule= false;
+      this.$refs.formSimpleWorkOrders.reset();
+    }
   },
 };
 </script>
