@@ -4,7 +4,7 @@ const pages = config('pages') // Get Pages from config
 export default [
   {
     title: 'ifly.cms.sidebar.rampInfo',
-    icon: 'fas fa-arrows-alt',
+    icon: 'fa-light fa-arrows-up-down-left-right',
     children: [
       pages.qramp.workOrders,
     ]
