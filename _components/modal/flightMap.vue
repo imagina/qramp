@@ -17,14 +17,14 @@
                   tw-text-blue-400
                 " href="">Haz un ascenso de categoria para ver el numero de matricula</a>
               <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">en vuelo hacia</p>
-              <p class="tw-text-yellow-600 tw-text-lg">Aterrizando en 1 hora 37 minutos</p>
+              <p class="tw-text-yellow-600 tw-text-base">Aterrizando en 1 hora 37 minutos</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="tw-flex tw-justify-between tw-space-x-4">
-        <div>
+      <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-space-x-4">
+        <div class="tw-mb-3">
           <p class="tw-text-xl tw-uppercase">Den</p>
           <p class="tw-text-lg tw-uppercase tw-font-bold">DENVER, CO</p>
           <p class="tw-text-sm">despego de</p>
