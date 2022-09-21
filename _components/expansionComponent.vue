@@ -126,7 +126,4 @@ export default {
   content:''; 
   @apply tw-bg-gray-200 tw-mx-4 tw-absolute tw-bottom-0 tw-inset-x-0 tw-h-px;
 }
-#expansion-container .q-field--outlined.q-field--readonly .q-field__control:before {
-  @apply tw-border-solid;
-}
 </style>

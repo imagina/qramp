@@ -57,9 +57,6 @@ export default {
 </script>
 
 <style lang="stylus">
-  #equipment-container
-    .search
-      background #e9edf6
-      border-radius 99px
-    
+
+  
 </style>

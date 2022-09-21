@@ -263,8 +263,11 @@ export default {
 .stepper-modal  .q-stepper__header {
   @apply tw-border-b-0;
 }
-.stepper-modal .q-stepper__tab  .q-stepper__dot {
+.stepper-modal .q-stepper__tab .q-stepper__dot {
   @apply md:tw-w-10 md:tw-h-10 tw-font-bold md:tw-text-base tw-border-0;
+}
+.stepper-modal .q-stepper__tab .q-stepper__dot .q-icon {
+  @apply tw-text-xs sm:tw-text-sm md:tw-text-xl;
 }
 .stepper-modal .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot {
   @apply tw-transform tw-translate-x-3.5;
@@ -290,10 +293,10 @@ export default {
   @apply tw-text-white;
 }
 .stepper-modal .q-stepper .q-stepper__dot:before {
-  @apply tw-mr-8;
+  @apply lg:tw-mr-8;
 }
 .stepper-modal .q-stepper .q-stepper__dot:after {
-  @apply tw-ml-8;
+  @apply lg:tw-ml-8;
 }
 .stepper-modal .q-stepper .q-stepper__line:after, 
 .stepper-modal .q-stepper .q-stepper__line:before {
@@ -309,11 +312,8 @@ export default {
   @apply tw-px-4 lg:tw-px-5;
 } 
 #formRampComponent .master-dialog__actions {
-  @apply tw-py-4 tw-px-7;
-  background-color: #F1F4FA; 
-  position: absolute;
-  width: 100%;
-  bottom: 0;
+  @apply tw-py-4 tw-px-7 tw-absolute tw-w-full tw-bottom-0;
+  background-color: #F1F4FA;
 }
 #formRampComponent .master-dialog__body {
   @apply tw-p-0 tw-m-0;
