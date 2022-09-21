@@ -5,9 +5,6 @@ const urlBase = `/${moduleName}/${moduleVersion}`
 const setupModuleName = 'setup';
 const setupUrlBase = `/${setupModuleName}/${moduleVersion}`
 
-const flightModuleName = 'flight';
-const flightUrlBase = `/${flightModuleName}/${moduleVersion}`
-
 export default {
   urlBase: urlBase,
   version: moduleVersion,

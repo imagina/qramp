@@ -158,11 +158,4 @@ export default {
 .text-tw-left-thumb {
 @apply tw-hidden;
 }
-.text-tw-right-thumb {
-  font-family: "Font Awesome 6 Pro";
-  font-weight: 900;
-  content: "\f0d8";
-  line-height: 0px;
-  color: #4046ff;
-}
 </style>
