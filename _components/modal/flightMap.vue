@@ -17,14 +17,14 @@
                   tw-text-blue-400
                 " href="">Haz un ascenso de categoria para ver el numero de matricula</a>
               <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">en vuelo hacia</p>
-              <p class="tw-text-yellow-600 tw-text-lg">Aterrizando en 1 hora 37 minutos</p>
+              <p class="tw-text-yellow-600 tw-text-base">Aterrizando en 1 hora 37 minutos</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="tw-flex tw-justify-between tw-space-x-4">
-        <div>
+      <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-space-x-4">
+        <div class="tw-mb-3">
           <p class="tw-text-xl tw-uppercase">Den</p>
           <p class="tw-text-lg tw-uppercase tw-font-bold">DENVER, CO</p>
           <p class="tw-text-sm">despego de</p>
@@ -65,7 +65,7 @@
       </div>
       <div class="tw-mt-6 ">
         <q-range v-model="standard" color="positive" :min="0" :max="100" readonly left-thumb-color="tw-left-thumb"
-          right-thumb-color="tw-right-thumb" />
+          right-thumb-color="tw-right-thumb"/>
       </div>
       <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-place-items-stretch tw-mb-6 tw-text-gray-500">
         <div class="tw-text-sm">
@@ -129,17 +129,19 @@ export default {
 </script>
 
 <style>
-.flight-map .q-slider__thumb {
+.flight-map .q-slider__thumb, 
+.flight-map .q-slider__track-container, .q-slider__selection {
   @apply tw-relative;
 }
 
-.flight-map .q-slider__thumb:before {
+.flight-map .q-slider__thumb:last-child:before {
   @apply tw-absolute tw-z-10 tw-text-2xl;
   font-family: "Font Awesome 6 Sharp";
   content: "\f072";
   color: var(--q-color-positive);
-  top: -7px;
+  top: -10px;
   text-shadow: -1px -1px 1px rgba(255, 255, 255, .1), 1px 1px 1px rgba(0, 0, 0, .5);
+  text-shadow: 0px 9px 5px #607d8b, 0px -4px 10px rgb(255 255 255 / 30%);
 }
 
 .flight-map .img-map {
@@ -161,5 +163,30 @@ export default {
 .flight-map .tw-underline.tw-decoration-dashed {
   text-underline-offset: 3px;
   text-decoration-style: dashed;
+}
+
+.flight-map .q-slider__track-container:before,
+.flight-map .q-slider__track-container:after { 
+  content: '';
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  box-shadow: 0px 0px 10px 2px #a2b1b9;
+}
+
+.flight-map .q-slider__track-container:before {
+  @apply tw-left-0;
+  background-color: var(--q-color-positive);
+}
+
+.flight-map .q-slider__track-container:after {
+  @apply tw-bg-gray-400 tw-right-0;
+}
+.flight-map .q-slider__inner {
+  @apply tw-bg-gray-400;
 }
 </style>
