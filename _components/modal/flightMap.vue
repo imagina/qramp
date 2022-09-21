@@ -129,26 +129,16 @@ export default {
 </script>
 
 <style>
-.img-map {
-  width: 70vw;
-  height: 500px;
-  border-radius: 10px;
-}
-
-.text-tw-left-thumb {
-  @apply tw-hidden;
-}
-
 .flight-map .q-slider__thumb {
   @apply tw-relative;
 }
 
 .flight-map .q-slider__thumb:before {
-  @apply tw-absolute tw-z-10 tw-text-base;
+  @apply tw-absolute tw-z-10 tw-text-2xl;
   font-family: "Font Awesome 6 Sharp";
   content: "\f072";
   color: var(--q-color-positive);
-  top: -2px;
+  top: -7px;
   text-shadow: -1px -1px 1px rgba(255, 255, 255, .1), 1px 1px 1px rgba(0, 0, 0, .5);
 }
 
