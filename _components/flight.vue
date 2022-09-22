@@ -1036,13 +1036,15 @@ export default {
     setForm(data) {
       this.refresh = 0
       if(this.name.includes('outboundFlightNumber')){
+        const destinationAirportId = data.destinationAirport ? data.destinationAirport.id : null;
         this.$set(this.form, "outboundFlightNumber",  data.ident)
-        this.$set(this.form, "outboundDestinationAirportId",  data.destinationAirport.id)
+        this.$set(this.form, "outboundDestinationAirportId",  destinationAirportId)
         this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.estimatedOn))
         this.$set(this.form, "outboundTailNumber",  data.registration)
       } else {
         this.$set(this.form, "inboundFlightNumber", data.ident)
-        this.$set(this.form, "inboundOriginAirportId", data.originAirport.id)
+        const originAirportId = data.originAirport ? data.originAirport.id : null;
+        this.$set(this.form, "inboundOriginAirportId", originAirportId)
         this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.estimatedOff))
         this.$set(this.form, "inboundTailNumber", data.registration)
         if(this.form.outboundTailNumber) {
