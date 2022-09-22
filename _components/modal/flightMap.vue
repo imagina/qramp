@@ -1,6 +1,6 @@
 <template>
   <master-modal v-model="visibleMapModal" v-bind="modalProps" :persistent="true" :loading="loading" @hide="close">
-    <div class="flight-map tw-mx-auto tw-p-3 tw-hidden">
+    <div v-if="!loading" class="flight-map tw-mx-auto tw-p-3">
       <div class="md:tw-flex tw-mb-6 md:tw-space-x-4">
         <div class="rw-grow">
           <div class="tw-flex">
@@ -15,9 +15,9 @@
                   tw-underline
                   tw-decoration-dashed
                   tw-text-blue-400
-                " href="">Haz un ascenso de categoria para ver el numero de matricula</a>
-              <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">en vuelo hacia</p>
-              <p class="tw-text-yellow-600 tw-text-base">Aterrizando en 1 hora 37 minutos</p>
+                " href="">Make a category upgrade to see the registration number</a>
+              <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">in flight to</p>
+              <p class="tw-text-yellow-600 tw-text-base">Landing in 1 hour 37 minutes</p>
             </div>
           </div>
         </div>
@@ -27,7 +27,7 @@
         <div class="tw-mb-3">
           <p class="tw-text-xl tw-uppercase">Den</p>
           <p class="tw-text-lg tw-uppercase tw-font-bold">DENVER, CO</p>
-          <p class="tw-text-sm">despego de</p>
+          <p class="tw-text-sm">detachment from</p>
           <a class="
               tw-text-base
               tw-mb-2
@@ -37,16 +37,16 @@
               tw-decoration-dotted
               tw-text-blue-400
             ">int'l de denver - <span class="tw-font-bold tw-uppercase">DEN</span></a>
-          <p class="tw-text-lg tw-uppercase">MARTES 20 09 2022</p>
+          <p class="tw-text-lg tw-uppercase">TUESDAY 20 09 2022</p>
           <p class="tw-text-lg">
             <span class="tw-font-bold">02:16PM MDT</span>
-            <span class="text-positive"> (en horario)</span>
+            <span class="text-positive"> (on schedule)</span>
           </p>
         </div>
         <div class="tw-text-right">
           <p class="tw-text-xl tw-uppercase">iln</p>
           <p class="tw-text-lg tw-uppercase tw-font-bold">wilmington, Ch</p>
-          <p class="tw-text-sm">aterrizando en</p>
+          <p class="tw-text-sm">landing on</p>
           <a class="
               tw-text-base
               tw-mb-2
@@ -56,9 +56,9 @@
               tw-decoration-dotted
               tw-text-blue-400
             ">int'l de denver - <span class="tw-font-bold tw-uppercase">ILN</span></a>
-          <p class="tw-text-lg tw-uppercase">MARTES 20 09 2022</p>
+          <p class="tw-text-lg tw-uppercase">TUESDAY 20 09 2022</p>
           <p class="tw-text-lg">
-            <span class="tw-text-yellow-600"> (atrasado 16 minutos) </span>
+            <span class="tw-text-yellow-600"> (delayed 16 minutes) </span>
             <span class="tw-font-bold">02:16PM MDT</span>
           </p>
         </div>
@@ -69,13 +69,13 @@
       </div>
       <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-place-items-stretch tw-mb-6 tw-text-gray-500">
         <div class="tw-text-sm">
-          <span class="tw-font-bold">313 mi</span> ya recorrido
+          <span class="tw-font-bold">313 my</span> already traveled
         </div>
         <div class="tw-text-sm tw-text-center">
-          <span class="tw-font-bold">2h 13 min</span> tiempo de viaje total
+          <span class="tw-font-bold">2h 13 min</span> total travel time
         </div>
         <div class="tw-text-sm text-right">
-          <span class="tw-font-bold">313 mi</span> por recorrer
+          <span class="tw-font-bold">313 my</span> to go
         </div>
       </div>
     </div>
@@ -88,7 +88,12 @@
 
 <script>
 import qRampStore from "../../_store/qRampStore.js";
+import flightMapComponent from './mapFlighMap.vue';
+
 export default {
+  components: {
+    flightMapComponent,
+  },  
   data() {
     return {
       standard: {
