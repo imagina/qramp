@@ -1083,7 +1083,7 @@ export default {
         const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
         const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
         const airportName = items.originAirport ? items.originAirport.airportName : '';
-        const destinationairportName = items.originAirport ? items.destinationAirport.airportName : '';
+        const destinationairportName = items.destinationAirport ? items.destinationAirport.airportName : '';
           const flight = {
             index,
             date,
