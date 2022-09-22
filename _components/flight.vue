@@ -1079,17 +1079,20 @@ export default {
     },
     setTable(data) {
       data.forEach((items, index) => {
-        const date = this.dateFormatter(items.scheduledOn.split("T")[0])
+        const date = items.scheduledOn ? this.dateFormatter(items.scheduledOn.split("T")[0]) : '';
         const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
         const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
-        const flight = {
-          index,
-          date,
-          registration: items.registration,
-          inbound: `${inboundTime} - ${items.originAirport.airportName}`,
-          outbound: `${outboundTime} - ${items.destinationAirport.airportName}`,
-          aircraftType: items.aircraftType,
-        }
+        const airportName = items.originAirport ? items.originAirport.airportName : '';
+        const destinationairportName = items.originAirport ? items.destinationAirport.airportName : '';
+          const flight = {
+            index,
+            date,
+            registration: items.registration,
+            inbound: `${inboundTime} - ${airportName}`,
+            outbound: `${outboundTime} - ${destinationairportName}`,
+            aircraftType: items.aircraftType,
+            faFlightId: items.faFlightId,
+          }
         this.dataTable.push(flight)
       })
         
