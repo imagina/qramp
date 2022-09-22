@@ -5,7 +5,7 @@
       :dialog="dialog"
       :dataTable="dataTable"
       @flightSelect="setDataTable($event)"
-      :manually="false"
+      @validateBound="addmanually"
     />
     <q-form
       ref="formSimpleWorkOrders"
@@ -272,6 +272,11 @@ export default {
       this.form.faFlightId = select.faFlightId || null;
       this.dialog = dialog;
       this.acceptSchedule = false;
+    },
+    addmanually() {
+      this.form.faFlightId = null;
+      this.dialog = false;
+      this.acceptSchedule = true;;
     },
     async saveRequestSimpleWorkOrder() {
       try {
