@@ -56,7 +56,7 @@
               :class="`${readonly ? 'col-7': ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
               v-model="form[keyField]"
-              @input="resetField()"
+              @input="resetField(keyField)"
             />
           </label>
           <div v-if="keyField === 'responsibleId'">
@@ -1191,7 +1191,11 @@ export default {
       this.form.inboundCustomFlightNumber= false
       qRampStore().resetFlightBoundFormStatus();
     },
-    resetField() {
+    resetField(key = '') {
+      if(key === 'stationId') {
+        this.form.gateId = null;
+        return;
+      }
       if(!this.form.operationTypeId) return;
       this.$refs.myForm.reset();
       const data = {
