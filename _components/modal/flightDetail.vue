@@ -89,7 +89,7 @@
 
 <script>
 import qRampStore from "../../_store/qRampStore.js";
-import flightMap from './flightMap.vue';
+import flightMap from '../flightMap/flightMap.vue';
 
 export default {
   components: {
