@@ -47,7 +47,7 @@
               </div>
             </dynamic-field>
           </label>
-          <label v-if="keyField != 'customerId' && keyField != 'customCustomerName' && keyField !== 'responsibleId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <label v-if="keyField != 'customerId' && keyField != 'customCustomerName'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
               :key="keyField"
@@ -59,7 +59,29 @@
               @input="resetField(keyField)"
             />
           </label>
-          <div v-if="keyField === 'responsibleId'">
+          <hr v-if="readonly" class="label-container"/>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div 
+          v-for="(field, keyField) in formFields.flyFormRight" 
+          :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`"
+          
+        >
+        <div :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
+          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
+          <dynamic-field
+            v-if="keyField !== 'responsibleId'"
+            :key="keyField"
+            :id="keyField"
+            :field="field"
+            :class="`${readonly ? 'col-7': ''}`"
+            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:1px' : 'padding-bottom:0px'}`"
+            v-model="form[keyField]"
+            @input="resetField()"
+          />
+        </div>
+        <div v-if="keyField === 'responsibleId'">
             <dynamic-field
               :key="keyField"
               :id="keyField"
@@ -70,31 +92,10 @@
               @input="setSelectResponsible"
             />
           </div>
-          <hr v-if="readonly" class="label-container"/>
-        </div>
-      </div>
-      <div class="col-12 col-md-6">
-        <div 
-          v-for="(field, keyField) in formFields.flyFormRight" 
-          :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`"
-          
-        >
-        <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
-          <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
-          <dynamic-field
-            :key="keyField"
-            :id="keyField"
-            :field="field"
-            :class="`${readonly ? 'col-7': ''}`"
-            :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:1px' : 'padding-bottom:0px'}`"
-            v-model="form[keyField]"
-            @input="resetField()"
-          />
-        </label>
         <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-      <div v-if="isInbound" class="col-12 col-md-6">
+      <div class="col-12 col-md-6">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
             <div>{{$tr('isite.cms.label.inbound')}}</div>
@@ -120,7 +121,7 @@
           </div>
         </div>
       </div>
-      <div v-if="isOutbound" class="col-12 col-md-6">
+      <div class="col-12 col-md-6">
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
             <div>{{$tr('isite.cms.label.outbound')}}</div>
@@ -147,7 +148,6 @@
         </div>
       </div>
       <div 
-        v-if="isInbound && isOutbound"
         class="col-12 tw-font-semibold"
       >
         <div 
@@ -239,7 +239,7 @@ export default {
     },
     'form.operationTypeId'(newVal, oldVal) {
       if(this.update)return;
-      else if (newVal != oldVal) {
+      else if ( oldVal !== '' && (newVal != oldVal)) {
         this.form.inboundFlightNumber = null,
         this.form.inboundOriginAirportId = null,
         this.form.inboundTailNumber = null,
@@ -250,23 +250,6 @@ export default {
         this.form.outboundTailNumber = null,
         this.form.outboundScheduledDeparture = null
         this.form.outboundBlockOut = null
-      }
-    },
-    'form.inboundFlightNumber' (val) {
-      if (!val) {
-        this.form.inboundFlightNumber = null,
-        this.form.inboundOriginAirportId = null,
-        this.form.inboundTailNumber = null,
-        this.form.inboundScheduledArrival = null,
-        this.form.inboundBlockIn = null
-      }
-    },
-    'form.outboundFlightNumber' (val) {
-      if (!val) {
-        this.form.outboundFlightNumber = null,
-        this.form.outboundDestinationAirportId = null,
-        this.form.outboundTailNumber = null,
-        this.form.outboundScheduledDeparture = null
       }
     },
     'form.outboundDestinationAirportId' (val) {
@@ -316,48 +299,6 @@ export default {
       }
       if(this.readonly && this.responsive ){
         return false   
-      }
-      return false
-    },
-    isOutbound() {
-      if(this.form.operationTypeId){
-        const validator = this.form.operationTypeId == 4 || this.form.operationTypeId != 3;
-        if(this.form.operationTypeId != 2 && this.form.operationTypeId != 1 && this.form.operationTypeId != 6) {
-          if(validator) {
-            this.form.outboundFlightNumber = this.flightData.outboundFlightNumber;
-            this.form.outboundScheduledDeparture = this.dateFormatterFull(this.flightData.outboundScheduledDeparture)
-            this.form.outboundTailNumber = this.flightData.outboundTailNumber;
-            this.form.outboundDestinationAirportId = this.flightData.outboundDestinationAirportId;
-            this.form.outboundBlockOut = this.dateFormatterFull(this.flightData.outboundBlockOut);
-          } else {
-            this.form.outboundFlightNumber = null;
-            this.form.outboundScheduledDeparture = null;
-            this.form.outboundTailNumber = null;
-            this.form.outboundDestinationAirportId = null;
-          }
-        }
-        return validator;
-      }
-      return false
-    },
-    isInbound() {
-      if(this.form.operationTypeId) {
-        const validator = this.form.operationTypeId == 3 || this.form.operationTypeId != 4;
-          if(this.form.operationTypeId != 2 && this.form.operationTypeId != 1 && this.form.operationTypeId != 6) {
-            if(validator) {
-              this.form.inboundFlightNumber = this.flightData.inboundFlightNumber;
-              this.form.inboundScheduledArrival = this.dateFormatterFull(this.flightData.inboundScheduledArrival)
-              this.form.inboundTailNumber = this.flightData.inboundTailNumber;
-              this.form.inboundOriginAirportId = this.flightData.inboundOriginAirportId;
-            } else {
-              this.form.inboundFlightNumber = null;
-              this.form.inboundScheduledArrival = null
-              this.form.inboundTailNumber = null;
-              this.form.inboundOriginAirportId = null;
-              this.form.outboundBlockOut = null;
-            }
-        }
-        return validator
       }
       return false
     },
@@ -470,27 +411,6 @@ export default {
             },
             label: this.$tr('ifly.cms.form.acType'),
           },
-          responsibleId: {
-            name: "responsibleId",
-            value: '',
-            type: "select",
-            props: {
-              vIf: this.manageResponsiblePermissions,
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
-              label: '*Responsible',
-              clearable: true,
-              color: "primary",
-              emitValue: false,
-              options: this.responsibleList,
-            },
-            loadOptions: {
-              apiRoute: "apiRoutes.quser.users",
-              select: { label: "fullName", id: "id", value:"fullName" },
-              filterByQuery: true
-            },
-          },
           operationTypeId: {
             name:'operationTypeId',
             value: '',
@@ -539,28 +459,6 @@ export default {
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
-          date: {
-            name:'date',
-            value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
-            props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
-              hint:'Format: MM/DD/YYYY HH:mm',
-              mask:'MM/DD/YYYY HH:mm',
-              'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.readonly || this.disabledReadonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.date')}`,
-              clearable: true,
-              color:"primary",
-              format24h: true,
-              options: (date, min) => this.validateFutureDateTime(date, min, this.form.date),
-            },
-            label: this.$tr('ifly.cms.form.date'),
-          },
           gateId: {
             name:'gateId',
             value: '',
@@ -605,6 +503,27 @@ export default {
               requestParams: {filter: {status: 1}}
             },
             label: this.$tr('ifly.cms.form.status'),
+          },
+          responsibleId: {
+            name: "responsibleId",
+            value: '',
+            type: "select",
+            props: {
+              vIf: this.manageResponsiblePermissions,
+              rules: [
+                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
+              ],
+              label: '*Responsible',
+              clearable: true,
+              color: "primary",
+              emitValue: false,
+              options: this.responsibleList,
+            },
+            loadOptions: {
+              apiRoute: "apiRoutes.quser.users",
+              select: { label: "fullName", id: "id", value:"fullName" },
+              filterByQuery: true
+            },
           },
         },
         inboundLeft:{
@@ -709,26 +628,6 @@ export default {
               format24h: true,
             },
             label: this.$tr('ifly.cms.form.blockIn'),
-          },
-          outboundBlockOut: {
-            name:'outboundBlockOut',
-            value: '',
-            type: this.readonly ? 'inputStandard':'fullDate',
-            props: {
-              vIf: this.form.operationTypeId === '3',
-              ref:'outboundBlockOutInboundLeft',
-              rules: [],
-              hint:'Format: MM/DD/YYYY HH:mm',
-              mask:'MM/DD/YYYY HH:mm',
-              'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.readonly || this.disabledReadonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
-              color:"primary",
-              format24h: true,
-            },
-            label: this.$tr('ifly.cms.form.blockOut'),
           },
         },
         outboundRight:{
@@ -907,10 +806,11 @@ export default {
           this.form.outboundFlightNumber = updateForm.outboundFlightNumber 
           this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
           this.form.inboundTailNumber = updateForm.inboundTailNumber
-          this.flightBoundFormStatus.boundTailNumber = updateForm.inboundTailNumber ? true : false;
-          this.flightBoundFormStatus.boundScheduled = updateForm.inboundScheduledArrival ? true : false;
-          this.flightBoundFormStatus.boundScheduledDeparture = updateForm.outboundScheduledDeparture ? true : false;
-          this.flightBoundFormStatus.boundOriginAirportId = updateForm.inboundOriginAirportId ? true : false;
+          this.flightBoundFormStatus.boundTailNumber = updateForm.inboundTailNumber !== '' ? true : false;
+          this.flightBoundFormStatus.boundScheduled = updateForm.inboundScheduledArrival !== '' ? true : false;
+          this.flightBoundFormStatus.boundScheduledDeparture = updateForm.outboundScheduledDeparture !== '' ? true : false;
+          this.flightBoundFormStatus.boundOriginAirportId = updateForm.inboundOriginAirportId !== '' ? true : false;
+          this.flightBoundFormStatus.boundDestinationAirport = updateForm.outboundDestinationAirportId !== '' ? true : false;
           this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
           this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)
           this.form.outboundDestinationAirportId = updateForm.outboundDestinationAirportId
