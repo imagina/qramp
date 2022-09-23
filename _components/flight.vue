@@ -203,6 +203,7 @@ export default {
         outboundFlightNumber:null,
         outboundDestinationAirportId:null,
         outboundBlockOut: null,
+        stationId: null,
       },
       refresh: 1,
       selected:[],
@@ -560,10 +561,10 @@ export default {
             },
             label: this.$tr('ifly.cms.form.date'),
           },
-          gate: {
-            name:'gate',
+          gateId: {
+            name:'gateId',
             value: '',
-            type: this.readonly ? 'inputStandard':'input',
+            type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
                 val => this.validateSpecialCharacters(val)
@@ -574,6 +575,11 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.gate')}`,
               clearable: true,
               color:"primary"
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qsetupagione.gates',
+              select: {label: 'name', id: 'id'},
+              requestParams: {filter: {stationId: this.form.stationId}}
             },
             label: this.$tr('ifly.cms.form.gate'),
           },
@@ -883,7 +889,7 @@ export default {
         }
         this.setCustomerForm();
         this.form.date = updateForm.date
-        this.form.gate = updateForm.gate
+        this.form.gateId = updateForm.gateId
         this.form.operationTypeId = updateForm.operationTypeId
         setTimeout(() => {
           this.form.date = this.dateFormatterFull(updateForm.date)

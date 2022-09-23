@@ -1,20 +1,20 @@
 <template>
   <div>
     <form-orders ref="formOrders" />
-    <flightMap />
+    <flightDetail />
   </div>
 </template>
 <script>
 import formOrders from "../_components/formOrders.vue"
 import { STATUS_POSTED, STATUS_SUBMITTED } from "../_components/model/constants"
-import flightMap from '../_components/modal/flightMap.vue'
+import flightDetail from '../_components/modal/flightDetail.vue'
 import qRampStore from '../_store/qRampStore.js'
 
 export default {
   name: 'RampCrud',
   components: {
     formOrders,
-    flightMap,
+    flightDetail,
   },
   data() {
     return {

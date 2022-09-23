@@ -1,197 +1,620 @@
 <template>
-  <master-modal v-model="visibleMapModal" v-bind="modalProps" :persistent="true" :loading="loading" @hide="close">
-    <div v-if="!loading" class="flight-map tw-mx-auto tw-p-3">
-      <div class="md:tw-flex tw-mb-6 md:tw-space-x-4">
-        <div class="rw-grow">
-          <div class="tw-flex">
-            <div class="tw-grow">
-              <p class="tw-text-2xl tw-mb-2">ABX Air 1234</p>
-              <p class="tw-uppercase tw-text-gray-400">ax3123123 / gdasad56</p>
-              <a class="
-                  tw-text-xs
-                  tw-mb-2
-                  tw-block
-                  tw-font-semibold
-                  tw-underline
-                  tw-decoration-dashed
-                  tw-text-blue-400
-                " href="">Make a category upgrade to see the registration number</a>
-              <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">in flight to</p>
-              <p class="tw-text-yellow-600 tw-text-base">Landing in 1 hour 37 minutes</p>
-            </div>
-          </div>
+    <div>
+        <div>
+            <button @click="clickBtn">
+            Change rectangle style
+            </button>
         </div>
-      </div>
-
-      <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-space-x-4">
-        <div class="tw-mb-3">
-          <p class="tw-text-xl tw-uppercase">Den</p>
-          <p class="tw-text-lg tw-uppercase tw-font-bold">DENVER, CO</p>
-          <p class="tw-text-sm">detachment from</p>
-          <a class="
-              tw-text-base
-              tw-mb-2
-              tw-block
-              tw-font-bold
-              tw-underline
-              tw-decoration-dotted
-              tw-text-blue-400
-            ">int'l de denver - <span class="tw-font-bold tw-uppercase">DEN</span></a>
-          <p class="tw-text-lg tw-uppercase">TUESDAY 20 09 2022</p>
-          <p class="tw-text-lg">
-            <span class="tw-font-bold">02:16PM MDT</span>
-            <span class="text-positive"> (on schedule)</span>
-          </p>
-        </div>
-        <div class="tw-text-right">
-          <p class="tw-text-xl tw-uppercase">iln</p>
-          <p class="tw-text-lg tw-uppercase tw-font-bold">wilmington, Ch</p>
-          <p class="tw-text-sm">landing on</p>
-          <a class="
-              tw-text-base
-              tw-mb-2
-              tw-block
-              tw-font-bold
-              tw-underline
-              tw-decoration-dotted
-              tw-text-blue-400
-            ">int'l de denver - <span class="tw-font-bold tw-uppercase">ILN</span></a>
-          <p class="tw-text-lg tw-uppercase">TUESDAY 20 09 2022</p>
-          <p class="tw-text-lg">
-            <span class="tw-text-yellow-600"> (delayed 16 minutes) </span>
-            <span class="tw-font-bold">02:16PM MDT</span>
-          </p>
-        </div>
-      </div>
-      <div class="tw-mt-6 ">
-        <q-range v-model="standard" color="positive" :min="0" :max="100" readonly left-thumb-color="tw-left-thumb"
-          right-thumb-color="tw-right-thumb"/>
-      </div>
-      <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-place-items-stretch tw-mb-6 tw-text-gray-500">
-        <div class="tw-text-sm">
-          <span class="tw-font-bold">313 my</span> already traveled
-        </div>
-        <div class="tw-text-sm tw-text-center">
-          <span class="tw-font-bold">2h 13 min</span> total travel time
-        </div>
-        <div class="tw-text-sm text-right">
-          <span class="tw-font-bold">313 my</span> to go
-        </div>
-      </div>
+        <l-map
+            :zoom="zoom"
+            :center="center"
+            style="height: 700px; width: 800px"
+        >
+            <l-tile-layer
+            :url="url"
+            :attribution="attribution"
+            />
+            <l-marker :lat-lng="getLine().shift()">
+              <l-icon
+                :icon-size="dynamicSize"
+                :icon-anchor="dynamicAnchor"
+                class-name="someExtraClass"
+                icon-url="./img/airport1.png"
+              />
+            </l-marker>
+            <l-marker :lat-lng="[44.61, -77.82]">
+              <l-icon
+                :icon-size="dynamicSize"
+                :icon-anchor="dynamicAnchor"
+                class-name="someExtraClass"
+                icon-url="./img/airport.png"
+              />
+            </l-marker>
+            <l-marker :lat-lng="[34.7, -112.48]">
+              <l-icon
+                :icon-size="dynamicSize"
+                :icon-anchor="dynamicAnchor"
+                class-name="someExtraClass"
+                icon-url="./img/airport1.png"
+              />
+            </l-marker>
+        </l-map>
     </div>
-    <div class="tw-flex tw-justify-center">
-      <img v-if="!loading" class="img-map" :src="imgMap" alt="" srcset="" />
-      <div v-if="loading" class="tw-w-64 tw-h-64" />
-    </div>
-  </master-modal>
-</template>
-
-<script>
-import qRampStore from "../../_store/qRampStore.js";
-import flightMapComponent from './mapFlighMap.vue';
+  </template>
+  
+  <script>
+import { latLng, icon } from "leaflet";
+import {
+  LMap,
+  LTileLayer,
+  LCircle,
+  LRectangle,
+  LPolygon,
+  LPolyline,
+  LIcon,
+  LMarker,
+} from "vue2-leaflet";
 
 export default {
   components: {
-    flightMapComponent,
-  },  
+    LMap,
+    LTileLayer,
+    LCircle,
+    LRectangle,
+    LPolygon,
+    LPolyline,
+    LIcon,
+    LMarker,
+  },
   data() {
     return {
-      standard: {
-        min: 0,
-        max: 80,
+      zoom: 3,
+      center: this.getLine()[0],
+      staticAnchor: [16, 37],
+      polyline: {
+        latlngs: this.getLine(),
+        color: "#bfc0c3",
       },
-    }
+      polyline2: {
+        latlngs: this.getLine1(),
+        color: "green",
+      },
+      icon: icon({
+        iconUrl: "./img/airport.png",
+        iconSize: [32, 37],
+        iconAnchor: [16, 37]
+      }),
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      iconSize: 20
+    };
   },
   computed: {
-    visibleMapModal: {
-      get() {
-        return qRampStore().getVisibleMapModal();
-      },
-      set(value) {
-        qRampStore().setVisibleMapModal(value);
-      },
+    dynamicSize() {
+      return [this.iconSize, this.iconSize * 1.15];
     },
-    imgMap() {
-      return qRampStore().getFlightMap();
-    },
-    loading() {
-      return qRampStore().getLoadingModalMap();
-    },
-    modalProps() {
-      return {
-        width: "90vw",
-        title: "Flight Map",
-      };
-    },
+    dynamicAnchor() {
+      return [this.iconSize / 2, this.iconSize * 1.15];
+    }
   },
   methods: {
-    close() {
-      this.visibleMapModal = false;
-      qRampStore().setFlightMap(null);
+    clickBtn() {
+      this.rectangle.style.weight++;
+      this.rectangle.style.color =
+        this.rectangle.style.weight % 2 === 0 ? "blue" : "green";
     },
+    getLine() {
+        const data = [
+        45.47,
+        -73.74,
+        45.52,
+        -73.87,
+        45.55,
+        -73.96,
+        45.58,
+        -74.06,
+        45.61,
+        -74.15,
+        45.61,
+        -74.18,
+        45.57,
+        -74.27,
+        45.52,
+        -74.45,
+        45.51,
+        -74.46,
+        45.51,
+        -74.49,
+        45.49,
+        -74.65,
+        45.47,
+        -74.79,
+        45.44,
+        -74.96,
+        45.43,
+        -75.04,
+        45.42,
+        -75.12,
+        45.42,
+        -75.13,
+        45.41,
+        -75.22,
+        45.36,
+        -75.51,
+        45.36,
+        -75.51,
+        45.35,
+        -75.61,
+        45.32,
+        -75.78,
+        45.31,
+        -75.83,
+        45.31,
+        -75.83,
+        45.26,
+        -76.18,
+        45.25,
+        -76.23,
+        45.25,
+        -76.24,
+        44.88,
+        -77.13,
+        44.71,
+        -77.6,
+        44.61,
+        -77.82,
+        44.52,
+        -78,
+        44.5,
+        -78.05,
+        44.32,
+        -78.49,
+        44.15,
+        -78.93,
+        44,
+        -79.26,
+        43.94,
+        -79.38,
+        43.81,
+        -79.66,
+        43.5,
+        -80.28,
+        43.39,
+        -80.48,
+        43.07,
+        -81.1,
+        43.04,
+        -81.15,
+        42.8,
+        -81.75,
+        42.71,
+        -81.98,
+        42.24,
+        -83.12,
+        41.99,
+        -83.74,
+        41.92,
+        -83.92,
+        41.86,
+        -84.27,
+        41.75,
+        -84.47,
+        41.68,
+        -84.67,
+        41.72,
+        -84.76,
+        41.59,
+        -85.07,
+        41.49,
+        -85.32,
+        41.39,
+        -85.66,
+        41.39,
+        -86.15,
+        41.21,
+        -86.3,
+        41.16,
+        -86.53,
+        41.16,
+        -86.56,
+        41.15,
+        -86.62,
+        41.13,
+        -86.8,
+        41.11,
+        -86.98,
+        41.1,
+        -87,
+        41.07,
+        -87.26,
+        41.07,
+        -87.26,
+        40.97,
+        -88.02,
+        40.94,
+        -88.26,
+        40.98,
+        -88.86,
+        40.97,
+        -88.91,
+        40.94,
+        -90,
+        40.91,
+        -90.26,
+        40.73,
+        -91.32,
+        40.71,
+        -91.45,
+        40.66,
+        -91.84,
+        40.54,
+        -92.38,
+        40.42,
+        -92.99,
+        40.33,
+        -93.45,
+        40.24,
+        -93.91,
+        39.77,
+        -96.15,
+        39,
+        -99.34,
+        38.8,
+        -100.13,
+        38.43,
+        -101.5,
+        37.95,
+        -103.16,
+        37.87,
+        -103.42,
+        37.63,
+        -104.22,
+        37.55,
+        -104.48,
+        37.39,
+        -105,
+        37.22,
+        -105.52,
+        37.14,
+        -105.78,
+        36.97,
+        -106.3,
+        36.88,
+        -106.56,
+        36.8,
+        -106.81,
+        36.63,
+        -107.31,
+        36.54,
+        -107.56,
+        36.45,
+        -107.82,
+        36.28,
+        -108.32,
+        36.19,
+        -108.56,
+        35.92,
+        -109.31,
+        35.8,
+        -109.64,
+        34.85,
+        -112.11,
+        34.7,
+        -112.48,
+        34.56,
+        -113.64,
+        34.52,
+        -114,
+        34.52,
+        -114.06,
+        34.33,
+        -114.92,
+        34.26,
+        -115.22,
+        34.22,
+        -115.41,
+        34.2,
+        -115.52,
+        34.16,
+        -115.69,
+        34.13,
+        -115.99,
+        34.13,
+        -116.05,
+        34.12,
+        -116.14,
+        34.1,
+        -116.3,
+        34.1,
+        -116.32,
+        34.09,
+        -116.4,
+        34.08,
+        -116.5,
+        34.08,
+        -116.57,
+        34.07,
+        -116.59,
+        34.05,
+        -116.84,
+        34.05,
+        -116.89,
+        34.04,
+        -116.9,
+        34.04,
+        -116.96,
+        34.03,
+        -117.02,
+        34.03,
+        -117.03,
+        34.02,
+        -117.08,
+        34.01,
+        -117.14,
+        34.01,
+        -117.2,
+        34,
+        -117.23,
+        34,
+        -117.26,
+        33.99,
+        -117.31,
+        33.99,
+        -117.31,
+        33.99,
+        -117.38,
+        33.98,
+        -117.44,
+        33.98,
+        -117.45,
+        33.97,
+        -117.47,
+        33.97,
+        -117.49,
+        33.97,
+        -117.65,
+        33.96,
+        -117.74,
+        33.96,
+        -117.84,
+        33.96,
+        -117.91,
+        33.96,
+        -117.95,
+        33.95,
+        -118.06,
+        33.95,
+        -118.11,
+        33.95,
+        -118.17,
+        33.95,
+        -118.18,
+        33.95,
+        -118.21,
+        33.95,
+        -118.22,
+        33.95,
+        -118.27,
+        33.95,
+        -118.31,
+        33.94,
+        -118.39,
+        33.94,
+        -118.41
+      ];
+      return this.twoDimensional(data, 2);
+    },
+    getLine1() {
+        const data = [
+        45.47,
+        -73.74,
+        45.52,
+        -73.87,
+        45.55,
+        -73.96,
+        45.58,
+        -74.06,
+        45.61,
+        -74.15,
+        45.61,
+        -74.18,
+        45.57,
+        -74.27,
+        45.52,
+        -74.45,
+        45.51,
+        -74.46,
+        45.51,
+        -74.49,
+        45.49,
+        -74.65,
+        45.47,
+        -74.79,
+        45.44,
+        -74.96,
+        45.43,
+        -75.04,
+        45.42,
+        -75.12,
+        45.42,
+        -75.13,
+        45.41,
+        -75.22,
+        45.36,
+        -75.51,
+        45.36,
+        -75.51,
+        45.35,
+        -75.61,
+        45.32,
+        -75.78,
+        45.31,
+        -75.83,
+        45.31,
+        -75.83,
+        45.26,
+        -76.18,
+        45.25,
+        -76.23,
+        45.25,
+        -76.24,
+        44.88,
+        -77.13,
+        44.71,
+        -77.6,
+        44.61,
+        -77.82,
+        44.52,
+        -78,
+        44.5,
+        -78.05,
+        44.32,
+        -78.49,
+        44.15,
+        -78.93,
+        44,
+        -79.26,
+        43.94,
+        -79.38,
+        43.81,
+        -79.66,
+        43.5,
+        -80.28,
+        43.39,
+        -80.48,
+        43.07,
+        -81.1,
+        43.04,
+        -81.15,
+        42.8,
+        -81.75,
+        42.71,
+        -81.98,
+        42.24,
+        -83.12,
+        41.99,
+        -83.74,
+        41.92,
+        -83.92,
+        41.86,
+        -84.27,
+        41.75,
+        -84.47,
+        41.68,
+        -84.67,
+        41.72,
+        -84.76,
+        41.59,
+        -85.07,
+        41.49,
+        -85.32,
+        41.39,
+        -85.66,
+        41.39,
+        -86.15,
+        41.21,
+        -86.3,
+        41.16,
+        -86.53,
+        41.16,
+        -86.56,
+        41.15,
+        -86.62,
+        41.13,
+        -86.8,
+        41.11,
+        -86.98,
+        41.1,
+        -87,
+        41.07,
+        -87.26,
+        41.07,
+        -87.26,
+        40.97,
+        -88.02,
+        40.94,
+        -88.26,
+        40.98,
+        -88.86,
+        40.97,
+        -88.91,
+        40.94,
+        -90,
+        40.91,
+        -90.26,
+        40.73,
+        -91.32,
+        40.71,
+        -91.45,
+        40.66,
+        -91.84,
+        40.54,
+        -92.38,
+        40.42,
+        -92.99,
+        40.33,
+        -93.45,
+        40.24,
+        -93.91,
+        39.77,
+        -96.15,
+        39,
+        -99.34,
+        38.8,
+        -100.13,
+        38.43,
+        -101.5,
+        37.95,
+        -103.16,
+        37.87,
+        -103.42,
+        37.63,
+        -104.22,
+        37.55,
+        -104.48,
+        37.39,
+        -105,
+        37.22,
+        -105.52,
+        37.14,
+        -105.78,
+        36.97,
+        -106.3,
+        36.88,
+        -106.56,
+        36.8,
+        -106.81,
+        36.63,
+        -107.31,
+        36.54,
+        -107.56,
+        36.45,
+        -107.82,
+        36.28,
+        -108.32,
+        36.19,
+        -108.56,
+        35.92,
+        -109.31,
+        35.8,
+        -109.64,
+        34.85,
+        -112.11,
+        34.7,
+        -112.48,
+      ];
+      return this.twoDimensional(data, 2);
+    },
+    twoDimensional(arr, size) 
+    {
+      var res = []; 
+      for(var i=0;i < arr.length;i = i+size)
+      res.push(arr.slice(i,i+size));
+      return res;
+    }
   },
 };
 </script>
-
 <style>
-.flight-map .q-slider__thumb, 
-.flight-map .q-slider__track-container, .q-slider__selection {
-  @apply tw-relative;
-}
-
-.flight-map .q-slider__thumb:last-child:before {
-  @apply tw-absolute tw-z-10 tw-text-2xl;
-  font-family: "Font Awesome 6 Sharp";
-  content: "\f072";
-  color: var(--q-color-positive);
-  top: -10px;
-  text-shadow: -1px -1px 1px rgba(255, 255, 255, .1), 1px 1px 1px rgba(0, 0, 0, .5);
-  text-shadow: 0px 9px 5px #607d8b, 0px -4px 10px rgb(255 255 255 / 30%);
-}
-
-.flight-map .img-map {
-  width: 70vw;
-  height: 500px;
-  border-radius: 10px;
-}
-
-.flight-map .text-tw-left-thumb,
-.flight-map .q-slider__thumb-shape {
-  @apply tw-hidden;
-}
-
-.flight-map .tw-underline.tw-decoration-dotted {
-  text-underline-offset: 3px;
-  text-decoration-style: dotted;
-}
-
-.flight-map .tw-underline.tw-decoration-dashed {
-  text-underline-offset: 3px;
-  text-decoration-style: dashed;
-}
-
-.flight-map .q-slider__track-container:before,
-.flight-map .q-slider__track-container:after { 
-  content: '';
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  box-shadow: 0px 0px 10px 2px #a2b1b9;
-}
-
-.flight-map .q-slider__track-container:before {
-  @apply tw-left-0;
-  background-color: var(--q-color-positive);
-}
-
-.flight-map .q-slider__track-container:after {
-  @apply tw-bg-gray-400 tw-right-0;
-}
-.flight-map .q-slider__inner {
-  @apply tw-bg-gray-400;
-}
 </style>

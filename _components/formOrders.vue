@@ -208,7 +208,7 @@ export default {
       this.flight.outboundTailNumber = updateData.data['outboundTailNumber'] ? updateData.data['outboundTailNumber'].toString() : ''
       this.flight.outboundScheduledDeparture = updateData.data['outboundScheduledDeparture'] ? updateData.data['outboundScheduledDeparture'].toString() : ''
       this.flight.outboundBlockOut = updateData.data['outboundBlockOut'] ? updateData.data['outboundBlockOut'].toString() : ''
-      this.flight.gate = updateData.data['gate'] ? updateData.data['gate'].toString() : ''
+      this.flight.gateId = updateData.data['gateId'] ? updateData.data['gateId'].toString() : ''
       this.flight.acTypeId = updateData.data['acTypeId'] ? updateData.data['acTypeId'].toString() : ''
       this.flight.responsibleId = updateData.data['responsibleId'] ? updateData.data['responsibleId'] : null;
       qRampStore().setResponsible(updateData.data['responsible']);
