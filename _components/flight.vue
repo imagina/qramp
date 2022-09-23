@@ -268,13 +268,11 @@ export default {
         this.form.inboundFlightNumber = null,
         this.form.inboundOriginAirportId = null,
         this.form.inboundTailNumber = null,
-        this.form.inboundBlockIn = null,
         this.form.inboundScheduledArrival = null,
         this.form.outboundFlightNumber = null,
         this.form.outboundDestinationAirportId = null,
         this.form.outboundTailNumber = null,
         this.form.outboundScheduledDeparture = null
-        this.form.outboundBlockOut = null
       }
     },
     'form.inboundFlightNumber' (val) {
@@ -282,8 +280,7 @@ export default {
         this.form.inboundFlightNumber = null,
         this.form.inboundOriginAirportId = null,
         this.form.inboundTailNumber = null,
-        this.form.inboundScheduledArrival = null,
-        this.form.inboundBlockIn = null
+        this.form.inboundScheduledArrival = null
       }
     },
     'form.outboundFlightNumber' (val) {
@@ -353,7 +350,6 @@ export default {
             this.form.outboundScheduledDeparture = this.dateFormatterFull(this.flightData.outboundScheduledDeparture)
             this.form.outboundTailNumber = this.flightData.outboundTailNumber;
             this.form.outboundDestinationAirportId = this.flightData.outboundDestinationAirportId;
-            this.form.outboundBlockOut = this.dateFormatterFull(this.flightData.outboundBlockOut);
           } else {
             this.form.outboundFlightNumber = null;
             this.form.outboundScheduledDeparture = null;
@@ -379,7 +375,6 @@ export default {
               this.form.inboundScheduledArrival = null
               this.form.inboundTailNumber = null;
               this.form.inboundOriginAirportId = null;
-              this.form.outboundBlockOut = null;
             }
         }
         return validator
