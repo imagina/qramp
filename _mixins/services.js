@@ -65,7 +65,7 @@ export default {
                       [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
                       name: currentValue.name,
                       value: currentValue.value ? currentValue.value : null,
-                      type: currentValue.type,
+                      type: currentValue.type === 'quantityFloat' ? 'quantity' : currentValue.type,
                       id: currentValue.id,
                       props :{ ...props}
                     }
@@ -157,6 +157,12 @@ export default {
           format24h: true,
           options,
           typeIndexDate: index,
+        }
+      } else if(type === 'quantityFloat') {
+        return {
+          readonly: this.readonly || this.disabledReadonly,
+          type: 'number',
+          step:"0.1"
         }
       } else {
         return {

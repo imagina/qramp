@@ -14,25 +14,31 @@
                 :icon-size="dynamicSize"
                 :icon-anchor="dynamicAnchor"
                 class-name="someExtraClass"
-                icon-url="./img/airport1.png"
-              />
+              >
+                  <div>
+                    <span class="tw-font-bold">HRC</span>
+                    <i class="tw-animate-pulse fa-sharp fa-solid fa-circle tw-text-green-600"></i>
+                  </div>
+              </l-icon>
             </l-marker>
-            <l-marker :lat-lng="[44.61, -77.82]">
-              <l-icon
-                :icon-size="dynamicSize"
-                :icon-anchor="dynamicAnchor"
-                class-name="someExtraClass"
-                icon-url="./img/airport.png"
-              />
-            </l-marker>
-            <l-marker :lat-lng="[34.7, -112.48]">
-              <l-icon
-                :icon-size="dynamicSize"
-                :icon-anchor="dynamicAnchor"
-                class-name="someExtraClass"
-                icon-url="./img/airport1.png"
-              />
-            </l-marker>
+            <vRotatedMarker
+                  :lat-lng="[33.96, -107.95]" 
+                  :icon="icon" 
+                  :rotationAngle="-25"
+            >
+            </vRotatedMarker>
+            <l-marker :lat-lng="[33.94, -118.41]">
+                <l-icon
+                  :icon-size="dynamicSize"
+                  :icon-anchor="dynamicAnchor"
+                  class-name="someExtraClass"
+                >
+                  <div>
+                    <span class="tw-font-bold">RCA</span>
+                    <i class="tw-animate-pulse fa-sharp fa-solid fa-circle tw-text-green-600"></i>
+                  </div>
+                </l-icon>
+              </l-marker>
         </l-map>
     </div>
   </template>
@@ -49,6 +55,9 @@ import {
   LMarker,
 } from "vue2-leaflet";
 import coordinateModel from './models/coordinateModel.js';
+import vRotatedMarker from 'vue2-leaflet-rotatedmarker';
+import { Icon, LatLng, divIcon } from 'leaflet'
+const ico = 'https://i.ibb.co/d0bmMTz/black-plane.png';
 export default {
   components: {
     LMap,
@@ -59,6 +68,7 @@ export default {
     LPolyline,
     LIcon,
     LMarker,
+    vRotatedMarker,
   },
   data() {
     return {
@@ -68,7 +78,7 @@ export default {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      iconSize: 20
+      iconSize: 30,
     };
   },
   computed: {
@@ -80,7 +90,16 @@ export default {
     },
     coordinate() {
       return coordinateModel();
-    }
+    },
+    icon() {
+      return new divIcon({
+        html: '<i class="fa-sharp fa-solid fa-plane tw-text-2xl tw-text-red-800"></i>',
+        //iconUrl: ico,
+        iconSize: this.dynamicSize, // size of the icon
+        iconAnchor: this.dynamicAnchor,
+        className:"iconMapPane"
+      });
+    },
   },
   methods: {},
 };
