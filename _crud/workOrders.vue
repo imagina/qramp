@@ -82,6 +82,7 @@ export default {
               field: "inboundScheduledArrival",
               align: "left",
               format: (val) => (val ? this.$trd(val) : "-"),
+             sortable: true
             },
             {
               name: "outboundFlightNumber",
@@ -95,6 +96,7 @@ export default {
               field: "outboundScheduledDeparture",
               align: "left",
               format: (val) => (val ? this.$trd(val) : "-"),
+              sortable: true
             },
             {
               name: 'adHoc',
@@ -173,6 +175,18 @@ export default {
               },
               props: {
                 label: 'Status',
+                'clearable': true
+              },
+            },
+            stationId: {
+              value: null,
+              type: 'select',
+              loadOptions: {
+                apiRoute: 'apiRoutes.qsetupagione.setupStations',
+                select: { 'label': 'stationName', 'id': 'id' },
+              },
+              props: {
+                label: 'Station',
                 'clearable': true
               },
             },
