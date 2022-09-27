@@ -69,6 +69,7 @@
             :field="field"
             v-model="form[keyField]"
             @enter="search(field)"
+            @input="zanetizeData(keyField)"
           />
         </div>
       </div>
@@ -125,6 +126,11 @@ export default {
     },
   },
   methods: {
+    zanetizeData(key) {
+        if(key === 'preFlightNumber') {
+          this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');
+        }
+    },
     addCustumers() {
       if (this.customerName !== "") {
         const id = `customer-${qRampStore().numberInRange(8000, 1000)}`;

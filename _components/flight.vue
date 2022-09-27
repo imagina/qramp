@@ -115,6 +115,7 @@
                 v-model="form[keyField]"
                 @enter="search(field)"
                 :ref="`${keyField}`"
+                @input="zanetizeData(keyField)"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
@@ -140,7 +141,7 @@
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
                 v-model="form[keyField]"
                 @enter="search(field)"
-                @input="changeDate(field)"
+                @input="zanetizeData(keyField)"
               />
             </label>
             <hr v-if="readonly" class="label-container"/>
@@ -226,6 +227,7 @@ export default {
         inboundCustomFlightNumber:null,
         outboundCustomFlightNumber:null,
         inboundFlightNumber:null,
+        outboundFlightNumber: null,
         inboundOriginAirportId:null,
         outboundFlightNumber:null,
         outboundDestinationAirportId:null,
@@ -1245,6 +1247,13 @@ export default {
       const responsibleId = this.selecteResponsibleComputed.id || null;
       this.form.responsibleId = responsibleId;
       console.log(this.form.responsibleId);
+    },
+    zanetizeData(key) {
+        if(key === 'inboundFlightNumber' || key === 'outboundFlightNumber') {
+          if(this.form[key]) {
+            this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');
+          }
+        }
     },
   },
 }
