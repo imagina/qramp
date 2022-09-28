@@ -27,6 +27,8 @@ const state = reactive({
     visibleMapModal: false,
     flightMap: null,
     loadingModalMap: false,
+    flightList: [],
+    flightId: 0,
 });
 
 export default function qRampStore() {
@@ -243,6 +245,18 @@ export default function qRampStore() {
     function setLoadingModalMap(value) {
         state.loadingModalMap = value;
     }
+    function setFlightList(value) {
+        state.flightList = value;
+    }
+    function getFlightList() {
+        return state.flightList;
+    }
+    function getFlightId() {
+        return state.flightId;
+    }
+    function setFlightId(value) {
+        state.flightId = value;
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -285,6 +299,10 @@ export default function qRampStore() {
         setFlightMap,
         getFlightMap,
         getLoadingModalMap,
-        setLoadingModalMap
+        setLoadingModalMap,
+        setFlightList,
+        getFlightList,
+        getFlightId,
+        setFlightId
     }
 }

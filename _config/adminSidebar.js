@@ -7,6 +7,7 @@ export default [
     icon: 'fa-light fa-arrows-up-down-left-right',
     children: [
       pages.qramp.workOrders,
+      pages.qramp.flightMap
     ]
   },
 ]

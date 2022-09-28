@@ -79,9 +79,9 @@
         </div>
       </div>
     </div>
-    <div class="tw-flex tw-justify-center">
-      <!--<flightMap v-if="!loading" />-->
-      <img v-if="!loading" class="img-map" :src="imgMap" alt="" srcset="" />
+    <div>
+      <flightMap v-if="!loading" :flightDetail="true" />
+      <!--<img v-if="!loading" class="img-map" :src="imgMap" alt="" srcset="" />-->
       <div v-if="loading" class="tw-w-64 tw-h-64" />
     </div>
   </master-modal>
