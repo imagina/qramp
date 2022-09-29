@@ -8,7 +8,7 @@
         :key="item.id"
         :lat-lng="item.coordinates"
         :icon="icon"
-        :rotationAngle="item.lastPositionHeading - 70"
+        :rotationAngle="item.lastPositionHeading - 95"
         @click="selectedflight(item.id)"
       >
         <l-tooltip>
@@ -52,7 +52,7 @@
             </div>
           </l-icon>
           <l-tooltip>
-            <p>Airport Name:{{ item.airportName }}</p> 
+            <p>Airport Name:{{ item.airportName }}</p>
           </l-tooltip>
         </l-marker>
         <l-marker
@@ -174,38 +174,10 @@ export default {
       return flightList;
     },
     listOfAirportsOfOrigin() {
-      const flightList = this.flightList.map(item => {
-        const origin = item.inboundOriginAirport ? item.inboundOriginAirport : {};
-        const coordinates = origin 
-        ? [origin.lat, origin.lng]
-        : [];
-        return {
-          workOrderId: item.id,
-          ...origin,
-          coordinates,
-        }
-      })
-      if(this.flightDetail) {
-        return flightList.filter(item => this.flightId === item.workOrderId);
-      }
-      return flightList;
+      return this.mapFlight('inboundOriginAirport');
     },
     listOfDestinationOfOrigin() {
-      const flightList =  this.flightList.map(item => {
-        const destination = item.outboundDestinationAirport ? item.outboundDestinationAirport : {};
-        const coordinates = destination 
-        ? [destination.lat, destination.lng]
-        : [];
-        return {
-          workOrderId: item.id,
-          ...destination,
-          coordinates,
-        }
-      })
-      if(this.flightDetail) {
-        return flightList.filter(item => this.flightId === item.workOrderId);
-      }
-      return flightList;
+      return this.mapFlight('outboundDestinationAirport');
     },
     icon() {
       return new divIcon({
@@ -248,6 +220,27 @@ export default {
       const hh = (duration.years()*(365*24)) + (duration.months()*(30*24)) + (duration.days()*24) + (duration.hours());
       const mm = duration.minutes();
       return `${hh}h ${mm} min`;
+    },
+    mapFlight(key) {
+      try {
+          const flightList =  this.flightList.map(item => {
+          const fligth = item[key] ? item[key] : {};
+          const coordinates = fligth 
+          ? [fligth.lat, fligth.lng]
+          : [];
+          return {
+            workOrderId: item.id,
+            ...fligth,
+            coordinates,
+          }
+        })
+        if(this.flightDetail) {
+          return flightList.filter(item => this.flightId === item.workOrderId);
+        }
+        return flightList;
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
 };
