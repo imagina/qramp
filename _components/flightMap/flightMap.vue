@@ -136,7 +136,7 @@ export default {
       const flightList = this.flightList.map(item => {
         const flightPosition = item.flightPosition ? item.flightPosition : {};
         const coordinates = flightPosition 
-          ? [flightPosition.lastPositionLatitude, flightPosition.lastPositionLongitude] 
+          ? [flightPosition.lastPositionLatitude || 0, flightPosition.lastPositionLongitude || 0] 
           : [];
         return {
           ...item,
