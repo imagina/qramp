@@ -6,7 +6,7 @@
 </template>
 <script>
 import formOrders from "../_components/formOrders.vue"
-import { STATUS_POSTED, STATUS_SUBMITTED } from "../_components/model/constants"
+import { STATUS_POSTED, STATUS_SUBMITTED,STATUS_CLOSED } from "../_components/model/constants"
 import flightDetail from '../_components/modal/flightDetail.vue'
 import qRampStore from '../_store/qRampStore.js'
 
@@ -210,15 +210,27 @@ export default {
           actions: [
             {
               name: 'edit',
-              icon: 'fas fa-pen',
+              icon: 'fal fa-pen',
               label: this.$tr('isite.cms.label.edit'),
               action: (item) => {
                 this.showWorkOrder(item)
               }
             },
             {
+              name: 'close',
+              icon: 'fal fa-check',
+              label: this.$tr('isite.cms.label.closeFlight'),
+              format: item => ({
+                //must have the submit permission and the work order can't be submited or posted
+                vIf: ![STATUS_POSTED, STATUS_SUBMITTED,STATUS_CLOSED].includes(item.statusId)
+              }),
+              action: (item) => {
+                this.changeStatus(STATUS_CLOSED, item.id)
+              },
+            },
+            {
               name: 'submit',
-              icon: 'fas fa-check',
+              icon: 'fal fa-check-double',
               label: this.$tr('isite.cms.label.submit'),
               format: item => ({
                 //must have the submit permission and the work order can't be submited or posted
@@ -230,7 +242,7 @@ export default {
             },
             {
               name: 'post',
-              icon: 'fas fa-paper-plane',
+              icon: 'fal fa-paper-plane',
               label: this.$tr('isite.cms.label.post'),
               action: (item) => {
                 this.changeStatus(STATUS_POSTED, item.id)

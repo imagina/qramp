@@ -8,6 +8,7 @@ export const STEP_SIGNATURE = 7;
 export const STATUS_DRAFT = 1;
 export const STATUS_POSTED = 2;
 export const STATUS_SUBMITTED = 3;
+export const STATUS_CLOSED = 4;
 export const modelDataBound = {
     destinationAirport: {
         id: null,
