@@ -52,7 +52,7 @@
             </div>
           </l-icon>
           <l-tooltip>
-            <p>Airport Name:{{  item.airportName}}</p> 
+            <p>Airport Name:{{ item.airportName }}</p> 
           </l-tooltip>
         </l-marker>
         <l-marker

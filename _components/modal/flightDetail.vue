@@ -59,7 +59,7 @@
             ">int'l de denver - <span class="tw-font-bold tw-uppercase">ILN</span></a>
           <p class="tw-text-lg tw-uppercase">{{ $moment(flight.outboundScheduledDeparture).format('dddd DD-MM-YYYY') }}</p>
           <p class="tw-text-lg">
-            <span class="tw-text-yellow-600" v-if="flight.flightPosition.delay"> ({{ minutesToHours(flight.flightPosition.delay) }}) </span>
+            <span class="tw-text-yellow-600 tw-hidden" v-if="flight.flightPosition.delay"> ({{ minutesToHours(flight.flightPosition.delay) }}) </span>
             <span class="tw-font-bold">{{ $moment(flight.outboundScheduledDeparture).format('HH:mm') }} {{ timezone(flight.outboundDestinationAirport.timezone) }}</span>
           </p>
         </div>
