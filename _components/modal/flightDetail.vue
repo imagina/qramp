@@ -109,7 +109,7 @@ export default {
       };
     },
     rightThumbColor() {
-      if(this.standard.max === 100) {
+      if(this.standard.max >= 100) {
         return 'tw-right-thumb tw-hidden';
       }
       return 'tw-right-thumb';
