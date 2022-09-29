@@ -5,8 +5,8 @@
         <div class="rw-grow">
           <div class="tw-flex">
             <div class="tw-grow">
-              <p class="tw-text-2xl tw-mb-2">ABX Air 1234</p>
-              <p class="tw-uppercase tw-text-gray-400">ax3123123 / gdasad56</p>
+              <p class="tw-text-2xl tw-mb-2 tw-hidden">ABX Air 1234</p>
+              <p class="tw-uppercase tw-text-gray-400">{{ flight.flightPosition.ident }} / {{ flight.flightPosition.ident_iata }}</p>
               <a class="
                   tw-text-xs
                   tw-mb-2
@@ -15,9 +15,10 @@
                   tw-underline
                   tw-decoration-dashed
                   tw-text-blue-400
+                  tw-hidden
                 " href="">Make a category upgrade to see the registration number</a>
-              <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">in flight to</p>
-              <p class="tw-text-yellow-600 tw-text-base">Landing in 1 hour 37 minutes</p>
+              <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">{{ flight.flightPosition.status }}</p>
+              <p class="tw-text-yellow-600 tw-text-base tw-hidden">{{ minutesToHours(flight.flightPosition.timeTotalEstimated) }}</p>
             </div>
           </div>
         </div>
@@ -25,9 +26,9 @@
 
       <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-space-x-4">
         <div class="tw-mb-3">
-          <p class="tw-text-xl tw-uppercase">Den</p>
-          <p class="tw-text-lg tw-uppercase tw-font-bold">DENVER, CO</p>
-          <p class="tw-text-sm">detachment from</p>
+          <p class="tw-text-xl tw-uppercase">{{ flight.inboundOriginAirport.airportIataCode }}</p>
+          <p class="tw-text-lg tw-uppercase tw-font-bold">{{ flight.inboundOriginAirport.airportName }}</p>
+          <p class="tw-text-sm tw-hidden">Detachment from</p>
           <a class="
               tw-text-base
               tw-mb-2
@@ -35,12 +36,12 @@
               tw-font-bold
               tw-underline
               tw-decoration-dotted
-              tw-text-blue-400
+              tw-text-blue-400 tw-hidden
             ">int'l de denver - <span class="tw-font-bold tw-uppercase">DEN</span></a>
-          <p class="tw-text-lg tw-uppercase">TUESDAY 20 09 2022</p>
+          <p class="tw-text-lg tw-uppercase">{{ $moment(flight.inboundScheduledArrival).format('dddd DD-MM-YYYY') }}</p>
           <p class="tw-text-lg">
-            <span class="tw-font-bold">02:16PM MDT</span>
-            <span class="text-positive"> (on schedule)</span>
+            <span class="tw-font-bold">{{ $moment(flight.inboundScheduledArrival).format('HH:mm') }} {{ $moment.tz(flight.inboundOriginAirport.timezone).format('z') }}</span>
+            <span class="text-positive tw-hidden"> (on schedule)</span>
           </p>
         </div>
         <div class="tw-text-right">
@@ -64,23 +65,23 @@
         </div>
       </div>
       <div class="tw-mt-6 ">
-        <q-range v-model="standard" color="positive" :min="0" :max="100" readonly left-thumb-color="tw-left-thumb"
-          right-thumb-color="tw-right-thumb"/>
+        <q-range 
+          v-model="standard" 
+          color="positive" 
+          :min="0" 
+          :max="100" 
+          readonly
+          left-thumb-color="tw-left-thumb"
+          :right-thumb-color="rightThumbColor"/>
       </div>
-      <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-place-items-stretch tw-mb-6 tw-text-gray-500">
-        <div class="tw-text-sm">
-          <span class="tw-font-bold">313 my</span> already traveled
-        </div>
+      <div class="tw-grid tw-grid-cols-1 tw-gap-4 tw-place-items-stretch tw-mb-6 tw-text-gray-500">
         <div class="tw-text-sm tw-text-center">
-          <span class="tw-font-bold">2h 13 min</span> total travel time
-        </div>
-        <div class="tw-text-sm text-right">
-          <span class="tw-font-bold">313 my</span> to go
+          <span class="tw-font-bold">{{  minutesToHours(flight.flightPosition.timeTotalEstimated) }}</span> total travel time
         </div>
       </div>
     </div>
     <div>
-      <flightMap v-if="!loading" :flightDetail="true" />
+      <!--<flightMap v-if="!loading" :flightDetail="true" />-->
       <!--<img v-if="!loading" class="img-map" :src="imgMap" alt="" srcset="" />-->
       <div v-if="loading" class="tw-w-64 tw-h-64" />
     </div>
@@ -90,20 +91,27 @@
 <script>
 import qRampStore from "../../_store/qRampStore.js";
 import flightMap from '../flightMap/flightMap.vue';
-
+import workOrdersModelDefault from '../flightMap/models/workOrdersModelDefault.js';
 export default {
   components: {
     flightMap,
   },  
   data() {
-    return {
-      standard: {
-        min: 0,
-        max: 80,
-      },
-    }
+    return {}
   },
   computed: {
+    standard() {
+      return {
+        min: 0,
+        max: this.flight.flightPosition.distancePercentageCovered,
+      };
+    },
+    rightThumbColor() {
+      if(this.standard.max === 100) {
+        return 'tw-right-thumb tw-hidden';
+      }
+      return 'tw-right-thumb';
+    },
     visibleMapModal: {
       get() {
         return qRampStore().getVisibleMapModal();
@@ -118,10 +126,16 @@ export default {
     loading() {
       return qRampStore().getLoadingModalMap();
     },
+    flight() {
+      return qRampStore().getFlightList().find(item => item.id === this.flightId) || {...workOrdersModelDefault};
+    },
+    flightId() {
+      return qRampStore().getFlightId();
+    },
     modalProps() {
       return {
         width: "90vw",
-        title: "Flight Map",
+        title: `Flight Map : ${this.flightId}`,
       };
     },
   },
@@ -130,6 +144,12 @@ export default {
       this.visibleMapModal = false;
       qRampStore().setFlightMap(null);
     },
+    minutesToHours(numberOfMinutes) {  
+      const duration = this.$moment.duration(numberOfMinutes, 'minutes');
+      const hh = (duration.years()*(365*24)) + (duration.months()*(30*24)) + (duration.days()*24) + (duration.hours());
+      const mm = duration.minutes();
+      return `${hh} hour ${mm} minutes`;
+    }
   },
 };
 </script>
@@ -190,9 +210,10 @@ export default {
 }
 
 .flight-map .q-slider__track-container:after {
-  @apply tw-bg-gray-400 tw-right-0;
+  @apply tw-right-0 tw-z-0;
+  background-color: var(--q-color-positive)
 }
 .flight-map .q-slider__inner {
-  @apply tw-bg-gray-400;
+  @apply tw-opacity-30 tw-bg-gray-200;
 }
 </style>

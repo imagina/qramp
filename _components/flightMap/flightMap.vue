@@ -103,6 +103,7 @@ import vRotatedMarker from "vue2-leaflet-rotatedmarker";
 import { Icon, LatLng, divIcon } from "leaflet";
 const ico = "https://i.ibb.co/d0bmMTz/black-plane.png";
 import qRampStore from '../../_store/qRampStore.js';
+import workOrderModel from './models/workOrderModel.js';
 
 export default {
   props: {
@@ -217,14 +218,15 @@ export default {
   },
   methods: {
     async selectedflight(id) {
+      console.log(id);
       this.getFlightMap();
       qRampStore().setFlightId(id);
     },
     async getFlights() {
       try {
-        const params = {refresh: true}
-        const response = await this.$crud.index("apiRoutes.qramp.flightPosition", params);
-        qRampStore().setFlightList(response.data)
+        //const params = {refresh: true}
+        //const response = await this.$crud.index("apiRoutes.qramp.flightPosition", params);
+        qRampStore().setFlightList(workOrderModel.data);
       } catch (error) {
         
       }
