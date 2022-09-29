@@ -156,8 +156,8 @@ export default {
       return this.mapFlight('outboundDestinationAirport');
     },
     listOfAirports() {
-      const data =  [...this.listOfAirportsOfOrigin, ...this.listOfDestinationOfOrigin];
-      return _.uniqBy(data, 'id');
+      const data =  _.uniqBy([...this.listOfAirportsOfOrigin, ...this.listOfDestinationOfOrigin], 'id');
+      return data;
     },
     icon() {
       return new divIcon({
