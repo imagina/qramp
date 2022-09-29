@@ -209,7 +209,7 @@ export default {
     },
     icon() {
       return new divIcon({
-        html: '<i class="fak fa-plane-right-thin-icon tw-text-3xl tw-text-blue-500"/>',
+        html: '<i class="fak fa-plane-right-thin-icon tw-text-4xl tw-text-blue-500"/>',
         iconSize: this.dynamicSize, // size of the icon
         iconAnchor: this.dynamicAnchor,
         className: "iconMapPane",
@@ -218,25 +218,26 @@ export default {
   },
   methods: {
     async selectedflight(id) {
-      console.log(id);
       this.getFlightMap();
       qRampStore().setFlightId(id);
     },
     async getFlights() {
       try {
-        //const params = {refresh: true}
-        //const response = await this.$crud.index("apiRoutes.qramp.flightPosition", params);
+        const params = {refresh: true}
+        const response = await this.$crud.index("apiRoutes.qramp.flightPosition", params);
         qRampStore().setFlightList(workOrderModel.data);
       } catch (error) {
-        
+        console.log(error)
       }
     },
     async getFlightMap() {
       try {
+        if(qRampStore().getVisibleMapModal()) return;
         qRampStore().showVisibleMapModal();
         qRampStore().setLoadingModalMap(true);
-        qRampStore().setLoadingModalMap(false);
-        
+        setTimeout(() => {
+          qRampStore().setLoadingModalMap(false);
+        }, 2000);
       } catch (error) {
         qRampStore().setFlightMap(null);
         qRampStore().setLoadingModalMap(false);

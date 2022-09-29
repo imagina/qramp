@@ -40,14 +40,14 @@
             ">int'l de denver - <span class="tw-font-bold tw-uppercase">DEN</span></a>
           <p class="tw-text-lg tw-uppercase">{{ $moment(flight.inboundScheduledArrival).format('dddd DD-MM-YYYY') }}</p>
           <p class="tw-text-lg">
-            <span class="tw-font-bold">{{ $moment(flight.inboundScheduledArrival).format('HH:mm') }} {{ $moment.tz(flight.inboundOriginAirport.timezone).format('z') }}</span>
+            <span class="tw-font-bold">{{ $moment(flight.inboundScheduledArrival).format('HH:mm') }} {{ timezone(this.flight.inboundOriginAirport.timezone) }}</span>
             <span class="text-positive tw-hidden"> (on schedule)</span>
           </p>
         </div>
         <div class="tw-text-right">
-          <p class="tw-text-xl tw-uppercase">iln</p>
-          <p class="tw-text-lg tw-uppercase tw-font-bold">wilmington, Ch</p>
-          <p class="tw-text-sm">landing on</p>
+          <p class="tw-text-xl tw-uppercase">{{ flight.outboundDestinationAirport.airportIataCode }}</p>
+          <p class="tw-text-lg tw-uppercase tw-font-bold">{{ flight.outboundDestinationAirport.airportName }}</p>
+          <p class="tw-text-sm tw-hidden">landing on</p>
           <a class="
               tw-text-base
               tw-mb-2
@@ -55,12 +55,12 @@
               tw-font-bold
               tw-underline
               tw-decoration-dotted
-              tw-text-blue-400
+              tw-text-blue-400 tw-hidden
             ">int'l de denver - <span class="tw-font-bold tw-uppercase">ILN</span></a>
-          <p class="tw-text-lg tw-uppercase">TUESDAY 20 09 2022</p>
+          <p class="tw-text-lg tw-uppercase">{{ $moment(flight.outboundScheduledDeparture).format('dddd DD-MM-YYYY') }}</p>
           <p class="tw-text-lg">
-            <span class="tw-text-yellow-600"> (delayed 16 minutes) </span>
-            <span class="tw-font-bold">02:16PM MDT</span>
+            <span class="tw-text-yellow-600" v-if="flight.flightPosition.delay"> ({{ minutesToHours(flight.flightPosition.delay) }}) </span>
+            <span class="tw-font-bold">{{ $moment(flight.outboundScheduledDeparture).format('HH:mm') }} {{ timezone(flight.outboundDestinationAirport.timezone) }}</span>
           </p>
         </div>
       </div>
@@ -81,7 +81,7 @@
       </div>
     </div>
     <div>
-      <!--<flightMap v-if="!loading" :flightDetail="true" />-->
+      <flightMap v-if="!loading" :flightDetail="true" />
       <!--<img v-if="!loading" class="img-map" :src="imgMap" alt="" srcset="" />-->
       <div v-if="loading" class="tw-w-64 tw-h-64" />
     </div>
@@ -92,6 +92,8 @@
 import qRampStore from "../../_store/qRampStore.js";
 import flightMap from '../flightMap/flightMap.vue';
 import workOrdersModelDefault from '../flightMap/models/workOrdersModelDefault.js';
+import momentTimezone from 'moment-timezone';
+
 export default {
   components: {
     flightMap,
@@ -149,6 +151,10 @@ export default {
       const hh = (duration.years()*(365*24)) + (duration.months()*(30*24)) + (duration.days()*24) + (duration.hours());
       const mm = duration.minutes();
       return `${hh} hour ${mm} minutes`;
+    },
+    timezone(timezone) {
+      if(!timezone) return;
+      return momentTimezone.tz(timezone).format('z');
     }
   },
 };
