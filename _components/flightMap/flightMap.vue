@@ -31,32 +31,7 @@
       </vRotatedMarker>
       <div>
         <l-marker
-          v-for="(item, index) in listOfAirportsOfOrigin"
-          :key="item.id"
-          :lat-lng="item.coordinates"
-        >
-          <l-icon
-            :icon-size="dynamicSize"
-            :icon-anchor="dynamicAnchor"
-            class-name="someExtraClass"
-          >
-            <div>
-              <span class="tw-font-bold">{{ item.airportIataCode }}</span>
-              <i
-                class="
-                  tw-animate-pulse
-                  fa-sharp fa-solid fa-circle
-                  tw-text-green-600
-                "
-              ></i>
-            </div>
-          </l-icon>
-          <l-tooltip>
-            <p>Airport Name:{{ item.airportName }}</p>
-          </l-tooltip>
-        </l-marker>
-        <l-marker
-          v-for="(item, index) in listOfDestinationOfOrigin"
+          v-for="(item, index) in listOfAirports"
           :key="item.id"
           :lat-lng="item.coordinates"
         >
@@ -104,6 +79,7 @@ import { Icon, LatLng, divIcon } from "leaflet";
 const ico = "https://i.ibb.co/d0bmMTz/black-plane.png";
 import qRampStore from '../../_store/qRampStore.js';
 import workOrderModel from './models/workOrderModel.js';
+import _ from 'lodash';
 
 export default {
   props: {
@@ -178,6 +154,10 @@ export default {
     },
     listOfDestinationOfOrigin() {
       return this.mapFlight('outboundDestinationAirport');
+    },
+    listOfAirports() {
+      const data =  [...this.listOfAirportsOfOrigin, ...this.listOfDestinationOfOrigin];
+      return _.uniqBy(data, 'id');
     },
     icon() {
       return new divIcon({
