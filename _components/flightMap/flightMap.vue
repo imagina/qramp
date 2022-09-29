@@ -225,7 +225,7 @@ export default {
       try {
         const params = {refresh: true}
         const response = await this.$crud.index("apiRoutes.qramp.flightPosition", params);
-        qRampStore().setFlightList(workOrderModel.data);
+        qRampStore().setFlightList(response.data);
       } catch (error) {
         console.log(error)
       }
