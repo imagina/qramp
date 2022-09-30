@@ -78,7 +78,7 @@ export default {
               label: 'Arrival',
               field: "inboundScheduledArrival",
               align: "left",
-              format: (val) => (val ? this.$trd(val) : "-"),
+              format: (val) => (val ? this.$trdT(val) : "-"),
              sortable: true
             },
             {
@@ -92,7 +92,7 @@ export default {
               label: 'Departure',
               field: "outboundScheduledDeparture",
               align: "left",
-              format: (val) => (val ? this.$trd(val) : "-"),
+              format: (val) => (val ? this.$trdT(val) : "-"),
               sortable: true
             },
             {
