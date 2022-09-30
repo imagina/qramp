@@ -49,6 +49,7 @@
 <script>
 
 import responsive from '../_mixins/responsive.js'
+import qRampStore from '../_store/qRampStore.js';
 export default {
   props:{
     readonly: true,
@@ -182,6 +183,7 @@ export default {
       }
     },
     saveInfo() {
+      this.form.statusId = qRampStore().getStatusId();
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
       this.$emit('send-info')
     },

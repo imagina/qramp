@@ -30,7 +30,8 @@ import services from '../_mixins/services.js';
 import { 
   STATUS_DRAFT,
   STATUS_POSTED,
-  STATUS_SUBMITTED 
+  STATUS_SUBMITTED,
+  STATUS_CLOSED,
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
@@ -113,7 +114,7 @@ export default {
       ]
     },
     nextLabel(){
-      return this.sp === this.steppers.length ? this.$tr('isite.cms.label.done') : this.$tr('isite.cms.label.next')
+      return this.sp === this.steppers.length ? 'Save to Draft' : this.$tr('isite.cms.label.next')
     },
     loadingComputed() {
       return qRampStore().getLoading();
@@ -136,7 +137,17 @@ export default {
       ]
     },
     actionsStepperButtom(){
-      return [
+      const closeFlight = [{
+          props:{
+            color:'primary',
+            label: this.$tr('isite.cms.label.closeFlight')
+          },
+          action: () => {
+            qRampStore().setStatusId(STATUS_CLOSED)
+            this.$refs.stepper.next()
+          }
+      }];
+      const actions = [
         {
           vIf: this.sp > 1 ,
           props:{
@@ -152,14 +163,18 @@ export default {
         {
           props:{
             color:'primary',
-            'icon-right': this.sp === this.steppers.length  ? 'fas fa-check' :'fas fa-arrow-right',
+            'icon-right': this.sp === this.steppers.length  ?  'fa-thin fa-floppy-disk' :'fas fa-arrow-right',
             label: this.nextLabel
           },
           action: () => {
+            if(this.sp === this.steppers.length) {
+              qRampStore().setStatusId(STATUS_DRAFT)
+            }
             this.$refs.stepper.next()
           }
         },
-      ]
+      ];
+      return this.sp === this.steppers.length ? actions.concat(closeFlight) : actions;
     }
   },
   methods: {

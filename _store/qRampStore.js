@@ -35,6 +35,9 @@ export default function qRampStore() {
     function setStatusId(value) {
         state.statusId = value;
     }
+    function getStatusId() {
+        return state.statusId;
+    }
     function setNeedToBePosted(value) {
         state.needToBePosted = value;
     }
@@ -260,6 +263,7 @@ export default function qRampStore() {
     return {
         disabledReadonly,
         setStatusId,
+        getStatusId,
         setNeedToBePosted,
         setFlightNumberField,
         getFlightNumberField,
