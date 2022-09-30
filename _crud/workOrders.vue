@@ -6,14 +6,12 @@
 <script>
 import formOrders from "../_components/formOrders.vue"
 import { STATUS_POSTED, STATUS_SUBMITTED,STATUS_CLOSED } from "../_components/model/constants"
-import flightDetail from '../_components/modal/flightDetail.vue'
 import qRampStore from '../_store/qRampStore.js'
 
 export default {
   name: 'RampCrud',
   components: {
     formOrders,
-    flightDetail,
   },
   data() {
     return {
