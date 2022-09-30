@@ -227,6 +227,7 @@ export default {
       this.flight.gateId = updateData.data['gateId'] ? updateData.data['gateId'].toString() : ''
       this.flight.acTypeId = updateData.data['acTypeId'] ? updateData.data['acTypeId'].toString() : ''
       this.flight.responsibleId = updateData.data['responsibleId'] ? updateData.data['responsibleId'] : null;
+      this.flight.faFlightId = updateData.data['faFlightId'] ? updateData.data['faFlightId'] : null;
       qRampStore().setResponsible(updateData.data['responsible']);
       this.flight.date = updateData.data['date'] ? updateData.data['date'].toString() : ''
       const customerName = updateData.data.customer ? updateData.data.customer.customerName : null;
