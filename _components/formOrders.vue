@@ -140,6 +140,7 @@ export default {
       const closeFlight = [{
           props:{
             color:'primary',
+            'icon-right': 'fal fa-check',
             label: this.$tr('isite.cms.label.closeFlight')
           },
           action: () => {
