@@ -206,7 +206,7 @@ export default {
           const flightList =  this.flightList.map(item => {
           const fligth = item[key] ? item[key] : {};
           const coordinates = fligth 
-          ? [fligth.lat, fligth.lng]
+          ? [fligth.lat || 0, fligth.lng || 0]
           : [];
           return {
             workOrderId: item.id,
