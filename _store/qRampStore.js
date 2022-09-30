@@ -201,8 +201,8 @@ export default function qRampStore() {
         const dataTable = [];
         data.forEach((items, index) => {
           const date = items.scheduledOn ? dateFormatter(items.scheduledOn.split("T")[0]) : '';
-          const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
-          const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
+          const inboundTime = items.estimatedOff ? moment(items.estimatedOff).format('DD-MM-YYYY HH:mm') : '';
+          const outboundTime = items.estimatedOn ? moment(items.estimatedOn).format('DD-MM-YYYY HH:mm') : '';
           const airportName = items.originAirport ? items.originAirport.airportName : '';
           const destinationairportName = items.destinationAirport ? items.destinationAirport.airportName : '';
           const flight = {

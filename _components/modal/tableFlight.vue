@@ -76,7 +76,6 @@ export default {
       selected:[],
       filter:'',
       columns:[
-        { name: 'date', label: 'Date', field: 'date', sortable: true , align: 'left'},
         { name: 'tailNumber', label: 'Tail Number', field: 'registration', sortable: true , align: 'left'},
         { name: 'inbound', label: 'Departure ', field: 'inbound', align: 'left'},
         { name: 'outbound', label: 'Arrival', field: 'outbound' , align: 'left'},

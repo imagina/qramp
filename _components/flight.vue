@@ -979,6 +979,7 @@ export default {
             })
           }
         }).catch(error => {
+          _this.resetBound();
           console.log('error', error)
         })
       },1500) 
@@ -1038,8 +1039,8 @@ export default {
     setTable(data) {
       data.forEach((items, index) => {
         const date = items.scheduledOn ? this.dateFormatter(items.scheduledOn.split("T")[0]) : '';
-        const inboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
-        const outboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
+        const inboundTime = items.estimatedOff ? this.$moment(items.estimatedOff).format('DD-MM-YYYY HH:mm') : '';
+        const outboundTime = items.estimatedOn ? this.$moment(items.estimatedOn).format('DD-MM-YYYY HH:mm') : '';
         const airportName = items.originAirport ? items.originAirport.airportName : '';
         const destinationairportName = items.destinationAirport ? items.destinationAirport.airportName : '';
           const flight = {
