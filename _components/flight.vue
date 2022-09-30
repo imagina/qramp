@@ -816,7 +816,7 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
-              //options: (date, min) => this.validateFutureDateTime(date, min, this.form.outboundBlockOut),
+              options: this.validateDateOutboundBlockOut,
             },
             label: this.$tr('ifly.cms.form.blockOut'),
           },
@@ -1219,25 +1219,28 @@ export default {
         return validateDate ? dateTime <= hour : true;
     },
     validateDateOutboundBlockOut(dateTime, dateMin = null) {
-      const outboundScheduledDepartureDate = this.form.outboundScheduledDeparture 
-          ? this.$moment(this.form.outboundScheduledDeparture) : this.$moment();
-      const today =  outboundScheduledDepartureDate.format('YYYY/MM/DD')  
-      const hour = outboundScheduledDepartureDate.format('H');
-      const min = outboundScheduledDepartureDate.format('mm');
-      const validateDate = today === this.$moment(this.form.outboundBlockOut).format('YYYY/MM/DD');
+      const outboundScheduledDepartureDate = this.form.outboundBlockOut 
+          ? this.$moment(this.form.outboundBlockOut) : this.$moment();    
+      const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');  
+      const inboundBlockIn = this.form.inboundBlockIn 
+          ? this.$moment(this.form.inboundBlockIn) : this.$moment();    
+      const todayIn =  inboundBlockIn.format('YYYY/MM/DD')  
+      const hourIn = inboundBlockIn.format('H');
+      const minIn = inboundBlockIn.format('mm');
+      const validateDate = today === todayIn;
+
       if (isNaN(dateTime)) {    
         if(this.form.inboundBlockIn) {
           return dateTime <= this.$moment().format('YYYY/MM/DD') 
-          && dateTime >= this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD') 
-          && dateTime <= today;
+          && dateTime >= todayIn;
         }
         return dateTime <= this.$moment().format('YYYY/MM/DD') 
         && dateTime >= today;
       }
       if(dateMin) {
-        return validateDate ? Number(dateMin) <= min : true;
+        return validateDate ? Number(dateMin) >= Number(minIn) : true;
       }
-      return validateDate ? dateTime <= hour : true;
+      return validateDate ? Number(dateTime) >= Number(hourIn) : true;
     },
     changeDate(field) {
       if(field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
