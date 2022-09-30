@@ -266,19 +266,6 @@ export default {
         this.form.customCustomerName = ''
       }
     },
-    'form.operationTypeId'(newVal, oldVal) {
-      if(this.update)return;
-      else if (newVal != oldVal) {
-        this.form.inboundFlightNumber = null,
-        this.form.inboundOriginAirportId = null,
-        this.form.inboundTailNumber = null,
-        this.form.inboundScheduledArrival = null,
-        this.form.outboundFlightNumber = null,
-        this.form.outboundDestinationAirportId = null,
-        this.form.outboundTailNumber = null,
-        this.form.outboundScheduledDeparture = null
-      }
-    },
     'form.inboundFlightNumber' (val) {
       if (!val) {
         this.form.inboundFlightNumber = null,
@@ -348,19 +335,6 @@ export default {
     isOutbound() {
       if(this.form.operationTypeId){
         const validator = this.form.operationTypeId == 4 || this.form.operationTypeId != 3;
-        if(this.form.operationTypeId != 2 && this.form.operationTypeId != 1 && this.form.operationTypeId != 6) {
-          if(validator) {
-            this.form.outboundFlightNumber = this.flightData.outboundFlightNumber;
-            this.form.outboundScheduledDeparture = this.dateFormatterFull(this.flightData.outboundScheduledDeparture)
-            this.form.outboundTailNumber = this.flightData.outboundTailNumber;
-            this.form.outboundDestinationAirportId = this.flightData.outboundDestinationAirportId;
-          } else {
-            this.form.outboundFlightNumber = null;
-            this.form.outboundScheduledDeparture = null;
-            this.form.outboundTailNumber = null;
-            this.form.outboundDestinationAirportId = null;
-          }
-        }
         return validator;
       }
       return false
@@ -368,19 +342,6 @@ export default {
     isInbound() {
       if(this.form.operationTypeId) {
         const validator = this.form.operationTypeId == 3 || this.form.operationTypeId != 4;
-          if(this.form.operationTypeId != 2 && this.form.operationTypeId != 1 && this.form.operationTypeId != 6) {
-            if(validator) {
-              this.form.inboundFlightNumber = this.flightData.inboundFlightNumber;
-              this.form.inboundScheduledArrival = this.dateFormatterFull(this.flightData.inboundScheduledArrival)
-              this.form.inboundTailNumber = this.flightData.inboundTailNumber;
-              this.form.inboundOriginAirportId = this.flightData.inboundOriginAirportId;
-            } else {
-              this.form.inboundFlightNumber = null;
-              this.form.inboundScheduledArrival = null
-              this.form.inboundTailNumber = null;
-              this.form.inboundOriginAirportId = null;
-            }
-        }
         return validator
       }
       return false
