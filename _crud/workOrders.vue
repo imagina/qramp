@@ -1,7 +1,6 @@
 <template>
   <div>
     <form-orders ref="formOrders" />
-    <flightDetail />
   </div>
 </template>
 <script>
