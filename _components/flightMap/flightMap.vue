@@ -53,7 +53,7 @@
             </div>
           </l-icon>
           <l-tooltip>
-            <p>Airport Name:{{  item.airportName}}</p> 
+            <p>Airport Name:{{  item.airportName }}</p> 
           </l-tooltip>
         </l-marker>
       </div>
@@ -134,16 +134,16 @@ export default {
     },
     aircraftList() {
       const flightList = this.flightList.map(item => {
-        const flightPosition = item.flightPosition ? item.flightPosition : {};
+        const flightPosition = item.flightPosition ? item.flightPosition : null;
         const coordinates = flightPosition 
           ? [flightPosition.lastPositionLatitude || 0, flightPosition.lastPositionLongitude || 0] 
-          : [];
-        return {
-          ...item,
-          ...flightPosition,
-          coordinates,
-        }
-      })
+          : [0, 0];
+          return {
+            ...item,
+            ...flightPosition,
+            coordinates,
+          }
+      }).filter(item => item.flightPosition !== null);
       if(this.flightDetail) {
         return flightList.filter(item => this.flightId === item.id);
       }
@@ -207,13 +207,14 @@ export default {
           const fligth = item[key] ? item[key] : {};
           const coordinates = fligth 
           ? [fligth.lat || 0, fligth.lng || 0]
-          : [];
+          : [0, 0];
           return {
             workOrderId: item.id,
             ...fligth,
             coordinates,
+            flightPosition: item.flightPosition
           }
-        })
+        }).filter(item => item.flightPosition !== null)
         if(this.flightDetail) {
           return flightList.filter(item => this.flightId === item.workOrderId);
         }
