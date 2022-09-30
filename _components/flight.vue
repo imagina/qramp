@@ -796,6 +796,7 @@ export default {
               format24h: true,
             },
             label: this.$tr('ifly.cms.form.blockIn'),
+            //options: (date, min) => this.validateDate(date, min)
           },
           outboundBlockOut: {
             name:'outboundBlockOut',
@@ -815,6 +816,7 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
+              //options: (date, min) => this.validateFutureDateTime(date, min, this.form.outboundBlockOut),
             },
             label: this.$tr('ifly.cms.form.blockOut'),
           },
@@ -1032,13 +1034,13 @@ export default {
         const destinationAirportId = data.destinationAirport ? data.destinationAirport.id : null;
         this.$set(this.form, "outboundFlightNumber",  data.ident)
         this.$set(this.form, "outboundDestinationAirportId",  destinationAirportId)
-        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.estimatedOn))
+        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.estimatedOff))
         this.$set(this.form, "outboundTailNumber",  data.registration)
       } else {
         this.$set(this.form, "inboundFlightNumber", data.ident)
         const originAirportId = data.originAirport ? data.originAirport.id : null;
         this.$set(this.form, "inboundOriginAirportId", originAirportId)
-        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.estimatedOff))
+        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.estimatedOn))
         this.$set(this.form, "inboundTailNumber", data.registration)
         if(this.form.outboundTailNumber) {
           this.$set(this.form, "outboundTailNumber",  data.registration);
@@ -1048,6 +1050,7 @@ export default {
     },
     setDataTable({select, dialog}) {
       this.dialog = dialog
+      this.form.faFlightId = select.faFlightId || null;
       this.setForm(this.mainData.find((item,index) => {
         return index === select.index 
       }))
@@ -1073,8 +1076,8 @@ export default {
     setTable(data) {
       data.forEach((items, index) => {
         const date = items.scheduledOn ? this.dateFormatter(items.scheduledOn.split("T")[0]) : '';
-        const inboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
-        const outboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
+        const inboundTime = items.estimatedOn ? items.estimatedOn.split("T")[1].substr(0, 5) : '';
+        const outboundTime = items.estimatedOff ? items.estimatedOff.split("T")[1].substr(0, 5) : '';
         const airportName = items.originAirport ? items.originAirport.airportName : '';
         const destinationairportName = items.destinationAirport ? items.destinationAirport.airportName : '';
           const flight = {
@@ -1193,8 +1196,8 @@ export default {
           originAirport: {
             id: this.form.outboundDestinationAirportId,
           },
-          estimatedOff: this.form.inboundScheduledArrival,
-          estimatedOn: this.form.outboundScheduledDeparture,
+          estimatedOff: this.form.outboundScheduledDeparture,
+          estimatedOn:  this.form.inboundScheduledArrival,
         }
       qRampStore().validateStatusSelectedFlight(data);
       this.resetBound();
