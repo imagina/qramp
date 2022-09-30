@@ -8,6 +8,7 @@ import {
 import * as moment from 'moment';
 import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts';
 import baseService from '@imagina/qcrud/_services/baseService.js'
+import Vue from "vue";
 
 const state = reactive({
     statusId: STATUS_DRAFT,
@@ -43,11 +44,13 @@ export default function qRampStore() {
     }
     function disabledReadonly() {
         const statusId = Number(state.statusId);
+        
         if (statusId === STATUS_DRAFT && state.needToBePosted) {
             return true;
         }
+        
         if (statusId === STATUS_POSTED
-            || statusId === STATUS_SUBMITTED
+            || !editPermissionseSubmitted()
         ) {
             return true;
         }
@@ -260,6 +263,9 @@ export default function qRampStore() {
     function setFlightId(value) {
         state.flightId = value;
     }
+    function editPermissionseSubmitted() {
+        return Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-when-submitted');
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -307,6 +313,7 @@ export default function qRampStore() {
         setFlightList,
         getFlightList,
         getFlightId,
-        setFlightId
+        setFlightId,
+        editPermissionseSubmitted,
     }
 }
