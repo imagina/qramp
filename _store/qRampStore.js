@@ -48,9 +48,10 @@ export default function qRampStore() {
         if (statusId === STATUS_DRAFT && state.needToBePosted) {
             return true;
         }
-        
+        if(statusId === STATUS_SUBMITTED && !editPermissionseSubmitted()) {
+            return true;
+        }
         if (statusId === STATUS_POSTED
-            || !editPermissionseSubmitted()
         ) {
             return true;
         }
