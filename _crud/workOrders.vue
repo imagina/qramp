@@ -148,7 +148,14 @@ export default {
             { name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left' },
           ],
           filters: {
-            date: { name: "createdAt", quickFilter: true },
+            date: {
+              props:{
+                label: "Arrival Date"
+              },
+              name: "inboundScheduledArrival",
+              field: {value: 'inbound_scheduled_arrival'},
+              quickFilter: true
+            },
             customerId: {
               value: null,
               type: 'select',
