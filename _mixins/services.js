@@ -49,7 +49,6 @@ export default {
     async getProducts(requestParams, id){
       this.services = [];
       await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
-        this.$emit('isError', false)
         const formatData = this.formatData(data, id)
         formatData.forEach(item => {
           this.services.push({

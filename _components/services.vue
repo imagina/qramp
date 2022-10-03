@@ -42,7 +42,6 @@ export default {
       //Request data
       this.getProducts(requestParams, 1)
     },
-    
   },
   computed:{
     pageActions() {
