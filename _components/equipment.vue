@@ -1,8 +1,8 @@
 <template>
   <div id="services-container">
-    <div class="tw-p-4">
+    <div class="tw-p-4 tw-mb-12">
       <search-local @value="searchServices = $event" />
-      <q-linear-progress v-if="services.length == 0"  stripe  indeterminate rounded color="primary" class="q-mt-sm" />
+      <q-linear-progress v-if="services.length === 0"  stripe  indeterminate rounded color="primary" class="q-mt-sm" />
       <expansion-component v-else :data="filterServices"/>
     </div>
   </div>
