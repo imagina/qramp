@@ -197,89 +197,94 @@ export default {
       this.services = [];
     },
     async loadform(params) {
-      this.loading = true;
-      const updateData = this.$clone(params)
-      this.show = true
-      this.modalProps = updateData.modalProps
-      this.flight = {}
-      this.cargo = {}
-      this.remark = {}
-      this.signature = {}
-      this.statusId = STATUS_DRAFT
-      this.needToBePosted = false
-      this.services = []
-      this.equipments = []
-      this.crew = []
-      qRampStore().setWorkOrderItems([]);
-      qRampStore().setStatusId(this.statusId);
-      qRampStore().setNeedToBePosted(this.needToBePosted);
-      if(!updateData.data) {
+      try {
+        this.loading = true;
+        const updateData = this.$clone(params)
+        this.show = true
+        this.modalProps = updateData.modalProps
+        this.flight = {}
+        this.cargo = {}
+        this.remark = {}
+        this.signature = {}
+        this.statusId = STATUS_DRAFT
+        this.needToBePosted = false
+        this.services = []
+        this.equipments = []
+        this.crew = []
+        qRampStore().setWorkOrderItems([]);
+        qRampStore().setStatusId(this.statusId);
+        qRampStore().setNeedToBePosted(this.needToBePosted);
+        if(!updateData.data) {
+          this.loading = false;
+          return;
+        };
+        this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
+        this.needToBePosted = updateData.data['needToBePosted'] || false;
+        qRampStore().setStatusId(this.statusId);
+        qRampStore().setNeedToBePosted(this.needToBePosted); 
+        this.flight.operationTypeId = updateData.data['operationTypeId'] ? updateData.data['operationTypeId'].toString() : ''
+        this.flight.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : ''
+        this.flight.inboundCustomFlightNumber = updateData.data['inboundCustomFlightNumber'] ? updateData.data['inboundCustomFlightNumber'] : ''
+        this.flight.outboundCustomFlightNumber = updateData.data['outboundCustomFlightNumber'] ? updateData.data['outboundCustomFlightNumber'] : ''
+        this.flight.inboundFlightNumber = updateData.data['inboundFlightNumber'] ? updateData.data['inboundFlightNumber'].toString() : ''
+        this.flight.inboundOriginAirportId = updateData.data['inboundOriginAirportId'] ? updateData.data['inboundOriginAirportId'].toString() : ''
+        this.flight.outboundFlightNumber = updateData.data['outboundFlightNumber'] ? updateData.data['outboundFlightNumber'].toString() : ''
+        this.flight.outboundDestinationAirportId = updateData.data['outboundDestinationAirportId'] ? updateData.data['outboundDestinationAirportId'].toString() : ''
+        this.flight.customerId = updateData.data['customerId'] ? updateData.data['customerId'].toString() : ''
+        this.flight.customCustomer = updateData.data['customCustomer'] ? updateData.data['customCustomer'] : 0
+        this.flight.adHoc = updateData.data['adHoc'] ? updateData.data['adHoc'] : 0
+        this.flight.carrierId = updateData.data['carrierId'] ? updateData.data['carrierId'].toString() : ''
+        this.flight.stationId = updateData.data['stationId'] ? updateData.data['stationId'].toString() : ''
+        this.flight.inboundTailNumber = updateData.data['inboundTailNumber'] ? updateData.data['inboundTailNumber'].toString() : ''
+        this.flight.inboundBlockIn = updateData.data['inboundBlockIn'] ? updateData.data['inboundBlockIn'].toString() : ''
+        this.flight.inboundScheduledArrival = updateData.data['inboundScheduledArrival'] ? updateData.data['inboundScheduledArrival'].toString() : ''
+        this.flight.outboundTailNumber = updateData.data['outboundTailNumber'] ? updateData.data['outboundTailNumber'].toString() : ''
+        this.flight.outboundScheduledDeparture = updateData.data['outboundScheduledDeparture'] ? updateData.data['outboundScheduledDeparture'].toString() : ''
+        this.flight.outboundBlockOut = updateData.data['outboundBlockOut'] ? updateData.data['outboundBlockOut'].toString() : ''
+        this.flight.gateId = updateData.data['gateId'] ? updateData.data['gateId'].toString() : ''
+        this.flight.acTypeId = updateData.data['acTypeId'] ? updateData.data['acTypeId'].toString() : ''
+        this.flight.responsibleId = updateData.data['responsibleId'] ? updateData.data['responsibleId'] : null;
+        this.flight.faFlightId = updateData.data['faFlightId'] ? updateData.data['faFlightId'] : null;
+        qRampStore().setResponsible(updateData.data['responsible']);
+        this.flight.date = updateData.data['date'] ? updateData.data['date'].toString() : ''
+        const customerName = updateData.data.customer ? updateData.data.customer.customerName : null;
+        const customCustomerName =  updateData.data.customCustomerName ? updateData.data.customCustomerName : null;
+        this.flight.customerName = customerName || customCustomerName;
+        this.flight.contractId = updateData.data.contractId ? updateData.data.contractId : null;
+        this.flight.contractName = updateData.data.contract ? updateData.data.contract.contractName : null;
+        this.cargo.inboundCargoTotalUldsUnloaded = updateData.data['inboundCargoTotalUldsUnloaded'] ? updateData.data['inboundCargoTotalUldsUnloaded'].toString() : ''
+        this.cargo.inboundCargoBulkUnloaded = updateData.data['inboundCargoBulkUnloaded'] ? updateData.data['inboundCargoBulkUnloaded'].toString() : ''
+        this.cargo.outboundCargoTotalUldsLoaded = updateData.data['outboundCargoTotalUldsLoaded'] ? updateData.data['outboundCargoTotalUldsLoaded'].toString() : ''
+        this.cargo.outboundCargoBulkLoaded = updateData.data['outboundCargoBulkLoaded'] ? updateData.data['outboundCargoBulkLoaded'].toString() : ''
+        this.cargo.cargoTotalKilosLoaded = updateData.data['cargoTotalKilosLoaded'] ? updateData.data['cargoTotalKilosLoaded'].toString() : ''
+        this.cargo.cargoTotalKilosUnloaded = updateData.data['cargoTotalKilosUnloaded'] ? updateData.data['cargoTotalKilosUnloaded'].toString() : ''
+        this.cargo.delayList = updateData.data['delay'] || [];
+        qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        this.services = await getProducts(1);
+        this.equipments = await getProducts(2);
+        this.crew = await getProducts(3);
+        this.remark.remark = updateData.data['remark']
+        this.remark.safetyMessage = updateData.data['safetyMessage']
+
+        this.signature.customerName = updateData.data['customerName']
+        this.signature.customerTitle = updateData.data['customerTitle']
+        this.signature.representativeName = updateData.data['representativeName']
+        this.signature.representativeTitle = updateData.data['representativeTitle']
+        this.signature.customerSignature = updateData.data['customerSignature']
+        this.signature.representativeSignature = updateData.data['representativeSignature']
+
+        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight )
+        this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList)
+        this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
+        this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services)
+        this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', this.equipments)
+        this.$store.commit('qrampApp/SET_FORM_CREW', this.crew)
+        this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
+        this.loading = false; 
+      } catch (error) {
         this.loading = false;
-        return;
-      };
-      this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
-      this.needToBePosted = updateData.data['needToBePosted'] || false;
-      qRampStore().setStatusId(this.statusId);
-      qRampStore().setNeedToBePosted(this.needToBePosted); 
-      this.flight.operationTypeId = updateData.data['operationTypeId'] ? updateData.data['operationTypeId'].toString() : ''
-      this.flight.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : ''
-      this.flight.inboundCustomFlightNumber = updateData.data['inboundCustomFlightNumber'] ? updateData.data['inboundCustomFlightNumber'] : ''
-      this.flight.outboundCustomFlightNumber = updateData.data['outboundCustomFlightNumber'] ? updateData.data['outboundCustomFlightNumber'] : ''
-      this.flight.inboundFlightNumber = updateData.data['inboundFlightNumber'] ? updateData.data['inboundFlightNumber'].toString() : ''
-      this.flight.inboundOriginAirportId = updateData.data['inboundOriginAirportId'] ? updateData.data['inboundOriginAirportId'].toString() : ''
-      this.flight.outboundFlightNumber = updateData.data['outboundFlightNumber'] ? updateData.data['outboundFlightNumber'].toString() : ''
-      this.flight.outboundDestinationAirportId = updateData.data['outboundDestinationAirportId'] ? updateData.data['outboundDestinationAirportId'].toString() : ''
-      this.flight.customerId = updateData.data['customerId'] ? updateData.data['customerId'].toString() : ''
-      this.flight.customCustomer = updateData.data['customCustomer'] ? updateData.data['customCustomer'] : 0
-      this.flight.adHoc = updateData.data['adHoc'] ? updateData.data['adHoc'] : 0
-      this.flight.carrierId = updateData.data['carrierId'] ? updateData.data['carrierId'].toString() : ''
-      this.flight.stationId = updateData.data['stationId'] ? updateData.data['stationId'].toString() : ''
-      this.flight.inboundTailNumber = updateData.data['inboundTailNumber'] ? updateData.data['inboundTailNumber'].toString() : ''
-      this.flight.inboundBlockIn = updateData.data['inboundBlockIn'] ? updateData.data['inboundBlockIn'].toString() : ''
-      this.flight.inboundScheduledArrival = updateData.data['inboundScheduledArrival'] ? updateData.data['inboundScheduledArrival'].toString() : ''
-      this.flight.outboundTailNumber = updateData.data['outboundTailNumber'] ? updateData.data['outboundTailNumber'].toString() : ''
-      this.flight.outboundScheduledDeparture = updateData.data['outboundScheduledDeparture'] ? updateData.data['outboundScheduledDeparture'].toString() : ''
-      this.flight.outboundBlockOut = updateData.data['outboundBlockOut'] ? updateData.data['outboundBlockOut'].toString() : ''
-      this.flight.gateId = updateData.data['gateId'] ? updateData.data['gateId'].toString() : ''
-      this.flight.acTypeId = updateData.data['acTypeId'] ? updateData.data['acTypeId'].toString() : ''
-      this.flight.responsibleId = updateData.data['responsibleId'] ? updateData.data['responsibleId'] : null;
-      this.flight.faFlightId = updateData.data['faFlightId'] ? updateData.data['faFlightId'] : null;
-      qRampStore().setResponsible(updateData.data['responsible']);
-      this.flight.date = updateData.data['date'] ? updateData.data['date'].toString() : ''
-      const customerName = updateData.data.customer ? updateData.data.customer.customerName : null;
-      const customCustomerName =  updateData.data.customCustomerName ? updateData.data.customCustomerName : null;
-      this.flight.customerName = customerName || customCustomerName;
-      this.flight.contractId = updateData.data.contractId ? updateData.data.contractId : null;
-      this.flight.contractName = updateData.data.contract ? updateData.data.contract.contractName : null;
-      this.cargo.inboundCargoTotalUldsUnloaded = updateData.data['inboundCargoTotalUldsUnloaded'] ? updateData.data['inboundCargoTotalUldsUnloaded'].toString() : ''
-      this.cargo.inboundCargoBulkUnloaded = updateData.data['inboundCargoBulkUnloaded'] ? updateData.data['inboundCargoBulkUnloaded'].toString() : ''
-      this.cargo.outboundCargoTotalUldsLoaded = updateData.data['outboundCargoTotalUldsLoaded'] ? updateData.data['outboundCargoTotalUldsLoaded'].toString() : ''
-      this.cargo.outboundCargoBulkLoaded = updateData.data['outboundCargoBulkLoaded'] ? updateData.data['outboundCargoBulkLoaded'].toString() : ''
-      this.cargo.cargoTotalKilosLoaded = updateData.data['cargoTotalKilosLoaded'] ? updateData.data['cargoTotalKilosLoaded'].toString() : ''
-      this.cargo.cargoTotalKilosUnloaded = updateData.data['cargoTotalKilosUnloaded'] ? updateData.data['cargoTotalKilosUnloaded'].toString() : ''
-      this.cargo.delayList = updateData.data['delay'] || [];
-      qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
-      this.services = await getProducts(1);
-      this.equipments = await getProducts(2);
-      this.crew = await getProducts(3);
-      this.remark.remark = updateData.data['remark']
-      this.remark.safetyMessage = updateData.data['safetyMessage']
-
-      this.signature.customerName = updateData.data['customerName']
-      this.signature.customerTitle = updateData.data['customerTitle']
-      this.signature.representativeName = updateData.data['representativeName']
-      this.signature.representativeTitle = updateData.data['representativeTitle']
-      this.signature.customerSignature = updateData.data['customerSignature']
-      this.signature.representativeSignature = updateData.data['representativeSignature']
-
-      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight )
-      this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList)
-      this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
-      this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services)
-      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', this.equipments)
-      this.$store.commit('qrampApp/SET_FORM_CREW', this.crew)
-      this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
-      this.loading = false;
+        console.log(error);
+      }
     },
     //Clear
     clear() {
