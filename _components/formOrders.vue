@@ -138,6 +138,7 @@ export default {
       ]
     },
     actionsStepperButtom(){
+      const statusId = qRampStore().getStatusId();
       const actions = [
         {
           props:{
@@ -166,24 +167,44 @@ export default {
           props:{
             color:'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
-            label: 'Save to Draft'
+            label: 'Save to Draft',
+            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED
           },
           action: async () => {
               qRampStore().setStatusId(STATUS_DRAFT);
               await this.$refs.stepper.setData();
               await this.$refs.stepper.sendInfo();
+              this.loading = false;
+              qRampStore().hideLoading();
           }
         },
         {
           props:{
             color:'primary',
             'icon-right': 'fal fa-check',
-            label: this.$tr('isite.cms.label.closeFlight')
+            label: this.$tr('isite.cms.label.closeFlight'),
+            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED
           },
           action: async () => {
             qRampStore().setStatusId(STATUS_CLOSED);
             await this.$refs.stepper.setData();
             await this.$refs.stepper.sendInfo();
+            this.loading = false;
+            qRampStore().hideLoading();
+          }
+        },
+        {
+          props:{
+            color:'primary',
+            'icon-right': 'fa-thin fa-floppy-disk',
+            label: this.$tr('isite.cms.label.save'),
+            vIf: statusId != STATUS_DRAFT && statusId != STATUS_CLOSED
+          },
+          action: async () => {
+            await this.$refs.stepper.setData();
+            await this.$refs.stepper.sendInfo();
+            this.loading = false;
+            qRampStore().hideLoading();
           }
         },
       ];
@@ -216,8 +237,10 @@ export default {
         qRampStore().setNeedToBePosted(this.needToBePosted);
         if(!updateData.data) {
           this.loading = false;
+          qRampStore().hideLoading();
           return;
         };
+        console.log('hola', this.loadingComputed);
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
         qRampStore().setStatusId(this.statusId);
@@ -283,6 +306,7 @@ export default {
         this.loading = false; 
       } catch (error) {
         this.loading = false;
+        qRampStore().hideLoading();
         console.log(error);
       }
     },
