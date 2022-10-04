@@ -194,11 +194,11 @@ export default {
       }
       return obj
     },
-    sendInfo() {
-      qRampStore().showLoading();
+    async sendInfo() {
       if(this.validateAllFieldsRequiredByStep()) return;
       const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
-      data.form.statusId = qRampStore().getStatusId();
+      const statusId = qRampStore().getStatusId();
+      data.form.statusId = statusId ? statusId: data.form.statusId;
       const formatData = {
         ...data.form,
         adHoc: data.form.adHoc == 1,
@@ -213,7 +213,7 @@ export default {
       if (this.data.update) {
         formatData.id = this.data.workOrderId;
       }
-      this.sendWorkOrder(formatData);
+      await this.sendWorkOrder(formatData);
     },
     clean(){
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
@@ -233,11 +233,12 @@ export default {
     previous(){
       this.$refs.stepper.previous()
     },
-    sendWorkOrder(formatData) {
+    async sendWorkOrder(formatData) {
+      this.$emit('loading', true)
       const route = 'apiRoutes.qramp.workOrders';
       if(this.disabledReadonly) {
-        this.$emit('close-modal', false);
         this.$emit('loading', false);
+        this.$emit('close-modal', false);
         return;
       }
       if(this.disabled) return;
@@ -245,18 +246,15 @@ export default {
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
         :this.$crud.create(route, formatData);
       request.then(res => {
-        this.$emit('loading', true)
         this.clean()
-        this.$emit('close-modal', false)
         const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}` 
           : `${this.$tr('isite.cms.message.recordCreated')}`;
         this.$alert.info({message})
-         this.$emit('loading', false)
+         this.$emit('loading', false);
+         this.$emit('close-modal', false);
          this.disabled = false;
-         qRampStore().hideLoading();
       })
       .catch(err => {
-        qRampStore().hideLoading();
          this.disabled = false;
          this.$emit('loading', false)
         this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
