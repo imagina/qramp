@@ -183,7 +183,7 @@ export default {
             color:'primary',
             'icon-right': 'fal fa-check',
             label: this.$tr('isite.cms.label.closeFlight'),
-            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED
+            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED,
           },
           action: async () => {
             qRampStore().setStatusId(STATUS_CLOSED);
@@ -198,7 +198,7 @@ export default {
             color:'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
             label: this.$tr('isite.cms.label.save'),
-            vIf: statusId != STATUS_DRAFT && statusId != STATUS_CLOSED
+            vIf: statusId != STATUS_DRAFT && statusId != STATUS_CLOSED,
           },
           action: async () => {
             await this.$refs.stepper.setData();
