@@ -77,8 +77,8 @@ export default {
       filter:'',
       columns:[
         { name: 'tailNumber', label: 'Tail Number', field: 'registration', sortable: true , align: 'left'},
-        { name: 'inbound', label: 'Departure ', field: 'inbound', align: 'left'},
-        { name: 'outbound', label: 'Arrival', field: 'outbound' , align: 'left'},
+        { name: 'outbound', label: 'Departure', field: 'outbound' , align: 'left'},
+        { name: 'inbound', label: 'Arrival ', field: 'inbound', align: 'left'},
         { name: 'aircraftType', label: 'Aircraft', field: 'aircraftType', align: 'left'}
       ],
     }
