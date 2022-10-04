@@ -35,6 +35,7 @@ import {
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
+import getProducts from '../_store/actions/getProducts.js';
 
 export default {
   name:'formOrders',
@@ -137,21 +138,10 @@ export default {
       ]
     },
     actionsStepperButtom(){
-      const closeFlight = [{
-          props:{
-            color:'primary',
-            'icon-right': 'fal fa-check',
-            label: this.$tr('isite.cms.label.closeFlight')
-          },
-          action: () => {
-            qRampStore().setStatusId(STATUS_CLOSED)
-            this.$refs.stepper.next()
-          }
-      }];
       const actions = [
         {
-          vIf: this.sp > 1 ,
           props:{
+            vIf: this.sp > 1,
             color:'white',
             'text-color':'primary',
             icon: 'fas fa-arrow-left',
@@ -163,19 +153,41 @@ export default {
         },
         {
           props:{
+            vIf: this.sp !== this.steppers.length,
             color:'primary',
-            'icon-right': this.sp === this.steppers.length  ?  'fa-thin fa-floppy-disk' :'fas fa-arrow-right',
-            label: this.nextLabel
+            'icon-right': 'fas fa-arrow-right',
+            label: this.$tr('isite.cms.label.next')
           },
           action: () => {
-            if(this.sp === this.steppers.length) {
-              qRampStore().setStatusId(STATUS_DRAFT)
-            }
             this.$refs.stepper.next()
           }
         },
+        {
+          props:{
+            color:'primary',
+            'icon-right': 'fa-thin fa-floppy-disk',
+            label: 'Save to Draft'
+          },
+          action: async () => {
+              qRampStore().setStatusId(STATUS_DRAFT);
+              await this.$refs.stepper.setData();
+              await this.$refs.stepper.sendInfo();
+          }
+        },
+        {
+          props:{
+            color:'primary',
+            'icon-right': 'fal fa-check',
+            label: this.$tr('isite.cms.label.closeFlight')
+          },
+          action: async () => {
+            qRampStore().setStatusId(STATUS_CLOSED);
+            await this.$refs.stepper.setData();
+            await this.$refs.stepper.sendInfo();
+          }
+        },
       ];
-      return this.sp === this.steppers.length ? actions.concat(closeFlight) : actions;
+      return actions;
     }
   },
   methods: {
@@ -184,7 +196,8 @@ export default {
       this.$root.$emit('crud.data.refresh')
       this.services = [];
     },
-    loadform(params) {
+    async loadform(params) {
+      this.loading = true;
       const updateData = this.$clone(params)
       this.show = true
       this.modalProps = updateData.modalProps
@@ -242,11 +255,10 @@ export default {
       this.cargo.cargoTotalKilosLoaded = updateData.data['cargoTotalKilosLoaded'] ? updateData.data['cargoTotalKilosLoaded'].toString() : ''
       this.cargo.cargoTotalKilosUnloaded = updateData.data['cargoTotalKilosUnloaded'] ? updateData.data['cargoTotalKilosUnloaded'].toString() : ''
       this.cargo.delayList = updateData.data['delay'] || [];
-
-      this.services = updateData.data['workOrderItems']
-      this.equipments = updateData.data['workOrderItems']
-      this.crew = updateData.data['workOrderItems']
       qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+      this.services = await getProducts(1);
+      this.equipments = await getProducts(2);
+      this.crew = await getProducts(3);
       this.remark.remark = updateData.data['remark']
       this.remark.safetyMessage = updateData.data['safetyMessage']
 
@@ -256,20 +268,22 @@ export default {
       this.signature.representativeTitle = updateData.data['representativeTitle']
       this.signature.customerSignature = updateData.data['customerSignature']
       this.signature.representativeSignature = updateData.data['representativeSignature']
+
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight )
       this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList)
       this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
-      this.$store.commit('qrampApp/SET_FORM_SERVICES',[])
-      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
-      this.$store.commit('qrampApp/SET_FORM_CREW', [] )
+      this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services)
+      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', this.equipments)
+      this.$store.commit('qrampApp/SET_FORM_CREW', this.crew)
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
+      this.loading = false;
     },
     //Clear
     clear() {
       this.modalProps = {}
       this.show = false
       this.services = [];
-    }
+    },
   },
 }
 </script>

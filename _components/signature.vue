@@ -183,7 +183,6 @@ export default {
       }
     },
     saveInfo() {
-      this.form.statusId = qRampStore().getStatusId();
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
       this.$emit('send-info')
     },

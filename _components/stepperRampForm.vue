@@ -4,6 +4,7 @@
       v-model="sp"
       ref="stepper"
       color="primary"
+      header-nav
       alternative-labels
       animated
       :contracted="$q.screen.lt.md"
@@ -145,14 +146,18 @@ export default {
     async setData() {
       switch (this.sp) {
         case 1:
-          const error = await this.$refs.flight[0].menssageValidate();
-          await this.$refs.flight[0].saveInfo(error);
+          if(this.$refs.flight) {
+            const error = await this.$refs.flight[0].menssageValidate();
+            await this.$refs.flight[0].saveInfo(error);
+          }
           break;
         case 2:
           this.$refs.cargo[0].saveInfo()
           break;
         case 3:
-          this.$refs.services[0].saveInfo()
+          if(this.$refs.services) {
+            this.$refs.services[0].saveInfo()
+          }
           break;
         case 4:
           this.$refs.equipment[0].saveInfo()
@@ -179,7 +184,9 @@ export default {
     },
     sendInfo() {
       qRampStore().showLoading();
-      const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
+      if(this.validateAllFieldsRequiredByStep()) return;
+      const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
+      data.form.statusId = qRampStore().getStatusId();
       const formatData = {
         ...data.form,
         adHoc: data.form.adHoc == 1,
@@ -243,6 +250,48 @@ export default {
         this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
         console.log('SEND INFO ERROR:', err)
       })
+    },
+    validateAllFieldsRequiredByStep() {
+      const flightForm = this.$store.state.qrampApp.form;
+      const flightformField = [
+        'customerId',
+        'stationId',
+        'acTypeId',
+        'operationTypeId',
+        'carrierId',
+        'gateId',
+        'statusId',
+        'responsibleId',
+        'inboundFlightNumber',
+        'inboundOriginAirportId',
+        'inboundTailNumber',
+        'inboundScheduledArrival',
+        'outboundFlightNumber',
+        'outboundDestinationAirportId',
+        'outboundTailNumber',
+        'outboundScheduledDeparture',
+        'inboundBlockIn',
+        'outboundBlockOut'
+      ];
+      const validateflightform = flightformField
+        .some(item => flightForm[item] === null || flightForm[item] === '')
+      if(validateflightform) {
+        this.error = true;
+        this.sp = 1;
+        qRampStore().hideLoading();
+        this.setData();
+        return true;
+      }
+      const service = this.$store.state.qrampApp.services;
+      if(service.length === 0) {
+        this.sp = 3;
+        this.error = true;
+        qRampStore().hideLoading();
+        this.setData();
+        return true;
+      }
+      this.error = false;
+      return false;  
     },
   },
 }

@@ -44,11 +44,11 @@ export default function qRampStore() {
     }
     function disabledReadonly() {
         const statusId = Number(state.statusId);
-        
+
         if (statusId === STATUS_DRAFT && state.needToBePosted) {
             return true;
         }
-        if(statusId === STATUS_SUBMITTED && !editPermissionseSubmitted()) {
+        if (statusId === STATUS_SUBMITTED && !editPermissionseSubmitted()) {
             return true;
         }
         if (statusId === STATUS_POSTED
@@ -118,10 +118,10 @@ export default function qRampStore() {
         if (isNaN(dateTime)) {
             return dateTime <= today
         }
-        if(dateMin) {
-           return today === current ? Number(dateMin) <= min : true;
+        if (dateMin) {
+            return today === current ? Number(dateMin) <= min : true;
         }
-        return today === current ? dateTime <= hour: true;
+        return today === current ? dateTime <= hour : true;
     }
     function setDateInboundBlockIn(value) {
         state.dateBoundBlock.inboundBlockIn = value;
@@ -150,42 +150,42 @@ export default function qRampStore() {
     }
 
     function validateDateInboundBlockIn(dateTime, dateMin = null) {
-        const date = getDateInboundBlockIn() 
-          ? moment(getDateInboundBlockIn()) : moment();
+        const date = getDateInboundBlockIn()
+            ? moment(getDateInboundBlockIn()) : moment();
         const today = date.format('YYYY/MM/DD');
         const hour = date.format('H');
         const min = date.format('mm')
         if (isNaN(dateTime)) {
-            if(getDateInboundBlockIn()) {
-                return dateTime <= today; 
+            if (getDateInboundBlockIn()) {
+                return dateTime <= today;
             }
             return dateTime <= moment().format('YYYY/MM/DD');
         }
-        if(dateMin) {
+        if (dateMin) {
             return Number(dateMin) <= min;
         }
         return dateTime <= hour;
     }
     function validateDateOutboundBlockOut(dateTime, dateMin = null) {
-      const date = getDateOutboundBlockOut()
-          ? moment(getDateOutboundBlockOut()) : moment();
-      const hour = date.format('H');
-      const min = date.format('mm');
-      if (isNaN(dateTime)) {    
-        if(getDateOutboundBlockOut()) {
-          return dateTime <= date.format('YYYY/MM/DD') 
-          && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
+        const date = getDateOutboundBlockOut()
+            ? moment(getDateOutboundBlockOut()) : moment();
+        const hour = date.format('H');
+        const min = date.format('mm');
+        if (isNaN(dateTime)) {
+            if (getDateOutboundBlockOut()) {
+                return dateTime <= date.format('YYYY/MM/DD')
+                    && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
+            }
+            return dateTime <= moment().format('YYYY/MM/DD')
+                && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
         }
-        return dateTime <= moment().format('YYYY/MM/DD') 
-        && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
-      }
-      if(dateMin) {
-        return Number(dateMin) <= min;
-      }
-      return dateTime <= hour;
+        if (dateMin) {
+            return Number(dateMin) <= min;
+        }
+        return dateTime <= hour;
     }
     function getDifferenceInHours(start, end) {
-        if(start) {
+        if (start) {
             const dateStart = moment(start);
             const dateEnd = moment(end);
             const hour = dateEnd.diff(dateStart, 'minutes') / 60;
@@ -217,9 +217,9 @@ export default function qRampStore() {
           }
           dataTable.push(flight)
         })
-        return dataTable;   
+        return dataTable;
     }
-    function setResponsible(data){
+    function setResponsible(data) {
         state.responsible = data;
     }
     function getResponsible() {
@@ -266,6 +266,74 @@ export default function qRampStore() {
     }
     function editPermissionseSubmitted() {
         return Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-when-submitted');
+    }
+    function setAttr(obj) {
+        try {
+            const att = [];
+            for (let key in obj) {
+                if (obj[key].id && obj[key].attributeId) {
+                    att.push({
+                        name: obj[key].name,
+                        value: obj[key].value,
+                        attribute_id: obj[key].attributeId,
+                        id: obj[key].id,
+                    })
+                } else if (obj[key].id && !obj[key].attributeId) {
+                    att.push({
+                        name: obj[key].name,
+                        value: obj[key].value,
+                        attribute_id: obj[key].id,
+                    })
+                } else if (obj[key].attributeId && obj[key].value) {
+                    att.push({
+                        name: obj[key].name,
+                        value: obj[key].value,
+                        attribute_id: obj[key].attributeId,
+                    })
+                }
+            }
+            return att
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    function productDataTransformation(data = []) {
+        try {
+            const products = [];
+            data.forEach((items) => {
+                if (items.id && items.productsId) {
+                    products.push({
+                        id: items.id,
+                        product_id: items.productsId,
+                        work_order_item_attributes: setAttr(items.formField)
+                    })
+                } else if (items.id && !items.productsId) {
+                    products.push({
+                        product_id: items.id,
+                        work_order_item_attributes: setAttr(items.formField)
+                    })
+                } else if (items.id && isDelete(items.formField)) {
+                    products.push({
+                        product_id: items.productsId,
+                        work_order_item_attributes: setAttr(items.formField)
+                    })
+                }
+            })
+            return products;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    function isDelete(obj) {
+        try {
+            const att = []
+            for (let key in obj) {
+                return obj[key].value && obj[key].value != ""
+            }
+            return att
+        } catch (error) {
+            console.log(error);
+        }
     }
     return {
         disabledReadonly,
@@ -316,5 +384,8 @@ export default function qRampStore() {
         getFlightId,
         setFlightId,
         editPermissionseSubmitted,
+        setAttr,
+        productDataTransformation,
+        isDelete,
     }
 }
