@@ -1039,8 +1039,8 @@ export default {
     setTable(data) {
       data.forEach((items, index) => {
         const date = items.scheduledOn ? this.dateFormatter(items.scheduledOn.split("T")[0]) : '';
-        const inboundTime = items.estimatedOff ? this.$moment(items.estimatedOff).format('DD-MM-YYYY HH:mm') : '';
-        const outboundTime = items.estimatedOn ? this.$moment(items.estimatedOn).format('DD-MM-YYYY HH:mm') : '';
+        const inboundTime = items.estimatedOn ? this.$moment(items.estimatedOn).utc().format('DD-MM-YYYY HH:mm') : '';
+        const outboundTime = items.estimatedOff ? this.$moment(items.estimatedOff).utc().format('DD-MM-YYYY HH:mm') : '';
         const airportName = items.originAirport ? items.originAirport.airportName : '';
         const destinationairportName = items.destinationAirport ? items.destinationAirport.airportName : '';
           const flight = {
