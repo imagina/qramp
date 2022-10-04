@@ -151,7 +151,10 @@ export default {
       switch (step) {
         case 1:
           if(this.$refs.flight) {
-            if(individual) return;
+            if(individual) {
+              this.$refs.flight[0].saveIndividual();
+              return;
+            };
             const error = await this.$refs.flight[0].menssageValidate();
             await this.$refs.flight[0].saveInfo(error);
           }
@@ -161,7 +164,10 @@ export default {
           break;
         case 3:
           if(this.$refs.services) {
-            if(individual) return;
+            if(individual) {
+              this.$refs.services[0].saveFormService();
+              return;
+            };
             this.$refs.services[0].saveInfo()
           }
           break;

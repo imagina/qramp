@@ -114,15 +114,7 @@ export default {
       })
       if(this.isProducts) {
         this.$emit('isError', false)
-        this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services.filter(items => {
-            for(let item in items.formField){
-              for(let key in items.formField[item]){
-                if (key == 'value'){
-                  return items.formField[item][key]
-                }
-              }
-            }
-        }))
+        this.saveFormService();
       } else {
         this.$alert.error({message: this.$tr('ifly.cms.message.servicesMessage')})
         this.$emit('isError', true)
@@ -170,5 +162,16 @@ export default {
         }
       }
     },
+    saveFormService() {
+      this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services.filter(items => {
+        for(let item in items.formField){
+          for(let key in items.formField[item]){
+            if (key == 'value'){
+              return items.formField[item][key]
+            }
+          }
+        }
+      }))
+    }
   },
 }
