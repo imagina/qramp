@@ -184,7 +184,7 @@ export default {
     },
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
-      this.$emit('send-info')
+      //this.$emit('send-info')
     },
   }
 }

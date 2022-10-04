@@ -213,7 +213,10 @@ export default {
       qRampStore().setWorkOrderItems([]);
       qRampStore().setStatusId(this.statusId);
       qRampStore().setNeedToBePosted(this.needToBePosted);
-      if(!updateData.data) return;
+      if(!updateData.data) {
+        this.loading = false;
+        return;
+      };
       this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
       this.needToBePosted = updateData.data['needToBePosted'] || false;
       qRampStore().setStatusId(this.statusId);

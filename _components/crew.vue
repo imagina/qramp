@@ -25,7 +25,6 @@ export default {
     async init() {
       //Request params
       let requestParams = {
-        refresh: true,
         params: {
         filter: {categoryId: 3},
         include: 'category,attributes,attributes.values'

@@ -33,7 +33,6 @@ export default {
     init() {
       //Request params
       let requestParams = {
-        refresh: true,
         params: {
           filter: {categoryId: 1},
           include: 'category,attributes,attributes.values'

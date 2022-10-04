@@ -3,7 +3,6 @@ import baseService from '@imagina/qcrud/_services/baseService.js';
 
 export default async function getProducts(id) {
     let requestParams = {
-        refresh: true,
         params: {
             filter: { categoryId: id },
             include: 'category,attributes,attributes.values'

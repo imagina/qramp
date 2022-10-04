@@ -135,8 +135,9 @@ export default {
     })
   },
   watch: {
-    sp(value) {
-      this.$emit('sp', value)
+    async sp(value, oldStep) {
+      await this.saveFormData(oldStep);
+      this.$emit('sp', value);
     }
   },
   methods: {
@@ -144,7 +145,10 @@ export default {
       this.$emit('sp', this.sp)
     },
     async setData() {
-      switch (this.sp) {
+      await this.saveFormData(this.sp);
+    },
+    async saveFormData(step) {
+      switch (step) {
         case 1:
           if(this.$refs.flight) {
             const error = await this.$refs.flight[0].menssageValidate();
@@ -292,6 +296,9 @@ export default {
       }
       this.error = false;
       return false;  
+    },
+    changeSp() {
+      console.log('hola');
     },
   },
 }
