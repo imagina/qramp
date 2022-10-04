@@ -307,6 +307,9 @@ export default {
     flightNumberField() {
       return qRampStore().getFlightNumberField();
     },
+    validateFutureDateTime() {
+      return (dateTime, min, currentDate) => qRampStore().validateFutureDateTime(dateTime, min, currentDate);
+    },
     selectCustomerComputed: {
       get() {
         return this.selectCustomers;
@@ -755,9 +758,9 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
+              options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundBlockIn),
             },
             label: this.$tr('ifly.cms.form.blockIn'),
-            //options: (date, min) => this.validateDate(date, min)
           },
           outboundBlockOut: {
             name:'outboundBlockOut',
