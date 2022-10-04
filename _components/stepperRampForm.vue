@@ -136,7 +136,7 @@ export default {
   },
   watch: {
     async sp(value, oldStep) {
-      await this.saveFormData(oldStep);
+      await this.saveFormData(oldStep, true);
       this.$emit('sp', value);
     }
   },
@@ -147,10 +147,11 @@ export default {
     async setData() {
       await this.saveFormData(this.sp);
     },
-    async saveFormData(step) {
+    async saveFormData(step, individual = false) {
       switch (step) {
         case 1:
           if(this.$refs.flight) {
+            if(individual) return;
             const error = await this.$refs.flight[0].menssageValidate();
             await this.$refs.flight[0].saveInfo(error);
           }
@@ -160,6 +161,7 @@ export default {
           break;
         case 3:
           if(this.$refs.services) {
+            if(individual) return;
             this.$refs.services[0].saveInfo()
           }
           break;

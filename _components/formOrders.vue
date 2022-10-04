@@ -240,7 +240,6 @@ export default {
           qRampStore().hideLoading();
           return;
         };
-        console.log('hola', this.loadingComputed);
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
         qRampStore().setStatusId(this.statusId);

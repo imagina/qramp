@@ -881,11 +881,7 @@ export default {
       this.$refs.myForm.validate().then(async (success) => {
         if (success) {
           // yay, models are correct
-          this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form)
-          qRampStore().setDateInboundBlockIn(this.form.inboundBlockIn);
-          qRampStore().setDateOutboundBlockOut(this.form.outboundBlockOut);
-          qRampStore().setDateOutboundScheduledDeparture(this.form.outboundScheduledDeparture);
-          qRampStore().setDateinboundScheduledArrival(this.form.inboundScheduledArrival);
+          this.saveIndividual();
           this.$emit('isError', error);
         }
         else {
@@ -895,6 +891,13 @@ export default {
           this.$emit('isError', true)
         }
       })
+    },
+    saveIndividual() {
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form)
+      qRampStore().setDateInboundBlockIn(this.form.inboundBlockIn);
+      qRampStore().setDateOutboundBlockOut(this.form.outboundBlockOut);
+      qRampStore().setDateOutboundScheduledDeparture(this.form.outboundScheduledDeparture);
+      qRampStore().setDateinboundScheduledArrival(this.form.inboundScheduledArrival);
     },
     async menssageValidate() {
       let error = false;
