@@ -1,13 +1,13 @@
 <template>
   <master-modal v-model="visibleMapModal" v-bind="modalProps" :persistent="true" :loading="loading" @hide="close">
-    <div v-if="!loading && flight.flightPosition" class="flight-map tw-mx-auto tw-p-3">
-      <div class="md:tw-flex tw-mb-6 md:tw-space-x-4">
-        <div class="rw-grow">
-          <div class="tw-flex">
-            <div class="tw-grow">
-              <p class="tw-text-2xl tw-mb-2 tw-hidden">ABX Air 1234</p>
-              <p class="tw-uppercase tw-text-gray-400">{{ flight.flightPosition.ident }} / {{ flight.flightPosition.ident_iata }}</p>
-              <a class="
+          <div v-if="!loading && flight.flightPosition" class="flight-map tw-mx-auto tw-p-3">
+            <div class="md:tw-flex tw-mb-6 md:tw-space-x-4">
+              <div class="rw-grow">
+                <div class="tw-flex">
+                  <div class="tw-grow">
+                    <p class="tw-text-2xl tw-mb-2 tw-hidden">ABX Air 1234</p>
+                    <p class="tw-uppercase tw-text-gray-400">{{ flight.flightPosition.ident }} / {{ flight.flightPosition.ident_iata }}</p>
+                    <a class="
                   tw-text-xs
                   tw-mb-2
                   tw-block
@@ -17,18 +17,18 @@
                   tw-text-blue-400
                   tw-hidden
                 " href="">Make a category upgrade to see the registration number</a>
-              <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">{{ flight.flightPosition.status }}</p>
-              <p class="tw-text-yellow-600 tw-text-base tw-hidden">{{ minutesToHours(flight.flightPosition.timeTotalEstimated) }}</p>
+                    <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">{{ flight.flightPosition.status }}</p>
+                    <p class="tw-text-yellow-600 tw-text-base tw-hidden">{{ minutesToHours(flight.flightPosition.timeTotalEstimated) }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-space-x-4">
-        <div class="tw-mb-3">
-          <p class="tw-text-xl tw-uppercase">{{ flight.inboundOriginAirport.airportIataCode }}</p>
-          <p class="tw-text-lg tw-uppercase tw-font-bold">{{ flight.inboundOriginAirport.airportName }}</p>
-          <p class="tw-text-sm tw-hidden">Detachment from</p>
+            <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-space-x-4">
+              <div class="tw-mb-3">
+                <p class="tw-text-xl tw-uppercase">{{ flight.inboundOriginAirport.airportIataCode }}</p>
+                <p class="tw-text-lg tw-uppercase tw-font-bold">{{ flight.inboundOriginAirport.airportName }}</p>
+                <p class="tw-text-sm tw-hidden">Detachment from</p>
           <a class="
               tw-text-base
               tw-mb-2
@@ -172,8 +172,7 @@ export default {
   content: "\f072";
   color: var(--q-color-positive);
   top: -10px;
-  text-shadow: -1px -1px 1px rgba(255, 255, 255, .1), 1px 1px 1px rgba(0, 0, 0, .5);
-  text-shadow: 0px 9px 5px #607d8b, 0px -4px 10px rgb(255 255 255 / 30%);
+  text-shadow: 0px 9px 5px #607d8b, 0px -4px 10px rgba(255 255 255 .30);
 }
 
 .flight-map .img-map {
