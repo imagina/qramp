@@ -5,7 +5,12 @@
 </template>
 <script>
 import formOrders from "../_components/formOrders.vue"
-import { STATUS_POSTED, STATUS_SUBMITTED,STATUS_CLOSED } from "../_components/model/constants"
+import { 
+  STATUS_POSTED, 
+  STATUS_SUBMITTED,
+  STATUS_CLOSED, 
+  STATUS_DRAFT
+} from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
 export default {
@@ -22,6 +27,17 @@ export default {
     return {showWorkOrder: this.showWorkOrder}
   },
   computed: {
+    editPermissionseSubmitted() {
+      return qRampStore().editPermissionseSubmitted();
+    },
+    validateStatus() {
+      return statusId => 
+        statusId == STATUS_DRAFT
+        || statusId == STATUS_CLOSED 
+        || statusId == STATUS_POSTED 
+        || (statusId == STATUS_SUBMITTED 
+        && this.editPermissionseSubmitted)
+    },
     crudData() {
       return {
         crudId: this.crudId,
@@ -216,6 +232,10 @@ export default {
               name: 'edit',
               icon: 'fal fa-pen',
               label: this.$tr('isite.cms.label.edit'),
+              format: item => ({
+                label: this.validateStatus(item.statusId) ? this.$tr('isite.cms.label.edit') : this.$tr('isite.cms.label.show'),
+                icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
+              }),
               action: (item) => {
                 this.showWorkOrder(item)
               }
