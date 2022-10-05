@@ -195,10 +195,11 @@ export default {
       return obj
     },
     async sendInfo() {
-      if(this.validateAllFieldsRequiredByStep()) return;
+      qRampStore().showLoading();
+      const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
+      if(validateAllFieldsRequiredByStep) return;
       const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
-      const statusId = qRampStore().getStatusId();
-      data.form.statusId = statusId ? statusId: data.form.statusId;
+      data.form.statusId = qRampStore().getStatusId();
       const formatData = {
         ...data.form,
         adHoc: data.form.adHoc == 1,
@@ -213,7 +214,7 @@ export default {
       if (this.data.update) {
         formatData.id = this.data.workOrderId;
       }
-      await this.sendWorkOrder(formatData);
+      this.sendWorkOrder(formatData);
     },
     clean(){
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
@@ -233,78 +234,86 @@ export default {
     previous(){
       this.$refs.stepper.previous()
     },
-    async sendWorkOrder(formatData) {
-      this.$emit('loading', true)
+    sendWorkOrder(formatData) {
       const route = 'apiRoutes.qramp.workOrders';
       if(this.disabledReadonly) {
-        this.$emit('loading', false);
         this.$emit('close-modal', false);
+        this.$emit('loading', false);
         return;
       }
       if(this.disabled) return;
       this.disabled = true;
+      this.$emit('loading', true)
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
         :this.$crud.create(route, formatData);
       request.then(res => {
         this.clean()
+        this.$emit('close-modal', false)
         const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}` 
           : `${this.$tr('isite.cms.message.recordCreated')}`;
         this.$alert.info({message})
-         this.$emit('loading', false);
-         this.$emit('close-modal', false);
+         this.$emit('loading', false)
          this.disabled = false;
+         qRampStore().hideLoading();
       })
       .catch(err => {
+        qRampStore().hideLoading();
          this.disabled = false;
          this.$emit('loading', false)
         this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
         console.log('SEND INFO ERROR:', err)
       })
     },
-    validateAllFieldsRequiredByStep() {
-      const flightForm = this.$store.state.qrampApp.form;
-      const flightformField = [
-        'customerId',
-        'stationId',
-        'acTypeId',
-        'operationTypeId',
-        'carrierId',
-        'gateId',
-        'statusId',
-        'responsibleId',
-        'inboundFlightNumber',
-        'inboundOriginAirportId',
-        'inboundTailNumber',
-        'inboundScheduledArrival',
-        'outboundFlightNumber',
-        'outboundDestinationAirportId',
-        'outboundTailNumber',
-        'outboundScheduledDeparture',
-        'inboundBlockIn',
-        'outboundBlockOut'
-      ];
-      const validateflightform = flightformField
-        .some(item => flightForm[item] === null || flightForm[item] === '')
-      if(validateflightform) {
-        this.error = true;
-        this.sp = 1;
+    async validateAllFieldsRequiredByStep() {
+      try {
+        const flightForm = this.$store.state.qrampApp.form;
+        const flightformField = [
+          'customerId',
+          'stationId',
+          'acTypeId',
+          'operationTypeId',
+          'carrierId',
+          'gateId',
+          'statusId',
+          'responsibleId',
+          'inboundFlightNumber',
+          'inboundOriginAirportId',
+          'inboundTailNumber',
+          'inboundScheduledArrival',
+          'outboundFlightNumber',
+          'outboundDestinationAirportId',
+          'outboundTailNumber',
+          'outboundScheduledDeparture',
+          'inboundBlockIn',
+          'outboundBlockOut'
+        ];
+        const validateflightform = flightformField
+          .some(item => flightForm[item] === null || flightForm[item] === '')
+        if(validateflightform) {
+          this.error = true;
+          await this.setStep(STEP_FLIGTH);
+          qRampStore().hideLoading();
+          await this.setData();
+          this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
+          return true;
+        }
+        const service = this.$store.state.qrampApp.services;
+        if(service.length === 0) {
+          await this.setStep(STEP_SERVICE);
+          this.error = true;
+          qRampStore().hideLoading();
+          await this.setData();
+          return true;
+        }
+        this.error = false;
+        return false;
+      } catch (error) {
+        console.log(error);
         qRampStore().hideLoading();
-        this.setData();
-        return true;
       }
-      const service = this.$store.state.qrampApp.services;
-      if(service.length === 0) {
-        this.sp = 3;
-        this.error = true;
-        qRampStore().hideLoading();
-        this.setData();
-        return true;
-      }
-      this.error = false;
-      return false;  
     },
-    changeSp() {
-      console.log('hola');
+    async setStep(value) {
+      this.sp = value;
     },
   },
 }

@@ -4,7 +4,7 @@
     v-model="show" 
     v-bind="modalProps" 
     :persistent="true"
-    :loading="loading" 
+    :loading="loading"
     @hide="clear" 
     :actions="actions" 
     :width="modalProps.width" 
@@ -13,7 +13,7 @@
     <stepper-ramp-form
       v-if="modalProps.update"
       @sp="sp = $event" 
-      @loading="setLoading" 
+      @loading="setLoading"
       ref="stepper" 
       :steps="steppers" 
       :data="modalProps" 
@@ -64,14 +64,10 @@ export default {
   provide() {
     return {
       disabledReadonly: computed(() => qRampStore().disabledReadonly()),
-      closeModal: this.close,
-      setLoading: this.setLoading
+      closeModal: this.close
     }
   },
   computed:{
-    editPermissionseSubmitted() {
-      return qRampStore().editPermissionseSubmitted();
-    },
     steppers () {
       return [
         {
@@ -141,6 +137,9 @@ export default {
         },
       ]
     },
+    editPermissionseSubmitted() {
+      return qRampStore().editPermissionseSubmitted();
+    },
     actionsStepperButtom(){
       const statusId = qRampStore().getStatusId();
       const actions = [
@@ -173,7 +172,7 @@ export default {
             'icon-right': 'fa-thin fa-floppy-disk',
             label: 'Save to Draft',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED,
-            loading: this.loadingComputed
+            loading: this.loadingComputed,
           },
           action: async () => {
               qRampStore().setStatusId(STATUS_DRAFT);
@@ -188,10 +187,10 @@ export default {
             'icon-right': 'fal fa-check',
             label: this.$tr('isite.cms.label.closeFlight'),
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED,
-            loading: this.loadingComputed
+            loading: this.loadingComputed,
           },
           action: async () => {
-            qRampStore().setStatusId(STATUS_CLOSED);
+            await qRampStore().setStatusId(STATUS_CLOSED);
             await this.$refs.stepper.setData();
             await this.$refs.stepper.sendInfo();
             qRampStore().hideLoading();
@@ -202,12 +201,15 @@ export default {
             color:'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
             label: this.$tr('isite.cms.label.save'),
-            vIf: statusId == STATUS_POSTED || (statusId == STATUS_SUBMITTED && this.editPermissionseSubmitted),
-            loading: this.loadingComputed
+            vIf: statusId == null || statusId == STATUS_POSTED || (statusId == STATUS_SUBMITTED && this.editPermissionseSubmitted),
+            loading: this.loadingComputed,
           },
           action: async () => {
             await this.$refs.stepper.setData();
+            const data = this.$store.state.qrampApp;
+            await qRampStore().setStatusId(data.form.statusId);
             await this.$refs.stepper.sendInfo();
+            await qRampStore().setStatusId(null);
             qRampStore().hideLoading();
           }
         },
@@ -307,6 +309,7 @@ export default {
         this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
         qRampStore().hideLoading();
       } catch (error) {
+        this.loading = false;
         qRampStore().hideLoading();
         console.log(error);
       }
@@ -319,7 +322,7 @@ export default {
     },
     setLoading(value) {
       this.loading = value;
-    }
+    },
   },
 }
 </script>

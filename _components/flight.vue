@@ -884,7 +884,7 @@ export default {
         else {
           // oh no, user has filled in
           // at least one invalid value
-          this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
+          //this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           this.$emit('isError', true)
           this.setLoading(false);
         }
