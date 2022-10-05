@@ -4,7 +4,7 @@
     v-model="show" 
     v-bind="modalProps" 
     :persistent="true"
-    :loading="loading || loadingComputed" 
+    :loading="loading" 
     @hide="clear" 
     :actions="actions" 
     :width="modalProps.width" 
@@ -13,7 +13,7 @@
     <stepper-ramp-form
       v-if="modalProps.update"
       @sp="sp = $event" 
-      @loading="loading = $event" 
+      @loading="setLoading" 
       ref="stepper" 
       :steps="steppers" 
       :data="modalProps" 
@@ -137,6 +137,9 @@ export default {
         },
       ]
     },
+    editPermissionseSubmitted() {
+      return qRampStore().editPermissionseSubmitted();
+    },
     actionsStepperButtom(){
       const statusId = qRampStore().getStatusId();
       const actions = [
@@ -168,13 +171,13 @@ export default {
             color:'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
             label: 'Save to Draft',
-            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED
+            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED,
+            loading: this.loadingComputed,
           },
           action: async () => {
-              qRampStore().setStatusId(STATUS_DRAFT);
+              await qRampStore().setStatusId(STATUS_DRAFT);
               await this.$refs.stepper.setData();
               await this.$refs.stepper.sendInfo();
-              this.loading = false;
               qRampStore().hideLoading();
           }
         },
@@ -184,12 +187,12 @@ export default {
             'icon-right': 'fal fa-check',
             label: this.$tr('isite.cms.label.closeFlight'),
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED,
+            loading: this.loadingComputed,
           },
           action: async () => {
-            qRampStore().setStatusId(STATUS_CLOSED);
+            await qRampStore().setStatusId(STATUS_CLOSED);
             await this.$refs.stepper.setData();
             await this.$refs.stepper.sendInfo();
-            this.loading = false;
             qRampStore().hideLoading();
           }
         },
@@ -198,12 +201,15 @@ export default {
             color:'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
             label: this.$tr('isite.cms.label.save'),
-            vIf: statusId != STATUS_DRAFT && statusId != STATUS_CLOSED,
+            vIf: statusId == null || statusId == STATUS_POSTED || (statusId == STATUS_SUBMITTED && this.editPermissionseSubmitted),
+            loading: this.loadingComputed,
           },
           action: async () => {
             await this.$refs.stepper.setData();
+            const data = this.$store.state.qrampApp;
+            await qRampStore().setStatusId(data.form.statusId);
             await this.$refs.stepper.sendInfo();
-            this.loading = false;
+            await qRampStore().setStatusId(null);
             qRampStore().hideLoading();
           }
         },
@@ -219,7 +225,7 @@ export default {
     },
     async loadform(params) {
       try {
-        this.loading = true;
+        qRampStore().showLoading();
         const updateData = this.$clone(params)
         this.show = true
         this.modalProps = updateData.modalProps
@@ -236,7 +242,6 @@ export default {
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
         if(!updateData.data) {
-          this.loading = false;
           qRampStore().hideLoading();
           return;
         };
@@ -302,7 +307,7 @@ export default {
         this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', this.equipments)
         this.$store.commit('qrampApp/SET_FORM_CREW', this.crew)
         this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
-        this.loading = false; 
+        qRampStore().hideLoading();
       } catch (error) {
         this.loading = false;
         qRampStore().hideLoading();
@@ -314,6 +319,9 @@ export default {
       this.modalProps = {}
       this.show = false
       this.services = [];
+    },
+    setLoading(value) {
+      this.loading = value;
     },
   },
 }
