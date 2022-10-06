@@ -206,7 +206,7 @@ export default {
       default:()=>{}
     }
   },
-  inject: ['disabledReadonly', 'setLoading'],
+  inject: ['disabledReadonly'],
   components:{tableFlight},
   mixins:[responsive],
   mounted() {
@@ -874,7 +874,6 @@ export default {
       }
     },
     saveInfo(error) {
-      this.setLoading(true);
       this.$refs.myForm.validate().then(async (success) => {
         if (success) {
           // yay, models are correct
@@ -886,7 +885,6 @@ export default {
           // at least one invalid value
           //this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           this.$emit('isError', true)
-          this.setLoading(false);
         }
       })
     },
