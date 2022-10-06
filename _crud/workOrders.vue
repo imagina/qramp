@@ -1,6 +1,7 @@
 <template>
   <div>
     <form-orders ref="formOrders" />
+    <flightDetail />
   </div>
 </template>
 <script>
@@ -12,19 +13,27 @@ import {
   STATUS_DRAFT
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
+import flightDetail from '../_components/modal/flightDetail.vue';
 
 export default {
   name: 'RampCrud',
   components: {
     formOrders,
+    flightDetail,
   },
   data() {
     return {
       crudId: this.$uid(),
     }
   },
+  async mounted() {
+    await qRampStore().getFlights();
+  },
   provide() {
-    return {showWorkOrder: this.showWorkOrder}
+    return {
+      showWorkOrder: this.showWorkOrder,
+      openModal: true,
+    }
   },
   computed: {
     editPermissionseSubmitted() {
@@ -460,20 +469,17 @@ export default {
           console.log(err);
         });
     },
-    async getFlightMap(fly) {
+    async getFlightMap(workOrder) {
       try {
-        if (!fly.faFlightId) return;
-        qRampStore().showVisibleMapModal();
-        qRampStore().setLoadingModalMap(true);
-        const params = {
-            refresh: true,
-            params: {
-              filter: { search: fly.faFlightId }
-            }
+        const flightList = qRampStore().getFlightList().find(item => item.id === workOrder.id);
+        if(flightList) {
+          qRampStore().showVisibleMapModal();
+          qRampStore().setLoadingModalMap(true);
+          qRampStore().setFlightId(workOrder.id);
+          setTimeout(() => {
+            qRampStore().setLoadingModalMap(false);
+          }, 1000);
         }
-        //const response = await this.$crud.index('apiRoutes.qfly.flightawareMap', params);
-        //qRampStore().setFlightMap(response.data.map);
-        qRampStore().setLoadingModalMap(false);
       } catch (error) {
         qRampStore().setFlightMap(null);
         qRampStore().setLoadingModalMap(false);

@@ -81,8 +81,12 @@
       </div>
     </div>
     <div>
-      <flightMap v-if="!loading" :flightDetail="true" />
-      <!--<img v-if="!loading" class="img-map" :src="imgMap" alt="" srcset="" />-->
+      <flightMap 
+        v-if="!loading 
+          && visibleMapModal 
+          && flight.flightPosition" 
+        :flightDetail="true" 
+      />
       <div v-if="loading" class="tw-w-64 tw-h-64" />
     </div>
   </master-modal>

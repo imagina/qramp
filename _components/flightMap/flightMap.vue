@@ -88,6 +88,12 @@ export default {
       default: () => false,
     },
   },
+  inject: {
+    openModal: {
+        type: Boolean,
+        default: () => false
+    },
+  },
   components: {
     LMap,
     LTileLayer,
@@ -109,15 +115,19 @@ export default {
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       iconSize: 20,
+      refreshIntervalId: null,
     };
   },
   async mounted() {
-    if(!this.flightDetail) {
+    if(!this.flightDetail || this.openModal) {
       await this.getFlights();
-      setInterval(async() => {
+      this.refreshIntervalId = setInterval(async() => {
         await this.getFlights();
       }, 5*60*1000);
     }
+  },
+  beforeDestroy() {
+    this.clearIntervalMap();
   },
   computed: {
     flightList() {
@@ -175,9 +185,7 @@ export default {
     },
     async getFlights() {
       try {
-        const params = {refresh: true}
-        const response = await this.$crud.index("apiRoutes.qramp.flightPosition", params);
-        qRampStore().setFlightList(response.data);
+        await qRampStore().getFlights();
       } catch (error) {
         console.log(error)
       }
@@ -222,7 +230,11 @@ export default {
       } catch (error) {
         console.log(error);
       }
-    }
+    },
+    clearIntervalMap() {
+      clearInterval(this.refreshIntervalId);
+      this.refreshIntervalId = null;
+    },
   },
 };
 </script>
