@@ -16,7 +16,7 @@ export default {
   },
   flightMap: {
     //permission: 'ramp.work-orders.manage',
-    activated: true,
+    activated: false,
     authenticated: true,
     path: '/ramp/flight-map/index',
     name: 'qramp.admin.flightMap',
