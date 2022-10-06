@@ -109,7 +109,6 @@ export default {
   data() {
     return {
       zoom: 2,
-      center: [0, 0],
       staticAnchor: [16, 37],
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
@@ -176,6 +175,14 @@ export default {
         iconAnchor: this.dynamicAnchor,
         className: "iconMapPane",
       });
+    },
+    center() {
+      if(this.flightDetail) {
+        this.zoom = 5;
+        return this.aircraftList[0].coordinates;
+      }
+      this.zoom = 2;
+      return [0, 0];
     },
   },
   methods: {
