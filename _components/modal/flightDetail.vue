@@ -17,7 +17,12 @@
                   tw-text-blue-400
                   tw-hidden
                 " href="">Make a category upgrade to see the registration number</a>
-                    <p class="tw-text-yellow-600 tw-uppercase tw-text-xl tw-font-bold">{{ flight.flightPosition.status }}</p>
+                    <p 
+                      class="tw-uppercase tw-text-xl tw-font-bold"
+                      :class="flight.flightStatusColor ? ` bg-${flight.flightStatusColor} tw-text-white tw-px-2 tw-rounded-md`: ''"
+                    >
+                        {{ flight.flightPosition.status }}
+                      </p>
                     <p class="tw-text-yellow-600 tw-text-base tw-hidden">{{ minutesToHours(flight.flightPosition.timeTotalEstimated) }}</p>
                   </div>
                 </div>
@@ -80,7 +85,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="tw-px-4">
       <flightMap 
         v-if="!loading 
           && visibleMapModal 
