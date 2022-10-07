@@ -473,12 +473,18 @@ export default {
       try {
         const flightList = qRampStore().getFlightList().find(item => item.id === workOrder.id);
         if(flightList) {
+          if(!flightList.flightPosition) {
+            this.$alert.error({message: this.$tr('ifly.cms.message.flightDetails')})
+            return; 
+          }
           qRampStore().showVisibleMapModal();
           qRampStore().setLoadingModalMap(true);
           qRampStore().setFlightId(workOrder.id);
           setTimeout(() => {
             qRampStore().setLoadingModalMap(false);
           }, 1000);
+        } else {
+          this.$alert.error({message: this.$tr('ifly.cms.message.flightDetails')});
         }
       } catch (error) {
         qRampStore().setFlightMap(null);
