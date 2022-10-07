@@ -87,7 +87,7 @@
           </p>
           <p class="tw-text-lg">
             <span class="tw-font-bold"
-              >{{ $moment(flight.inboundScheduledArrival).format("HH:mm") }}
+              >{{ $moment(flight.inboundScheduledArrival).format("hh:mm A") }}
               {{ timezone(this.flight.inboundOriginAirport.timezone) }}</span
             >
             <span :class="delay(flight.flightPosition.departureDelay).color">
@@ -129,7 +129,7 @@
               ({{ delay(flight.flightPosition.arrivalDelay).title }})</span
             >
             <span class="tw-font-bold"
-              >{{ $moment(flight.outboundScheduledDeparture).format("HH:mm") }}
+              >{{ $moment(flight.outboundScheduledDeparture).format("hh:mm A") }}
               {{ timezone(flight.outboundDestinationAirport.timezone) }}</span
             >
           </p>
