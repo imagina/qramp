@@ -131,8 +131,10 @@ export default {
             color:'primary',
             label: this.$tr('isite.cms.label.save'),
           },
-          action: () => {
-            this.$refs.simpleWorkOrder.saveSimpleWorkOrder();
+          action: async () => {
+            await this.setLoading(true);
+            await this.$refs.simpleWorkOrder.saveSimpleWorkOrder();
+            await this.setLoading(false);
           }
         },
       ]

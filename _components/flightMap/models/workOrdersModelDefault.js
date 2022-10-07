@@ -128,6 +128,8 @@ export default {
       "timeTotalEstimated": 0,
       "timeCovered": 0,
       "delay": 0,
+      "departureDelay": null,
+      "arrivalDelay": null,
       "status": null,
       "lastPositionHeading": null,
       "lastPositionLatitude": null,
