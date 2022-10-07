@@ -335,6 +335,15 @@ export default function qRampStore() {
             console.log(error);
         }
     }
+    async function getFlights() {
+        try {
+          const params = {refresh: true}
+          const response = await baseService.index("apiRoutes.qramp.flightPosition", params);
+          setFlightList(response.data);
+        } catch (error) {
+          console.log(error)
+        }
+      }
     return {
         disabledReadonly,
         setStatusId,
@@ -387,5 +396,6 @@ export default function qRampStore() {
         setAttr,
         productDataTransformation,
         isDelete,
+        getFlights,
     }
 }
