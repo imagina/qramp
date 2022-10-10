@@ -88,8 +88,8 @@ export default function qRampStore() {
         state.flightBoundFormStatus.boundOriginAirportId = this.isData(data.destinationAirport.id);
         state.flightBoundFormStatus.boundTailNumber = this.isData(data.registration);
         state.flightBoundFormStatus.boundDestinationAirport = this.isData(data.originAirport.id);
-        state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOff);
-        state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOn);
+        state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOn);
+        state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOff);
     }
     function isData(data) {
         return data ? true : false;
