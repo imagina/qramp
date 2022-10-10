@@ -13,18 +13,24 @@
       >
         <l-tooltip>
           <p>
-            <span class="tw-font-semibold">Work Order Id:</span>{{ item.id }}
+            <span class="tw-font-semibold">
+              {{ $tr('ifly.cms.map.workOrderId') }}:
+            </span>{{ item.id }}
           </p>
           <p>
-            <span class="tw-font-semibold">Flight Number:</span>
+            <span class="tw-font-semibold">
+              {{ $tr('ifly.cms.map.flightNumber') }}:
+            </span>
             {{ item.preFlightNumber }}
           </p>
           <p>
-            <span class="tw-font-semibold">Aircraft Type:</span>
+            <span class="tw-font-semibold">
+              {{ $tr('ifly.cms.map.aircraftType') }}:
+            </span>
             {{ item.aircraft_type }}
           </p>
           <p>
-            <span class="tw-font-semibold">Estimated Time of Arrival:</span>
+            <span class="tw-font-semibold">{{ $tr('ifly.cms.map.estimatedTimeOfArrival') }}:</span>
             {{ minutesToHours(item.timeTotalEstimated) }}
           </p>
         </l-tooltip>
@@ -53,7 +59,9 @@
             </div>
           </l-icon>
           <l-tooltip>
-            <p>Airport Name:{{  item.airportName }}</p> 
+            <p>
+              {{ $tr('ifly.cms.map.airportName') }}:{{  item.airportName }}
+            </p> 
           </l-tooltip>
         </l-marker>
       </div>

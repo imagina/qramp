@@ -335,7 +335,7 @@ export default {
       return false
     },
     isOutbound() {
-      if(this.form.operationTypeId){
+      if(this.form.operationTypeId) {
         const validator = this.form.operationTypeId == 4 || this.form.operationTypeId != 3;
         return validator;
       }
@@ -650,7 +650,6 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
-              options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundScheduledArrival),
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
@@ -733,7 +732,6 @@ export default {
               clearable: true,
               color:"primary",
               format24h: true,
-              options: (date, min) => this.validateFutureDateTime(date, min, this.form.outboundScheduledDeparture),
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
@@ -854,12 +852,12 @@ export default {
           this.form.inboundFlightNumber = updateForm.inboundFlightNumber 
           this.form.outboundFlightNumber = updateForm.outboundFlightNumber 
           this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
-          this.form.inboundTailNumber = updateForm.inboundTailNumber
-          this.flightBoundFormStatus.boundTailNumber = updateForm.inboundTailNumber !== '' ? true : false;
-          this.flightBoundFormStatus.boundScheduled = updateForm.inboundScheduledArrival !== '' ? true : false;
-          this.flightBoundFormStatus.boundScheduledDeparture = updateForm.outboundScheduledDeparture !== '' ? true : false;
-          this.flightBoundFormStatus.boundOriginAirportId = updateForm.inboundOriginAirportId !== '' ? true : false;
-          this.flightBoundFormStatus.boundDestinationAirport = updateForm.outboundDestinationAirportId !== '' ? true : false;
+          this.form.inboundTailNumber = updateForm.inboundTailNumber;
+          this.flightBoundFormStatus.boundTailNumber = this.checkIfDataArrives(updateForm.inboundTailNumber);
+          this.flightBoundFormStatus.boundScheduled = this.checkIfDataArrives(updateForm.inboundScheduledArrival);
+          this.flightBoundFormStatus.boundScheduledDeparture = this.checkIfDataArrives(updateForm.outboundScheduledDeparture);
+          this.flightBoundFormStatus.boundOriginAirportId = this.checkIfDataArrives(updateForm.inboundOriginAirportId);
+          this.flightBoundFormStatus.boundDestinationAirport = this.checkIfDataArrives(updateForm.outboundDestinationAirportId);
           this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
           this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)
           this.form.outboundDestinationAirportId = updateForm.outboundDestinationAirportId
@@ -873,17 +871,16 @@ export default {
         },1000)
       }
     },
+    checkIfDataArrives(data) {
+      return (data === null || data === '')  ? false : true;
+    },
     saveInfo(error) {
       this.$refs.myForm.validate().then(async (success) => {
         if (success) {
-          // yay, models are correct
           this.saveIndividual();
           this.$emit('isError', error);
         }
         else {
-          // oh no, user has filled in
-          // at least one invalid value
-          //this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           this.$emit('isError', true)
         }
       })
@@ -1033,30 +1030,13 @@ export default {
       const [hr, mm] = formDate[1].substr(0, 5).split(':')
       return `${month}/${day}/${year} ${hr}:${mm}`
     },
-    dateFormatter(date) {
-      if (!date) return null
-      const [year, month, day] = date.substr(0, 10).split('-')
-      return `${month}/${day}/${year}`
-    },
     setTable(data) {
-      data.forEach((items, index) => {
-        const date = items.scheduledOn ? this.dateFormatter(items.scheduledOn.split("T")[0]) : '';
-        const inboundTime = items.estimatedOn ? this.$moment(items.estimatedOn).utc().format('MM-DD-YYYY h:mm:ss a') : '';
-        const outboundTime = items.estimatedOff ? this.$moment(items.estimatedOff).utc().format('MM-DD-YYYY h:mm:ss a') : '';
-        const airportName = items.originAirport ? items.originAirport.fullName : '';
-        const destinationairportName = items.destinationAirport ? items.destinationAirport.fullName : '';
-          const flight = {
-            index,
-            date,
-            registration: items.registration,
-            inbound: `${inboundTime} - ${airportName}`,
-            outbound: `${outboundTime} - ${destinationairportName}`,
-            aircraftType: items.aircraftType,
-            faFlightId: items.faFlightId,
-          }
-        this.dataTable.push(flight)
-      })
-        
+      try {
+        this.dataTable = qRampStore().getTableListOfFlights(data);
+      } catch (error) {
+        this.dataTable = [];
+        console.log(error);
+      }
     }, 
     validateSpecialCharacters(val) {
       if(/[^a-zA-Z0-9-]/.test(val)) {
@@ -1142,7 +1122,6 @@ export default {
     resetBound() {
       this.form.outboundCustomFlightNumber = false
       this.form.inboundCustomFlightNumber= false
-      qRampStore().resetFlightBoundFormStatus();
     },
     resetField(key = '') {
       if(key === 'stationId') {
