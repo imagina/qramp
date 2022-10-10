@@ -877,14 +877,10 @@ export default {
     saveInfo(error) {
       this.$refs.myForm.validate().then(async (success) => {
         if (success) {
-          // yay, models are correct
           this.saveIndividual();
           this.$emit('isError', error);
         }
         else {
-          // oh no, user has filled in
-          // at least one invalid value
-          //this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           this.$emit('isError', true)
         }
       })
@@ -1034,30 +1030,13 @@ export default {
       const [hr, mm] = formDate[1].substr(0, 5).split(':')
       return `${month}/${day}/${year} ${hr}:${mm}`
     },
-    dateFormatter(date) {
-      if (!date) return null
-      const [year, month, day] = date.substr(0, 10).split('-')
-      return `${month}/${day}/${year}`
-    },
     setTable(data) {
-      data.forEach((items, index) => {
-        const date = items.scheduledOn ? this.dateFormatter(items.scheduledOn.split("T")[0]) : '';
-        const inboundTime = items.estimatedOn ? this.$moment(items.estimatedOn).utc().format('MM-DD-YYYY h:mm:ss a') : '';
-        const outboundTime = items.estimatedOff ? this.$moment(items.estimatedOff).utc().format('MM-DD-YYYY h:mm:ss a') : '';
-        const airportName = items.originAirport ? items.originAirport.fullName : '';
-        const destinationairportName = items.destinationAirport ? items.destinationAirport.fullName : '';
-          const flight = {
-            index,
-            date,
-            registration: items.registration,
-            inbound: `${inboundTime} - ${airportName}`,
-            outbound: `${outboundTime} - ${destinationairportName}`,
-            aircraftType: items.aircraftType,
-            faFlightId: items.faFlightId,
-          }
-        this.dataTable.push(flight)
-      })
-        
+      try {
+        this.dataTable = qRampStore().getTableListOfFlights(data);
+      } catch (error) {
+        this.dataTable = [];
+        console.log(error);
+      }
     }, 
     validateSpecialCharacters(val) {
       if(/[^a-zA-Z0-9-]/.test(val)) {
