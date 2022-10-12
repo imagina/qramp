@@ -26,9 +26,6 @@ export default {
       crudId: this.$uid(),
     }
   },
-  async mounted() {
-    await qRampStore().getFlights();
-  },
   provide() {
     return {
       showWorkOrder: this.showWorkOrder,
@@ -252,7 +249,7 @@ export default {
             },
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType,station,contract,responsible,flightStatus'
+            include: 'customer,workOrderStatus,operationType,station,contract,responsible,inboundOriginAirport,outboundDestinationAirport,flightStatus'
           },
           actions: [
             {
@@ -470,22 +467,18 @@ export default {
         });
     },
     async getFlightMap(workOrder) {
-      try {
-        const flightList = qRampStore().getFlightList().find(item => item.id === workOrder.id);
-        if(flightList) {
-          if(!flightList.flightPosition) {
+      try{
+          if(!workOrder.flightPosition) {
             this.$alert.error({message: this.$tr('ifly.cms.message.flightDetails')})
             return; 
           }
+          await qRampStore().getFlights(workOrder.id);
           qRampStore().showVisibleMapModal();
           qRampStore().setLoadingModalMap(true);
           qRampStore().setFlightId(workOrder.id);
           setTimeout(() => {
             qRampStore().setLoadingModalMap(false);
           }, 1000);
-        } else {
-          this.$alert.error({message: this.$tr('ifly.cms.message.flightDetails')});
-        }
       } catch (error) {
         qRampStore().setFlightMap(null);
         qRampStore().setLoadingModalMap(false);
