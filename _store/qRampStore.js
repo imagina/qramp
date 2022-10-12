@@ -342,7 +342,12 @@ export default function qRampStore() {
               params.params = {filter:{ id: workOrderId }}
           }
           const response = await baseService.index("apiRoutes.qramp.flightPosition", params);
-          setFlightList(response.data);
+          if(response.status === 204) {
+            return false;
+          } 
+          const data = workOrderId ? [response.data] : response.data;
+          setFlightList(data);
+          return true;
         } catch (error) {
           console.log(error)
         }

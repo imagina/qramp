@@ -126,10 +126,9 @@ export default {
     };
   },
   async mounted() {
-    if(!this.flightDetail || this.openModal) {
-      await this.getFlights();
+    if(!this.flightDetail) {
       this.refreshIntervalId = setInterval(async() => {
-        await this.getFlights();
+        await this.getFlights(this.flightId);
       }, 5*60*1000);
     }
   },

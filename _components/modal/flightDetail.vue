@@ -237,6 +237,7 @@ export default {
     close() {
       this.visibleMapModal = false;
       qRampStore().setFlightMap(null);
+      qRampStore().setFlightId(null);
     },
     minutesToHours(numberOfMinutes) {
       const duration = this.$moment.duration(numberOfMinutes, "minutes");
