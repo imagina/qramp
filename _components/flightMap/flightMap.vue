@@ -129,7 +129,7 @@ export default {
     const fiveMin = 1000 * 60 * 5;
     if(!this.flightDetail || this.openModal) {
       this.refreshIntervalId = setInterval(async() => {
-        await this.getFlights(this.flightId);
+        await this.getFlights();
       }, fiveMin);
     }
   },

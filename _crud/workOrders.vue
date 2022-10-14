@@ -468,14 +468,15 @@ export default {
     },
     async getFlightMap(workOrder) {
       try{
-          const statusResponse = await qRampStore().getFlights(workOrder.id);
-          if(!statusResponse) {
+          qRampStore().setFlightId(workOrder.id);
+          const response = await qRampStore().getFlights();
+          if(response.status === 204 || !response.data.flightPosition) {
             this.$alert.error({message: this.$tr('ifly.cms.message.flightDetails')})
             return; 
           }
           qRampStore().showVisibleMapModal();
           qRampStore().setLoadingModalMap(true);
-          qRampStore().setFlightId(workOrder.id);
+          
           setTimeout(() => {
             qRampStore().setLoadingModalMap(false);
           }, 1000);

@@ -335,19 +335,17 @@ export default function qRampStore() {
             console.log(error);
         }
     }
-    async function getFlights(workOrderId = null) {
+    async function getFlights() {
         try {
+          const workOrderId = state.flightId;
           const params = {refresh: true}
           if(workOrderId) {
               params.params = {filter:{ id: workOrderId }}
           }
           const response = await baseService.index("apiRoutes.qramp.flightPosition", params);
-          if(response.status === 204) {
-            return false;
-          } 
           const data = workOrderId ? [response.data] : response.data;
           setFlightList(data);
-          return true;
+          return response;
         } catch (error) {
           console.log(error)
         }
