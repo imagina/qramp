@@ -126,7 +126,7 @@ export default {
     };
   },
   async mounted() {
-    if(!this.flightDetail) {
+    if(!this.flightDetail || this.openModal) {
       this.refreshIntervalId = setInterval(async() => {
         await this.getFlights(this.flightId);
       }, 5*60*1000);
