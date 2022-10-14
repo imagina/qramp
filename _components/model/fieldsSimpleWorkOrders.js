@@ -113,7 +113,7 @@ export default {
               customerStatusId: 1,
             },
           },
-          refresh: true,
+          refresh: false,
         };
         const contractParams = {
           params: {
@@ -121,7 +121,7 @@ export default {
               contractStatusId: 1,
             },
           },
-          refresh: true,
+          refresh: false,
         };
         const customersData = await Promise.all([
           this.$crud.index("apiRoutes.qramp.setupCustomers", custemerParams),
