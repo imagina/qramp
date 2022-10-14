@@ -271,7 +271,9 @@ export default {
           this.responseStatus(response);
         })
         .catch((error) => {
-          console.log("error", error);
+          this.loadingState = false;
+          this.$alert.error({message: this.$tr("ifly.cms.message.errorlookingForFlight") })
+          console.log(error);
         });
     },
     setDataTable({ select, dialog }) {

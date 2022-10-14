@@ -979,6 +979,8 @@ export default {
           }
         }).catch(error => {
           _this.resetBound();
+          this.loadingState = false;
+          this.$alert.error({message: this.$tr("ifly.cms.message.errorlookingForFlight") });
           console.log('error', error)
         })
       },1500) 
