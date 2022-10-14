@@ -1,6 +1,6 @@
 <template>
   <div>
-    <l-map :zoom="zoom" :minZoom="2"  :center="center" style="height: 700px; width: 100%">
+    <l-map :zoom="zoom" :worldCopyJump="true" :minZoom="2"  :center="center" style="height: 700px; width: 100%">
       <l-tile-layer :url="url" :attribution="attribution" />
 
       <vRotatedMarker
