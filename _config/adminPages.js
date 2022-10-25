@@ -30,7 +30,7 @@ export default {
   },
   schedule: {
     //permission: 'ramp.work-orders.manage',
-    activated: true,
+    activated: false,
     authenticated: true,
     path: '/ramp/schedule/index',
     name: 'qramp.admin.schedule',

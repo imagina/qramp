@@ -8,14 +8,16 @@
     :actions="actions"
     :maximized="$q.screen.lt.md"
   >
-    <div v-for="(field, keyField) in fields.form" :key="keyField">
-      <dynamic-field
-        :key="keyField"
-        :id="keyField"
-        :field="field"
-        v-model="form[keyField]"
-      />
-    </div>
+    <q-form ref="formSchedule">
+      <div v-for="(field, keyField) in fields.form" :key="keyField">
+        <dynamic-field
+          :key="keyField"
+          :id="keyField"
+          :field="field"
+          v-model="form[keyField]"
+        />
+      </div>
+    </q-form>
   </master-modal>
 </template>
 <script>
@@ -51,12 +53,7 @@ export default {
               : this.$tr("isite.cms.label.save"),
           },
           action: async () => {
-            if (this.isEdit) {
-              this.$emit("updateSchedule", this.form);
-            } else {
-              this.$emit("addSchedule", this.form);
-            }
-            this.hideModal();
+            this.saveScheduleForm();
           },
         },
       ];
@@ -76,6 +73,18 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    saveScheduleForm() {
+      this.$refs.formSchedule.validate().then(async (success) => {
+        if (success) {
+          if (this.isEdit) {
+            this.$emit("updateSchedule", this.form);
+          } else {
+            this.$emit("addSchedule", this.form);
+          }
+          this.hideModal();
+        }
+      });
     },
   },
 };
