@@ -51,7 +51,7 @@
             class="tw-cursor-pointer"
             @click.stop.prevent="editSchedule(event)"
           >
-           <span class="ellipsis">{{ event.title }}</span>
+            <span class="ellipsis">{{ event.title }}</span>
           </q-badge>
         </div>
       </template>
@@ -74,6 +74,7 @@
       ref="modalForm"
       @addSchedule="addSchedule"
       @updateSchedule="updateSchedule"
+      @deleteSchedule="deleteSchedule"
     />
   </div>
 </template>
@@ -135,7 +136,9 @@ export default {
     },
     eventSchedule(event) {
       this.selectedData = event.scope.timestamp;
-      this.$refs.modalForm.openModal(`Create schedule date: ${event.scope.timestamp.date}`);
+      this.$refs.modalForm.openModal(
+        `Create schedule date: ${event.scope.timestamp.date}`
+      );
     },
     editSchedule(event) {
       this.selectedData = event;
@@ -163,10 +166,10 @@ export default {
         console.log(error);
       }
     },
-    deleteSchedule(event) {
-        try {
+    deleteSchedule() {
+      try {
         const events = this.events.filter(
-          (item) => item.id === event.id
+          (item) => item.id !== this.selectedData.id
         );
         this.events = events;
       } catch (error) {

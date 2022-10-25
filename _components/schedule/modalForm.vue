@@ -56,6 +56,17 @@ export default {
             this.saveScheduleForm();
           },
         },
+        {
+          props: {
+            vIf: this.isEdit,
+            color: "primary",
+            label: this.$tr("isite.cms.label.delete"),
+          },
+          action: () => {
+            this.$emit('deleteSchedule');
+            this.hideModal();
+          },
+        },
       ];
     },
   },
