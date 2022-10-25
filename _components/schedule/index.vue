@@ -135,7 +135,7 @@ export default {
     },
     eventSchedule(event) {
       this.selectedData = event.scope.timestamp;
-      this.$refs.modalForm.openModal("Create schedule");
+      this.$refs.modalForm.openModal(`Create schedule date: ${event.scope.timestamp.date}`);
     },
     editSchedule(event) {
       this.selectedData = event;
