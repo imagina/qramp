@@ -27,6 +27,20 @@ export default {
     subHeader: {
       refresh: true,
     }
+  },
+  schedule: {
+    //permission: 'ramp.work-orders.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/schedule/index',
+    name: 'qramp.admin.schedule',
+    page: () => import('../_components/schedule/index.vue'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.schedule',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
   }
 }
 
