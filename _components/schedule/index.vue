@@ -51,12 +51,7 @@
             class="tw-cursor-pointer"
             @click.stop.prevent="editSchedule(event)"
           >
-            <q-icon
-              v-if="event.icon"
-              :name="event.icon"
-              class="q-mr-xs"
-            ></q-icon
-            ><span class="ellipsis">{{ event.title }}</span>
+           <span class="ellipsis">{{ event.title }}</span>
           </q-badge>
         </div>
       </template>
