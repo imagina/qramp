@@ -66,89 +66,130 @@ function luminosity (color) {
     B = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4)
   return 0.2126 * R + 0.7152 * G + 0.0722 * B
 }
-
 export default [
     {
       id: 1,  
-      title: '1st of the Month',
+      title: 'CI5240 STA 2200 STD 0030 SC4',
       details: 'Everything is funny as long as it is happening to someone else',
       date: getCurrentDay(1),
-      bgcolor: 'orange'
+      color: 'blue',
+      STA: "22:00",
+      STD: "00:30",
+      flightNumber: "CI5240",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 2,
-      title: 'Sisters Birthday',
+      title: 'TK6435 STA 2205 STD 0015 SC14',
       details: 'Buy a nice present',
       date: getCurrentDay(4),
-      bgcolor: 'green',
-      icon: 'fas fa-birthday-cake'
+      color: 'green',
+      STA: "22:05",
+      STD: "00:15",
+      flightNumber: "TK6435",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 3,  
-      title: 'Meeting',
+      title: 'GT8238 STA 2310 STD 1600 SC5',
       details: 'Time to pitch my idea to the company',
       date: getCurrentDay(8),
       time: '10:00',
       duration: 120,
-      bgcolor: 'red',
-      icon: 'fas fa-handshake'
+      color: 'red',
+      STA: "23:10",
+      STD: "16:00",
+      flightNumber: "GT8238",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 4,  
-      title: 'Lunch',
+      title: 'KZ134 STA 2320 STD 0140 NCA',
       details: 'Company is paying!',
       date: getCurrentDay(8),
       time: '11:30',
       duration: 90,
-      bgcolor: 'teal',
-      icon: 'fas fa-hamburger'
+      color: 'red',
+      STA: "23:20",
+      STD: "01:40",
+      flightNumber: "KZ134",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 5,  
-      title: 'Visit mom',
+      title: 'NH8463 STA 1600 STD 1725 SC5',
       details: 'Always a nice chat with mom',
       date: getCurrentDay(20),
       time: '17:00',
       duration: 90,
-      bgcolor: 'blue-grey',
-      icon: 'fas fa-car'
+      color: 'black',
+      icon: 'fas fa-car',
+      STA: "16:00",
+      STD: "17:25",
+      flightNumber: "NH8463",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 6,  
-      title: 'Conference',
+      title: 'GT542 STA 2310 STD 2200+1 SC29',
       details: 'Teaching Javascript 101',
       date: getCurrentDay(15),
       time: '08:00',
       duration: 540,
-      bgcolor: 'blue',
-      icon: 'fas fa-chalkboard-teacher'
+      color: 'blue',
+      icon: 'fas fa-chalkboard-teacher',
+      STA: "23:10",
+      STD: "22:00",
+      flightNumber: "GT542",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 7,  
-      title: 'Girlfriend',
+      title: 'KZ134 STA 2155 STD 0200 NCA',
       details: 'Meet GF for dinner at Swanky Restaurant',
       date: getCurrentDay(15),
       time: '19:00',
       duration: 180,
-      bgcolor: 'teal',
-      icon: 'fas fa-utensils'
+      color: 'red',
+      icon: 'fas fa-utensils',
+      STA: "21:55",
+      STD: "02:00",
+      flightNumber: "KZ134",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 8,  
-      title: 'Rowing',
+      title: 'CI5236 STA 1730 STD 2000 SC18',
       details: 'Time for some weekend R&R',
       date: getCurrentDay(16),
-      bgcolor: 'purple',
+      color: 'green',
       icon: 'rowing',
-      days: 2
+      days: 2,
+      STA: "17:30",
+      STD: "20:00",
+      flightNumber: "CI5236",
+      gateId: "77",
+      stationId: "3"
     },
     {
       id: 9,  
-      title: 'Vacation',
+      title: 'GT516 STA 1410 STD 1705 SC14',
       details: 'Trails and hikes, going camping! Don\'t forget to bring bear spray!',
       date: getCurrentDay(22),
-      bgcolor: 'purple',
+      color: 'blue',
       icon: 'fas fa-plane',
-      days: 7
+      days: 7,
+      STA: "14:10",
+      STD: "17:05",
+      flightNumber: "GT516",
+      gateId: "77",
+      stationId: "3"
     }
   ];

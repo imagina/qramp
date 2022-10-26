@@ -51,7 +51,9 @@
             class="tw-cursor-pointer"
             @click.stop.prevent="editSchedule(event)"
           >
-            <span class="ellipsis">{{ event.title }}</span>
+            <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">{{
+              event.title
+            }}</span>
           </q-badge>
         </div>
       </template>
@@ -64,8 +66,11 @@
             :key="index"
             class="tw-cursor-pointer"
             @click.stop.prevent="editSchedule(event)"
+            :style="{ backgroundColor: event.color }"
           >
-            <span class="ellipsis">{{ event.title }}</span>
+            <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">{{
+              event.title
+            }}</span>
           </q-badge>
         </div>
       </template>
@@ -82,7 +87,6 @@
 import calendar, { QCalendar } from "@quasar/quasar-ui-qcalendar";
 import eventModel from "./models/eventModel.js";
 import modalForm from "./modalForm.vue";
-console.log(QCalendar);
 export default {
   components: {
     QCalendar,
@@ -121,18 +125,22 @@ export default {
       this.$refs.schedule.prev();
     },
     getEvents(timestamp) {
-      let events = this.$clone(this.events || []);
-      let response = [];
-      events.forEach((event) => {
-        const momentDate = this.$moment(event.date, "YYYY-MM-DD").toDate();
-        let eventDate = calendar.parseDate(momentDate);
-        if (eventDate.date === timestamp) {
-          response.push({
-            ...event,
-          });
-        }
-      });
-      return response;
+      try {
+        let events = this.$clone(this.events || []);
+        let response = [];
+        events.forEach((event) => {
+          const momentDate = this.$moment(event.date, "YYYY-MM-DD").toDate();
+          let eventDate = calendar.parseDate(momentDate);
+          if (eventDate.date === timestamp) {
+            response.push({
+              ...event,
+            });
+          }
+        });
+        return response;
+      } catch (error) {
+        console.log(error);
+      }
     },
     eventSchedule(event) {
       this.selectedData = event.scope.timestamp;
@@ -148,9 +156,8 @@ export default {
       try {
         this.events.push({
           id: this.events.length + 1,
-          title: data.title,
           date: this.selectedData.date,
-          bgcolor: "teal",
+          ...data,
         });
       } catch (error) {
         console.log(error);
@@ -161,7 +168,14 @@ export default {
         const event = this.events.find(
           (item) => item.id === this.selectedData.id
         );
-        if (event) event.title = data.title;
+        if (event) {
+          event.title = data.title;
+          event.STA = data.STA;
+          event.STD = data.STD;
+          event.flightNumber = data.flightNumber;
+          event.gateId = data.gateId;
+          event.color = data.color;
+        }
       } catch (error) {
         console.log(error);
       }

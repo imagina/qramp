@@ -11,10 +11,9 @@
     <q-form ref="formSchedule">
       <div v-for="(field, keyField) in fields.form" :key="keyField">
         <dynamic-field
-          :key="keyField"
-          :id="keyField"
           :field="field"
           v-model="form[keyField]"
+          @input="zanetizeData(keyField)"
         />
       </div>
     </q-form>
@@ -63,7 +62,7 @@ export default {
             label: this.$tr("isite.cms.label.delete"),
           },
           action: () => {
-            this.$emit('deleteSchedule');
+            this.$emit("deleteSchedule");
             this.hideModal();
           },
         },
@@ -80,7 +79,7 @@ export default {
         this.title = title;
         this.show = true;
         this.isEdit = !!data;
-        if (data) this.form.title = data.title;
+        if (data) this.form = data;
       } catch (error) {
         console.log(error);
       }
@@ -88,6 +87,10 @@ export default {
     saveScheduleForm() {
       this.$refs.formSchedule.validate().then(async (success) => {
         if (success) {
+          const STA = this.form.STA.replace(":", "");
+          const STD = this.form.STD.replace(":", "");
+          const title = `${this.form.flightNumber} STA ${STA} STD ${STD} ${this.form.gateId}`;
+          this.form.title = title;
           if (this.isEdit) {
             this.$emit("updateSchedule", this.form);
           } else {
@@ -96,6 +99,15 @@ export default {
           this.hideModal();
         }
       });
+    },
+    zanetizeData(key) {
+      if (key === "flightNumber") {
+        this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, "");
+      }
+      if (key === "stationId") {
+        this.form.gateId = null;
+        return;
+      }
     },
   },
 };
