@@ -50,6 +50,7 @@
             :key="index"
             class="tw-cursor-pointer"
             @click.stop.prevent="editSchedule(event)"
+            :style="{ backgroundColor: event.color }"
           >
             <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">{{
               event.title
