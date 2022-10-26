@@ -267,7 +267,7 @@ export default {
     async validateAllFieldsRequiredByStep() {
       try {
         const flightForm = this.$store.state.qrampApp.form;
-        const flightformField = [
+        let flightformField = [
           'customerId',
           'stationId',
           'acTypeId',
@@ -275,18 +275,36 @@ export default {
           'carrierId',
           'gateId',
           'statusId',
-          'responsibleId',
+          'inboundBlockIn',
+          'outboundBlockOut'
+        ];
+
+        const halfTurnInBount = [
           'inboundFlightNumber',
           'inboundOriginAirportId',
           'inboundTailNumber',
           'inboundScheduledArrival',
+        ];
+
+        const halfTurnOutBount = [
           'outboundFlightNumber',
           'outboundDestinationAirportId',
           'outboundTailNumber',
           'outboundScheduledDeparture',
-          'inboundBlockIn',
-          'outboundBlockOut'
         ];
+        if(flightForm.operationTypeId == 3) {
+          flightformField = flightformField.concat(halfTurnInBount);
+        }
+        if(flightForm.operationTypeId == 4) {
+          flightformField = flightformField.concat(halfTurnOutBount);
+        }
+        if(flightForm.operationTypeId == 2
+          || flightForm.operationTypeId == 1
+          || flightForm.operationTypeId == 6
+          || flightForm.operationTypeId == 5) {
+          const bount = halfTurnInBount.concat(halfTurnOutBount);
+          flightformField = flightformField.concat(bount);
+        }
         const validateflightform = flightformField
           .some(item => flightForm[item] === null || flightForm[item] === '')
         if(validateflightform) {

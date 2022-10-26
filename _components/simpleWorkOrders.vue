@@ -200,7 +200,7 @@ export default {
       if(this.acceptSchedule) {
         this.$alert.warning({
             mode: "modal",
-            message: `You have to select a schedule for the flight number: ${this.form.preFlightNumber}`,
+            message: `Are you sure to create this Work Order with an unscheduled flight number: ${this.form.preFlightNumber}?`,
             actions: [
               {
                 label: 'Ok',
