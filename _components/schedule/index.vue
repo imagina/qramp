@@ -1,5 +1,19 @@
 <template>
-  <div>
+  <div 
+    :class="{'fullscreen tw-bg-white tw-p-3': fullscreen }">
+    <div 
+      class="
+        tw-w-full 
+        tw-text-right 
+        tw-py-4"
+      >
+      <q-btn
+        color="secondary"
+        @click="fullscreen = !fullscreen"
+        :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+        :label="$t('isite.cms.configList.fullScreen', {capitalize: true})"
+      />
+    </div>
     <q-btn-toggle
       v-model="scheduleType"
       no-caps
@@ -95,6 +109,7 @@ export default {
   },
   data() {
     return {
+      fullscreen: false,
       selectedDate: this.$moment().format("YYYY-MM-DD"),
       selectedData: null,
       scheduleType: "month",
@@ -196,4 +211,13 @@ export default {
 </script>
 
 <style src="@quasar/quasar-ui-qcalendar/dist/index.css">
+#myDiv.fullscreen{
+    z-index: 9999; 
+    width: 100%; 
+    height: 100%; 
+    position: absolute; 
+    top: 0; 
+    left: 0;
+
+ }
 </style>
