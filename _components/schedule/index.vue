@@ -9,6 +9,7 @@
       >
       <q-btn
         color="secondary"
+        size="sm"
         @click="fullscreen = !fullscreen"
         :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
         :label="$t('isite.cms.configList.fullScreen', {capitalize: true})"
