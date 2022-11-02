@@ -3,8 +3,8 @@ export default {
       fields() {
         return {
           form: {
-            flightNumber: {
-              name:'flightNumber',
+            preFlightNumber: {
+              name:'preFlightNumber',
               value: '',
               type: 'input',
               props: {
@@ -54,7 +54,7 @@ export default {
               },
               label: this.$tr('ifly.cms.form.gate'),
             },
-            STA: {
+            sta: {
               value: null,
               type: 'hour',
               props: {
@@ -62,22 +62,12 @@ export default {
                 format24h: true,
               },
             },
-            STD: {
+            std: {
               value: null,
               type: 'hour',
               props: {
                 label: 'STD',
                 format24h: true,
-              },
-            },
-            color: {
-              value: '',
-              type: 'inputColor',
-              props: {
-                label: `${this.$tr('isite.cms.label.color')}*`,
-                rules: [
-                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
-                ],
               },
             },
           },

@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <div
+    :class="{'fullscreen tw-bg-white tw-p-3': fullscreen }"
+  >
     <div class="box box-auto-height q-mb-md">
       <page-actions
         :title="$t('ifly.cms.sidebar.schedule')"
@@ -128,6 +130,7 @@ export default {
   },
   data() {
     return {
+      fullscreen: false,
       loading: false,
       eventLoading: false,
       selectedDate: this.$moment().format("YYYY-MM-DD"),
@@ -174,9 +177,10 @@ export default {
         {
           label: this.$t('isite.cms.configList.fullScreen', { capitalize: true }),
           props: {
-            icon: this.$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen',
+            icon: this.fullscreen ? 'fullscreen_exit' : 'fullscreen',
           },
           action: () => {
+            this.fullscreen = !this.fullscreen;
             this.$q.fullscreen.toggle();
           },
         },
@@ -245,10 +249,11 @@ export default {
           (item) => item.id === this.selectedData.id
         );
         if (event) {
+          console.log(preFlightNumber)
           event.title = data.title;
           event.STA = data.STA;
           event.STD = data.STD;
-          event.flightNumber = data.flightNumber;
+          event.preFlightNumber = data.preFlightNumber;
           event.gateId = data.gateId;
           event.color = data.color;
         }

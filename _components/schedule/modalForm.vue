@@ -89,7 +89,7 @@ export default {
         if (success) {
           const STA = this.form.STA.replace(":", "");
           const STD = this.form.STD.replace(":", "");
-          const title = `${this.form.flightNumber} STA ${STA} STD ${STD} ${this.form.gateId}`;
+          const title = `${this.form.preFlightNumber} STA ${STA} STD ${STD} ${this.form.gateId}`;
           this.form.title = title;
           if (this.isEdit) {
             this.$emit("updateSchedule", this.form);
