@@ -69,8 +69,7 @@ function luminosity (color) {
 export default [
     {
       id: 1,  
-      title: 'CI5240 STA 2200 STD 0030 SC4',
-      details: 'Everything is funny as long as it is happening to someone else',
+      calendarTitle: 'CI5240 STA 2200 STD 0030 SC4',
       date: getCurrentDay(1),
       color: 'blue',
       STA: "22:00",
@@ -81,7 +80,7 @@ export default [
     },
     {
       id: 2,
-      title: 'TK6435 STA 2205 STD 0015 SC14',
+      calendarTitle: 'TK6435 STA 2205 STD 0015 SC14',
       details: 'Buy a nice present',
       date: getCurrentDay(4),
       color: 'green',
@@ -93,7 +92,7 @@ export default [
     },
     {
       id: 3,  
-      title: 'GT8238 STA 2310 STD 1600 SC5',
+      calendarTitle: 'GT8238 STA 2310 STD 1600 SC5',
       details: 'Time to pitch my idea to the company',
       date: getCurrentDay(8),
       time: '10:00',
@@ -107,7 +106,7 @@ export default [
     },
     {
       id: 4,  
-      title: 'KZ134 STA 2320 STD 0140 NCA',
+      calendarTitle: 'KZ134 STA 2320 STD 0140 NCA',
       details: 'Company is paying!',
       date: getCurrentDay(8),
       time: '11:30',
@@ -121,7 +120,7 @@ export default [
     },
     {
       id: 5,  
-      title: 'NH8463 STA 1600 STD 1725 SC5',
+      calendarTitle: 'NH8463 STA 1600 STD 1725 SC5',
       details: 'Always a nice chat with mom',
       date: getCurrentDay(20),
       time: '17:00',
@@ -136,7 +135,7 @@ export default [
     },
     {
       id: 6,  
-      title: 'GT542 STA 2310 STD 2200+1 SC29',
+      calendarTitle: 'GT542 STA 2310 STD 2200+1 SC29',
       details: 'Teaching Javascript 101',
       date: getCurrentDay(15),
       time: '08:00',
@@ -151,7 +150,7 @@ export default [
     },
     {
       id: 7,  
-      title: 'KZ134 STA 2155 STD 0200 NCA',
+      calendarTitle: 'KZ134 STA 2155 STD 0200 NCA',
       details: 'Meet GF for dinner at Swanky Restaurant',
       date: getCurrentDay(15),
       time: '19:00',
@@ -166,7 +165,7 @@ export default [
     },
     {
       id: 8,  
-      title: 'CI5236 STA 1730 STD 2000 SC18',
+      calendarTitle: 'CI5236 STA 1730 STD 2000 SC18',
       details: 'Time for some weekend R&R',
       date: getCurrentDay(16),
       color: 'green',
@@ -180,7 +179,7 @@ export default [
     },
     {
       id: 9,  
-      title: 'GT516 STA 1410 STD 1705 SC14',
+      calendarTitle: 'GT516 STA 1410 STD 1705 SC14',
       details: 'Trails and hikes, going camping! Don\'t forget to bring bear spray!',
       date: getCurrentDay(22),
       color: 'blue',
