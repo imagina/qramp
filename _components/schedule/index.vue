@@ -97,7 +97,7 @@
           >
             <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
               {{
-                event.calendarTitle || event.title || event.inboundTailNumber
+                event.calendarTitle || event.title || event.inboundTailNumber 
               }}
             </span>
           </q-badge>
@@ -220,20 +220,14 @@ export default {
     getEvents(timestamp) {
       try {
         let events = this.$clone(this.events || []);
-        let response = [];
-        events.forEach((event) => {
+        return events.filter(event => {
           const momentDate = this.$moment(
             event.inboundScheduledArrival,
             "YYYY-MM-DD"
           ).toDate();
           let eventDate = calendar.parseDate(momentDate);
-          if (eventDate.date === timestamp) {
-            response.push({
-              ...event,
-            });
-          }
+          return eventDate.date === timestamp;
         });
-        return response;
       } catch (error) {
         console.log(error);
       }
@@ -328,6 +322,7 @@ export default {
           params
         );
         this.events = response.data;
+        console.log(response.data);
         this.loading = false;
       } catch (error) {
         console.log(error);
