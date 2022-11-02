@@ -156,20 +156,14 @@ export default {
       ],
     };
   },
-  async created() {
-    this.$filter.setFilter({
-      name: this.$route.name,
-      fields: {
-        date: {
-          props: {
-            label: "Arrival Date",
-          },
-          name: "inboundScheduledArrival",
-          field: { value: "inbound_scheduled_arrival" },
-        },
-      },
-      callBack: () => { this.getFilter() },
-    });
+  created() {
+    this.$nextTick(function () {
+      this.setFilter();
+      this.$root.$on('page.data.refresh', () => this.getWorkOrderFilter(true));
+    })
+  },
+  beforeDestroy() {
+    this.$filter.setFilter({});
   },
   computed: {
     extraPageActions() {
@@ -199,7 +193,7 @@ export default {
       await this.getListOfSelectedWorkOrders();
     },
     async getListOfSelectedWorkOrders() {
-      const from = this.$filter.values.date.from;
+      const from = Object.keys(this.$filter.values).length > 0 ? this.$filter.values.date.from : null;
       if(!from) {
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
@@ -249,7 +243,6 @@ export default {
           (item) => item.id === this.selectedData.id
         );
         if (event) {
-          console.log(preFlightNumber)
           event.title = data.title;
           event.STA = data.STA;
           event.STD = data.STD;
@@ -283,7 +276,7 @@ export default {
     },
     async getWorkOrderFilter(refresh = false) {
       try {
-        const from = this.$filter.values.date.from;
+        const from = Object.keys(this.$filter.values).length ? this.$filter.values.date.from : null;
         const lastStart = this.$moment().startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
         const lastEnd = this.$moment().endOf('month').endOf("day").format('YYYY-MM-DD HH:mm:ss');
         const filter = this.getCurrentFilterDate(lastStart, lastEnd);
@@ -322,8 +315,25 @@ export default {
     getFilter() {
       this.events = []; 
       this.getWorkOrderFilter(true);
-      this.$root.$on('page.data.refresh', () => this.getWorkOrderFilter(true));
     },
+    setFilter() {
+      return new Promise(async (resolve, reject) => {
+        this.$filter.setFilter({
+          name: this.$route.name,
+          fields: {
+            date: {
+              props: {
+                label: "Arrival Date",
+              },
+              name: "inboundScheduledArrival",
+              field: { value: "inbound_scheduled_arrival" },
+            },
+          },
+          callBack: this.getFilter,
+        });
+        resolve(true);
+      })
+    }
   },
 };
 </script>
