@@ -7,15 +7,6 @@
         class="q-mb-md"
       />
     </div>
-    <div class="tw-w-full tw-text-right tw-py-4">
-      <q-btn
-        color="secondary"
-        size="sm"
-        @click="$q.fullscreen.toggle()"
-        :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-        :label="$t('isite.cms.configList.fullScreen', { capitalize: true })"
-      />
-    </div>
     <q-btn-toggle
       v-model="scheduleType"
       no-caps
@@ -181,17 +172,12 @@ export default {
     extraPageActions() {
       return [
         {
-          //action to turn view type
-          label: this.$tr(`isite.cms.label.view`),
-          vIf: false,
+          label: this.$t('isite.cms.configList.fullScreen', { capitalize: true }),
           props: {
-            icon:
-              this.view == "calendar"
-                ? "fas fa-list-ul"
-                : "fas fa-calendar-alt",
+            icon: this.$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen',
           },
           action: () => {
-            this.view = this.view == "calendar" ? "crud" : "calendar";
+            this.$q.fullscreen.toggle();
           },
         },
       ];
