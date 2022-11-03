@@ -187,7 +187,9 @@ export default {
     })
   },
   beforeDestroy() {
-    this.$filter.setFilter({});
+    this.$nextTick(function () {
+      this.$filter.setFilter(null);
+    })
   },
   computed: {
     extraPageActions() {
@@ -215,10 +217,14 @@ export default {
       await this.getListOfSelectedWorkOrders();
     },
     async getListOfSelectedWorkOrders() {
+      try {
         this.events = []; 
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
         await this.getWorkOrderFilter(false, lastStart, lastEnd);
+      } catch (error) {
+        console.log(error);
+      }
     },
     getEvents(timestamp) {
       try {
