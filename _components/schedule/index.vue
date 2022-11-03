@@ -1,6 +1,7 @@
 <template>
   <div
     :class="{'fullscreen tw-bg-white tw-p-3': fullscreen }"
+    :style="fullscreen ? 'z-index: 2999' : ''"
   >
     <div class="box box-auto-height q-mb-md">
       <page-actions
