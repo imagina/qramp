@@ -63,12 +63,12 @@
             :key="index"
             class="tw-cursor-pointer"
             @click.stop.prevent="editSchedule(event)"
-            :style="{ backgroundColor: event.flightStatusColor }"
+            :class="`bg-${event.flightStatusColor}`"
           >
             <i class="fak fa-plane-right-thin-icon" />
             <span class="ellipsis">
               {{
-                event.calendarTitle || event.title || event.inboundTailNumber
+                event.calendarTitle
               }}
             </span>
           </q-badge>
@@ -86,12 +86,10 @@
             :key="index"
             class="tw-cursor-pointer"
             @click.stop.prevent="editSchedule(event)"
-            :style="{ backgroundColor: event.flightStatusColor }"
+            :class="`bg-${event.flightStatusColor}`"
           >
             <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
-              {{
-                event.calendarTitle || event.title || event.inboundTailNumber 
-              }}
+              {{ event.calendarTitle }}
             </span>
           </q-badge>
         </div>
@@ -223,8 +221,7 @@ export default {
       );
     },
     editSchedule(event) {
-      this.selectedData = event;
-      this.$refs.modalForm.openModal("Edit schedule", this.selectedData);
+      this.showWorkOrder(event);
     },
     addSchedule(data) {
       try {
@@ -294,6 +291,7 @@ export default {
         const params = {
           refresh,
           params: {
+            include: 'flightStatus,gate',
             filter: {
               //statusId: 2,
               ...filter,
@@ -311,6 +309,20 @@ export default {
         console.log(error);
         this.loading = false;
       }
+    },
+    showWorkOrder(data) {
+      this.$crud.show('apiRoutes.qramp.workOrders', data.id,
+        {
+          refresh: true,
+          params: {
+            include: "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus"
+          }
+        }).then((item) => {
+          this.selectedData = item.data;
+          this.$refs.modalForm.openModal("Edit schedule", item.data);
+        }).catch((err) => {
+          console.log(err);
+        });
     },
     getFilter() {
       this.events = []; 
