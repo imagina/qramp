@@ -55,43 +55,59 @@
         #day-header="{ timestamp }"
         v-if="scheduleType === 'week' || scheduleType === 'day'"
       >
-        <div
-          v-for="(event, index) in getEvents(timestamp.date)"
-          :key="event.id"
+        <div 
+          class="
+            tw-overflow-y-auto 
+            tw-overflow-x-hidden 
+            tw-h-28
+            tw-px-2"
         >
-          <q-badge
-            :key="index"
-            class="tw-cursor-pointer"
-            @click.stop.prevent="editSchedule(event)"
-            :class="`bg-${event.flightStatusColor}`"
+          <div
+            v-for="(event, index) in getEvents(timestamp.date)"
+            :key="event.id"
           >
-            <i class="fak fa-plane-right-thin-icon" />
-            <span class="ellipsis">
-              {{
-                event.calendarTitle
-              }}
-            </span>
-          </q-badge>
+            <q-badge
+              :key="index"
+              class="tw-cursor-pointer"
+              @click.stop.prevent="editSchedule(event)"
+              :class="`bg-${event.flightStatusColor}`"
+            >
+              <i class="fak fa-plane-right-thin-icon" />
+              <span class="ellipsis">
+                {{
+                  event.calendarTitle
+                }}
+              </span>
+            </q-badge>
+          </div>
         </div>
       </template>
       <template 
         #day="{ timestamp }"
         v-if="scheduleType === 'month'"
       >
-        <div
-          v-for="(event, index) in getEvents(timestamp.date)"
-          :key="event.id"
+        <div 
+          class="
+            tw-overflow-y-auto 
+            tw-overflow-x-hidden 
+            tw-h-28
+            tw-px-2"
         >
-          <q-badge
-            :key="index"
-            class="tw-cursor-pointer"
-            @click.stop.prevent="editSchedule(event)"
-            :class="`bg-${event.flightStatusColor}`"
+          <div
+            v-for="(event, index) in getEvents(timestamp.date)"
+            :key="event.id"
           >
-            <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
-              {{ event.calendarTitle }}
-            </span>
-          </q-badge>
+            <q-badge
+              :key="index"
+              class="tw-cursor-pointer"
+              @click.stop.prevent="editSchedule(event)"
+              :class="`bg-${event.flightStatusColor}`"
+            >
+              <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
+                {{ event.calendarTitle }}
+              </span>
+            </q-badge>
+          </div>
         </div>
       </template>
     </q-calendar>
@@ -191,18 +207,17 @@ export default {
   },
   methods: {
     async scheduleNext() {
-      this.events = []; 
       await this.$refs.schedule.next();
       await this.getListOfSelectedWorkOrders();
     },
     async schedulePrev() {
-      this.events = []; 
       await this.$refs.schedule.prev();
       await this.getListOfSelectedWorkOrders();
     },
     async getListOfSelectedWorkOrders() {
-      const from = Object.keys(this.$filter.values).length > 0 ? this.$filter.values.date.from : null;
-      if(!from) {
+      const filter = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : null;
+      if(!filter) {
+        this.events = []; 
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
         const filter = this.getCurrentFilterDate(lastStart, lastEnd);
@@ -213,12 +228,15 @@ export default {
       try {
         let events = this.$clone(this.events || []);
         return events.filter(event => {
-          const momentDate = this.$moment(
+          if(event.inboundScheduledArrival) {
+            const momentDate = this.$moment(
             event.inboundScheduledArrival,
             "YYYY-MM-DD"
-          ).toDate();
-          let eventDate = calendar.parseDate(momentDate);
-          return eventDate.date === timestamp;
+            ).toDate();
+            let eventDate = calendar.parseDate(momentDate);
+            return eventDate.date === timestamp;
+          }
+          return false;
         });
       } catch (error) {
         console.log(error);
@@ -283,11 +301,11 @@ export default {
     },
     async getWorkOrderFilter(refresh = false) {
       try {
-        const from = Object.keys(this.$filter.values).length ? this.$filter.values.date.from : null;
+        const from = Object.keys(this.$filter.values).length > 0 ? this.$filter.values.date.from : null;
         const lastStart = this.$moment().startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
         const lastEnd = this.$moment().endOf('month').endOf("day").format('YYYY-MM-DD HH:mm:ss');
         const filter = this.getCurrentFilterDate(lastStart, lastEnd);
-        const filterCurrent = from ? this.$filter.values : filter;
+        const filterCurrent = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : filter;
         this.selectedDate = from ? from : this.$moment().format("YYYY-MM-DD HH:mm:ss");
         await this.getWorkOrders(refresh, filterCurrent);
       } catch (error) {
@@ -314,6 +332,7 @@ export default {
           params
         );
         this.events = response.data;
+        console.log(this.events);
         this.loading = false;
       } catch (error) {
         console.log(error);
@@ -361,6 +380,18 @@ export default {
               },
               name: "inboundScheduledArrival",
               field: { value: "inbound_scheduled_arrival" },
+            },
+            statusId: {
+              value: null,
+              type: 'select',
+              loadOptions: {
+                apiRoute: 'apiRoutes.qramp.workOrderStatuses',
+                select: { 'label': 'statusName', 'id': 'id' },
+              },
+              props: {
+                label: 'Status',
+                'clearable': true
+              },
             },
           },
           callBack: this.getFilter,
