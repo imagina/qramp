@@ -293,7 +293,7 @@ export default {
         return {
           date: {
             field:"inbound_scheduled_arrival",
-            type: "customer",
+            type: "custom",
             from: lastStart,
             to: lastEnd
           }
@@ -301,12 +301,19 @@ export default {
     },
     async getWorkOrderFilter(refresh = false) {
       try {
-        const from = Object.keys(this.$filter.values).length > 0 ? this.$filter.values.date.from : null;
-        const lastStart = this.$moment().startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
-        const lastEnd = this.$moment().endOf('month').endOf("day").format('YYYY-MM-DD HH:mm:ss');
-        const filter = this.getCurrentFilterDate(lastStart, lastEnd);
-        const filterCurrent = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : filter;
-        this.selectedDate = from ? from : this.$moment().format("YYYY-MM-DD HH:mm:ss");
+        let lastStart = this.$moment().startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
+        let lastEnd = this.$moment().endOf('month').endOf("day").format('YYYY-MM-DD HH:mm:ss');
+        if(Object.keys(this.$filter.values).length > 0) {
+          lastStart = this.$moment(this.selectedDate).startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
+          lastEnd = this.$moment(this.selectedDate).endOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
+        }
+        const currentFilterDate = this.getCurrentFilterDate(lastStart, lastEnd);
+        const thereAreFilters = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : {};
+        const filterCurrent =  {
+          ...thereAreFilters,
+          ...currentFilterDate
+        };
+        
         await this.getWorkOrders(refresh, filterCurrent);
       } catch (error) {
         console.log(error);
@@ -321,9 +328,12 @@ export default {
           params: {
             include: 'flightStatus,gate',
             filter: {
-              //statusId: 2,
               ...filter,
               withoutDefaultInclude: true,
+              order:{
+                field:"inbound_scheduled_arrival", 
+                way:"asc"
+              }
             },
           },
         };
@@ -373,12 +383,17 @@ export default {
         this.$filter.setFilter({
           name: this.$route.name,
           fields: {
-            date: {
-              props: {
-                label: "Arrival Date",
+            customerId: {
+              value: null,
+              type: 'select',
+              loadOptions: {
+                apiRoute: 'apiRoutes.qramp.setupCustomers',
+                select: { 'label': 'customerName', 'id': 'id' },
               },
-              name: "inboundScheduledArrival",
-              field: { value: "inbound_scheduled_arrival" },
+              props: {
+                label: 'Customer',
+                'clearable': true
+              },
             },
             statusId: {
               value: null,
@@ -389,6 +404,42 @@ export default {
               },
               props: {
                 label: 'Status',
+                'clearable': true
+              },
+            },
+            stationId: {
+              value: null,
+              type: 'select',
+              loadOptions: {
+                apiRoute: 'apiRoutes.qsetupagione.setupStations',
+                select: { 'label': 'stationName', 'id': 'id' },
+              },
+              props: {
+                label: 'Station',
+                'clearable': true
+              },
+            },
+            adHoc: {
+              value: null,
+              type: 'select',
+              props: {
+                label: 'Ad Hoc',
+                clearable: true,
+                options:[
+                {label: this.$tr('isite.cms.label.yes'), value: true,},
+                {label: this.$tr('isite.cms.label.no'), value: false,},
+              ],
+              },
+            },
+            flightStatusId: {
+              value: null,
+              type: 'select',
+              loadOptions: {
+                apiRoute: 'apiRoutes.qfly.flightStatuses',
+                select: {'label': 'name', 'id': 'id'},
+              },
+              props: {
+                label: 'Flight Status',
                 'clearable': true
               },
             },
