@@ -116,15 +116,25 @@
       @updateSchedule="updateSchedule"
       @deleteSchedule="deleteSchedule"
     />
+    <form-orders ref="formOrders" />
   </div>
 </template>
 <script>
 import calendar, { QCalendar } from "@quasar/quasar-ui-qcalendar";
 import modalForm from "./modalForm.vue";
+import formOrders from "../formOrders.vue";
+import {
+  STATUS_POSTED,
+  STATUS_SUBMITTED,
+  STATUS_CLOSED,
+  STATUS_DRAFT,
+  STATUS_SCHEDULE,
+} from "../model/constants"
 export default {
   components: {
     QCalendar,
     modalForm,
+    formOrders,
   },
   data() {
     return {
@@ -318,6 +328,18 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus"
           }
         }).then((item) => {
+          if(item.statusId !== STATUS_SCHEDULE) {
+            this.$refs.formOrders.loadform({
+              modalProps: {
+                title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
+                update: true,
+                workOrderId: data.id,
+                width: '90vw'
+              },
+              data: item.data,
+            })
+            return;
+          }
           this.selectedData = item.data;
           this.$refs.modalForm.openModal("Edit schedule", item.data);
         }).catch((err) => {

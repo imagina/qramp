@@ -9,6 +9,7 @@ export const STATUS_DRAFT = 1;
 export const STATUS_POSTED = 2;
 export const STATUS_SUBMITTED = 3;
 export const STATUS_CLOSED = 4;
+export const STATUS_SCHEDULE = 5;
 export const modelDataBound = {
     destinationAirport: {
         id: null,
