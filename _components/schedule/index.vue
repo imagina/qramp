@@ -1,7 +1,6 @@
 <template>
   <div
     :class="{'fullscreen tw-bg-white tw-p-3': fullscreen }"
-    :style="fullscreen ? 'z-index: 2999' : ''"
   >
     <div class="box box-auto-height q-mb-md">
       <page-actions
@@ -209,21 +208,17 @@ export default {
   methods: {
     async scheduleNext() {
       await this.$refs.schedule.next();
-      await this.getWorkOrderFilter();
+      await this.getListOfSelectedWorkOrders();
     },
     async schedulePrev() {
       await this.$refs.schedule.prev();
-      await this.getWorkOrderFilter();
+      await this.getListOfSelectedWorkOrders();
     },
     async getListOfSelectedWorkOrders() {
-      const filter = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : null;
-      if(!filter) {
         this.events = []; 
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
-        const filter = this.getCurrentFilterDate(lastStart, lastEnd);
-        await this.getWorkOrders(false, filter);
-      }
+        await this.getWorkOrderFilter(false, lastStart, lastEnd);
     },
     getEvents(timestamp) {
       try {
@@ -300,10 +295,14 @@ export default {
           }
        }
     },
-    async getWorkOrderFilter(refresh = false) {
+    async getWorkOrderFilter(refresh = false, dateStart = null, dateEnd = null) {
       try {
         let lastStart = this.$moment(this.selectedDate).startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
         let lastEnd = this.$moment(this.selectedDate).endOf('month').endOf("day").format('YYYY-MM-DD HH:mm:ss');
+        if(dateStart && dateEnd) {
+          lastStart = dateStart;
+          lastEnd = dateEnd;
+        }
         const currentFilterDate = this.getCurrentFilterDate(lastStart, lastEnd);
         const thereAreFilters = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : {};
         const filterCurrent =  {
