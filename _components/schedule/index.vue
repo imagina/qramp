@@ -6,6 +6,7 @@
       <page-actions
         :title="$t('ifly.cms.sidebar.schedule')"
         :extra-actions="extraPageActions"
+        @refresh="getWorkOrderFilter(true)"
         class="q-mb-md"
       />
     </div>
@@ -183,7 +184,6 @@ export default {
   created() {
     this.$nextTick(function () {
       this.setFilter();
-      this.$root.$on('page.data.refresh', () => this.getWorkOrderFilter(true));
     })
   },
   beforeDestroy() {
