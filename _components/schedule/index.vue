@@ -208,11 +208,11 @@ export default {
   methods: {
     async scheduleNext() {
       await this.$refs.schedule.next();
-      await this.getListOfSelectedWorkOrders();
+      await this.getWorkOrderFilter();
     },
     async schedulePrev() {
       await this.$refs.schedule.prev();
-      await this.getListOfSelectedWorkOrders();
+      await this.getWorkOrderFilter();
     },
     async getListOfSelectedWorkOrders() {
       const filter = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : null;
@@ -301,12 +301,8 @@ export default {
     },
     async getWorkOrderFilter(refresh = false) {
       try {
-        let lastStart = this.$moment().startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
-        let lastEnd = this.$moment().endOf('month').endOf("day").format('YYYY-MM-DD HH:mm:ss');
-        if(Object.keys(this.$filter.values).length > 0) {
-          lastStart = this.$moment(this.selectedDate).startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
-          lastEnd = this.$moment(this.selectedDate).endOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
-        }
+        let lastStart = this.$moment(this.selectedDate).startOf('month').startOf("day").format('YYYY-MM-DD HH:mm:ss');
+        let lastEnd = this.$moment(this.selectedDate).endOf('month').endOf("day").format('YYYY-MM-DD HH:mm:ss');
         const currentFilterDate = this.getCurrentFilterDate(lastStart, lastEnd);
         const thereAreFilters = Object.keys(this.$filter.values).length > 0 ? this.$filter.values : {};
         const filterCurrent =  {
