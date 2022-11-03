@@ -332,7 +332,6 @@ export default {
           params
         );
         this.events = response.data;
-        console.log(this.events);
         this.loading = false;
       } catch (error) {
         console.log(error);
