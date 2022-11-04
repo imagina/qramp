@@ -6,6 +6,7 @@
       <page-actions
         :title="$t('ifly.cms.sidebar.schedule')"
         :extra-actions="extraPageActions"
+        :excludeActions="fullscreen ? ['filter'] : []"
         @refresh="getWorkOrderFilter(true)"
         class="q-mb-md"
       />
