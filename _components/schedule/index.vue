@@ -141,6 +141,8 @@
 import calendar, { QCalendar } from "@quasar/quasar-ui-qcalendar";
 import modalForm from "./modalForm.vue";
 import formOrders from "../formOrders.vue";
+import _ from 'lodash';
+
 import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
@@ -230,7 +232,7 @@ export default {
     getEvents(timestamp) {
       try {
         let events = this.$clone(this.events || []);
-        return events.filter(event => {
+        const filters = events.filter(event => {
           if(event.inboundScheduledArrival) {
             const momentDate = this.$moment(
             event.inboundScheduledArrival,
@@ -241,6 +243,7 @@ export default {
           }
           return false;
         });
+        return _.orderBy(filters, 'inboundScheduledArrival', 'asc' );
       } catch (error) {
         console.log(error);
       }
