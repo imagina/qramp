@@ -274,12 +274,11 @@ export default {
           (item) => item.id === this.selectedData.id
         );
         if (event) {
-          event.title = data.title;
-          event.STA = data.STA;
-          event.STD = data.STD;
+          event.title = data.calendarTitle;
+          event.sta = data.sta;
+          event.std = data.std;
           event.preFlightNumber = data.preFlightNumber;
           event.gateId = data.gateId;
-          event.color = data.color;
         }
       } catch (error) {
         console.log(error);
