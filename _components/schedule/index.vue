@@ -261,7 +261,6 @@ export default {
       try {
         this.events.push({
           id: this.events.length + 1,
-          date: this.selectedData.date,
           ...data,
         });
       } catch (error) {
@@ -295,6 +294,7 @@ export default {
       }
     },
     getCurrentFilterDate(lastStart, lastEnd) {
+      try {
         return {
           date: {
             field:"inbound_scheduled_arrival",
@@ -303,6 +303,9 @@ export default {
             to: lastEnd
           }
        }
+      } catch (error) {
+        console.log(error);
+      } 
     },
     async getWorkOrderFilter(refresh = false, dateStart = null, dateEnd = null) {
       try {
