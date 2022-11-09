@@ -3,6 +3,7 @@
     :class="{'fullscreen tw-bg-white tw-p-3': fullscreen }"
   >
     <div class="box box-auto-height q-mb-md">
+      {{ loading }}
       <page-actions
         :title="$t('ifly.cms.sidebar.schedule')"
         :extra-actions="extraPageActions"
@@ -12,7 +13,7 @@
       />
     </div>
     <q-btn-toggle
-      v-model="scheduleType"
+      v-model="scheduleTypeComputed"
       no-caps
       unelevated
       toggle-color="blue-grey"
@@ -42,7 +43,6 @@
         class="tw-w-1/2"
       />
     </div>
-    {{   }}
     <q-calendar
       ref="schedule"
       v-model="selectedDate"
@@ -126,7 +126,17 @@
         tw-z-20
       "
     >
-      <q-spinner color="primary" size="5em" />
+      <div>
+        <i 
+          class="
+            fa-duotone 
+            fa-loader 
+            fa-spin 
+            fa-pulse 
+            tw-text-7xl 
+            tw-text-blue-800"
+        />
+      </div>
     </div>
     <modalForm
       ref="modalForm"
@@ -195,6 +205,16 @@ export default {
     })
   },
   computed: {
+    scheduleTypeComputed: {
+      get() {
+        return this.scheduleType;
+      },
+      async set(value) {
+        this.scheduleType = value;
+        await this.$refs.schedule;
+        await this.getListOfSelectedWorkOrders();
+      }
+    },
     extraPageActions() {
       return [
         {
@@ -221,7 +241,7 @@ export default {
     },
     async getListOfSelectedWorkOrders() {
       try {
-        this.events = []; 
+        this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
         await this.getWorkOrderFilter(false, lastStart, lastEnd);
