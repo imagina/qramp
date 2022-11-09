@@ -95,17 +95,11 @@ export default {
                action: (item) => this.getFlightMap(item),
             },
             {
-              name: "faFlightId",
-              label: 'Manual Flight',
-              field: "faFlightId",
-              align: "left",
-              format: item => item ? item  : "Manual",
-            },
-            {
               name: "inboundFlightNumber",
               label: 'Inbound Flight Number',
-              field: "inboundFlightNumber",
+              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
               align: "left",
+              format: item => item ? item : '',
             },
             {
               name: "inboundScheduledArrival",
@@ -118,8 +112,9 @@ export default {
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
-              field: "outboundFlightNumber",
+              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
               align: "left",
+              format: item => item ? item : '',
             },
             {
               name: "outboundScheduledDeparture",
