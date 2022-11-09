@@ -95,6 +95,13 @@ export default {
                action: (item) => this.getFlightMap(item),
             },
             {
+              name: "faFlightId",
+              label: 'Manual Flight',
+              field: "faFlightId",
+              align: "left",
+              format: item => item ? item  : "Manual",
+            },
+            {
               name: "inboundFlightNumber",
               label: 'Inbound Flight Number',
               field: "inboundFlightNumber",
