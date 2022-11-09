@@ -184,7 +184,7 @@ export default {
       ],
     };
   },
-  created() {
+  mounted() {
     this.$nextTick(function () {
       this.setFilter();
     })
@@ -251,18 +251,21 @@ export default {
     eventSchedule(event) {
       this.selectedData = event.scope.timestamp;
       this.$refs.modalForm.openModal(
-        `Create schedule date: ${event.scope.timestamp.date}`
+        `Create schedule date: ${event.scope.timestamp.date}`,
+        null,
+        event.scope.timestamp.date,
       );
     },
     editSchedule(event) {
       this.showWorkOrder(event);
     },
-    addSchedule(data) {
+    async addSchedule(data) {
       try {
-        this.events.push({
-          id: this.events.length + 1,
-          ...data,
-        });
+        await this.$refs.modalForm.setLoading(true);
+        const response = await this.saveRequestSimpleWorkOrder(data);
+        this.events.push({...response.data});
+        await this.$refs.modalForm.setLoading(false);
+        await this.$refs.modalForm.hideModal();
       } catch (error) {
         console.log(error);
       }
@@ -453,10 +456,21 @@ export default {
             },
           },
           callBack: this.getFilter,
+          storeFilter: false,
         });
         resolve(true);
       })
-    }
+    },
+    async saveRequestSimpleWorkOrder(form) {
+      try {
+        const response = await this.$crud.create(
+          "apiRoutes.qramp.simpleWorkOrders", form
+        );
+        return response;
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>

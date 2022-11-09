@@ -52,7 +52,7 @@ export default {
               : this.$tr("isite.cms.label.save"),
           },
           action: async () => {
-            this.saveScheduleForm();
+            await this.saveScheduleForm();
           },
         },
         {
@@ -74,31 +74,35 @@ export default {
       this.show = false;
       this.form = {};
     },
-    openModal(title = null, data = null) {
+    openModal(title = null, data = null, date) {
       try {
+        let currentDate = this.$moment().format('YYYY-MM-DDTHH:mm:ss');
+        if(this.$moment().format('YYYY-MM-DD') !== date) {
+          currentDate = this.$moment(date).format('YYYY-MM-DDTHH:mm:ss');
+        }
         this.title = title;
         this.show = true;
         this.isEdit = !!data;
+        this.form.inboundScheduledArrival = currentDate;
         if (data) this.form = data;
       } catch (error) {
         console.log(error);
       }
     },
-    saveScheduleForm() {
-      this.$refs.formSchedule.validate().then(async (success) => {
-        if (success) {
-          const STA = this.form.STA.replace(":", "");
-          const STD = this.form.STD.replace(":", "");
-          const title = `${this.form.preFlightNumber} STA ${STA} STD ${STD} ${this.form.gateId}`;
-          this.form.title = title;
-          if (this.isEdit) {
-            this.$emit("updateSchedule", this.form);
-          } else {
-            this.$emit("addSchedule", this.form);
+    async saveScheduleForm() {
+      try {
+        this.$refs.formSchedule.validate().then(async (success) => {
+          if (success) {
+            if (this.isEdit) {
+              this.$emit("updateSchedule", this.form);
+            } else {
+              this.$emit("addSchedule", this.form);
+            }
           }
-          this.hideModal();
-        }
-      });
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
     zanetizeData(key) {
       if (key === "flightNumber") {
@@ -108,6 +112,9 @@ export default {
         this.form.gateId = null;
         return;
       }
+    },
+    setLoading(value) {
+      this.loading = value;
     },
   },
 };
