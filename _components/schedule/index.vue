@@ -1,7 +1,6 @@
 <template>
   <div :class="{ 'fullscreen tw-bg-white tw-p-3': fullscreen }">
     <div class="box box-auto-height q-mb-md">
-      {{ loading }}
       <page-actions
         :title="$t('ifly.cms.sidebar.schedule')"
         :extra-actions="extraPageActions"
@@ -323,12 +322,20 @@ export default {
     },
     getCurrentFilterDate(lastStart, lastEnd) {
       try {
+        let lastStartM = this.$moment(lastStart)
+          .startOf("month")
+          .startOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
+        let lastEndM = this.$moment(lastEnd)
+          .endOf("month")
+          .endOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
             field: "inbound_scheduled_arrival",
             type: "custom",
-            from: lastStart,
-            to: lastEnd,
+            from: lastStartM,
+            to: lastEndM,
           },
         };
       } catch (error) {
