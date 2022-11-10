@@ -91,6 +91,7 @@ export default {
     },
     async saveScheduleForm() {
       try {
+        this.tranformData();
         this.$refs.formSchedule.validate().then(async (success) => {
           if (success) {
             if (this.isEdit) {
@@ -103,6 +104,9 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    tranformData() {
+      this.form.inboundScheduledArrival = this.$moment(this.form.inboundScheduledArrival).format(`DD/MM/YYYY ${this.form.sta}`)
     },
     zanetizeData(key) {
       if (key === "flightNumber") {
