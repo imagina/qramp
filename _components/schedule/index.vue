@@ -80,25 +80,25 @@
                   v-if="event.time"
                   class="
                     tw-text-xs
-                    tw-my-1 
-                    tw-px-1 
-                    tw-mx-2 
-                    tw-rounded-md 
+                    tw-my-1
+                    tw-px-1
+                    tw-mx-2
+                    tw-rounded-md
                     tw-text-white
                     tw-cursor-pointer"
                   @click.stop.prevent="editSchedule(event)"
                   :class="event.flightStatusColor ? `bg-${event.flightStatusColor}`: 'tw-bg-blue-800'"
                   :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
                 >
-                  <div 
+                  <div
                     class="tw-font-semibold"
                     style="font-size: 9.5px"
                   >
-                    <i class="fak fa-plane-right-thin-icon" /> 
+                    <i class="fak fa-plane-right-thin-icon" />
                     {{ event.calendarTitle }}
                   </div>
                   <div>
-                    Time: {{ event.time }} 
+                    Time: {{ event.time }}
                   </div>
                 </div>
               </template>
@@ -208,9 +208,16 @@ export default {
     extraPageActions() {
       return [
         {
-          label: this.$t("isite.cms.configList.fullScreen", {
-            capitalize: true,
-          }),
+          label: 'Copy Tiny URL',
+          props: {
+            icon: 'fa-light fa-copy',
+          },
+          action: () => {
+            this.$helper.copyToClipboard(this.$store.state.qsiteApp.originURL+'/#/ramp/schedule/public/index',"Tiny URL copied!")
+          },
+        },
+        {
+          label: this.$t('isite.cms.configList.fullScreen', { capitalize: true }),
           props: {
             icon: this.fullscreen ? "fullscreen_exit" : "fullscreen",
           },
@@ -250,7 +257,7 @@ export default {
               event.inboundScheduledArrival,
               "YYYY-MM-DD"
             ).toDate();
-            
+
             let eventDate = calendar.parseDate(momentDate);
             return eventDate.date === timestamp;
           }
