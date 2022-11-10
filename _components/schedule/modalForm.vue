@@ -76,9 +76,9 @@ export default {
     },
     openModal(title = null, data = null, date) {
       try {
-        let currentDate = this.$moment().format('YYYY-MM-DDTHH:mm:ss');
+        let currentDate = this.$moment().format('DD/MM/YYYY HH:mm:ss');
         if(this.$moment().format('YYYY-MM-DD') !== date) {
-          currentDate = this.$moment(date).format('YYYY-MM-DDTHH:mm:ss');
+          currentDate = this.$moment(date).format('DD/MM/YYYY HH:mm:ss');
         }
         this.title = title;
         this.show = true;
