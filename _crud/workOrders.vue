@@ -251,7 +251,8 @@ export default {
             },
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType,station,contract,responsible,inboundOriginAirport,outboundDestinationAirport,flightStatus'
+            include: 'customer,workOrderStatus,operationType,station,contract,responsible,inboundOriginAirport,outboundDestinationAirport,flightStatus',
+            filter: {order: {way: 'desc'}}
           },
           actions: [
             {
