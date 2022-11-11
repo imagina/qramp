@@ -183,14 +183,17 @@ export default {
       ],
     };
   },
+  watch: {
+    '$route': {
+      deep: true,
+      handler: async function () {
+        this.$router.go();
+      }
+    },
+  },
   mounted() {
     this.$nextTick(function () {
       this.setFilter();
-    });
-  },
-  beforeDestroy() {
-    this.$nextTick(function () {
-      this.$filter.setFilter(null);
     });
   },
   computed: {
@@ -231,6 +234,75 @@ export default {
         },
       ];
     },
+    filsterAction() {
+      return {
+          name: this.$route.name,
+          fields: {
+            customerId: {
+              value: null,
+              type: "select",
+              loadOptions: {
+                apiRoute: "apiRoutes.qramp.setupCustomers",
+                select: { label: "customerName", id: "id" },
+              },
+              props: {
+                label: "Customer",
+                clearable: true,
+              },
+            },
+            statusId: {
+              value: null,
+              type: "select",
+              loadOptions: {
+                apiRoute: "apiRoutes.qramp.workOrderStatuses",
+                select: { label: "statusName", id: "id" },
+              },
+              props: {
+                label: "Status",
+                clearable: true,
+              },
+            },
+            stationId: {
+              value: null,
+              type: "select",
+              loadOptions: {
+                apiRoute: "apiRoutes.qsetupagione.setupStations",
+                select: { label: "stationName", id: "id" },
+              },
+              props: {
+                label: "Station",
+                clearable: true,
+              },
+            },
+            adHoc: {
+              value: null,
+              type: "select",
+              props: {
+                label: "Ad Hoc",
+                clearable: true,
+                options: [
+                  { label: this.$tr("isite.cms.label.yes"), value: true },
+                  { label: this.$tr("isite.cms.label.no"), value: false },
+                ],
+              },
+            },
+            flightStatusId: {
+              value: null,
+              type: "select",
+              loadOptions: {
+                apiRoute: "apiRoutes.qfly.flightStatuses",
+                select: { label: "name", id: "id" },
+              },
+              props: {
+                label: "Flight Status",
+                clearable: true,
+              },
+            },
+          },
+          callBack: this.getFilter,
+          storeFilter: false,
+        };
+    },  
   },
   methods: {
     async scheduleNext() {
@@ -453,73 +525,7 @@ export default {
     },
     setFilter() {
       return new Promise(async (resolve, reject) => {
-        this.$filter.setFilter({
-          name: this.$route.name,
-          fields: {
-            customerId: {
-              value: null,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qramp.setupCustomers",
-                select: { label: "customerName", id: "id" },
-              },
-              props: {
-                label: "Customer",
-                clearable: true,
-              },
-            },
-            statusId: {
-              value: null,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qramp.workOrderStatuses",
-                select: { label: "statusName", id: "id" },
-              },
-              props: {
-                label: "Status",
-                clearable: true,
-              },
-            },
-            stationId: {
-              value: null,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qsetupagione.setupStations",
-                select: { label: "stationName", id: "id" },
-              },
-              props: {
-                label: "Station",
-                clearable: true,
-              },
-            },
-            adHoc: {
-              value: null,
-              type: "select",
-              props: {
-                label: "Ad Hoc",
-                clearable: true,
-                options: [
-                  { label: this.$tr("isite.cms.label.yes"), value: true },
-                  { label: this.$tr("isite.cms.label.no"), value: false },
-                ],
-              },
-            },
-            flightStatusId: {
-              value: null,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qfly.flightStatuses",
-                select: { label: "name", id: "id" },
-              },
-              props: {
-                label: "Flight Status",
-                clearable: true,
-              },
-            },
-          },
-          callBack: this.getFilter,
-          storeFilter: false,
-        });
+        this.$filter.setFilter(this.filsterAction);
         resolve(true);
       });
     },
