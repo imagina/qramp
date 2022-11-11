@@ -444,9 +444,10 @@ export default {
           lastEnd = dateEnd;
         }
         const currentFilterDate = this.getCurrentFilterDate(lastStart, lastEnd);
+        const filter =  Object.keys(this.$route.query).length === 0 ? this.$filter.values : this.$route.query;
         const thereAreFilters =
-          Object.keys(this.$filter.values).length > 0
-            ? this.$filter.values
+          Object.keys(filter).length > 0
+            ? filter
             : {};
         const filterCurrent = {
           ...thereAreFilters,
