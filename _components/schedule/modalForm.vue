@@ -76,9 +76,9 @@ export default {
     },
     openModal(title = null, data = null, date) {
       try {
-        let currentDate = this.$moment().format('DD/MM/YYYY HH:mm:ss');
+        let currentDate = this.$moment().format('DD/MM/YYYY');
         if(this.$moment().format('YYYY-MM-DD') !== date) {
-          currentDate = this.$moment(date).format('DD/MM/YYYY HH:mm:ss');
+          currentDate = this.$moment(date).format('DD/MM/YYYY');
         }
         this.title = title;
         this.show = true;
@@ -106,7 +106,7 @@ export default {
       }
     },
     tranformData() {
-      this.form.inboundScheduledArrival = this.$moment(this.form.inboundScheduledArrival).format(`DD/MM/YYYY ${this.form.sta}`)
+      this.form.inboundScheduledArrival = `${this.form.inboundScheduledArrival} ${this.form.sta}`;
     },
     zanetizeData(key) {
       if (key === "flightNumber") {

@@ -470,8 +470,8 @@ export default {
               ...filter,
               withoutDefaultInclude: true,
               order: {
-                field: "inbound_scheduled_arrival",
-                way: "asc",
+                field: "id",
+                way: "desc",
               },
             },
           },
