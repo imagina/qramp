@@ -1057,7 +1057,7 @@ export default {
         ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}` 
         : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
        
-      this.bannerMessage =  selectCustomers && !this.form.contractId ? message : null;
+      this.bannerMessage =  selectCustomers && this.form.customerId !== null && !this.form.contractId ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
     },
