@@ -148,7 +148,6 @@ import {
   STATUS_DRAFT,
   STATUS_SCHEDULE,
 } from "../model/constants";
-import eventModel from './models/eventModel.js';
 export default {
   components: {
     QCalendar,
