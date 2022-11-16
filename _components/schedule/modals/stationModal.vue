@@ -5,6 +5,7 @@
     :persistent="true"
     :loading="loading"
     :actions="actions"
+    hideCloseAction
     :maximized="$q.screen.lt.md"
   >
     <q-form ref="formStation">
