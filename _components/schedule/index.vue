@@ -649,6 +649,7 @@ export default {
         }
         return {};
       } catch (error) {
+        this.$alert.error('The filter url is misspelled');
         console.log(error);
       }
     },
