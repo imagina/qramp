@@ -185,12 +185,14 @@ export default {
   },
   mounted() {
     this.$nextTick(async function () {
-      this.stationId = this.userData ? this.userData.options.stationsAssigned[0] : null;
-      if (!this.stationId) {
+      const obj = await this.convertStringToObject();
+      const stationsAssigned = this.userData ? this.userData.options.stationsAssigned[0] : null;
+      this.stationId = stationsAssigned || (obj.stationId || null);
+      if (!this.stationId && Object.keys(obj).length === 0) {
         await this.$refs.stationModal.showModal();
         return;
       }
-      const obj = await this.convertStringToObject();
+      
       if (!obj.stationId) {
         await this.mutateCurrentURL();
       }
