@@ -188,11 +188,10 @@ export default {
       const obj = await this.convertStringToObject();
       const stationsAssigned = this.userData ? this.userData.options.stationsAssigned[0] : null;
       this.stationId = stationsAssigned || (obj.stationId || null);
-      if (!this.stationId && Object.keys(obj).length === 0) {
+      if (!this.stationId || Object.keys(obj).length === 0) {
         await this.$refs.stationModal.showModal();
         return;
       }
-      
       if (!obj.stationId) {
         await this.mutateCurrentURL();
       }
