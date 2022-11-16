@@ -185,7 +185,7 @@ export default {
   },
   mounted() {
     this.$nextTick(async function () {
-      this.stationId = this.userData.options.stationsAssigned[0] || null;
+      this.stationId = this.userData ? this.userData.options.stationsAssigned[0] : null;
       if (!this.stationId) {
         await this.$refs.stationModal.showModal();
         return;
@@ -645,6 +645,7 @@ export default {
           });
           return remplaceObject || {};
         }
+        return {};
       } catch (error) {
         console.log(error);
       }
