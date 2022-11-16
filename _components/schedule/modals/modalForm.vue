@@ -20,7 +20,7 @@
   </master-modal>
 </template>
 <script>
-import scheduleField from "./fields/scheduleField.js";
+import scheduleField from "../fields/scheduleField.js";
 export default {
   mixins: [scheduleField],
   data() {

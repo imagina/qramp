@@ -133,12 +133,17 @@
       @deleteSchedule="deleteSchedule"
     />
     <form-orders ref="formOrders" />
+      <stationModal 
+        ref="stationModal"
+        @saveFilterStationId="saveFilterStationId"
+      />
   </div>
 </template>
 <script>
 import calendar, { QCalendar } from "@quasar/quasar-ui-qcalendar";
-import modalForm from "./modalForm.vue";
+import modalForm from "./modals/modalForm.vue";
 import formOrders from "../formOrders.vue";
+import stationModal from './modals/stationModal.vue';
 import _ from "lodash";
 
 import {
@@ -153,6 +158,7 @@ export default {
     QCalendar,
     modalForm,
     formOrders,
+    stationModal,
   },
   data() {
     return {
@@ -180,6 +186,8 @@ export default {
           icon: "fas fa-calendar-day",
         },
       ],
+      stationId: null,
+      filterData: null,
     };
   },
   watch: {
@@ -191,11 +199,34 @@ export default {
     },
   },
   mounted() {
-    this.$nextTick(function () {
-      this.setFilter();
+    this.$nextTick(async function () {
+      this.stationId = this.userData.options.stationsAssigned[0] || null;
+      if(!this.stationId) {
+        await this.$refs.stationModal.showModal();
+        return;
+      }
+      const obj = await this.convertStringToObject();
+      if(!obj.stationId) {
+        await this.mutateCurrentURL();
+      }
+      setTimeout(async() => {
+        await this.setFilter();
+      }, 100);
     });
   },
+  beforeDestroy() {
+    this.$nextTick(async function () {
+      this.filter.reset();
+    })
+  },  
   computed: {
+    filter() {
+      this.filterData = this.$clone(this.$filter.values)
+      return this.$filter
+    },
+    userData() {
+      return this.$store.state.quserAuth.userData
+    },
     scheduleTypeComputed: {
       get() {
         return this.scheduleType;
@@ -262,7 +293,7 @@ export default {
               },
             },
             stationId: {
-              value: null,
+              value: this.stationId,
               type: "select",
               loadOptions: {
                 apiRoute: "apiRoutes.qsetupagione.setupStations",
@@ -443,7 +474,8 @@ export default {
           lastEnd = dateEnd;
         }
         const currentFilterDate = this.getCurrentFilterDate(lastStart, lastEnd);
-        const filter =  Object.keys(this.$route.query).length === 0 ? this.$filter.values : this.$route.query;
+        const objUrl = await this.convertStringToObject();
+        const filter =  Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
         const thereAreFilters =
           Object.keys(filter).length > 0
             ? filter
@@ -521,7 +553,9 @@ export default {
     },
     getFilter() {
       this.events = [];
-      this.getWorkOrderFilter();
+      if(this.stationId) {
+        this.getWorkOrderFilter();
+      }
     },
     setFilter() {
       return new Promise(async (resolve, reject) => {
@@ -561,6 +595,50 @@ export default {
       }
       s['align-items'] = 'flex-start'
       return s
+    },
+    async saveFilterStationId(stationId) {
+      this.stationId = stationId;
+      await this.mutateCurrentURL();
+      this.emitFilter();
+    },
+    async mutateCurrentURL() {
+      try {
+        const origin = window.location.href.split('?');
+        const urlBase = `${origin[0]}?stationId=${this.stationId}`
+        window.history.replaceState({}, '', urlBase);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    emitFilter() {
+      //Add Values
+      setTimeout(() => {
+        this.setFilter();
+      }, 1000);
+      
+    },
+    async convertStringToObject() {
+      try {
+        let url = '';
+        const origin = window.location.href.split('?');
+        if(origin.length === 2) {
+          url = origin[1] || '';
+        }
+        if(url.length > 0) {
+          const regex = /=/g;
+          const regex2 = /&/g;
+          const remplaceFilter = url.replace(regex, ':').replace(regex2, ',');
+          const remplaceObject = eval('({' + remplaceFilter + '})');
+          Object.keys(remplaceObject).forEach(key => {
+            if(this.$filter.fields.hasOwnProperty(key)) {
+              remplaceObject[key] = String(remplaceObject[key]);
+            }
+          });
+          return remplaceObject || {};
+        }
+      } catch (error) {
+       console.log(error); 
+      }
     },
   },
 };
