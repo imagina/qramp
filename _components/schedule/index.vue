@@ -53,7 +53,7 @@
       @click:day:header2="eventSchedule"
     >
       <template #day="{ timestamp }">
-        <div  class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2">
+        <div class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2">
           <div
             v-for="(event, index) in getEvents(timestamp.date)"
             :key="event.id"
@@ -72,37 +72,39 @@
         </div>
       </template>
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
-          <template>
-              <template v-for="(event, index) in getEvents(timestamp.date)">
-                <div
-                  :key="index"
-                  v-if="event.time"
-                  class="
-                    tw-text-xs
-                    tw-my-1
-                    tw-px-1
-                    tw-mx-2
-                    tw-rounded-md
-                    tw-text-white
-                    tw-cursor-pointer"
-                  @click.stop.prevent="editSchedule(event)"
-                  :class="event.flightStatusColor ? `bg-${event.flightStatusColor}`: 'tw-bg-blue-800'"
-                  :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
-                >
-                  <div
-                    class="tw-font-semibold"
-                    style="font-size: 9.5px"
-                  >
-                    <i class="fak fa-plane-right-thin-icon" />
-                    {{ event.calendarTitle }}
-                  </div>
-                  <div>
-                    Time: {{ event.time }}
-                  </div>
-                </div>
-              </template>
+        <template>
+          <template v-for="(event, index) in getEvents(timestamp.date)">
+            <div
+              :key="index"
+              v-if="event.time"
+              class="
+                tw-text-xs
+                tw-my-1
+                tw-px-1
+                tw-mx-2
+                tw-rounded-md
+                tw-text-white
+                tw-cursor-pointer
+              "
+              @click.stop.prevent="editSchedule(event)"
+              :class="
+                event.flightStatusColor
+                  ? `bg-${event.flightStatusColor}`
+                  : 'tw-bg-blue-800'
+              "
+              :style="
+                badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
+              "
+            >
+              <div class="tw-font-semibold" style="font-size: 9.5px">
+                <i class="fak fa-plane-right-thin-icon" />
+                {{ event.calendarTitle }}
+              </div>
+              <div>Time: {{ event.time }}</div>
+            </div>
           </template>
         </template>
+      </template>
     </q-calendar>
     <div
       v-if="loading"
@@ -133,17 +135,17 @@
       @deleteSchedule="deleteSchedule"
     />
     <form-orders ref="formOrders" />
-      <stationModal 
-        ref="stationModal"
-        @saveFilterStationId="saveFilterStationId"
-      />
+    <stationModal
+      ref="stationModal"
+      @saveFilterStationId="saveFilterStationId"
+    />
   </div>
 </template>
 <script>
 import calendar, { QCalendar } from "@quasar/quasar-ui-qcalendar";
 import modalForm from "./modals/modalForm.vue";
 import formOrders from "../formOrders.vue";
-import stationModal from './modals/stationModal.vue';
+import stationModal from "./modals/stationModal.vue";
 import _ from "lodash";
 
 import {
@@ -169,9 +171,44 @@ export default {
       selectedData: null,
       scheduleType: "month",
       events: [],
-      scheduleTypeOptions: [
+      stationId: null,
+      filterData: null,
+    };
+  },
+  watch: {
+    $route: {
+      deep: true,
+      handler: async function () {
+        this.$router.go();
+      },
+    },
+  },
+  mounted() {
+    this.$nextTick(async function () {
+      this.stationId = this.userData.options.stationsAssigned[0] || null;
+      if (!this.stationId) {
+        await this.$refs.stationModal.showModal();
+        return;
+      }
+      const obj = await this.convertStringToObject();
+      if (!obj.stationId) {
+        await this.mutateCurrentURL();
+      }
+      setTimeout(async () => {
+        await this.setFilter();
+      }, 100);
+    });
+  },
+  beforeDestroy() {
+    this.$nextTick(async function () {
+      this.filter.reset();
+    });
+  },
+  computed: {
+    scheduleTypeOptions() {
+      return [
         {
-          label: this.$tr("isite.cms.label.month"),
+          label: `${this.$tr("isite.cms.label.month")} (${this.$moment(this.selectedDate).format('MMMM')})`,
           value: "month",
           icon: "fas fa-calendar-alt",
         },
@@ -185,47 +222,14 @@ export default {
           value: "day-agenda",
           icon: "fas fa-calendar-day",
         },
-      ],
-      stationId: null,
-      filterData: null,
-    };
-  },
-  watch: {
-    '$route': {
-      deep: true,
-      handler: async function () {
-        this.$router.go();
-      }
+      ];
     },
-  },
-  mounted() {
-    this.$nextTick(async function () {
-      this.stationId = this.userData.options.stationsAssigned[0] || null;
-      if(!this.stationId) {
-        await this.$refs.stationModal.showModal();
-        return;
-      }
-      const obj = await this.convertStringToObject();
-      if(!obj.stationId) {
-        await this.mutateCurrentURL();
-      }
-      setTimeout(async() => {
-        await this.setFilter();
-      }, 100);
-    });
-  },
-  beforeDestroy() {
-    this.$nextTick(async function () {
-      this.filter.reset();
-    })
-  },  
-  computed: {
     filter() {
-      this.filterData = this.$clone(this.$filter.values)
-      return this.$filter
+      this.filterData = this.$clone(this.$filter.values);
+      return this.$filter;
     },
     userData() {
-      return this.$store.state.quserAuth.userData
+      return this.$store.state.quserAuth.userData;
     },
     scheduleTypeComputed: {
       get() {
@@ -240,20 +244,23 @@ export default {
     extraPageActions() {
       return [
         {
-          label: 'Copy Tiny URL',
+          label: "Copy Tiny URL",
           props: {
-            icon: 'fa-light fa-copy',
+            icon: "fa-light fa-copy",
           },
           action: () => {
-            let hrefSplit = window.location.href.split("?")
-            let tinyUrl = this.$store.state.qsiteApp.originURL+'/#/ramp/schedule/public/index';
-            if(hrefSplit[1])
-              tinyUrl = tinyUrl + '?' + hrefSplit[1];
-            this.$helper.copyToClipboard(tinyUrl,"Tiny URL copied!")
+            let hrefSplit = window.location.href.split("?");
+            let tinyUrl =
+              this.$store.state.qsiteApp.originURL +
+              "/#/ramp/schedule/public/index";
+            if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
+            this.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
           },
         },
         {
-          label: this.$t('isite.cms.configList.fullScreen', { capitalize: true }),
+          label: this.$t("isite.cms.configList.fullScreen", {
+            capitalize: true,
+          }),
           props: {
             icon: this.fullscreen ? "fullscreen_exit" : "fullscreen",
           },
@@ -266,73 +273,73 @@ export default {
     },
     filsterAction() {
       return {
-          name: this.$route.name,
-          fields: {
-            customerId: {
-              value: null,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qramp.setupCustomers",
-                select: { label: "customerName", id: "id" },
-              },
-              props: {
-                label: "Customer",
-                clearable: true,
-              },
+        name: this.$route.name,
+        fields: {
+          customerId: {
+            value: null,
+            type: "select",
+            loadOptions: {
+              apiRoute: "apiRoutes.qramp.setupCustomers",
+              select: { label: "customerName", id: "id" },
             },
-            statusId: {
-              value: null,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qramp.workOrderStatuses",
-                select: { label: "statusName", id: "id" },
-              },
-              props: {
-                label: "Status",
-                clearable: true,
-              },
-            },
-            stationId: {
-              value: this.stationId,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qsetupagione.setupStations",
-                select: { label: "stationName", id: "id" },
-              },
-              props: {
-                label: "Station",
-                clearable: true,
-              },
-            },
-            adHoc: {
-              value: null,
-              type: "select",
-              props: {
-                label: "Ad Hoc",
-                clearable: true,
-                options: [
-                  { label: this.$tr("isite.cms.label.yes"), value: true },
-                  { label: this.$tr("isite.cms.label.no"), value: false },
-                ],
-              },
-            },
-            flightStatusId: {
-              value: null,
-              type: "select",
-              loadOptions: {
-                apiRoute: "apiRoutes.qfly.flightStatuses",
-                select: { label: "name", id: "id" },
-              },
-              props: {
-                label: "Flight Status",
-                clearable: true,
-              },
+            props: {
+              label: "Customer",
+              clearable: true,
             },
           },
-          callBack: this.getFilter,
-          storeFilter: false,
-        };
-    },  
+          statusId: {
+            value: null,
+            type: "select",
+            loadOptions: {
+              apiRoute: "apiRoutes.qramp.workOrderStatuses",
+              select: { label: "statusName", id: "id" },
+            },
+            props: {
+              label: "Status",
+              clearable: true,
+            },
+          },
+          stationId: {
+            value: this.stationId,
+            type: "select",
+            loadOptions: {
+              apiRoute: "apiRoutes.qsetupagione.setupStations",
+              select: { label: "stationName", id: "id" },
+            },
+            props: {
+              label: "Station",
+              clearable: true,
+            },
+          },
+          adHoc: {
+            value: null,
+            type: "select",
+            props: {
+              label: "Ad Hoc",
+              clearable: true,
+              options: [
+                { label: this.$tr("isite.cms.label.yes"), value: true },
+                { label: this.$tr("isite.cms.label.no"), value: false },
+              ],
+            },
+          },
+          flightStatusId: {
+            value: null,
+            type: "select",
+            loadOptions: {
+              apiRoute: "apiRoutes.qfly.flightStatuses",
+              select: { label: "name", id: "id" },
+            },
+            props: {
+              label: "Flight Status",
+              clearable: true,
+            },
+          },
+        },
+        callBack: this.getFilter,
+        storeFilter: false,
+      };
+    },
   },
   methods: {
     async scheduleNext() {
@@ -356,22 +363,28 @@ export default {
     getEvents(timestamp) {
       try {
         let events = this.$clone(this.events || []);
-        const filters = events.filter((event) => {
-          if (event.inboundScheduledArrival) {
-            const momentDate = this.$moment(
-              event.inboundScheduledArrival,
-              "YYYY-MM-DD"
-            ).toDate();
+        const filters = events
+          .filter((event) => {
+            if (event.inboundScheduledArrival) {
+              const momentDate = this.$moment(
+                event.inboundScheduledArrival,
+                "YYYY-MM-DD"
+              ).toDate();
 
-            let eventDate = calendar.parseDate(momentDate);
-            return eventDate.date === timestamp;
-          }
-          return false;
-        }).map(item => ({
-          ...item,
-          time: item.sta,
-        }));
-        return _.orderBy(filters, ['inboundScheduledArrival', 'time'], ['asc', 'asc']);
+              let eventDate = calendar.parseDate(momentDate);
+              return eventDate.date === timestamp;
+            }
+            return false;
+          })
+          .map((item) => ({
+            ...item,
+            time: item.sta,
+          }));
+        return _.orderBy(
+          filters,
+          ["inboundScheduledArrival", "time"],
+          ["asc", "asc"]
+        );
       } catch (error) {
         console.log(error);
       }
@@ -475,11 +488,9 @@ export default {
         }
         const currentFilterDate = this.getCurrentFilterDate(lastStart, lastEnd);
         const objUrl = await this.convertStringToObject();
-        const filter =  Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
-        const thereAreFilters =
-          Object.keys(filter).length > 0
-            ? filter
-            : {};
+        const filter =
+          Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
+        const thereAreFilters = Object.keys(filter).length > 0 ? filter : {};
         const filterCurrent = {
           ...thereAreFilters,
           ...currentFilterDate,
@@ -553,7 +564,7 @@ export default {
     },
     getFilter() {
       this.events = [];
-      if(this.stationId) {
+      if (this.stationId) {
         this.getWorkOrderFilter();
       }
     },
@@ -574,27 +585,26 @@ export default {
         console.error(error);
       }
     },
-    badgeStyles (event, type, timeStartPos, timeDurationHeight) {
-      const s = {}
+    badgeStyles(event, type, timeStartPos, timeDurationHeight) {
+      const s = {};
       if (timeStartPos) {
         // don't clamp position to 0px
-        s.top = timeStartPos(event.time, false) + 'px'
-        s.position = 'absolute'
+        s.top = timeStartPos(event.time, false) + "px";
+        s.position = "absolute";
         if (event.side !== undefined) {
-          s.width = '50%'
-          if (event.side === 'right') {
-            s.left = '50%'
+          s.width = "50%";
+          if (event.side === "right") {
+            s.left = "50%";
           }
-        }
-        else {
-          s.width = '100%'
+        } else {
+          s.width = "100%";
         }
       }
       if (timeDurationHeight) {
-        s.height = timeDurationHeight(event.duration) + 'px'
+        s.height = timeDurationHeight(event.duration) + "px";
       }
-      s['align-items'] = 'flex-start'
-      return s
+      s["align-items"] = "flex-start";
+      return s;
     },
     async saveFilterStationId(stationId) {
       this.stationId = stationId;
@@ -603,9 +613,9 @@ export default {
     },
     async mutateCurrentURL() {
       try {
-        const origin = window.location.href.split('?');
-        const urlBase = `${origin[0]}?stationId=${this.stationId}`
-        window.history.replaceState({}, '', urlBase);
+        const origin = window.location.href.split("?");
+        const urlBase = `${origin[0]}?stationId=${this.stationId}`;
+        window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
       }
@@ -615,29 +625,28 @@ export default {
       setTimeout(() => {
         this.setFilter();
       }, 1000);
-      
     },
     async convertStringToObject() {
       try {
-        let url = '';
-        const origin = window.location.href.split('?');
-        if(origin.length === 2) {
-          url = origin[1] || '';
+        let url = "";
+        const origin = window.location.href.split("?");
+        if (origin.length === 2) {
+          url = origin[1] || "";
         }
-        if(url.length > 0) {
+        if (url.length > 0) {
           const regex = /=/g;
           const regex2 = /&/g;
-          const remplaceFilter = url.replace(regex, ':').replace(regex2, ',');
-          const remplaceObject = eval('({' + remplaceFilter + '})');
-          Object.keys(remplaceObject).forEach(key => {
-            if(this.$filter.fields.hasOwnProperty(key)) {
+          const remplaceFilter = url.replace(regex, ":").replace(regex2, ",");
+          const remplaceObject = eval("({" + remplaceFilter + "})");
+          Object.keys(remplaceObject).forEach((key) => {
+            if (this.$filter.fields.hasOwnProperty(key)) {
               remplaceObject[key] = String(remplaceObject[key]);
             }
           });
           return remplaceObject || {};
         }
       } catch (error) {
-       console.log(error); 
+        console.log(error);
       }
     },
   },
