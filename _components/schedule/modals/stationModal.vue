@@ -4,7 +4,6 @@
     title="Filter schedule"
     :persistent="true"
     :loading="loading"
-    @hide="hideModal"
     :actions="actions"
     :maximized="$q.screen.lt.md"
   >
@@ -24,15 +23,6 @@ export default {
   computed: {
     actions() {
       return [
-        {
-          props: {
-            color: "primary",
-            label: this.$tr("isite.cms.label.close"),
-          },
-          action: () => {
-            this.hideModal();
-          },
-        },
         {
           props: {
             color: "primary",
