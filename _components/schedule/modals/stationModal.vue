@@ -8,6 +8,7 @@
     hideCloseAction
     :maximized="$q.screen.lt.md"
   >
+    <dynamic-field :field="field.banner" v-model="stationId" />
     <q-form ref="formStation">
       <dynamic-field :field="field.stationId" v-model="stationId" />
     </q-form>
@@ -37,6 +38,14 @@ export default {
     },
     field() {
       return {
+        banner: {
+          type: 'banner',
+          props: {
+            color: 'info',
+            icon: 'fas fa-exclamation-triangle',
+            message: 'You have to select an Station previusly',
+          }
+        },
         stationId: {
           value: this.stationId,
           type: "select",
