@@ -121,7 +121,10 @@ export default {
       return qRampStore().getLoading();
     },
     actions() {
-      return this.modalProps.update ? this.actionsStepperButtom : this.actionSimpleWorkOrder;
+      if(!qRampStore().getIsblank()) {
+        return this.modalProps.update ? this.actionsStepperButtom : this.actionSimpleWorkOrder;
+      }
+      return [];
     },
     actionSimpleWorkOrder() {
       return [

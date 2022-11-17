@@ -129,6 +129,7 @@
       </div>
     </div>
     <modalForm
+      v-if="!isBlank"
       ref="modalForm"
       @addSchedule="addSchedule"
       @updateSchedule="updateSchedule"
@@ -136,6 +137,7 @@
     />
     <form-orders ref="formOrders" />
     <stationModal
+      v-if="!isBlank"
       ref="stationModal"
       @saveFilterStationId="saveFilterStationId"
     />
@@ -147,6 +149,7 @@ import modalForm from "./modals/modalForm.vue";
 import formOrders from "../formOrders.vue";
 import stationModal from "./modals/stationModal.vue";
 import _ from "lodash";
+import qRampStore from '../../_store/qRampStore.js';
 
 import {
   STATUS_POSTED,
@@ -156,6 +159,12 @@ import {
   STATUS_SCHEDULE,
 } from "../model/constants";
 export default {
+  props:{
+    isBlank: {
+      type: Boolean,
+      default: () => false,
+    }
+  },
   components: {
     QCalendar,
     modalForm,
@@ -185,6 +194,7 @@ export default {
   },
   mounted() {
     this.$nextTick(async function () {
+      qRampStore().setIsblank(this.isBlank)
       const obj = await this.convertStringToObject();
       const stationsAssigned = this.userData ? this.userData.options.stationsAssigned[0] : null;
       this.stationId = stationsAssigned || (obj.stationId || null);
@@ -399,12 +409,14 @@ export default {
       return map;
     },
     eventSchedule(event) {
-      this.selectedData = event.scope.timestamp;
-      this.$refs.modalForm.openModal(
-        `Create schedule date: ${event.scope.timestamp.date}`,
-        null,
-        event.scope.timestamp.date
-      );
+      if(!this.isBlank) {
+        this.selectedData = event.scope.timestamp;
+        this.$refs.modalForm.openModal(
+          `Create schedule date: ${event.scope.timestamp.date}`,
+          null,
+          event.scope.timestamp.date
+        );
+      }
     },
     editSchedule(event) {
       this.showWorkOrder(event);

@@ -559,6 +559,7 @@ export default {
               rules: [
                 (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
               ],
+              readonly: this.disabledReadonly,
               label: '*Responsible',
               clearable: true,
               color: "primary",

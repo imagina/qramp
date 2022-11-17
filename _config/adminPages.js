@@ -48,7 +48,7 @@ export default {
     authenticated: true,
     path: '/ramp/schedule/public/index',
     name: 'qramp.admin.public.schedule',
-    page: () => import('../_components/schedule/index.vue'),
+    page: () => import('../_components/schedule/indexBlank.vue'),
     layout: () => import('@imagina/qsite/_layouts/blank.vue'),
     title: 'ifly.cms.sidebar.schedule',
     icon: 'fa-thin fa-calendar-days',

@@ -30,6 +30,7 @@ const state = reactive({
     loadingModalMap: false,
     flightList: [],
     flightId: 0,
+    isblank: false,
 });
 
 export default function qRampStore() {
@@ -42,9 +43,17 @@ export default function qRampStore() {
     function setNeedToBePosted(value) {
         state.needToBePosted = value;
     }
+    function getIsblank(value) {
+        return state.isblank;
+    }
+    function setIsblank(value) {
+        state.isblank = value;
+    }
     function disabledReadonly() {
         const statusId = Number(state.statusId);
-
+        if(state.isblank) {
+            return true;
+        }
         if (statusId === STATUS_DRAFT && state.needToBePosted) {
             return true;
         }
@@ -403,5 +412,7 @@ export default function qRampStore() {
         productDataTransformation,
         isDelete,
         getFlights,
+        setIsblank,
+        getIsblank,
     }
 }
