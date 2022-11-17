@@ -42,7 +42,6 @@
                 "
               >
                 {{ flight.flightPosition.status }}
-
               </p>
               <p class="tw-text-yellow-600 tw-text-base tw-hidden">
                 {{ minutesToHours(flight.flightPosition.timeTotalEstimated) }}
