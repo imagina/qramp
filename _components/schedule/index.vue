@@ -196,7 +196,16 @@ export default {
     this.$nextTick(async function () {
       qRampStore().setIsblank(this.isBlank)
       const obj = await this.convertStringToObject();
-      const stationsAssigned = this.userData ? this.userData.options.stationsAssigned[0] : null;
+      let stationsAssigned = null;
+      if(this.userData) {
+        if(this.userData.options) {
+          if(this.userData.options.stationsAssigned 
+            && Array.isArray(this.userData.options.stationsAssigned)
+            && this.userData.options.stationsAssigned.length > 0) {
+              stationsAssigned = this.userData.options.stationsAssigned[0];
+          }
+        }
+      }
       this.stationId = stationsAssigned || (obj.stationId || null);
       if (!this.stationId || Object.keys(obj).length === 0) {
         await this.$refs.stationModal.showModal();
