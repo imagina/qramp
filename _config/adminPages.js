@@ -16,7 +16,7 @@ export default {
   },
   flightMap: {
     //permission: 'ramp.work-orders.manage',
-    activated: true,
+    activated: false,
     authenticated: true,
     path: '/ramp/flight-map/index',
     name: 'qramp.admin.flightMap',
@@ -45,7 +45,7 @@ export default {
   publicSchedule: {
     //permission: 'ramp.work-orders.manage',
     activated: true,
-    authenticated: true,
+    authenticated: false,
     path: '/ramp/schedule/public/index',
     name: 'qramp.admin.public.schedule',
     page: () => import('../_components/schedule/indexBlank.vue'),
