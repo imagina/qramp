@@ -137,7 +137,6 @@
     />
     <form-orders ref="formOrders" />
     <stationModal
-      v-if="!isBlank"
       ref="stationModal"
       @saveFilterStationId="saveFilterStationId"
     />
