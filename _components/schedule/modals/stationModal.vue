@@ -43,7 +43,7 @@ export default {
           props: {
             color: 'info',
             icon: 'fas fa-exclamation-triangle',
-            message: 'You have to select an Station previusly',
+            message: 'You must first select a Station',
           }
         },
         stationId: {
