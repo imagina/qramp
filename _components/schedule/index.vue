@@ -415,11 +415,13 @@ export default {
             ...item,
             time: item.sta,
           }));
-        return _.orderBy(
+        const order = _.orderBy(
           filters,
-          ["inboundScheduledArrival", "time"],
-          ["asc", "asc"]
+          ["time"],
+          ["asc"]
         );
+        console.log(order);
+        return order;
       } catch (error) {
         console.log(error);
       }
