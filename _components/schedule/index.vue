@@ -194,29 +194,7 @@ export default {
   },
   mounted() {
     this.$nextTick(async function () {
-      qRampStore().setIsblank(this.isBlank)
-      const obj = await this.convertStringToObject();
-      let stationsAssigned = null;
-      if(this.userData) {
-        if(this.userData.options) {
-          if(this.userData.options.stationsAssigned 
-            && Array.isArray(this.userData.options.stationsAssigned)
-            && this.userData.options.stationsAssigned.length > 0) {
-              stationsAssigned = this.userData.options.stationsAssigned[0];
-          }
-        }
-      }
-      this.stationId = stationsAssigned || (obj.stationId || null);
-      if (!this.stationId || Object.keys(obj).length === 0) {
-        await this.$refs.stationModal.showModal();
-        return;
-      }
-      if (!obj.stationId) {
-        await this.mutateCurrentURL();
-      }
-      setTimeout(async () => {
-        await this.setFilter();
-      }, 100);
+      await this.init();
     });
   },
   beforeDestroy() {
@@ -357,11 +335,48 @@ export default {
           },
         },
         callBack: this.getFilter,
-        storeFilter: false,
+        storeFilter: true,
       };
     },
   },
   methods: {
+   async init() {
+      try {
+        qRampStore().setIsblank(this.isBlank)
+        const obj = await this.convertStringToObject();
+        this.stationId = this.getStationAssigned() || (obj.stationId || null);
+        if (!this.stationId) {
+          await this.$refs.stationModal.showModal();
+          return;
+        }
+        if (!obj.stationId) {
+          await this.mutateCurrentURL();
+        }
+        setTimeout(async () => {
+          await this.setFilter();
+        }, 100);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getStationAssigned() {
+      try {
+        let stationsAssigned = null;
+        if(this.userData) {
+          if(this.userData.options) {
+            if(this.userData.options.stationsAssigned 
+              && Array.isArray(this.userData.options.stationsAssigned)
+              && this.userData.options.stationsAssigned.length > 0) {
+                stationsAssigned = this.userData.options.stationsAssigned.shift();
+            }
+          }
+        }
+        return stationsAssigned;
+      } catch (error) {
+        console.log(error)
+      }
+      
+    }, 
     async scheduleNext() {
       await this.$refs.schedule.next();
       await this.getListOfSelectedWorkOrders();
