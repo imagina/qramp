@@ -42,7 +42,6 @@
     </div>
     <q-calendar
       ref="schedule"
-      style="height: calc(100vh - 50px)"
       v-model="selectedDate"
       :view="scheduleType"
       locale="en-us"
@@ -53,7 +52,9 @@
       @click:day:header2="eventSchedule"
     >
       <template #day="{ timestamp }">
-        <div class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2">
+        <div
+          v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')"
+          class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2">
           <div
             v-for="(event, index) in getEvents(timestamp.date)"
             :key="event.id"
