@@ -91,9 +91,9 @@ export default {
     },
     async saveScheduleForm() {
       try {
-        this.tranformData();
         this.$refs.formSchedule.validate().then(async (success) => {
           if (success) {
+            this.tranformData();
             if (this.isEdit) {
               this.$emit("updateSchedule", this.form);
             } else {
