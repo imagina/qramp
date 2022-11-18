@@ -58,6 +58,9 @@ export default {
               value: null,
               type: 'hour',
               props: {
+                rules: [
+                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                ],
                 label: 'STA',
                 format24h: true,
               },
@@ -66,6 +69,9 @@ export default {
               value: null,
               type: 'hour',
               props: {
+                rules: [
+                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                ],
                 label: 'STD',
                 format24h: true,
               },

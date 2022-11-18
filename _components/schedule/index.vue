@@ -424,14 +424,6 @@ export default {
         console.log(error);
       }
     },
-    eventsMap() {
-      const map = {};
-      this.events.forEach((event) =>
-        (map[event.inboundScheduledArrival] =
-          map[event.inboundScheduledArrival] || []).push(event)
-      );
-      return map;
-    },
     eventSchedule(event) {
       if(!this.isBlank && !event.scope.outside) {
         this.selectedData = event.scope.timestamp;
