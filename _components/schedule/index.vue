@@ -433,7 +433,7 @@ export default {
       return map;
     },
     eventSchedule(event) {
-      if(!this.isBlank) {
+      if(!this.isBlank && !event.scope.outside) {
         this.selectedData = event.scope.timestamp;
         this.$refs.modalForm.openModal(
           `Create schedule date: ${event.scope.timestamp.date}`,
