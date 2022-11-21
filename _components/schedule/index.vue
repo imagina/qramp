@@ -479,12 +479,8 @@ export default {
     getCurrentFilterDate(lastStart, lastEnd) {
       try {
         let lastStartM = this.$moment(lastStart)
-          .startOf("month")
-          .startOf("day")
           .format("YYYY-MM-DD HH:mm:ss");
         let lastEndM = this.$moment(lastEnd)
-          .endOf("month")
-          .endOf("day")
           .format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
@@ -516,7 +512,7 @@ export default {
           lastStart = dateStart;
           lastEnd = dateEnd;
         }
-        const currentFilterDate = this.getCurrentFilterDate(lastStart, lastEnd);
+        const currentFilterDate = await this.getCurrentFilterDate(lastStart, lastEnd);
         const objUrl = await this.convertStringToObject();
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
