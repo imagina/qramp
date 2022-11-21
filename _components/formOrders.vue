@@ -31,6 +31,7 @@ import {
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED,
+  STATUS_SCHEDULE,
   STATUS_CLOSED,
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
@@ -176,7 +177,7 @@ export default {
             color:'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
             label: 'Save to Draft',
-            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED,
+            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
           action: async () => {
@@ -191,7 +192,7 @@ export default {
             color:'primary',
             'icon-right': 'fal fa-check',
             label: this.$tr('isite.cms.label.closeFlight'),
-            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED,
+            vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
           action: async () => {

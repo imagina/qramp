@@ -10,7 +10,7 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_CLOSED,
-  STATUS_DRAFT
+  STATUS_DRAFT, STATUS_SCHEDULE
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -41,6 +41,7 @@ export default {
         statusId == STATUS_DRAFT
         || statusId == STATUS_CLOSED
         || statusId == STATUS_POSTED
+        || statusId == STATUS_SCHEDULE
         || (statusId == STATUS_SUBMITTED
         && this.editPermissionseSubmitted)
     },
