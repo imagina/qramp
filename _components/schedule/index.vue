@@ -420,7 +420,6 @@ export default {
           ["time"],
           ["asc"]
         );
-        console.log(order);
         return order;
       } catch (error) {
         console.log(error);
