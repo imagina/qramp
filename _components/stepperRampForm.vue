@@ -39,7 +39,7 @@
           />
           <i-services 
             ref="services" 
-            @isError="error = $event" 
+            @isError="isError" 
             v-if="step.step == STEP_SERVICE" 
             :servicesData="step.form" 
             :readonly="readonly"
@@ -140,6 +140,16 @@ export default {
       this.$emit('sp', value);
     }
   },
+  computed: {
+    stepError: {
+      get() {
+        return this.error;
+      },
+      set(value) {
+        this.error = value;
+      }
+    }
+  },
   methods: {
     init(){
       this.$emit('sp', this.sp)
@@ -195,7 +205,7 @@ export default {
       return obj
     },
     async sendInfo() {
-      qRampStore().showLoading();
+      qRampStore().showLoading();     
       const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
       if(validateAllFieldsRequiredByStep) return;
       const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
@@ -227,7 +237,15 @@ export default {
     async next() {
       await this.setData();
       setTimeout(()=>{
-        if(this.error) return;
+        if(this.error) {
+          if(this.sp === STEP_SERVICE) {
+            const validateDateService = this.validateFulldate();
+            if(!validateDateService) {
+              this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
+            }
+          }
+          return
+        };
         this.$refs.stepper.next()
       },500)
     },
@@ -263,6 +281,20 @@ export default {
         this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
         console.log('SEND INFO ERROR:', err)
       })
+    },
+    validateFulldate() {
+      let validate = true;
+      this.$store.state.qrampApp.services.forEach((service) => {
+        service.work_order_item_attributes.forEach((attr) => {
+          if(attr.type === 'fullDate') {
+            if(!this.$moment(attr.value, 'MM/DD/YYYY HH:mm', true).isValid()) {
+                validate = false;
+                return;
+            }
+          }
+        })
+      })
+      return validate; 
     },
     async validateAllFieldsRequiredByStep() {
       try {
@@ -315,8 +347,17 @@ export default {
           this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           return true;
         }
+        const validateDateService = await this.validateFulldate();
         const service = this.$store.state.qrampApp.services;
         if(service.length === 0) {
+          await this.setStep(STEP_SERVICE);
+          this.error = true;
+          qRampStore().hideLoading();
+          await this.setData();
+          return true;
+        }
+        if(!validateDateService) {
+          this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
           await this.setStep(STEP_SERVICE);
           this.error = true;
           qRampStore().hideLoading();
@@ -332,6 +373,9 @@ export default {
     },
     async setStep(value) {
       this.sp = value;
+    },
+    isError(value) {
+      this.stepError = value;
     },
   },
 }

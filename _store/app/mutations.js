@@ -8,18 +8,21 @@ function setAttr(obj) {
                   value: obj[key].value,
                   attribute_id: obj[key].attributeId,
                   id: obj[key].id,
+                  type: obj[key].type,
               })
           } else if (obj[key].id && !obj[key].attributeId) {
               att.push({
                   name: obj[key].name,
                   value: obj[key].value,
                   attribute_id: obj[key].id,
+                  type: obj[key].type,
               })
           } else if (obj[key].attributeId && obj[key].value) {
               att.push({
                   name: obj[key].name,
                   value: obj[key].value,
                   attribute_id: obj[key].attributeId,
+                  type: obj[key].type,
               })
           }
       }
