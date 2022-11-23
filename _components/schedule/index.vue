@@ -2,6 +2,7 @@
   <div :class="{ 'fullscreen tw-bg-white tw-p-3': fullscreen }">
     <div class="box box-auto-height q-mb-md">
       <page-actions
+        ref="pageActions"
         :title="$t('ifly.cms.sidebar.schedule')"
         :extra-actions="extraPageActions"
         :excludeActions="fullscreen ? ['filter'] : []"
@@ -177,8 +178,9 @@ export default {
       loading: false,
       eventLoading: false,
       selectedDate: this.$moment().format("YYYY-MM-DD"),
+      selectedDateEnd: null,
       selectedData: null,
-      scheduleType: "month",
+      scheduleType: 'month',
       events: [],
       stationId: null,
       filterData: null,
@@ -194,7 +196,7 @@ export default {
   },
   mounted() {
     this.$nextTick(async function () {
-      await this.init();
+        await this.init();
     });
   },
   beforeDestroy() {
@@ -206,16 +208,19 @@ export default {
     scheduleTypeOptions() {
       return [
         {
+          id: 1,
           label: `${this.$tr("isite.cms.label.month")} (${this.$moment(this.selectedDate).format('MMMM')})`,
           value: "month",
           icon: "fas fa-calendar-alt",
         },
         {
+          id: 2,
           label: this.$tr("isite.cms.label.week"),
           value: "week-agenda",
           icon: "fas fa-calendar-week",
         },
         {
+          id: 3,
           label: this.$tr("isite.cms.label.day"),
           value: "day-agenda",
           icon: "fas fa-calendar-day",
@@ -236,7 +241,7 @@ export default {
       async set(value) {
         this.scheduleType = value;
         await this.$refs.schedule;
-        await this.getListOfSelectedWorkOrders();
+        await this.getListOfSelectedWorkOrders(value);
       },
     },
     extraPageActions() {
@@ -333,6 +338,9 @@ export default {
               clearable: true,
             },
           },
+          type: {
+            value: null,
+          },
         },
         callBack: this.getFilter,
         storeFilter: true,
@@ -343,7 +351,16 @@ export default {
    async init() {
       try {
         qRampStore().setIsblank(this.isBlank)
-        const obj = await this.convertStringToObject();
+        await this.initUrlMutate();
+        setTimeout(async () => {
+          await this.setFilter();
+        }, 100);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async initUrlMutate() {
+      const obj = await this.convertStringToObject();
         this.stationId = this.getStationAssigned() || (obj.stationId || null);
         if (!this.stationId) {
           await this.$refs.stationModal.showModal();
@@ -352,12 +369,6 @@ export default {
         if (!obj.stationId) {
           await this.mutateCurrentURL();
         }
-        setTimeout(async () => {
-          await this.setFilter();
-        }, 100);
-      } catch (error) {
-        console.log(error);
-      }
     },
     getStationAssigned() {
       try {
@@ -385,12 +396,12 @@ export default {
       await this.$refs.schedule.prev();
       await this.getListOfSelectedWorkOrders();
     },
-    async getListOfSelectedWorkOrders() {
+    async getListOfSelectedWorkOrders(type = false) {
       try {
         this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
-        await this.getWorkOrderFilter(false, lastStart, lastEnd);
+        await this.getWorkOrderFilter(false, lastStart, lastEnd, type);
       } catch (error) {
         console.log(error);
       }
@@ -497,7 +508,8 @@ export default {
     async getWorkOrderFilter(
       refresh = false,
       dateStart = null,
-      dateEnd = null
+      dateEnd = null, 
+      type = false
     ) {
       try {
         let lastStart = this.$moment(this.selectedDate)
@@ -517,11 +529,15 @@ export default {
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
         const thereAreFilters = Object.keys(filter).length > 0 ? filter : {};
+        const scheduleTypeOption = this.scheduleTypeOptions.find(item => item.id === Number(thereAreFilters.type)) || 'month';
+        const scheduleTypeId = this.scheduleTypeOptions.find(item => item.value === this.scheduleType) || {};
+        thereAreFilters.type = String(scheduleTypeId.id) || '1';
+        if(type) this.mutateCurrentURLBrowser(thereAreFilters);
+        this.scheduleType = type ? type : scheduleTypeOption.value;
         const filterCurrent = {
           ...thereAreFilters,
           ...currentFilterDate,
         };
-
         await this.getWorkOrders(refresh, filterCurrent);
       } catch (error) {
         console.log(error);
@@ -639,12 +655,45 @@ export default {
     },
     async mutateCurrentURL() {
       try {
+        const scheduleTypeId = this.scheduleTypeOptions.find(item => item.value === this.scheduleType);
         const origin = window.location.href.split("?");
-        const urlBase = `${origin[0]}?stationId=${this.stationId}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
       }
+    },
+    async mutateCurrentURLBrowser(data) {
+      try {
+        let paramsUrl = '';
+        console.log(data);
+        Object.keys(data).forEach((item, index) => {
+          if(this.$filter.fields.hasOwnProperty(item)) {
+            if(index === 0) {
+              paramsUrl += this.validateObjectFilter('?', item, data);
+            } else {
+              paramsUrl += this.validateObjectFilter('&', item, data);
+            }
+          }
+        });
+        console.log(paramsUrl);
+        const origin = window.location.href.split('?');
+        const urlBase = `${origin[0]}${paramsUrl}`
+        window.history.replaceState({}, '', urlBase);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // validate Object Filter
+    validateObjectFilter(operator = '?', item, data) {
+      if(data[item]) {
+        if(typeof data[item] === 'object' 
+          || Array.isArray(data[item])) {
+          return  `${operator}${item}=${JSON.stringify(data[item])}`;
+        }
+        return `${operator}${item}=${data[item]}`;
+      }
+      return '';
     },
     emitFilter() {
       //Add Values
@@ -676,6 +725,12 @@ export default {
         this.$alert.error('The filter url is misspelled');
         console.log(error);
       }
+    },
+    emitFilterSchedule(filter) {
+      //Add Values
+      this.$filter.addValues(filter)
+      //Call back
+      if (this.filter && this.filter.callBack) this.filter.callBack(this.filter)
     },
   },
 };
