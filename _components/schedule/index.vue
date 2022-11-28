@@ -556,13 +556,17 @@ export default {
     },
     async getWorkOrders(refresh = false, filter) {
       try {
+        const filterClone = this.$clone(filter);
+        delete filterClone.type;
+        delete filterClone.dateStart;
+        delete filterClone.dateEnd;
         this.loading = true;
         const params = {
           refresh,
           params: {
             include: "flightStatus,gate",
             filter: {
-              ...filter,
+              ...filterClone,
               withoutDefaultInclude: true,
               order: {
                 field: "id",
