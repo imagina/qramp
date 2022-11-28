@@ -4,6 +4,7 @@
       <page-actions
         ref="pageActions"
         :title="$t('ifly.cms.sidebar.schedule')"
+        multipleRefresh
         :extra-actions="extraPageActions"
         :excludeActions="fullscreen ? ['filter'] : []"
         @refresh="getWorkOrderFilter(true)"
