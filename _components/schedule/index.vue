@@ -177,9 +177,9 @@ export default {
       fullscreen: false,
       loading: false,
       eventLoading: false,
-      selectedDate: this.$moment().format("YYYY-MM-DD"),
-      selectedDateEnd: null,
-      selectedData: null,
+      selectedDate: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
+      selectedDateEnd: this.$moment().endOf("month").endOf("day").format("YYYY-MM-DD"),
+      selectedDateStart: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
       scheduleType: 'month',
       events: [],
       stationId: null,
@@ -341,6 +341,12 @@ export default {
           type: {
             value: null,
           },
+          dateStart: {
+            value: null,
+          },
+          dateEnd: {
+            value: null,
+          },
         },
         callBack: this.getFilter,
         storeFilter: true,
@@ -366,6 +372,12 @@ export default {
           await this.$refs.stationModal.showModal();
           return;
         }
+        if(obj.dateStart) {
+          this.selectedDate = this.$moment(obj.dateStart, 'YYYYMMDD').format('YYYY-MM-DD');
+        }
+        if(obj.dateEnd) {
+          this.selectedDateEnd = this.$moment(obj.dateEnd, 'YYYYMMDD').format('YYYY-MM-DD');
+        }
         if (!obj.stationId) {
           await this.mutateCurrentURL();
         }
@@ -390,11 +402,11 @@ export default {
     }, 
     async scheduleNext() {
       await this.$refs.schedule.next();
-      await this.getListOfSelectedWorkOrders();
+      await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
     async schedulePrev() {
       await this.$refs.schedule.prev();
-      await this.getListOfSelectedWorkOrders();
+      await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
     async getListOfSelectedWorkOrders(type = false) {
       try {
@@ -490,8 +502,10 @@ export default {
     getCurrentFilterDate(lastStart, lastEnd) {
       try {
         let lastStartM = this.$moment(lastStart)
+          .startOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
         let lastEndM = this.$moment(lastEnd)
+          .endOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
@@ -512,19 +526,13 @@ export default {
       type = false
     ) {
       try {
-        let lastStart = this.$moment(this.selectedDate)
-          .startOf("month")
-          .startOf("day")
-          .format("YYYY-MM-DD HH:mm:ss");
-        let lastEnd = this.$moment(this.selectedDate)
-          .endOf("month")
-          .endOf("day")
+        this.selectedDateStart = this.$moment(this.selectedDate)
           .format("YYYY-MM-DD HH:mm:ss");
         if (dateStart && dateEnd) {
-          lastStart = dateStart;
-          lastEnd = dateEnd;
+          this.selectedDateStart = dateStart;
+          this.selectedDateEnd = dateEnd;
         }
-        const currentFilterDate = await this.getCurrentFilterDate(lastStart, lastEnd);
+        const currentFilterDate = await this.getCurrentFilterDate(this.selectedDateStart, this.selectedDateEnd);
         const objUrl = await this.convertStringToObject();
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
@@ -532,6 +540,8 @@ export default {
         const scheduleTypeOption = this.scheduleTypeOptions.find(item => item.id === Number(thereAreFilters.type)) || 'month';
         const scheduleTypeId = this.scheduleTypeOptions.find(item => item.value === this.scheduleType) || {};
         thereAreFilters.type = String(scheduleTypeId.id) || '1';
+        thereAreFilters.dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
+        thereAreFilters.dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
         if(type) this.mutateCurrentURLBrowser(thereAreFilters);
         this.scheduleType = type ? type : scheduleTypeOption.value;
         const filterCurrent = {
@@ -657,7 +667,9 @@ export default {
       try {
         const scheduleTypeId = this.scheduleTypeOptions.find(item => item.value === this.scheduleType);
         const origin = window.location.href.split("?");
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }`;
+        const dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
+        const dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
@@ -666,7 +678,6 @@ export default {
     async mutateCurrentURLBrowser(data) {
       try {
         let paramsUrl = '';
-        console.log(data);
         Object.keys(data).forEach((item, index) => {
           if(this.$filter.fields.hasOwnProperty(item)) {
             if(index === 0) {
@@ -676,7 +687,6 @@ export default {
             }
           }
         });
-        console.log(paramsUrl);
         const origin = window.location.href.split('?');
         const urlBase = `${origin[0]}${paramsUrl}`
         window.history.replaceState({}, '', urlBase);
