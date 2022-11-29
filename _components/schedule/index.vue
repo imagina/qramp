@@ -63,9 +63,11 @@
           >
             <q-badge
               :key="index"
-              class="tw-cursor-pointer"
+              class="tw-cursor-pointer tw-text-xs"
               @click.stop.prevent="editSchedule(event)"
-              :class="`bg-${event.flightStatusColor}`"
+              :class="event.flightStatusColor
+                  ? `bg-${event.flightStatusColor}`
+                  : 'tw-bg-blue-800'"
             >
               <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
                 {{ event.calendarTitle }}
@@ -99,7 +101,7 @@
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
               "
             >
-              <div class="tw-font-semibold" style="font-size: 9.5px">
+              <div class="tw-font-semibold">
                 <i class="fak fa-plane-right-thin-icon" />
                 {{ event.calendarTitle }}
               </div>
@@ -368,7 +370,8 @@ export default {
     },
     async initUrlMutate() {
       const obj = await this.convertStringToObject();
-        this.stationId = this.getStationAssigned() || (obj.stationId || null);
+      const localStationId = localStorage.getItem("stationId");
+        this.stationId = this.getStationAssigned() || (obj.stationId || null) || localStationId;
         if (!this.stationId) {
           await this.$refs.stationModal.showModal();
           return;
