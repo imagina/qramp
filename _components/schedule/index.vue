@@ -625,6 +625,7 @@ export default {
     getFilter() {
       this.events = [];
       if (this.stationId) {
+        localStorage.setItem("stationId", this.filter.values.stationId);
         this.getWorkOrderFilter();
       }
     },
