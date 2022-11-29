@@ -666,7 +666,8 @@ export default {
     async saveFilterStationId(stationId) {
       this.stationId = stationId;
       await this.mutateCurrentURL();
-      this.emitFilter();
+      await this.emitFilter();
+      await this.$router.go();
     },
     async mutateCurrentURL() {
       try {
