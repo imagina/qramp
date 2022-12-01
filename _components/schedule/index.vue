@@ -302,7 +302,6 @@ export default {
             },
             props: {
               label: "Status",
-              clearable: true,
             },
           },
           stationId: {
@@ -370,8 +369,8 @@ export default {
     },
     async initUrlMutate() {
       const obj = await this.convertStringToObject();
-      const localStationId = localStorage.getItem("stationId");
-        this.stationId = this.getStationAssigned() || (obj.stationId || null) || localStationId;
+      const localStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+        this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
         if (!this.stationId) {
           await this.$refs.stationModal.showModal();
           return;
@@ -622,11 +621,11 @@ export default {
           console.log(err);
         });
     },
-    getFilter() {
+    async getFilter() {
       this.events = [];
       if (this.stationId) {
-        localStorage.setItem("stationId", this.filter.values.stationId);
-        this.getWorkOrderFilter();
+        await sessionStorage.setItem("stationId", this.filter.values.stationId || null);
+        await this.getWorkOrderFilter();
       }
     },
     setFilter() {

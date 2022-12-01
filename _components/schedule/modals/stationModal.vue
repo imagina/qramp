@@ -75,7 +75,7 @@ export default {
       try {
         this.$refs.formStation.validate().then(async (success) => {
           if (success) {
-            localStorage.setItem("stationId", this.stationId);
+            sessionStorage.setItem("stationId", this.stationId);
             this.$emit("saveFilterStationId", this.stationId);
             this.hideModal();
           }
