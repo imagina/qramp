@@ -302,6 +302,7 @@ export default {
             },
             props: {
               label: "Status",
+              clearable: true
             },
           },
           stationId: {
@@ -313,7 +314,6 @@ export default {
             },
             props: {
               label: "Station",
-              clearable: true,
             },
           },
           adHoc: {
