@@ -83,9 +83,9 @@
               :key="index"
               v-if="event.time"
               class="
-                tw-text-xs
+                tw-text-xl
                 tw-my-1
-                tw-px-1
+                tw-p-3
                 tw-mx-2
                 tw-rounded-md
                 tw-text-white
