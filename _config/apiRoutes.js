@@ -25,4 +25,5 @@ export default {
   setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
   simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
   flightPosition: `${urlBase}/work-orders/flight-position`,
+  scheduleStatuses: `${urlBase}/schedule-statuses`
 }

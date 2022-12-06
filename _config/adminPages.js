@@ -55,6 +55,21 @@ export default {
     subHeader: {
       refresh: true,
     }
+  },
+  scheduleStatus: {
+    //permission: 'ramp.work-orders.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/schedule-status/index',
+    name: 'qramp.admin.scheduleStatus',
+    crud: import('../_crud/scheduleStatus.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.scheduleStatus',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
   }
 }
 
