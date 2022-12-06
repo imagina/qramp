@@ -58,7 +58,7 @@ export default {
           ],
           filters: {},
         },
-        update: false,
+        update: true,
         delete: true,
         formLeft: {
           id: {value: ""},
