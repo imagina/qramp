@@ -8,7 +8,8 @@ export default [
     children: [
       pages.qramp.workOrders,
       pages.qramp.flightMap,
-      pages.qramp.schedule
+      pages.qramp.schedule,
+      pages.qramp.scheduleStatus
     ]
   },
 ]
