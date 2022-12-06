@@ -1,5 +1,6 @@
 <template></template>
 <script>
+import colorQuasar from '@imagina/qsite/_resources/models/colorQuasar.js'
 export default {
   name: 'scheduleStatus',
   data() {
@@ -65,19 +66,18 @@ export default {
             value: "",
             type: "input",
             props: {
-              label: `${this.$tr("ifly.cms.form.airportName")}*`,
+              label: 'Name',
               rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
             },
           },
-          color: {
+          color : {
             value: "",
-            type: "input",
+            type: "select",
             props: {
-              label: `${this.$tr("ifly.cms.form.airportIataCode")}*`,
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-                (val) => val.length >= 8 || this.$tr('isite.cms.message.fieldMinLeng', {num: 8})
-              ],
+              selectColor: true,
+              label: 'Font Color',
+              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
+              options: colorQuasar,
             },
           },
         }
