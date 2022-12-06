@@ -15,7 +15,9 @@ export default {
         //entityName: config("main.qfly.entityNames.workOrder"),
         apiRoute: 'apiRoutes.qramp.scheduleStatuses',
         //permission: 'ramp.schedule-statuses',
-        create: true,
+        create: {
+          title: 'Create Schedule statuses'
+        },
         read: {
           columns: [
             {
@@ -58,7 +60,9 @@ export default {
           ],
           filters: {},
         },
-        update: true,
+        update: {
+          title: 'Update Schedule statuses'
+        },
         delete: true,
         formLeft: {
           id: {value: ""},
