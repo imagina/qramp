@@ -14,7 +14,7 @@ export default {
         crudId: this.crudId,
         //entityName: config("main.qfly.entityNames.workOrder"),
         apiRoute: 'apiRoutes.qramp.scheduleStatuses',
-        //permission: 'ramp.schedule-statuses',
+        permission: 'ramp.schedule-statuses',
         create: {
           title: 'Create Schedule statuses'
         },
