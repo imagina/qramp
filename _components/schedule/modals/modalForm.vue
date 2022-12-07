@@ -7,6 +7,7 @@
     @hide="hideModal"
     :actions="actions"
     :maximized="$q.screen.lt.md"
+    :customClass="`tw-border-l-2 tw-border-${scheduleStatusComputed() ? scheduleStatusComputed().color : 'gray-100'}`"
   >
     <q-form ref="formSchedule">
       <div v-for="(field, keyField) in fields.form" :key="keyField">
@@ -30,7 +31,13 @@ export default {
       title: null,
       form: {},
       isEdit: false,
+      dataLoad: false,
     };
+  },
+  async created() {
+    this.$nextTick(async function () {
+      await this.getScheduleStatusList();
+    })
   },
   computed: {
     actions() {
@@ -74,8 +81,9 @@ export default {
       this.show = false;
       this.form = {};
     },
-    openModal(title = null, data = null, date) {
+    async openModal(title = null, data = null, date) {
       try {
+        this.dataLoad = true;
         let currentDate = this.$moment().format('MM/DD/YYYY');
         if(this.$moment().format('YYYY-MM-DD') !== date) {
           currentDate = this.$moment(date).format('MM/DD/YYYY');
@@ -85,6 +93,9 @@ export default {
         this.isEdit = !!data;
         this.form.inboundScheduledArrival = currentDate;
         if (data) this.form = data;
+        setTimeout(() => {
+          this.dataLoad = false;
+        }, 300);
       } catch (error) {
         console.log(error);
       }
@@ -109,16 +120,20 @@ export default {
       this.form.inboundScheduledArrival = `${this.form.inboundScheduledArrival} ${this.form.sta}`;
     },
     zanetizeData(key) {
+      if(this.dataLoad) return;
       if (key === "flightNumber") {
         this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, "");
       }
-      if (key === "stationId") {
+      if (key === "stationId") {       
         this.form.gateId = null;
         return;
       }
     },
     setLoading(value) {
       this.loading = value;
+    },
+    scheduleStatusComputed() {
+      return this.scheduleStatusList.find(item => item.id == this.form.scheduleStatusId) || null;
     },
   },
 };

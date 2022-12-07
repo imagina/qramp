@@ -283,6 +283,7 @@ export default {
         this.flight.date = updateData.data['date'] ? updateData.data['date'] : null;
         this.flight.sta = updateData.data['sta'] ? updateData.data['sta'] : null;
         this.flight.std = updateData.data['std'] ? updateData.data['std'] : null;
+        this.flight.scheduleStatusId = updateData.data['scheduleStatusId'] ? updateData.data['scheduleStatusId'] : null;
         qRampStore().setResponsible(updateData.data['responsible']);
         this.flight.date = updateData.data['date'] ? updateData.data['date'].toString() : ''
         const customerName = updateData.data.customer ? updateData.data.customer.customerName : null;

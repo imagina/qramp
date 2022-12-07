@@ -1,4 +1,9 @@
 export default {
+    data() {
+      return {
+        scheduleStatusList: [],
+      }
+    },
     computed: {
       fields() {
         return {
@@ -37,7 +42,7 @@ export default {
             },
             gateId: {
               name:'gateId',
-              value: '',
+              value: null,
               type: 'select',
               props: {
                 rules: [
@@ -76,6 +81,21 @@ export default {
                 format24h: true,
               },
             },
+            scheduleStatusId: {
+              value: null,
+              type: 'select',
+              props: {
+                selectColor: true,
+                colorType: 'tailwindcss',
+                rules: [
+                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                ],
+                label: `Font Color`,
+                clearable: true,
+                color:"primary",
+                options: this.scheduleStatusList,
+              },
+            },
           },
         };
       },
@@ -86,6 +106,15 @@ export default {
           return this.$tr('isite.cms.message.specialCharactersAreNotAllowed');
         }
         return !!val || this.$tr('isite.cms.message.fieldRequired');
+      },
+      async getScheduleStatusList() {
+        const response = await this.$crud.index('apiRoutes.qramp.scheduleStatuses');
+        this.scheduleStatusList = response.data.map((item) =>({
+          label: item.name,
+          id: item.id,
+          color: item.color,
+          value: item.id,
+        }));
       },
     }
   };

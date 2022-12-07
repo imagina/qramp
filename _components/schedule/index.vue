@@ -63,11 +63,13 @@
           >
             <q-badge
               :key="index"
-              class="tw-cursor-pointer tw-text-xs"
+              class="tw-cursor-pointer tw-text-xs  tw-bg-white tw-border tw-border-grey-100"
               @click.stop.prevent="editSchedule(event)"
-              :class="event.flightStatusColor
-                  ? `bg-${event.flightStatusColor}`
-                  : 'tw-bg-blue-800'"
+              :class="
+                event.scheduleStatus
+                  ? `tw-text-${event.scheduleStatus.color}`
+                  : 'tw-text-black'
+              "
             >
               <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
                 {{ event.calendarTitle }}
@@ -88,14 +90,15 @@
                 tw-p-3
                 tw-mx-2
                 tw-rounded-md
-                tw-text-white
                 tw-cursor-pointer
+                tw-border 
+                tw-border-grey-100
               "
               @click.stop.prevent="editSchedule(event)"
               :class="
-                event.flightStatusColor
-                  ? `bg-${event.flightStatusColor}`
-                  : 'tw-bg-blue-800'
+                event.scheduleStatus
+                  ? `tw-text-${event.scheduleStatus.color}`
+                  : 'tw-text-black'
               "
               :style="
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
@@ -105,7 +108,6 @@
                 <i class="fak fa-plane-right-thin-icon" />
                 {{ event.calendarTitle }}
               </div>
-              <div>Time: {{ event.time }}</div>
             </div>
           </template>
         </template>
@@ -416,7 +418,7 @@ export default {
         this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
-        await this.getWorkOrderFilter(false, lastStart, lastEnd, type);
+        await this.getWorkOrderFilter(true, lastStart, lastEnd, type);
       } catch (error) {
         console.log(error);
       }
@@ -461,16 +463,17 @@ export default {
         );
       }
     },
-    editSchedule(event) {
-      this.showWorkOrder(event);
+    async editSchedule(event) {
+      await this.showWorkOrder(event);
     },
     async addSchedule(data) {
       try {
         await this.$refs.modalForm.setLoading(true);
         const response = await this.saveRequestSimpleWorkOrder(data);
-        this.events.push({ ...response.data });
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
+        this.getWorkOrderFilter(true);
+        this.$router.go();
       } catch (error) {
         console.log(error);
         await this.$refs.modalForm.setLoading(false);
@@ -498,6 +501,7 @@ export default {
           (item) => item.id !== this.selectedData.id
         );
         this.events = events;
+        this.$crud.delete("apiRoutes.qramp.workOrders", this.selectedData.id);
       } catch (error) {
         console.log(error);
       }
@@ -567,7 +571,7 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate",
+            include: "flightStatus,gate,scheduleStatus",
             filter: {
               ...filterClone,
               withoutDefaultInclude: true,
@@ -590,36 +594,28 @@ export default {
         this.loading = false;
       }
     },
-    showWorkOrder(data) {
-      this.$crud
-        .show("apiRoutes.qramp.workOrders", data.id, {
-          refresh: true,
-          params: {
+    async showWorkOrder(reponseSchedule) {
+      const response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
+            refresh: true,
             include:
-              "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus",
-          },
-        })
-        .then((item) => {
-          if (item.statusId !== STATUS_SCHEDULE) {
-            this.$refs.formOrders.loadform({
+              "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
+      })
+          if (response.data.statusId !== STATUS_SCHEDULE) {
+            await this.$refs.formOrders.loadform({
               modalProps: {
                 title: `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${
-                  data.id
+                  response.data.id
                 }`,
                 update: true,
-                workOrderId: data.id,
+                workOrderId: response.data.id,
                 width: "90vw",
               },
-              data: item.data,
+              data: response.data,
             });
             return;
           }
-          this.selectedData = item.data;
-          this.$refs.modalForm.openModal("Edit schedule", item.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          this.selectedData =  response.data;
+          await this.$refs.modalForm.openModal("Edit schedule",  response.data);
     },
     async getFilter() {
       this.events = [];
