@@ -472,26 +472,37 @@ export default {
         const response = await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
-        this.getWorkOrderFilter(true);
+        await this.getWorkOrderFilter(true);
         this.$router.go();
       } catch (error) {
         console.log(error);
         await this.$refs.modalForm.setLoading(false);
       }
     },
-    updateSchedule(data) {
+    async updateSchedule(data) {
       try {
+        await this.$refs.modalForm.setLoading(true);
         const event = this.events.find(
           (item) => item.id === this.selectedData.id
         );
         if (event) {
-          event.title = data.calendarTitle;
-          event.sta = data.sta;
-          event.std = data.std;
-          event.preFlightNumber = data.preFlightNumber;
-          event.gateId = data.gateId;
+          const dataForm = {};
+          dataForm.id = data.id;
+          dataForm.sta = data.sta;
+          dataForm.std = data.std;
+          dataForm.stationId = data.stationId;
+          dataForm.preFlightNumber = data.preFlightNumber;
+          dataForm.gateId = data.gateId;
+          dataForm.scheduleStatusId = data.scheduleStatusId;
+          await this.$crud.update("apiRoutes.qramp.schedule", this.selectedData.id ,dataForm);
+          await this.getWorkOrderFilter(true);
+          await this.$router.go();
         }
+        await this.$refs.modalForm.setLoading(false);
+        await this.$refs.modalForm.hideModal();
       } catch (error) {
+        await this.$refs.modalForm.setLoading(false);
+        await this.$refs.modalForm.hideModal();
         console.log(error);
       }
     },
@@ -615,6 +626,8 @@ export default {
             return;
           }
           this.selectedData =  response.data;
+          response.data.sta = this.$moment(response.data.sta, 'HH:mm:ss').format('HH:mm');
+          response.data.std = this.$moment(response.data.std, 'HH:mm:ss').format('HH:mm');
           await this.$refs.modalForm.openModal("Edit schedule",  response.data);
     },
     async getFilter() {

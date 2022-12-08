@@ -65,7 +65,7 @@ export default {
         {
           props: {
             vIf: this.isEdit,
-            color: "primary",
+            color: "red",
             label: this.$tr("isite.cms.label.delete"),
           },
           action: () => {
