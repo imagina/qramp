@@ -182,7 +182,7 @@ export default {
       fullscreen: false,
       loading: false,
       eventLoading: false,
-      selectedDate: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
+      selectedDate: this.$moment().format("YYYY-MM-DD"),
       selectedDateEnd: this.$moment().endOf("month").endOf("day").format("YYYY-MM-DD"),
       selectedDateStart: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
       scheduleType: 'month',
