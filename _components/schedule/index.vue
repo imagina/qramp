@@ -182,7 +182,7 @@ export default {
       fullscreen: false,
       loading: false,
       eventLoading: false,
-      selectedDate: this.$moment().format("YYYY-MM-DD"),
+      selectedDate: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
       selectedDateEnd: this.$moment().endOf("month").endOf("day").format("YYYY-MM-DD"),
       selectedDateStart: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
       scheduleType: 'month',
@@ -473,7 +473,7 @@ export default {
         const response = await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
-        await this.getWorkOrderFilter(true);
+        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
         //this.$router.go();
       } catch (error) {
         console.log(error);
@@ -497,7 +497,7 @@ export default {
           dataForm.scheduleStatusId = data.scheduleStatusId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           await this.$crud.update("apiRoutes.qramp.schedule", this.selectedData.id ,dataForm);
-          await this.getWorkOrderFilter(true);
+          await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
         }
         await this.$refs.modalForm.setLoading(false);
@@ -546,14 +546,13 @@ export default {
       type = false
     ) {
       try {
-        this.selectedDateStart = this.$moment(this.selectedDate)
-          .format("YYYY-MM-DD HH:mm:ss");
+        this.selectedDateStart = this.$moment(this.selectedDate).format("YYYY-MM-DD HH:mm:ss");
         if (dateStart && dateEnd) {
           this.selectedDateStart = dateStart;
           this.selectedDateEnd = dateEnd;
         }
-        console.log(this.selectedDateStart, this.selectedDateEnd);
         const currentFilterDate = await this.getCurrentFilterDate(this.selectedDateStart, this.selectedDateEnd);
+        console.log(currentFilterDate);
         const objUrl = await this.convertStringToObject();
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
