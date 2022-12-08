@@ -417,6 +417,7 @@ export default {
       try {
         this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
+        console.log(this.$refs.schedule.lastStart, this.$refs.schedule.lastEnd);
         const lastEnd = this.$refs.schedule.lastEnd;
         await this.getWorkOrderFilter(true, lastStart, lastEnd, type);
       } catch (error) {
@@ -551,6 +552,7 @@ export default {
           this.selectedDateStart = dateStart;
           this.selectedDateEnd = dateEnd;
         }
+        console.log(this.selectedDateStart, this.selectedDateEnd);
         const currentFilterDate = await this.getCurrentFilterDate(this.selectedDateStart, this.selectedDateEnd);
         const objUrl = await this.convertStringToObject();
         const filter =
@@ -626,7 +628,6 @@ export default {
             });
             return;
           }
-          this.selectedData =  response.data;
           response.data.sta = this.$moment(response.data.sta, 'HH:mm:ss').format('HH:mm');
           response.data.std = this.$moment(response.data.std, 'HH:mm:ss').format('HH:mm');
           await this.$refs.modalForm.openModal("Edit schedule",  response.data, response.data.inboundScheduledArrival);
