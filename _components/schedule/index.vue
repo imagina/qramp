@@ -417,7 +417,6 @@ export default {
       try {
         this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
-        console.log(this.$refs.schedule.lastStart, this.$refs.schedule.lastEnd);
         const lastEnd = this.$refs.schedule.lastEnd;
         await this.getWorkOrderFilter(true, lastStart, lastEnd, type);
       } catch (error) {
@@ -552,7 +551,6 @@ export default {
           this.selectedDateEnd = dateEnd;
         }
         const currentFilterDate = await this.getCurrentFilterDate(this.selectedDateStart, this.selectedDateEnd);
-        console.log(currentFilterDate);
         const objUrl = await this.convertStringToObject();
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
