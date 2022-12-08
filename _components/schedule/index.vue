@@ -494,7 +494,7 @@ export default {
           dataForm.preFlightNumber = data.preFlightNumber;
           dataForm.gateId = data.gateId;
           dataForm.scheduleStatusId = data.scheduleStatusId;
-          //dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
+          dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           await this.$crud.update("apiRoutes.qramp.schedule", this.selectedData.id ,dataForm);
           await this.getWorkOrderFilter(true);
           //await this.$router.go();
@@ -629,7 +629,7 @@ export default {
           this.selectedData =  response.data;
           response.data.sta = this.$moment(response.data.sta, 'HH:mm:ss').format('HH:mm');
           response.data.std = this.$moment(response.data.std, 'HH:mm:ss').format('HH:mm');
-          await this.$refs.modalForm.openModal("Edit schedule",  response.data);
+          await this.$refs.modalForm.openModal("Edit schedule",  response.data, response.data.inboundScheduledArrival);
     },
     async getFilter() {
       this.events = [];

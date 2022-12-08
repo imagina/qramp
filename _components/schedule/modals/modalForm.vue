@@ -117,7 +117,7 @@ export default {
       }
     },
     tranformData() {
-      this.form.inboundScheduledArrival = `${this.form.inboundScheduledArrival} ${this.form.sta}`;
+      this.form.inboundScheduledArrival = `${this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY')} ${this.form.sta}`;
     },
     zanetizeData(key) {
       if(this.dataLoad) return;
