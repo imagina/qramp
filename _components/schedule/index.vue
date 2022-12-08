@@ -473,7 +473,7 @@ export default {
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true);
-        this.$router.go();
+        //this.$router.go();
       } catch (error) {
         console.log(error);
         await this.$refs.modalForm.setLoading(false);
@@ -494,9 +494,10 @@ export default {
           dataForm.preFlightNumber = data.preFlightNumber;
           dataForm.gateId = data.gateId;
           dataForm.scheduleStatusId = data.scheduleStatusId;
+          //dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           await this.$crud.update("apiRoutes.qramp.schedule", this.selectedData.id ,dataForm);
           await this.getWorkOrderFilter(true);
-          await this.$router.go();
+          //await this.$router.go();
         }
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
