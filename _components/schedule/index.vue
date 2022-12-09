@@ -7,7 +7,7 @@
         multipleRefresh
         :extra-actions="extraPageActions"
         :excludeActions="fullscreen ? ['filter'] : []"
-        @refresh="getWorkOrderFilter(true)"
+        @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)"
         class="q-mb-md"
       />
     </div>
@@ -406,10 +406,12 @@ export default {
       
     }, 
     async scheduleNext() {
+      this.selectedDate = this.$moment(this.selectedDate).startOf("month").startOf("day").add(1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.next();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
     async schedulePrev() {
+      this.selectedDate = this.$moment(this.selectedDate).startOf("month").startOf("day").add(-1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.prev();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
@@ -633,7 +635,7 @@ export default {
       this.events = [];
       if (this.stationId) {
         await sessionStorage.setItem("stationId", this.filter.values.stationId || null);
-        await this.getWorkOrderFilter();
+        await this.getWorkOrderFilter(false);
       }
     },
     setFilter() {
