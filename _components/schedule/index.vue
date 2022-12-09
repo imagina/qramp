@@ -538,7 +538,6 @@ export default {
         let lastEndM = this.$moment(lastEnd)
           .endOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
-        console.log(lastStartM, lastEndM);  
         return {
           date: {
             field: "inbound_scheduled_arrival",
