@@ -520,8 +520,15 @@ export default {
         console.log(error);
       }
     },
-    getCurrentFilterDate(lastStart, lastEnd) {
+    async getCurrentFilterDate(lastStart, lastEnd) {
       try {
+        const startDate = this.$moment(lastStart);
+        const endDate = this.$moment(lastEnd);
+        if(this.scheduleType === 'month' && startDate.format('MM') === this.$moment(lastEnd).format('MM')) {
+          lastStart = startDate.startOf("month").format("YYYY-MM-DD");
+          lastEnd = endDate.endOf("month").format("YYYY-MM-DD");
+        }
+        console.log(lastStart, lastEnd);
         let lastStartM = this.$moment(lastStart)
           .startOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
@@ -635,7 +642,7 @@ export default {
       this.events = [];
       if (this.stationId) {
         await sessionStorage.setItem("stationId", this.filter.values.stationId || null);
-        await this.getWorkOrderFilter(false);
+        await this.getWorkOrderFilter();
       }
     },
     setFilter() {
