@@ -522,13 +522,12 @@ export default {
     },
     async getCurrentFilterDate(lastStart, lastEnd) {
       try {
-        const startDate = this.$moment(lastStart);
-        const endDate = this.$moment(lastEnd);
+        const startDate = this.$moment(this.$refs.schedule.lastStart);
+        const endDate = this.$moment(this.$refs.schedule.lastEnd);
         if(this.scheduleType === 'month' && startDate.format('MM') === this.$moment(lastEnd).format('MM')) {
           lastStart = startDate.startOf("month").format("YYYY-MM-DD");
           lastEnd = endDate.endOf("month").format("YYYY-MM-DD");
         }
-        console.log(lastStart, lastEnd);
         let lastStartM = this.$moment(lastStart)
           .startOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
