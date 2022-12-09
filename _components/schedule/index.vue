@@ -528,12 +528,17 @@ export default {
           lastStart = startDate.startOf("month").format("YYYY-MM-DD");
           lastEnd = endDate.endOf("month").format("YYYY-MM-DD");
         }
+        if(this.scheduleType !== 'month') {
+          lastStart = startDate.format("YYYY-MM-DD");
+          lastEnd = endDate.format("YYYY-MM-DD");
+        }
         let lastStartM = this.$moment(lastStart)
           .startOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
         let lastEndM = this.$moment(lastEnd)
           .endOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
+        console.log(lastStartM, lastEndM);  
         return {
           date: {
             field: "inbound_scheduled_arrival",
