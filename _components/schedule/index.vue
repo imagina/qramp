@@ -129,8 +129,12 @@
       <div>
         <i
           class="
-            fa-duotone fa-loader fa-spin fa-pulse
-            tw-text-7xl tw-text-blue-800
+            fa-duotone 
+            fa-loader 
+            fa-spin 
+            fa-pulse
+            tw-text-7xl 
+            tw-text-blue-800
           "
         />
       </div>
