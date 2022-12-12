@@ -136,7 +136,6 @@
       </div>
     </div>
     <modalForm
-      v-if="!isBlank"
       ref="modalForm"
       @addSchedule="addSchedule"
       @updateSchedule="updateSchedule"

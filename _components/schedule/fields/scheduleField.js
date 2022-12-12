@@ -1,3 +1,5 @@
+import qRampStore from '../../../_store/qRampStore.js';
+
 export default {
     data() {
       return {
@@ -5,6 +7,9 @@ export default {
       }
     },
     computed: {
+      isBlank() {
+        return qRampStore().getIsblank();
+      },
       fields() {
         return {
           form: {
@@ -13,6 +18,7 @@ export default {
               value: '',
               type: 'input',
               props: {
+                readonly: this.isBlank,
                 rules: [
                   val => !!val || this.$tr('isite.cms.message.fieldRequired')
                 ],
@@ -26,6 +32,7 @@ export default {
               value: '',
               type: 'select',
               props: {
+                readonly: this.isBlank,
                 rules: [
                   val => !!val || this.$tr('isite.cms.message.fieldRequired')
                 ],
@@ -45,6 +52,7 @@ export default {
               value: null,
               type: 'select',
               props: {
+                readonly: this.isBlank,
                 rules: [
                   val => this.validateSpecialCharacters(val)
                 ],
@@ -63,6 +71,7 @@ export default {
               value: null,
               type: 'hour',
               props: {
+                readonly: this.isBlank,
                 rules: [
                   val => !!val || this.$tr('isite.cms.message.fieldRequired')
                 ],
@@ -74,6 +83,7 @@ export default {
               value: null,
               type: 'hour',
               props: {
+                readonly: this.isBlank,
                 rules: [
                   val => !!val || this.$tr('isite.cms.message.fieldRequired')
                 ],
@@ -85,6 +95,7 @@ export default {
               value: null,
               type: 'select',
               props: {
+                readonly: this.isBlank,
                 selectColor: true,
                 colorType: 'tailwindcss',
                 rules: [

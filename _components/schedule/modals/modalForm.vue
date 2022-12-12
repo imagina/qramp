@@ -22,6 +22,7 @@
 </template>
 <script>
 import scheduleField from "../fields/scheduleField.js";
+import qRampStore from '../../../_store/qRampStore.js';
 export default {
   mixins: [scheduleField],
   data() {
@@ -40,10 +41,14 @@ export default {
     })
   },
   computed: {
+    isBlank() {
+      return qRampStore().getIsblank();
+    },
     actions() {
       return [
         {
           props: {
+            vIf: !this.isBlank,
             color: "primary",
             label: this.$tr("isite.cms.label.close"),
           },
@@ -53,6 +58,7 @@ export default {
         },
         {
           props: {
+            vIf: !this.isBlank,
             color: "primary",
             label: this.isEdit
               ? this.$tr("isite.cms.label.update")
@@ -64,7 +70,7 @@ export default {
         },
         {
           props: {
-            vIf: this.isEdit,
+            vIf: this.isEdit && !this.isBlank,
             color: "red",
             label: this.$tr("isite.cms.label.delete"),
           },
