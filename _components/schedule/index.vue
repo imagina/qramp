@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'fullscreen tw-bg-white tw-p-3': fullscreen }">
+  <div :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }">
     <div class="box box-auto-height q-mb-md">
       <page-actions
         ref="pageActions"
