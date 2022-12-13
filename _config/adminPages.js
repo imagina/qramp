@@ -29,7 +29,7 @@ export default {
     }
   },
   schedule: {
-    //permission: 'ramp.work-orders.manage',
+    permission: 'ramp.work-order-schedules.manage',
     activated: true,
     authenticated: true,
     path: '/ramp/schedule/index',
