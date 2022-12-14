@@ -80,6 +80,7 @@
 import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
+import { STATUS_DRAFT } from './model/constants.js';
 
 export default {
   components: {
@@ -97,6 +98,7 @@ export default {
         customCustomerName: null,
         customCustomer: null,
         faFlightId: null,
+        statusId: STATUS_DRAFT
       },
       bannerMessage: null,
       selectCustomers: "",
@@ -338,6 +340,7 @@ export default {
         customCustomerName: null,
         customCustomer: null,
         faFlightId: null,
+        statusId: STATUS_DRAFT,
       }
       this.newCustumerAdHoc= [];
       this.bannerMessage= null;
