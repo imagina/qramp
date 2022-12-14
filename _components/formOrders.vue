@@ -286,6 +286,7 @@ export default {
         this.flight.scheduleStatusId = updateData.data['scheduleStatusId'] ? updateData.data['scheduleStatusId'] : null;
         this.flight.estimatedOffUtc = updateData.data['estimatedOffUtc'] ? updateData.data['estimatedOffUtc'] : null;
         this.flight.estimatedOnUtc = updateData.data['estimatedOnUtc'] ? updateData.data['estimatedOnUtc'] : null;
+        this.flight.areaId = updateData.data['areaId'] ? updateData.data['areaId'] : null;
         qRampStore().setResponsible(updateData.data['responsible']);
         this.flight.date = updateData.data['date'] ? updateData.data['date'].toString() : ''
         const customerName = updateData.data.customer ? updateData.data.customer.customerName : null;
