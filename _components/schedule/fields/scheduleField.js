@@ -98,9 +98,6 @@ export default {
                 readonly: this.isBlank,
                 selectColor: true,
                 colorType: 'tailwindcss',
-                rules: [
-                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
-                ],
                 label: `Font Color`,
                 clearable: true,
                 color:"primary",
