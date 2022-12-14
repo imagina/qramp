@@ -348,7 +348,6 @@ export default {
           areaId: {
               value: null,
               type: 'select',
-              quickFilter: true,
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.areas',
                 select: { label: 'name', id: 'id' },

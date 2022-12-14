@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       crudId: this.$uid(),
+      areaId: null,
     }
   },
   provide() {
@@ -32,7 +33,21 @@ export default {
       openModal: true,
     }
   },
+  watch: {
+    '$filter.values': {
+      deep: true,
+      handler: function (newValue, oldValue) {
+        if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
+        this.areaId = this.$filter.values.areaId;
+        console.log(this.areaId);
+      }
+    }
+  },
   computed: {
+    filter() {
+      console.log(this.$filter);
+      return this.$filter;
+    },
     editPermissionseSubmitted() {
       return qRampStore().editPermissionseSubmitted();
     },
@@ -253,7 +268,6 @@ export default {
             areaId: {
               value: null,
               type: 'select',
-              quickFilter: true,
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.areas',
                 select: { 'label': 'name', 'id': 'id' },
