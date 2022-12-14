@@ -250,6 +250,19 @@ export default {
                 'clearable': true
               },
             },
+            areaId: {
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              loadOptions: {
+                apiRoute: 'apiRoutes.qsetupagione.areas',
+                select: { 'label': 'name', 'id': 'id' },
+              },
+              props: {
+                label: 'Areas',
+                'clearable': true
+              },
+            },
           },
           requestParams: {
             include: 'customer,workOrderStatus,operationType,station,contract,responsible,inboundOriginAirport,outboundDestinationAirport,flightStatus',
