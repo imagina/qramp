@@ -75,7 +75,7 @@ export default {
             label: this.$tr("isite.cms.label.delete"),
           },
           action: () => {
-            this.$emit("deleteSchedule");
+            this.$emit("deleteSchedule", this.form.id);
             this.hideModal();
           },
         },

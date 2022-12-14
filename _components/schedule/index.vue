@@ -500,7 +500,7 @@ export default {
       try {
         await this.$refs.modalForm.setLoading(true);
         const event = this.events.find(
-          (item) => item.id === this.selectedData.id
+          (item) => item.id === data.id
         );
         if (event) {
           const dataForm = {};
@@ -512,7 +512,7 @@ export default {
           dataForm.gateId = data.gateId;
           dataForm.scheduleStatusId = data.scheduleStatusId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
-          await this.$crud.update("apiRoutes.qramp.schedule", this.selectedData.id ,dataForm);
+          await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
         }
@@ -524,13 +524,13 @@ export default {
         console.log(error);
       }
     },
-    deleteSchedule() {
+    deleteSchedule(scheduleId) {
       try {
         const events = this.events.filter(
-          (item) => item.id !== this.selectedData.id
+          (item) => item.id !== scheduleId
         );
         this.events = events;
-        this.$crud.delete("apiRoutes.qramp.workOrders", this.selectedData.id);
+        this.$crud.delete("apiRoutes.qramp.workOrders", scheduleId);
       } catch (error) {
         console.log(error);
       }
