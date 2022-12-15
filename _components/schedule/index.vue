@@ -67,7 +67,7 @@
               @click.stop.prevent="editSchedule(event)"
               :class="
                 event.scheduleStatus
-                  ? `tw-text-${event.scheduleStatus.color}`
+                  ? `tw-text-${event.scheduleStatus.color} tw-font-semibold`
                   : 'tw-text-black'
               "
             >
