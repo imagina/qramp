@@ -89,6 +89,7 @@ export default {
     },
     async openModal(title = null, data = null, date) {
       try {
+        this.sessionStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
         this.dataLoad = true;
         let currentDate = this.$moment().format('MM/DD/YYYY');
         if(this.$moment().format('YYYY-MM-DD') !== date) {

@@ -4,11 +4,12 @@ export default {
     data() {
       return {
         scheduleStatusList: [],
+        sessionStationId: null,
       }
     },
     computed: {
       station() {
-        return sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+        return this.sessionStationId;
       },
       isBlank() {
         return qRampStore().getIsblank();
