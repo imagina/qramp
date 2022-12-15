@@ -516,7 +516,7 @@ export default {
           await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
-          this.$alert.info('The schedule was updated correctly');
+          this.$alert.info('The workOrders was updated correctly');
         }
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
