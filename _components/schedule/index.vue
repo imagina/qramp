@@ -490,6 +490,7 @@ export default {
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+        this.$alert.success('workOrders was added correctly');
         //this.$router.go();
       } catch (error) {
         console.log(error);
@@ -515,6 +516,7 @@ export default {
           await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
+          this.$alert.info('The schedule was updated correctly');
         }
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
@@ -531,6 +533,7 @@ export default {
         );
         this.events = events;
         this.$crud.delete("apiRoutes.qramp.workOrders", scheduleId);
+        this.$alert.info('workOrders was deleted correctly');
       } catch (error) {
         console.log(error);
       }
