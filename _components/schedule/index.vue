@@ -85,7 +85,7 @@
               :key="index"
               v-if="event.time"
               class="
-                tw-text-xl
+                tw-text-lg
                 tw-my-1
                 tw-p-3
                 tw-mx-2
@@ -153,6 +153,7 @@
   </div>
 </template>
 <script>
+import convertStringToObject from '@imagina/qsite/_plugins/convertStringToObject.js';
 import calendar, { QCalendar } from "@quasar/quasar-ui-qcalendar";
 import modalForm from "./modals/modalForm.vue";
 import formOrders from "../formOrders.vue";
@@ -385,7 +386,7 @@ export default {
       }
     },
     async initUrlMutate() {
-      const obj = await this.convertStringToObject();
+      const obj = await convertStringToObject();
       const localStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
         this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
         if (!this.stationId) {
@@ -581,7 +582,7 @@ export default {
           this.selectedDateEnd = dateEnd;
         }
         const currentFilterDate = await this.getCurrentFilterDate(this.selectedDateStart, this.selectedDateEnd);
-        const objUrl = await this.convertStringToObject();
+        const objUrl = await convertStringToObject();
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
         const thereAreFilters = Object.keys(filter).length > 0 ? filter : {};
@@ -757,31 +758,6 @@ export default {
       setTimeout(() => {
         this.setFilter();
       }, 1000);
-    },
-    async convertStringToObject() {
-      try {
-        let url = "";
-        const origin = window.location.href.split("?");
-        if (origin.length === 2) {
-          url = origin[1] || "";
-        }
-        if (url.length > 0) {
-          const regex = /=/g;
-          const regex2 = /&/g;
-          const remplaceFilter = url.replace(regex, ":").replace(regex2, ",");
-          const remplaceObject = eval("({" + remplaceFilter + "})");
-          Object.keys(remplaceObject).forEach((key) => {
-            if (this.$filter.fields.hasOwnProperty(key)) {
-              remplaceObject[key] = String(remplaceObject[key]);
-            }
-          });
-          return remplaceObject || {};
-        }
-        return {};
-      } catch (error) {
-        this.$alert.error('The filter url is misspelled');
-        console.log(error);
-      }
     },
     emitFilterSchedule(filter) {
       //Add Values
