@@ -7,6 +7,9 @@ export default {
       }
     },
     computed: {
+      station() {
+        return sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+      },
       isBlank() {
         return qRampStore().getIsblank();
       },
@@ -29,7 +32,7 @@ export default {
             },
             stationId: {
               name:'stationId',
-              value: '',
+              value: this.station,
               type: 'select',
               props: {
                 readonly: this.isBlank,
