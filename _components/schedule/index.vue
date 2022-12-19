@@ -51,6 +51,7 @@
       animated
       hour24Format
       @click:day2="eventSchedule"
+      @click:day:header2="eventSchedule"
     >
       <template #day="{ timestamp }">
         <div
@@ -526,13 +527,15 @@ export default {
       }
     },
     eventSchedule(event) {
-      if(!this.isBlank && !event.scope.outside) {
-        this.selectedData = event.scope.timestamp;
-        this.$refs.modalForm.openModal(
-          `Create schedule date: ${event.scope.timestamp.date}`,
-          null,
-          event.scope.timestamp.date
-        );
+      if(this.scheduleType !== 'day-agenda') {
+        if(!this.isBlank && !event.scope.outside) {
+          this.selectedData = event.scope.timestamp;
+          this.$refs.modalForm.openModal(
+            `Create schedule date: ${event.scope.timestamp.date}`,
+            null,
+            event.scope.timestamp.date
+          );
+        }
       }
     },
     async editSchedule(event, type = null) {
