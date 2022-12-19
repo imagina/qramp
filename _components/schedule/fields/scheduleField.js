@@ -67,7 +67,7 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.gates',
                 select: {label: 'name', id: 'id'},
-                requestParams: {filter: {stationId: this.form.stationId}}
+                requestParams: {filter: {stationId: this.form?.stationId || this.sessionStationId}}
               },
               label: this.$tr('ifly.cms.form.gate'),
             },

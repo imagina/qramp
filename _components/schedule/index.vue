@@ -51,7 +51,6 @@
       animated
       hour24Format
       @click:day2="eventSchedule"
-      @click:day:header2="eventSchedule"
     >
       <template #day="{ timestamp }">
         <div
@@ -83,7 +82,7 @@
           <template v-for="(event, index) in getEvents(timestamp.date)">
             <div
               :key="index"
-              v-if="event.time"
+              v-if="event.time && !event.isUpdate"
               class="
                 tw-text-lg
                 tw-my-1
@@ -93,6 +92,7 @@
                 tw-cursor-pointer
                 tw-border 
                 tw-border-grey-100
+                tw-flex
               "
               @click.stop.prevent="editSchedule(event)"
               :class="
@@ -104,13 +104,65 @@
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
               "
             >
-              <div class="tw-font-semibold">
+              <div class="tw-font-semibold tw-w-1/2">
                 <i class="fak fa-plane-right-thin-icon" />
                 {{ event.calendarTitle }}
               </div>
+              <div class="tw-text-right tw-w-1/2 tw-space-x-2">
+                <button
+                  v-if="event.id && scheduleType === 'day-agenda'"
+                  @click.stop.prevent="editSchedule(event, 'day')"
+                  class="
+                    tw-bg-blue-800 
+                    tw-rounded-lg 
+                    tw-px-2
+                    tw-text-white">
+                  <i class="fa-light fa-pen-to-square tw-text-sm"/>
+                  <q-tooltip>
+                    Edit
+                  </q-tooltip>
+                </button>
+                <button
+                  v-if="event.id && scheduleType === 'day-agenda'"
+                  class="
+                    tw-bg-red-500 
+                    tw-rounded-lg 
+                    tw-px-2  
+                    tw-text-white"
+                    @click="deleteSchedule(event.id)" 
+                  >
+                  <i class="fa-light fa-trash-can tw-text-sm"/>
+                  <q-tooltip>
+                    Delete
+                  </q-tooltip>
+                </button>
+              </div>
             </div>
+            <lineForm
+              :key="index"
+              v-if="event.isUpdate"
+              :event="event"
+              @dismissEvent="dismissEvent"
+              @addSchedule="addSchedule"
+              @updateSchedule="updateSchedule"
+            />
+            
           </template>
         </template>
+      </template>
+      <template #day-header="{ timestamp }">
+        <div class="tw-mx-4 tw-py-4" v-if="scheduleType === 'day-agenda'">
+          <button 
+            class="
+              tw-bg-blue-800 
+              tw-text-white 
+              tw-rounded-lg 
+              tw-px-4"
+              @click="addNewDayToSchedule(timestamp)"
+            >
+            <i class="fa-light fa-plus"></i> New
+          </button>
+        </div>
       </template>
     </q-calendar>
     <div
@@ -160,14 +212,11 @@ import formOrders from "../formOrders.vue";
 import stationModal from "./modals/stationModal.vue";
 import _ from "lodash";
 import qRampStore from '../../_store/qRampStore.js';
-
 import {
-  STATUS_POSTED,
-  STATUS_SUBMITTED,
-  STATUS_CLOSED,
-  STATUS_DRAFT,
   STATUS_SCHEDULE,
 } from "../model/constants";
+import lineForm from './lineForm.vue';
+
 export default {
   props:{
     isBlank: {
@@ -180,6 +229,7 @@ export default {
     modalForm,
     formOrders,
     stationModal,
+    lineForm,
   },
   data() {
     return {
@@ -193,6 +243,7 @@ export default {
       events: [],
       stationId: null,
       filterData: null,
+      cloneEvent: {},
     };
   },
   watch: {
@@ -459,6 +510,8 @@ export default {
           })
           .map((item) => ({
             ...item,
+            sta: this.$moment(item.sta, 'HH:mm:ss').format('HH:mm'),
+            std: this.$moment(item.std, 'HH:mm:ss').format('HH:mm'),
             time: item.sta,
           }));
         const order = _.orderBy(
@@ -466,6 +519,7 @@ export default {
           ["time"],
           ["asc"]
         );
+        console.log(order);
         return order;
       } catch (error) {
         console.log(error);
@@ -481,8 +535,19 @@ export default {
         );
       }
     },
-    async editSchedule(event) {
-      await this.showWorkOrder(event);
+    async editSchedule(event, type = null) {
+      if(this.scheduleType !== 'day-agenda') {
+        await this.showWorkOrder(event);
+        return;
+      }
+      if(type === 'day') {
+        this.cloneEvent = await this.$clone(this.events);
+        this.events = this.$clone(this.events);
+        const eventFind = this.events.find(item => item.id === event.id);
+        if(eventFind) {
+          eventFind.isUpdate = true;
+        }
+      }
     },
     async addSchedule(data) {
       try {
@@ -628,7 +693,7 @@ export default {
           "apiRoutes.qramp.workOrders",
           params
         );
-        this.events = response.data;
+        this.events = response.data.map((item) => ({ ...item, isUpdate: false }));
         //this.events = eventModel;
         this.loading = false;
       } catch (error) {
@@ -664,7 +729,7 @@ export default {
       this.events = [];
       if (this.stationId) {
         await sessionStorage.setItem("stationId", this.filter.values.stationId || null);
-        await this.getWorkOrderFilter();
+        await this.getWorkOrderFilter(true);
       }
     },
     setFilter() {
@@ -765,6 +830,34 @@ export default {
       //Call back
       if (this.filter && this.filter.callBack) this.filter.callBack(this.filter)
     },
+    addNewDayToSchedule(event) {
+      try {
+        const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T23:59:59`;
+        this.sessionStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+        const data = {
+          calendarTitle: null,
+          id: this.$uid(),
+          sta: null,
+          std: null,
+          stationId: this.sessionStationId,
+          preFlightNumber: null,
+          gateId: null,
+          scheduleStatusId: null,
+          inboundScheduledArrival: date,
+          isUpdate: true, 
+        }
+        this.events.push({...data});
+      } catch (error) {
+        console.log(error);
+      } 
+    },
+    dismissEvent(event) {
+      if(typeof event.id === "number") {
+        this.events = this.$clone(this.cloneEvent);
+        return;
+      }
+      this.events = this.events.filter(item => item.id !== event.id);
+    }
   },
 };
 </script>
