@@ -148,13 +148,14 @@
       </template>
       <template #day-header="{ timestamp }">
         <div class="tw-mx-4 tw-py-4" v-if="scheduleType === 'day-agenda'">
-          <button 
+          <button
             class="
               tw-bg-blue-800 
               tw-text-white 
               tw-rounded-lg 
               tw-px-4"
               @click="addNewDayToSchedule(timestamp)"
+              :disabled="events.some(item => item.isUpdate)"
             >
             <i class="fa-light fa-plus"></i> New
           </button>
@@ -861,7 +862,10 @@ export default {
     },
     dismissEvent(event) {
       if(typeof event.id === "number") {
-        this.events = this.$clone(this.cloneEvent);
+        const eventFind = this.events.find(item => item.id === event.id);
+        if(eventFind) {
+          eventFind.isUpdate = false;
+        }
         return;
       }
       this.events = this.events.filter(item => item.id !== event.id);
