@@ -520,7 +520,6 @@ export default {
           ["time"],
           ["asc"]
         );
-        console.log(order);
         return order;
       } catch (error) {
         console.log(error);
@@ -539,18 +538,7 @@ export default {
       }
     },
     async editSchedule(event, type = null) {
-      if(this.scheduleType !== 'day-agenda') {
-        await this.showWorkOrder(event);
-        return;
-      }
-      if(type === 'day') {
-        this.cloneEvent = await this.$clone(this.events);
-        this.events = this.$clone(this.events);
-        const eventFind = this.events.find(item => item.id === event.id);
-        if(eventFind) {
-          eventFind.isUpdate = true;
-        }
-      }
+      await this.showWorkOrder(event, type);
     },
     async addSchedule(data) {
       try {
@@ -704,7 +692,7 @@ export default {
         this.loading = false;
       }
     },
-    async showWorkOrder(reponseSchedule) {
+    async showWorkOrder(reponseSchedule, type = null) {
       const response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
             refresh: true,
             include:
@@ -726,6 +714,17 @@ export default {
           }
           response.data.sta = this.$moment(response.data.sta, 'HH:mm:ss').format('HH:mm');
           response.data.std = this.$moment(response.data.std, 'HH:mm:ss').format('HH:mm');
+          if(type === 'day') {
+            const index = this.events.indexOf(item => item.id == reponseSchedule.id);
+              this.events[index] = response.data;
+              this.cloneEvent = await this.$clone(this.events);
+              const eventFind = this.events.find(item => item.id === reponseSchedule.id);
+              if(eventFind) {
+                eventFind.isUpdate = true;
+              }
+              return;
+            
+          }
           await this.$refs.modalForm.openModal("Edit schedule",  response.data, response.data.inboundScheduledArrival);
     },
     async getFilter() {
