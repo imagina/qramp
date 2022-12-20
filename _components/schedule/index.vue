@@ -90,17 +90,12 @@
                 tw-p-3
                 tw-mx-2
                 tw-rounded-md
-                tw-cursor-pointer
                 tw-border 
                 tw-border-grey-100
                 tw-flex
               "
               @click.stop.prevent="editSchedule(event)"
-              :class="
-                event.scheduleStatus
-                  ? `tw-text-${event.scheduleStatus.color}`
-                  : 'tw-text-black'
-              "
+              :class="classSchedule(event)"
               :style="
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
               "
@@ -266,6 +261,16 @@ export default {
     });
   },
   computed: {
+    classSchedule() {
+      return event => {
+        const color = event.scheduleStatus ? event.scheduleStatus.color : 'black';
+        return {
+          [`tw-text-${color}`] : event.scheduleStatus,
+          'tw-cursor-pointer': this.scheduleType !== 'day-agenda',
+          'tw-text-black': !event.scheduleStatus
+        }
+      }
+    },
     scheduleTypeOptions() {
       return [
         {
@@ -714,7 +719,7 @@ export default {
           }
           response.data.sta = this.$moment(response.data.sta, 'HH:mm:ss').format('HH:mm');
           response.data.std = this.$moment(response.data.std, 'HH:mm:ss').format('HH:mm');
-          if(type === 'day') {
+          if(type === 'day' && this.scheduleType === 'day-agenda') {
             const index = this.events.indexOf(item => item.id == reponseSchedule.id);
               this.events[index] = response.data;
               this.cloneEvent = await this.$clone(this.events);
@@ -723,9 +728,10 @@ export default {
                 eventFind.isUpdate = true;
               }
               return;
-            
           }
-          await this.$refs.modalForm.openModal("Edit schedule",  response.data, response.data.inboundScheduledArrival);
+          if(this.scheduleType !== 'day-agenda') {
+            await this.$refs.modalForm.openModal("Edit schedule",  response.data, response.data.inboundScheduledArrival);
+          }
     },
     async getFilter() {
       this.events = [];
