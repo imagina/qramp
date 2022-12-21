@@ -125,7 +125,7 @@
                       Edit
                     </div>
                     <div v-else>
-                      Shoe
+                      Show
                     </div>
                   </q-tooltip>
                 </button>
