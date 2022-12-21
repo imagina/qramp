@@ -2,22 +2,22 @@
   <q-form ref="lineForm">
     <div
       class="
-        tw-flex
         tw-border
         tw-rounded-lg
         tw-py-3
         tw-px-4
-        tw-space-x-2
         tw-mx-2
         tw-my-1
+        lg:tw-flex
+        lg:tw-space-x-2
       "
     >
       <div v-for="(field, keyField) in fields.form" :key="keyField">
         <dynamic-field
           :field="field"
           v-model="event[keyField]"
-          class="tw-w-48"
-          :class="{ 'tw-hidden': keyField === 'stationId' }"
+          class="tw-w-full lg:tw-w-48"
+          :class="{ 'tw-hidden tw-w-0': keyField === 'stationId' }"
         />
       </div>
       <div class="tw-space-x-2 tw-my-1">
