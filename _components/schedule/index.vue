@@ -50,8 +50,7 @@
       class="tw-w-full"
       animated
       hour24Format
-      @click:day2="eventSchedule"
-      @click:day:header2="eventSchedule"
+      @click:date2="eventSchedule"
     >
       <template #day="{ timestamp }">
         <div
@@ -64,7 +63,6 @@
             <q-badge
               :key="index"
               class="tw-cursor-pointer tw-text-xs  tw-bg-white tw-border tw-border-grey-100"
-              @click.stop.prevent="editSchedule(event)"
               :class="
                 event.scheduleStatus
                   ? `tw-text-${event.scheduleStatus.color} tw-font-semibold`
@@ -94,7 +92,6 @@
                 tw-border-grey-100
                 tw-flex
               "
-              @click.stop.prevent="editSchedule(event)"
               :class="classSchedule(event)"
               :style="
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
@@ -530,7 +527,7 @@ export default {
             ...item,
             sta: this.$moment(item.sta, 'HH:mm:ss').format('HH:mm'),
             std: this.$moment(item.std, 'HH:mm:ss').format('HH:mm'),
-            time: item.sta,
+            time: item.sta || '00:00',
           }));
         const order = _.orderBy(
           filters,
@@ -543,7 +540,8 @@ export default {
       }
     },
     eventSchedule(event) {
-      if(this.scheduleType !== 'day-agenda') {
+      this.scheduleType = 'day-agenda';
+      /*if(this.scheduleType !== 'day-agenda') {
         if(!this.isBlank && !event.scope.outside) {
           this.selectedData = event.scope.timestamp;
           this.$refs.modalForm.openModal(
@@ -552,7 +550,7 @@ export default {
             event.scope.timestamp.date
           );
         }
-      }
+      }*/
     },
     async editSchedule(event, type = null) {
       await this.showWorkOrder(event, type);
