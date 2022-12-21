@@ -28,7 +28,7 @@
         >
           <i class="fa-light fa-floppy-disk" />
           <q-tooltip>
-            Save
+            {{ $tr('isite.cms.label.save') }}
           </q-tooltip>
         </button>
         <button

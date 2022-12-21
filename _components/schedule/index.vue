@@ -122,10 +122,10 @@
                     />
                   <q-tooltip>
                     <div v-if="!isBlank">
-                      Edit
+                      {{ $tr('isite.cms.label.edit') }}
                     </div>
                     <div v-else>
-                      Show
+                      {{ $tr('isite.cms.label.show') }}
                     </div>
                   </q-tooltip>
                 </button>
@@ -140,7 +140,7 @@
                   >
                   <i class="fa-light fa-trash-can tw-text-sm"/>
                   <q-tooltip>
-                    Delete
+                    {{ $tr('isite.cms.label.delete') }}
                   </q-tooltip>
                 </button>
               </div>
@@ -168,7 +168,7 @@
               @click="addNewDayToSchedule(timestamp)"
               :disabled="events.some(item => item.isUpdate)"
             >
-            <i class="fa-light fa-plus"></i> New
+            <i class="fa-light fa-plus"></i> {{ $tr('isite.cms.label.new') }}
           </button>
         </div>
       </template>
@@ -273,9 +273,6 @@ export default {
     });
   },
   computed: {
-    isBlank() {
-      return qRampStore().getIsblank();
-    },
     classSchedule() {
       return event => {
         const color = event.scheduleStatus ? event.scheduleStatus.color : 'black';
