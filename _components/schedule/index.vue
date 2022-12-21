@@ -55,7 +55,8 @@
       <template #day="{ timestamp }">
         <div
           v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')"
-          class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2">
+          class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2"
+        >
           <div
             v-for="(event, index) in getEvents(timestamp.date)"
             :key="event.id"
@@ -562,6 +563,7 @@ export default {
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+        await this.addNewDayToSchedule({ date: this.selectedDate });
         this.$alert.success('workOrders was added correctly');
         //this.$router.go();
       } catch (error) {
@@ -848,7 +850,7 @@ export default {
       //Call back
       if (this.filter && this.filter.callBack) this.filter.callBack(this.filter)
     },
-    addNewDayToSchedule(event) {
+    async addNewDayToSchedule(event) {
       try {
         const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T23:59:59`;
         this.sessionStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
