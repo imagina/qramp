@@ -113,13 +113,24 @@
                     tw-rounded-lg 
                     tw-px-2
                     tw-text-white">
-                  <i class="fa-light fa-pen-to-square tw-text-sm"/>
+                  <i 
+                    class="fa-light tw-text-sm"
+                    :class="{
+                      'fa-eye': isBlank,
+                      'fa-pen-to-square': !isBlank
+                    }"
+                    />
                   <q-tooltip>
-                    Edit
+                    <div v-if="!isBlank">
+                      Edit
+                    </div>
+                    <div v-else>
+                      Shoe
+                    </div>
                   </q-tooltip>
                 </button>
                 <button
-                  v-if="event.id && scheduleType === 'day-agenda'"
+                  v-if="event.id && scheduleType === 'day-agenda' && !isBlank"
                   class="
                     tw-bg-red-500 
                     tw-rounded-lg 
@@ -147,7 +158,7 @@
         </template>
       </template>
       <template #day-header="{ timestamp }">
-        <div class="tw-mx-4 tw-py-4" v-if="scheduleType === 'day-agenda'">
+        <div class="tw-mx-4 tw-py-4" v-if="scheduleType === 'day-agenda' && !isBlank">
           <button
             class="
               tw-bg-blue-800 
@@ -262,6 +273,9 @@ export default {
     });
   },
   computed: {
+    isBlank() {
+      return qRampStore().getIsblank();
+    },
     classSchedule() {
       return event => {
         const color = event.scheduleStatus ? event.scheduleStatus.color : 'black';

@@ -22,7 +22,7 @@
       </div>
       <div class="tw-space-x-2 tw-my-1">
         <button
-          v-if="event.isUpdate"
+          v-if="event.isUpdate && !isBlank"
           class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
           @click.prevent="save"
         >
@@ -47,6 +47,7 @@
 </template>
 <script>
 import scheduleField from "./fields/scheduleField.js";
+import qRampStore from '../../_store/qRampStore.js';
 
 export default {
   mixins: [scheduleField],
@@ -79,7 +80,10 @@ export default {
             scheduleStatusId: this.event.scheduleStatusId,
             inboundScheduledArrival: inboundScheduledArrival,
         }
-    }
+    },
+    isBlank() {
+      return qRampStore().getIsblank();
+    },
   },
   methods: {
     save() {
