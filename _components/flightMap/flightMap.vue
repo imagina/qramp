@@ -7,7 +7,7 @@
         v-for="(item, index) in aircraftList"
         :key="item.id"
         :lat-lng="item.coordinates"
-        :icon="icon"
+        :icon="icon(item.flightStatusColor)"
         :rotationAngle="item.lastPositionHeading - 95"
         @click="selectedflight(item.id)"
       >
@@ -179,8 +179,8 @@ export default {
       return data;
     },
     icon() {
-      return new divIcon({
-        html: '<i class="fak fa-plane-right-thin-icon tw-text-4xl tw-text-blue-500"/>',
+      return color => new divIcon({
+        html: `<i class="fak fa-plane-right-thin-icon tw-text-4xl ${ color ? `text-${color}`: 'tw-text-blue-500'}"  />`,
         iconSize: this.dynamicSize, // size of the icon
         iconAnchor: this.dynamicAnchor,
         className: "iconMapPane",
