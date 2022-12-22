@@ -8,7 +8,7 @@
           :value="80"
           size="200px"
           :thickness="0.22"
-          color="teal"
+          color="blue-10"
           track-color="grey-3"
           class="q-ma-md tw-text-center"
         >
