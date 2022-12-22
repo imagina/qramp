@@ -17,6 +17,7 @@ export default {
     await qRampStore().getFlights();
   },
   beforeDestroy() {
+    qRampStore().setFlightList([]);
     qRampStore().setFlightId(null);
   }
 };
