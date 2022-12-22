@@ -16,5 +16,8 @@ export default {
   async mounted() {
     await qRampStore().getFlights();
   },
+  beforeDestroy() {
+    qRampStore().setFlightId(null);
+  }
 };
 </script>
