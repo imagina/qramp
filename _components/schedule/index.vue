@@ -541,7 +541,7 @@ export default {
       }
     },
     eventSchedule(event) {
-      this.scheduleType = 'day-agenda';
+      this.scheduleTypeComputed = 'day-agenda';
       /*if(this.scheduleType !== 'day-agenda') {
         if(!this.isBlank && !event.scope.outside) {
           this.selectedData = event.scope.timestamp;
