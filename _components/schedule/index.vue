@@ -104,7 +104,7 @@
               </div>
               <div class="tw-text-right tw-w-1/2 tw-space-x-2">
                 <button
-                  v-if="event.id && scheduleType === 'day-agenda'"
+                  v-if="event.id && scheduleType === 'day-agenda' && !events.some(item => item.isUpdate)"
                   @click.stop.prevent="editSchedule(event, 'day')"
                   class="
                     tw-bg-blue-800 
@@ -128,7 +128,7 @@
                   </q-tooltip>
                 </button>
                 <button
-                  v-if="event.id && scheduleType === 'day-agenda' && !isBlank"
+                  v-if="event.id && scheduleType === 'day-agenda' && !isBlank && !events.some(item => item.isUpdate)"
                   class="
                     tw-bg-red-500 
                     tw-rounded-lg 
