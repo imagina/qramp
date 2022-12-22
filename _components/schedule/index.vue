@@ -98,13 +98,19 @@
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
               "
             >
-              <div class="tw-font-semibold tw-w-1/2">
+              <div 
+                class="tw-font-semibold"
+                :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
+              >
                 <i class="fak fa-plane-right-thin-icon" />
                 {{ event.calendarTitle }}
               </div>
-              <div class="tw-text-right tw-w-1/2 tw-space-x-2">
+              <div 
+                class="tw-text-right tw-w-1/2 tw-space-x-2"
+                v-if="event.id && scheduleType === 'day-agenda'"
+              >
                 <button
-                  v-if="event.id && scheduleType === 'day-agenda' && !events.some(item => item.isUpdate)"
+                  v-if="!events.some(item => item.isUpdate)"
                   @click.stop.prevent="editSchedule(event, 'day')"
                   class="
                     tw-bg-blue-800 
@@ -128,7 +134,7 @@
                   </q-tooltip>
                 </button>
                 <button
-                  v-if="event.id && scheduleType === 'day-agenda' && !isBlank && !events.some(item => item.isUpdate)"
+                  v-if="!isBlank && !events.some(item => item.isUpdate)"
                   class="
                     tw-bg-red-500 
                     tw-rounded-lg 
