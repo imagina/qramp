@@ -39,9 +39,12 @@ export default {
       handler: function (newValue, oldValue) {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
         this.areaId = this.$filter.values.areaId;
-        console.log(this.areaId);
       }
     }
+  },
+  beforeDestroy() {
+    qRampStore().setFlightList([]);
+    qRampStore().setFlightId(null);
   },
   computed: {
     filter() {
