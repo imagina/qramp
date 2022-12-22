@@ -10,20 +10,20 @@ export default {
     flight: 'flights'
   },
   quickCards: [
-    {
-      active: true,
+    /*{
+      active: false,
       //permission: 'profile.user.manage',
       component: () => import('../_components/quick-cards/lineChart.vue')
     },
     {
-      active: true,
+      active: false,
       //permission: 'profile.user.manage',
       component: () => import('../_components/quick-cards/bar.vue')
     },
     {
-      active: true,
+      active: false,
       //permission: 'profile.user.manage',
       component: () => import('../_components/quick-cards/percentage.vue')
-    },
+    },*/
   ]
 }
