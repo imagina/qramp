@@ -10,20 +10,20 @@ export default {
     flight: 'flights'
   },
   quickCards: [
-    /*{
-      active: false,
-      //permission: 'profile.user.manage',
+    {
+      active: true,
+      permission: 'ramp.work-orders.manage',
       component: () => import('../_components/quick-cards/lineChart.vue')
     },
     {
-      active: false,
-      //permission: 'profile.user.manage',
+      active: true,
+      permission: 'ramp.work-orders.manage',
       component: () => import('../_components/quick-cards/bar.vue')
     },
     {
-      active: false,
-      //permission: 'profile.user.manage',
+      active: true,
+      permission: 'ramp.work-orders.manage',
       component: () => import('../_components/quick-cards/percentage.vue')
-    },*/
+    }
   ]
 }
