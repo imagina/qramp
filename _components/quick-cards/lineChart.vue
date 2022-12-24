@@ -1,7 +1,5 @@
 <template>
-  <quick-card :params="quickCardParams">
-    <QCharts :chartsData="chartData" />
-  </quick-card>
+  <quick-card :params="quickCardParams" />
 </template>
 <script>
 //Component
@@ -20,33 +18,15 @@ export default {
     return {
       loading: false,
       posts: [],
-      dataChart: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-          {
-            label: 'Data One',
-            backgroundColor: '#28489a',
-            data: [0.9, 39, 25, 40]
-          }
-        ]
-      },
     }
   },
   computed: {
-    chartData() {
-      if (this.dataChart.datasets.length === 0) return;
-      return {
-        type: 'lineChart',
-        dataSets: this.dataChart.datasets,
-        dataLabels: this.dataChart.labels
-      }
-    },
     quickCardParams() {
       return {
-        type: 'slot',
-        title: 'Ramp',
-        icon: 'fas fa-users',
-        actionTo: 'quser.admin.users'
+        type: 'chart',
+        title: 'Work orders by status lines',
+        icon: 'fa-light fa-briefcase',
+        apiRoute:"apiRoutes.qramp.workOrdersByStatusLines"
       }
     }
   },

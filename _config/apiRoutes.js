@@ -26,5 +26,8 @@ export default {
   simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
   flightPosition: `${urlBase}/work-orders/flight-position`,
   scheduleStatuses: `${urlBase}/schedule-statuses`,
-  schedule: `${urlBase}/work-orders/schedule`
+  schedule: `${urlBase}/work-orders/schedule`,
+  workOrdersByStatus: `${urlBase}/dashboard/work-orders-by-status`,
+  percentageWorkOrdersPosted: `${urlBase}/dashboard/percentage-work-orders-posted`,
+  workOrdersByStatusLines: `${urlBase}/dashboard/work-orders-by-status-lines`,
 }

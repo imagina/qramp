@@ -1,7 +1,5 @@
 <template>
-  <quick-card :params="quickCardParams">
-    <QCharts :chartsData="chartData" />
-  </quick-card>
+  <quick-card :params="quickCardParams" />
 </template>
 <script>
 //Component
@@ -43,10 +41,10 @@ export default {
     },
     quickCardParams() {
       return {
-        type: 'slot',
-        title: 'Ramp',
-        icon: 'fas fa-users',
-        actionTo: 'quser.admin.users'
+        type: 'chart',
+        title: 'Work Orders by status (Current Month)',
+        icon: 'fa-light fa-briefcase',
+        apiRoute:"apiRoutes.qramp.workOrdersByStatus"
       }
     }
   },
