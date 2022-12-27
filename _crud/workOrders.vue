@@ -198,10 +198,10 @@ export default {
           filters: {
             date: {
               props:{
-                label: "Arrival Date"
+                label: "Block-in/out Date"
               },
-              name: "inboundScheduledArrival",
-              field: {value: 'inbound_scheduled_arrival'},
+              name: "blockInBlockOut",
+              field: {value: 'blockInBlockOut'},
               quickFilter: true
             },
             customerId: {

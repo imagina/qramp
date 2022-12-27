@@ -219,8 +219,8 @@ export default function qRampStore() {
             index,
             date,
             registration: items.registration,
-            inbound: `${inboundTime} - ${airportName}`,
-            outbound: `${outboundTime} - ${destinationairportName}`,
+            inbound: `${inboundTime} - ${destinationairportName}`,
+            outbound: `${outboundTime} - ${airportName}`,
             aircraftType: items.aircraftType,
             faFlightId: items.faFlightId,
           }

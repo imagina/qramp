@@ -214,7 +214,7 @@ export default {
         qRampStore().setLoadingModalMap(true);
         setTimeout(() => {
           qRampStore().setLoadingModalMap(false);
-        }, 2000);
+        }, 1000);
       } catch (error) {
         qRampStore().setFlightMap(null);
         qRampStore().setLoadingModalMap(false);
