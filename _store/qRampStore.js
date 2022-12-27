@@ -1,4 +1,4 @@
-import { reactive } from '@vue/composition-api';
+//import { reactive } from 'vue';
 import {
     STATUS_DRAFT,
     STATUS_POSTED,
@@ -8,7 +8,7 @@ import {
 import * as moment from 'moment';
 import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts';
 import baseService from '@imagina/qcrud/_services/baseService.js'
-import Vue from "vue";
+import Vue, { reactive } from "vue";
 
 const state = reactive({
     statusId: STATUS_DRAFT,
