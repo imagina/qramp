@@ -12,17 +12,17 @@ export default {
   quickCards: [
     {
       active: true,
-      permission: 'ramp.work-orders.manage',
+      permission: 'ramp.dashboard.work-orders-by-status-lines',
       component: () => import('../_components/quick-cards/lineChart.vue')
     },
     {
       active: true,
-      permission: 'ramp.work-orders.manage',
+      permission: 'ramp.dashboard.work-orders-by-status',
       component: () => import('../_components/quick-cards/bar.vue')
     },
     {
       active: true,
-      permission: 'ramp.work-orders.manage',
+      permission: 'ramp.dashboard.percentage-work-orders-posted',
       component: () => import('../_components/quick-cards/percentage.vue')
     }
   ]
