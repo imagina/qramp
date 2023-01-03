@@ -217,7 +217,6 @@
   </div>
 </template>
 <script>
-import convertStringToObject from '@imagina/qsite/_plugins/convertStringToObject.js';
 import calendar, { QCalendar } from "@quasar/quasar-ui-qcalendar";
 import modalForm from "./modals/modalForm.vue";
 import formOrders from "../formOrders.vue";
@@ -459,7 +458,7 @@ export default {
       }
     },
     async initUrlMutate() {
-      const obj = await convertStringToObject();
+      const obj = await this.$helper.convertStringToObject();
       const localStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
         this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
         if (!this.stationId) {
@@ -661,7 +660,7 @@ export default {
           this.selectedDateEnd = dateEnd;
         }
         const currentFilterDate = await this.getCurrentFilterDate(this.selectedDateStart, this.selectedDateEnd);
-        const objUrl = await convertStringToObject();
+        const objUrl = await this.$helper.convertStringToObject();
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
         const thereAreFilters = Object.keys(filter).length > 0 ? filter : {};
