@@ -880,7 +880,6 @@ export default {
       })
     },
     saveIndividual() {
-      console.log(this.form);
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form))
       qRampStore().setDateInboundBlockIn(this.form.inboundBlockIn);
       qRampStore().setDateOutboundBlockOut(this.form.outboundBlockOut);
