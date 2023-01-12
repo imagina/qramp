@@ -183,7 +183,9 @@ export default {
           action: async () => {
               qRampStore().setStatusId(STATUS_DRAFT);
               await this.$refs.stepper.setData();
-              await this.$refs.stepper.sendInfo();
+              setTimeout(async () => {
+                await this.$refs.stepper.sendInfo();
+              }, 1000);
               qRampStore().hideLoading();
           }
         },
@@ -198,7 +200,9 @@ export default {
           action: async () => {
             await qRampStore().setStatusId(STATUS_CLOSED);
             await this.$refs.stepper.setData();
-            await this.$refs.stepper.sendInfo();
+            setTimeout(async () => {
+                await this.$refs.stepper.sendInfo();
+            }, 1000);
             qRampStore().hideLoading();
           }
         },

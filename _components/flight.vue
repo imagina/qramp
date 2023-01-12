@@ -258,13 +258,6 @@ export default {
     }
   },
   watch:{
-    'form.customCustomer'(newVal) {
-      if(newVal){
-        this.form.customerId = null
-      } else {
-        this.form.customCustomerName = ''
-      }
-    },
     'form.inboundFlightNumber' (val) {
       if (!val) {
         this.form.inboundFlightNumber = null,
@@ -887,7 +880,8 @@ export default {
       })
     },
     saveIndividual() {
-      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.form)
+      console.log(this.form);
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form))
       qRampStore().setDateInboundBlockIn(this.form.inboundBlockIn);
       qRampStore().setDateOutboundBlockOut(this.form.outboundBlockOut);
       qRampStore().setDateOutboundScheduledDeparture(this.form.outboundScheduledDeparture);
