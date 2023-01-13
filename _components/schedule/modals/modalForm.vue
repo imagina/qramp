@@ -15,6 +15,7 @@
           :field="field"
           v-model="form[keyField]"
           @input="zanetizeData(keyField)"
+          :class="{ 'tw-hidden': keyField === 'stationId' }"
         />
       </div>
     </q-form>
@@ -37,6 +38,10 @@ export default {
   },
   async created() {
     this.$nextTick(async function () {
+      this.sessionStationId =
+        sessionStorage.getItem("stationId") !== "null"
+          ? sessionStorage.getItem("stationId")
+          : null;
       await this.getScheduleStatusList();
     })
   },

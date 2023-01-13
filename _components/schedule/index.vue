@@ -50,7 +50,9 @@
       class="tw-w-full"
       animated
       hour24Format
-      @click:date2="eventSchedule"
+      @click:day2="eventSchedule"
+      @click:date2="event => eventSchedule(event, true)"
+      @click:day:header2="eventSchedule"
     >
       <template #day="{ timestamp }">
         <div
@@ -69,6 +71,7 @@
                   ? `tw-text-${event.scheduleStatus.color} tw-font-semibold`
                   : 'tw-text-black'
               "
+              @click.stop.prevent="editSchedule(event)"
             >
               <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
                 {{ event.calendarTitle }}
@@ -97,6 +100,7 @@
               :style="
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
               "
+              @click.stop.prevent="editSchedule(event)"
             >
               <div 
                 class="tw-font-semibold"
@@ -545,9 +549,13 @@ export default {
         console.log(error);
       }
     },
-    eventSchedule(event) {
-      this.scheduleTypeComputed = 'day-agenda';
-      /*if(this.scheduleType !== 'day-agenda') {
+    eventSchedule(event, isDay = false) {
+      console.log(isDay);
+      if(isDay){
+        this.scheduleTypeComputed = 'day-agenda';
+        return;
+      }
+      if(this.scheduleType !== 'day-agenda') {
         if(!this.isBlank && !event.scope.outside) {
           this.selectedData = event.scope.timestamp;
           this.$refs.modalForm.openModal(
@@ -556,7 +564,7 @@ export default {
             event.scope.timestamp.date
           );
         }
-      }*/
+      }
     },
     async editSchedule(event, type = null) {
       await this.showWorkOrder(event, type);
@@ -715,6 +723,7 @@ export default {
       }
     },
     async showWorkOrder(reponseSchedule, type = null) {
+      console.log(type);
       const response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
             refresh: true,
             include:
