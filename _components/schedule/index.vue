@@ -536,7 +536,6 @@ export default {
       }
     },
     eventSchedule(event, isDay = false) {
-      console.log(isDay);
       if(isDay){
         this.scheduleTypeComputed = 'day-agenda';
         return;
