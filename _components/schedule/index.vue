@@ -710,12 +710,13 @@ export default {
       }
     },
     async showWorkOrder(reponseSchedule, type = null) {
-      const response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
+          let response = {data: reponseSchedule};
+          if (response.data.statusId !== STATUS_SCHEDULE) {
+            response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
             refresh: true,
             include:
               "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
-      })
-          if (response.data.statusId !== STATUS_SCHEDULE) {
+            })
             await this.$refs.formOrders.loadform({
               modalProps: {
                 title: `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${
