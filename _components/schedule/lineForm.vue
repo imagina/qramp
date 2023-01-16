@@ -10,6 +10,7 @@
         tw-my-1
         lg:tw-flex
         lg:tw-space-x-2
+        lg:tw-flex-wrap
       "
     >
       <div v-for="(field, keyField) in fields.form" :key="keyField">
@@ -63,7 +64,7 @@ export default {
         sessionStorage.getItem("stationId") !== "null"
           ? sessionStorage.getItem("stationId")
           : null;
-      await this.getScheduleStatusList();
+      await this.getFlightStatusList();
     });
   },
   computed: {
@@ -77,7 +78,8 @@ export default {
             stationId: this.event.stationId,
             preFlightNumber: this.event.preFlightNumber,
             gateId: this.event.gateId,
-            scheduleStatusId: this.event.scheduleStatusId,
+            flightStatusId: this.event.flightStatusId,
+            aircraftTypeId: this.event.aircraftTypeId,
             inboundScheduledArrival: inboundScheduledArrival,
         }
     },

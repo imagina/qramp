@@ -7,7 +7,7 @@
     @hide="hideModal"
     :actions="actions"
     :maximized="$q.screen.lt.md"
-    :customClass="`tw-border-l-2 tw-border-${scheduleStatusComputed() ? scheduleStatusComputed().color : 'gray-100'}`"
+    :customClass="`tw-border-l-2 tw-border-${flightStatusComputed() ? flightStatusComputed().color : 'gray-100'}`"
   >
     <q-form ref="formSchedule">
       <div v-for="(field, keyField) in fields.form" :key="keyField">
@@ -42,7 +42,7 @@ export default {
         sessionStorage.getItem("stationId") !== "null"
           ? sessionStorage.getItem("stationId")
           : null;
-      await this.getScheduleStatusList();
+      await this.getFlightStatusList();
     })
   },
   computed: {
@@ -144,8 +144,8 @@ export default {
     setLoading(value) {
       this.loading = value;
     },
-    scheduleStatusComputed() {
-      return this.scheduleStatusList.find(item => item.id == this.form.scheduleStatusId) || null;
+    flightStatusComputed() {
+      return this.flightStatusList.find(item => item.id == this.form.flightStatusId) || null;
     },
   },
 };

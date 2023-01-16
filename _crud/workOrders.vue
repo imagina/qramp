@@ -109,7 +109,7 @@ export default {
               align: "left",
               format: item => item ? item.name  : "",
               formatColumn: row => ({
-                bgTextColor: row.flightStatus ? `bg-${row.flightStatus.color}` : ''
+                bgTextColor: row.flightStatus ? `tw-bg-${row.flightStatus.color}` : ''
               }),
                action: (item) => this.getFlightMap(item),
             },

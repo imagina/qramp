@@ -3,7 +3,7 @@ import qRampStore from '../../../_store/qRampStore.js';
 export default {
     data() {
       return {
-        scheduleStatusList: [],
+        flightStatusList: [],
         sessionStationId: null,
       }
     },
@@ -95,18 +95,33 @@ export default {
                 format24h: true,
               },
             },
-            scheduleStatusId: {
+            flightStatusId: {
               value: null,
               type: 'select',
               props: {
                 readonly: this.isBlank,
                 selectColor: true,
                 colorType: 'tailwindcss',
-                label: `Font Color`,
+                label: `Flight Status`,
                 clearable: true,
                 color:"primary",
-                options: this.scheduleStatusList,
+                options: this.flightStatusList,
               },
+            },
+            aircraftTypeId: {
+              value: null,
+              type: 'select',
+              props: {
+                label: this.$tr('ifly.cms.sidebar.aircraftType'),
+              },
+              loadOptions: {
+                apiRoute: 'apiRoutes.qfly.aircraftTypes',
+                select: {
+                  label:'model',
+                  id: 'id'
+                },
+                refresh: true,
+              }
             },
           },
         };
@@ -119,9 +134,9 @@ export default {
         }
         return !!val || this.$tr('isite.cms.message.fieldRequired');
       },
-      async getScheduleStatusList() {
-        const response = await this.$crud.index('apiRoutes.qramp.scheduleStatuses');
-        this.scheduleStatusList = response.data.map((item) =>({
+      async getFlightStatusList() {
+        const response = await this.$crud.index('apiRoutes.qfly.flightStatuses');
+        this.flightStatusList = response.data.map((item) =>({
           label: item.name,
           id: item.id,
           color: item.color,

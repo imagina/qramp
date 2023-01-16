@@ -66,11 +66,7 @@
             <q-badge
               :key="index"
               class="tw-cursor-pointer tw-text-xs  tw-bg-white tw-border tw-border-grey-100"
-              :class="
-                event.scheduleStatus
-                  ? `tw-text-${event.scheduleStatus.color} tw-font-semibold`
-                  : 'tw-text-black'
-              "
+              :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
               <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
@@ -282,11 +278,13 @@ export default {
   computed: {
     classSchedule() {
       return event => {
-        const color = event.scheduleStatus ? event.scheduleStatus.color : 'black';
+        const color = event.carrier ? event.carrier.color : 'black';
+        const statusColor = event.flightStatus ? event.flightStatus.color : 'grey-100';
         return {
-          [`tw-text-${color}`] : event.scheduleStatus,
+          [`tw-text-${color} tw-font-semibold`] : event.carrier,
           'tw-cursor-pointer': this.scheduleType !== 'day-agenda',
-          'tw-text-black': !event.scheduleStatus
+          'tw-text-black': !event.carrier,
+          [`tw-border-${statusColor}`] : statusColor
         }
       }
     },
@@ -373,18 +371,6 @@ export default {
             props: {
               label: "Customer",
               clearable: true,
-            },
-          },
-          statusId: {
-            value: null,
-            type: "select",
-            loadOptions: {
-              apiRoute: "apiRoutes.qramp.workOrderStatuses",
-              select: { label: "statusName", id: "id" },
-            },
-            props: {
-              label: "Status",
-              clearable: true
             },
           },
           stationId: {
@@ -598,7 +584,8 @@ export default {
           dataForm.stationId = data.stationId;
           dataForm.preFlightNumber = data.preFlightNumber;
           dataForm.gateId = data.gateId;
-          dataForm.scheduleStatusId = data.scheduleStatusId;
+          dataForm.flightStatusId =  data.flightStatusId;
+          dataForm.aircraftTypeId =  data.aircraftTypeId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
@@ -699,9 +686,10 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,scheduleStatus",
+            include: "flightStatus,gate,scheduleStatus,carrier",
             filter: {
               ...filterClone,
+              statusId: STATUS_SCHEDULE,
               withoutDefaultInclude: true,
               order: {
                 field: "id",
@@ -723,7 +711,6 @@ export default {
       }
     },
     async showWorkOrder(reponseSchedule, type = null) {
-      console.log(type);
       const response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
             refresh: true,
             include:
