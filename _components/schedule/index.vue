@@ -685,7 +685,7 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,scheduleStatus,carrier",
+            include: "flightStatus,gate,carrier",
             filter: {
               ...filterClone,
               statusId: STATUS_SCHEDULE,
