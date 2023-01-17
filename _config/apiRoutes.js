@@ -5,6 +5,9 @@ const urlBase = `/${moduleName}/${moduleVersion}`
 const setupModuleName = 'setup';
 const setupUrlBase = `/${setupModuleName}/${moduleVersion}`
 
+const moduleComments = 'icomments';
+const commentsUrlBase = `/${moduleComments}/${moduleVersion}`
+
 export default {
   urlBase: urlBase,
   version: moduleVersion,
@@ -30,4 +33,5 @@ export default {
   workOrdersByStatus: `${urlBase}/dashboard/work-orders-by-status`,
   percentageWorkOrdersPosted: `${urlBase}/dashboard/percentage-work-orders-posted`,
   workOrdersByStatusLines: `${urlBase}/dashboard/work-orders-by-status-lines`,
+  comments: `${commentsUrlBase}/comments`,
 }

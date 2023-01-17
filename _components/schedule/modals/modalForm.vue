@@ -7,16 +7,29 @@
     @hide="hideModal"
     :actions="actions"
     :maximized="$q.screen.lt.md"
+    width="70%"
     :customClass="`tw-border-l-2 tw-border-${flightStatusComputed() ? flightStatusComputed().color : 'gray-100'}`"
   >
     <q-form ref="formSchedule">
-      <div v-for="(field, keyField) in fields.form" :key="keyField">
-        <dynamic-field
-          :field="field"
-          v-model="form[keyField]"
-          @input="zanetizeData(keyField)"
-          :class="{ 'tw-hidden': keyField === 'stationId' }"
-        />
+      <div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-4" >
+          <div>
+            <div v-for="(field, keyField) in fields.form" :key="keyField">
+            <dynamic-field
+              :field="field"
+              v-model="form[keyField]"
+              @input="zanetizeData(keyField)"
+              :class="{ 'tw-hidden': keyField === 'stationId' }"
+            />
+          </div>
+        </div>
+        <div>
+          <comments 
+            v-if="form.id"
+            apiRoute="apiRoutes.qramp.comments"
+            :commentableId="Number(form.id)"
+            commentableType="Modules\Ramp\Entities\WorkOrder"
+          />
+        </div>
       </div>
     </q-form>
   </master-modal>
@@ -24,7 +37,9 @@
 <script>
 import scheduleField from "../fields/scheduleField.js";
 import qRampStore from '../../../_store/qRampStore.js';
+import comments from '@imagina/qsite/_components/master/comments/index.vue'
 export default {
+  components: {comments},
   mixins: [scheduleField],
   data() {
     return {
