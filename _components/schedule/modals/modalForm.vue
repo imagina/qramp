@@ -7,11 +7,14 @@
     @hide="hideModal"
     :actions="actions"
     :maximized="$q.screen.lt.md"
-    width="70%"
+    :width="form.id ? '70%' : '400px'"
     :customClass="`tw-border-l-2 tw-border-${flightStatusComputed() ? flightStatusComputed().color : 'gray-100'}`"
   >
     <q-form ref="formSchedule">
-      <div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-4" >
+      <div 
+        class="tw-grid tw-grid-cols-1 tw-gap-4"
+        :class="{'lg:tw-grid-cols-2': form.id}"
+      >
           <div>
             <div v-for="(field, keyField) in fields.form" :key="keyField">
             <dynamic-field
