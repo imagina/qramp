@@ -31,6 +31,7 @@
             apiRoute="apiRoutes.qramp.comments"
             :commentableId="Number(form.id)"
             commentableType="Modules\Ramp\Entities\WorkOrder"
+            class="tw-py-4"
           />
         </div>
       </div>
