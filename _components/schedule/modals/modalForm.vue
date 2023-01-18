@@ -13,7 +13,7 @@
     <q-form ref="formSchedule">
       <div 
         class="tw-grid tw-grid-cols-1 tw-gap-4"
-        :class="{'lg:tw-grid-cols-2': form.id}"
+        :class="{'lg:tw-grid-cols-2': form.id && permisionComments}"
       >
           <div>
             <div v-for="(field, keyField) in fields.form" :key="keyField">
@@ -27,10 +27,11 @@
         </div>
         <div>
           <comments 
-            v-if="form.id"
+            v-if="form.id && permisionComments"
             apiRoute="apiRoutes.qramp.comments"
             :commentableId="Number(form.id)"
             commentableType="Modules\Ramp\Entities\WorkOrder"
+            permisionComments="ramp.work-orders-comments"
             class="tw-py-4"
           />
         </div>
@@ -67,6 +68,9 @@ export default {
   computed: {
     isBlank() {
       return qRampStore().getIsblank();
+    },
+    permisionComments() {
+      return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
     },
     actions() {
       return [

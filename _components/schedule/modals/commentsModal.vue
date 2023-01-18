@@ -4,16 +4,16 @@
     title="Comments"
     :persistent="true"
     :loading="loading"
-    :actions="actions"
     @hide="hideModal"
     width="60%"
     :maximized="$q.screen.lt.md"
   >
     <comments
-      v-if="commentableId"
+      v-if="commentableId > 0"
       apiRoute="apiRoutes.qramp.comments"
       :commentableId="Number(commentableId)"
       commentableType="Modules\Ramp\Entities\WorkOrder"
+      permisionComments="ramp.work-orders-comments"
       class="tw-py-4"
     />
   </master-modal>

@@ -27,7 +27,7 @@
             </q-tooltip>
           </button>
           <button
-            v-if="event.isUpdate && !isBlank"
+            v-if="event.isUpdate && !isBlank && permisionComments"
             class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
             @click.prevent="openCommentsModal"
           >
@@ -48,7 +48,8 @@
       </div>
     </q-form>
     <commentsModal
-      v-if="event.id" 
+      v-if="event.id"
+      :key="event.id"
       ref="commentsModal"
       :commentableId="event.id"
     />
@@ -96,6 +97,9 @@ export default {
     },
     isBlank() {
       return qRampStore().getIsblank();
+    },
+    permisionComments() {
+      return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
     },
   },
   methods: {
