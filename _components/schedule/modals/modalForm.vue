@@ -71,7 +71,7 @@ export default {
     },
     permisionComments() {
       return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
-    },
+    },  
     actions() {
       return [
         {
@@ -111,9 +111,10 @@ export default {
     },
   },
   methods: {
-    hideModal() {
+    async hideModal() {
+      this.$emit('setEventComments', this.form.id);
       this.show = false;
-      this.form = {};
+      this.form = {};      
     },
     async openModal(title = null, data = null, date) {
       try {

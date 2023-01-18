@@ -226,6 +226,7 @@
       @addSchedule="addSchedule"
       @updateSchedule="updateSchedule"
       @deleteSchedule="deleteSchedule"
+      @setEventComments="setEventComments"
     />
     <form-orders ref="formOrders" />
     <stationModal
@@ -902,7 +903,13 @@ export default {
         return;
       }
       this.events = this.events.filter(item => item.id !== event.id);
-    }
+    },
+    async setEventComments(workOrderId) {
+      const event = this.events.find(item => item.id === workOrderId);
+      const response = await this.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
+            refresh: true})
+      event.comments = response.data.comments;
+    },
   },
 };
 </script>
