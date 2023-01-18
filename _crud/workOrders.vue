@@ -2,6 +2,10 @@
   <div>
     <form-orders ref="formOrders" />
     <flightDetail />
+    <commentsModal
+      ref="commentsModal"
+      :commentableId="commentableId"
+    />
   </div>
 </template>
 <script>
@@ -14,17 +18,20 @@ import {
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
+import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 
 export default {
   name: 'RampCrud',
   components: {
     formOrders,
     flightDetail,
+    commentsModal,
   },
   data() {
     return {
       crudId: this.$uid(),
       areaId: null,
+      commentableId: null,
     }
   },
   provide() {
@@ -346,6 +353,21 @@ export default {
                 {
                   //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
                   vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
+                }),
+            },
+            {
+              name: 'Comments',
+              icon: 'fas fa-paper-plane',
+              label: 'Comments',
+              action: (item) => {
+                this.commentableId = item.id || null;
+                if(this.$refs.commentsModal) {
+                    this.$refs.commentsModal.showModal();
+                }
+              },
+              format: item => (
+                {
+                  vIf: this.$auth.hasAccess('ramp.work-orders-comments.index') 
                 }),
             },
           ],
