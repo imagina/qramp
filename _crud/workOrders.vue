@@ -357,7 +357,7 @@ export default {
             },
             {
               name: 'Comments',
-              icon: 'fas fa-paper-plane',
+              icon: 'fa-light fa-comment',
               label: 'Comments',
               action: (item) => {
                 this.commentableId = item.id || null;
