@@ -174,6 +174,7 @@
               @dismissEvent="dismissEvent"
               @addSchedule="addSchedule"
               @updateSchedule="updateSchedule"
+              @setEventComments="setEventComments"
             />
             
           </template>
@@ -900,6 +901,7 @@ export default {
         if(eventFind) {
           eventFind.isUpdate = false;
         }
+        this.setEventComments(event.id);
         return;
       }
       this.events = this.events.filter(item => item.id !== event.id);
