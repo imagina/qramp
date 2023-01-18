@@ -69,6 +69,15 @@
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
+              <i
+                v-if="event.comments > 0"
+                class="
+                  fa-light 
+                  fa-comment-lines 
+                  tw-px-1 
+                  tw-text-red-500 
+                  tw-font-semibold" 
+              />
               <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
                 {{ event.calendarTitle }}
               </span>
@@ -102,6 +111,15 @@
                 class="tw-font-semibold"
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
+                <i
+                  v-if="event.comments > 0"
+                  class="
+                    fa-light 
+                    fa-comment-lines 
+                    tw-px-1 
+                    tw-text-red-500 
+                    tw-font-semibold" 
+                />
                 <i class="fak fa-plane-right-thin-icon" />
                 {{ event.calendarTitle }}
               </div>
