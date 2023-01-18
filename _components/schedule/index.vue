@@ -70,7 +70,7 @@
               @click.stop.prevent="editSchedule(event)"
             >
               <i
-                v-if="event.comments > 0"
+                v-if="event.comments > 0 && permisionComments"
                 class="
                   fa-light 
                   fa-comment-lines 
@@ -112,7 +112,7 @@
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
                 <i
-                  v-if="event.comments > 0"
+                  v-if="event.comments > 0 && permisionComments"
                   class="
                     fa-light 
                     fa-comment-lines 
@@ -294,6 +294,9 @@ export default {
     });
   },
   computed: {
+    permisionComments() {
+      return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
+    },
     classSchedule() {
       return event => {
         const color = event.carrier ? event.carrier.color : 'black';
