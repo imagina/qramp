@@ -411,7 +411,6 @@ export default {
           statusId: {
             value: STATUS_SCHEDULE,
             type: 'select',
-            quickFilter: true,
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
               select: { 'label': 'statusName', 'id': 'id' },
