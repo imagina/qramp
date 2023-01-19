@@ -110,6 +110,23 @@ export default {
               align: 'left'
             },
             {
+              name: "comments",
+              label: 'Comments',
+              field: "comments",
+              align: "left",
+              format: item => item !== 0 ? `<span class="tw-px-2 text-black tw-text-base">${item}</span>
+              <i class="fa-light fa-comment-lines tw-text-lg tw-font-semibold" ></i>` : '',
+              formatColumn: row => ({
+                textColor: row.comments ? `red-5` : ''
+              }),
+              action: (item) => {
+                this.commentableId = item.id || null;
+                if(this.$refs.commentsModal) {
+                  this.$refs.commentsModal.showModal();
+                }
+              },
+            },
+            {
               name: "flightStatus",
               label: 'Flight Status',
               field: "flightStatus",
@@ -526,7 +543,7 @@ export default {
           qRampStore().setFlightId(workOrder.id);
           const response = await qRampStore().getFlights();
           if(response.status === 204 || !response.data.flightPosition) {
-            this.$alert.error({message: this.$tr('ifly.cms.message.flightDetails')})
+            this.$alert.warning({message: this.$tr('ifly.cms.message.flightDetails')})
             return; 
           }
           qRampStore().showVisibleMapModal();
