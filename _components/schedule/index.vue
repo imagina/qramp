@@ -78,7 +78,7 @@
                   tw-text-red-500 
                   tw-font-semibold" 
               />
-              <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
+              <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i><span class="ellipsis">
                 {{ event.calendarTitle }}
               </span>
             </q-badge>
@@ -97,7 +97,7 @@
                 tw-p-3
                 tw-mx-2
                 tw-rounded-md
-                tw-border 
+                tw-border-2
                 tw-border-grey-100
                 tw-flex
               "
@@ -120,7 +120,7 @@
                     tw-text-red-500 
                     tw-font-semibold" 
                 />
-                <i class="fak fa-plane-right-thin-icon" />
+                <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i>
                 {{ event.calendarTitle }}
               </div>
               <div 
@@ -275,6 +275,7 @@ export default {
       stationId: null,
       filterData: null,
       cloneEvent: {},
+      STATUS_SCHEDULE,
     };
   },
   watch: {
@@ -405,6 +406,19 @@ export default {
             },
             props: {
               label: "Station",
+            },
+          },
+          statusId: {
+            value: STATUS_SCHEDULE,
+            type: 'select',
+            quickFilter: true,
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.workOrderStatuses',
+              select: { 'label': 'statusName', 'id': 'id' },
+            },
+            props: {
+              label: 'Status',
+              'clearable': true
             },
           },
           adHoc: {
@@ -607,8 +621,9 @@ export default {
           dataForm.preFlightNumber = data.preFlightNumber;
           dataForm.gateId = data.gateId;
           dataForm.flightStatusId =  data.flightStatusId;
-          dataForm.aircraftTypeId =  data.aircraftTypeId;
+          dataForm.acTypeId =  data.acTypeId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
+          dataForm.carrierId = data.carrierId;
           await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
@@ -708,10 +723,10 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,carrier",
+            include: "flightStatus,gate,carrier,acType",
             filter: {
-              ...filterClone,
               statusId: STATUS_SCHEDULE,
+              ...filterClone,
               withoutDefaultInclude: true,
               order: {
                 field: "id",

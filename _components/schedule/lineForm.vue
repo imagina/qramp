@@ -4,7 +4,7 @@
       <div
         class="
           tw-border tw-rounded-lg tw-py-3 tw-px-4 tw-mx-2 tw-my-1
-          lg:tw-flex lg:tw-space-x-2 lg:tw-flex-wrap
+          lg:tw-flex lg:tw-space-x-2 lg:tw-flex-wrap md:tw-flex-wrap
         "
       >
         <div v-for="(field, keyField) in fields.form" :key="keyField">
@@ -91,8 +91,9 @@ export default {
         preFlightNumber: this.event.preFlightNumber,
         gateId: this.event.gateId,
         flightStatusId: this.event.flightStatusId,
-        aircraftTypeId: this.event.aircraftTypeId,
+        acTypeId: this.event.acTypeId,
         inboundScheduledArrival: inboundScheduledArrival,
+        carrierId: this.event.carrierId,
       };
     },
     isBlank() {

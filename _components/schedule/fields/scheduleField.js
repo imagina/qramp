@@ -108,7 +108,7 @@ export default {
                 options: this.flightStatusList,
               },
             },
-            aircraftTypeId: {
+            acTypeId: {
               value: null,
               type: 'select',
               props: {
@@ -118,6 +118,21 @@ export default {
                 apiRoute: 'apiRoutes.qfly.aircraftTypes',
                 select: {
                   label:'model',
+                  id: 'id'
+                },
+                refresh: true,
+              }
+            },
+            carrierId: {
+              value: null,
+              type: 'select',
+              props: {
+                label: 'Carrier',
+              },
+              loadOptions: {
+                apiRoute: 'apiRoutes.qfly.airlines',
+                select: {
+                  label:'airlineName',
                   id: 'id'
                 },
                 refresh: true,
