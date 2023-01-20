@@ -921,10 +921,16 @@ export default {
       this.events = this.events.filter(item => item.id !== event.id);
     },
     async setEventComments(workOrderId) {
-      const event = this.events.find(item => item.id === workOrderId);
-      const response = await this.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
-            refresh: true})
-      event.comments = response.data.comments;
+      try {
+        const event = this.events.find(item => item.id === workOrderId);
+        if(event) {
+          const response = await this.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
+              refresh: true})
+          event.comments = response.data.comments;
+        }
+      } catch (error) {
+       console.log(error)
+      }
     },
   },
 };
