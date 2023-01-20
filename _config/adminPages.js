@@ -58,7 +58,7 @@ export default {
   },
   scheduleStatus: {
     permission: 'ramp.schedule-statuses.manage',
-    activated: false,
+    activated: true,
     authenticated: true,
     path: '/ramp/schedule-status/index',
     name: 'qramp.admin.scheduleStatus',
