@@ -39,13 +39,21 @@ export default {
     loading: false,
     stationId: null,
   }),
-  computed: {},
+  computed: {
+    permisionCommentsIndex() {
+      return this.$auth.hasAccess('ramp.work-orders-comments.index');
+    },
+  },
   methods: {
     hideModal() {
       this.visible = false;
       if(this.isCrud) this.$root.$emit('crud.data.refresh');
     },
     showModal() {
+      if(!this.permisionCommentsIndex) {
+          this.$alert.warning({message: 'You do not have permission to view comments'});
+        return;
+      }
       this.visible = true;
     },
   },

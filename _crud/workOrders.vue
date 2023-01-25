@@ -55,6 +55,9 @@ export default {
     qRampStore().setFlightId(null);
   },
   computed: {
+    permisionCommentsIndex() {
+      return this.$auth.hasAccess('ramp.work-orders-comments.index');
+    },
     filter() {
       console.log(this.$filter);
       return this.$filter;
@@ -385,7 +388,7 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.$auth.hasAccess('ramp.work-orders-comments.index') 
+                  vIf: this.permisionCommentsIndex
                 }),
             },
           ],
