@@ -29,6 +29,10 @@ export default {
       type: Number,
       default: () => 0,
     },
+    isCrud: {
+      type: Boolean,
+      default: () => false,
+    },
   },
   data: () => ({
     visible: false,
@@ -39,6 +43,7 @@ export default {
   methods: {
     hideModal() {
       this.visible = false;
+      if(this.isCrud) this.$root.$emit('crud.data.refresh');
     },
     showModal() {
       this.visible = true;

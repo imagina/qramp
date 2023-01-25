@@ -5,6 +5,7 @@
     <commentsModal
       ref="commentsModal"
       :commentableId="commentableId"
+      isCrud
     />
   </div>
 </template>
