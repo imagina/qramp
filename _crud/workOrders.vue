@@ -2,6 +2,10 @@
   <div>
     <form-orders ref="formOrders" />
     <flightDetail />
+    <commentsModal
+      ref="commentsModal"
+      :commentableId="commentableId"
+    />
   </div>
 </template>
 <script>
@@ -14,17 +18,20 @@ import {
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
+import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 
 export default {
   name: 'RampCrud',
   components: {
     formOrders,
     flightDetail,
+    commentsModal,
   },
   data() {
     return {
       crudId: this.$uid(),
       areaId: null,
+      commentableId: null,
     }
   },
   provide() {
@@ -103,13 +110,30 @@ export default {
               align: 'left'
             },
             {
+              name: "comments",
+              label: 'Comments',
+              field: "comments",
+              align: "left",
+              format: item => item !== 0 ? `<span class="tw-px-2 text-black tw-text-base">${item}</span>
+              <i class="fa-light fa-comment-lines tw-text-lg tw-font-semibold" ></i>` : '',
+              formatColumn: row => ({
+                textColor: row.comments ? `red-5` : ''
+              }),
+              action: (item) => {
+                this.commentableId = item.id || null;
+                if(this.$refs.commentsModal) {
+                  this.$refs.commentsModal.showModal();
+                }
+              },
+            },
+            {
               name: "flightStatus",
               label: 'Flight Status',
               field: "flightStatus",
               align: "left",
               format: item => item ? item.name  : "",
               formatColumn: row => ({
-                bgTextColor: row.flightStatus ? `bg-${row.flightStatus.color}` : ''
+                bgTextColor: row.flightStatus ? `tw-bg-${row.flightStatus.color}` : ''
               }),
                action: (item) => this.getFlightMap(item),
             },
@@ -348,6 +372,21 @@ export default {
                   vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                 }),
             },
+            {
+              name: 'Comments',
+              icon: 'fa-light fa-comment',
+              label: 'Comments',
+              action: (item) => {
+                this.commentableId = item.id || null;
+                if(this.$refs.commentsModal) {
+                    this.$refs.commentsModal.showModal();
+                }
+              },
+              format: item => (
+                {
+                  vIf: this.$auth.hasAccess('ramp.work-orders-comments.index') 
+                }),
+            },
           ],
           bulkActions: [
             {
@@ -504,7 +543,7 @@ export default {
           qRampStore().setFlightId(workOrder.id);
           const response = await qRampStore().getFlights();
           if(response.status === 204 || !response.data.flightPosition) {
-            this.$alert.error({message: this.$tr('ifly.cms.message.flightDetails')})
+            this.$alert.warning({message: this.$tr('ifly.cms.message.flightDetails')})
             return; 
           }
           qRampStore().showVisibleMapModal();

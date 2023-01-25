@@ -30,4 +30,5 @@ export default {
   workOrdersByStatus: `${urlBase}/dashboard/work-orders-by-status`,
   percentageWorkOrdersPosted: `${urlBase}/dashboard/percentage-work-orders-posted`,
   workOrdersByStatusLines: `${urlBase}/dashboard/work-orders-by-status-lines`,
+  comments: `${urlBase}/comments`,
 }

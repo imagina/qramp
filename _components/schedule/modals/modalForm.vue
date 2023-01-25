@@ -7,15 +7,34 @@
     @hide="hideModal"
     :actions="actions"
     :maximized="$q.screen.lt.md"
-    :customClass="`tw-border-l-2 tw-border-${scheduleStatusComputed() ? scheduleStatusComputed().color : 'gray-100'}`"
+    :width="form.id ? '70%' : '400px'"
+    :customClass="`tw-border-l-2 tw-border-${flightStatusComputed() ? flightStatusComputed().color : 'gray-100'}`"
   >
     <q-form ref="formSchedule">
-      <div v-for="(field, keyField) in fields.form" :key="keyField">
-        <dynamic-field
-          :field="field"
-          v-model="form[keyField]"
-          @input="zanetizeData(keyField)"
-        />
+      <div 
+        class="tw-grid tw-grid-cols-1 tw-gap-4"
+        :class="{'lg:tw-grid-cols-2': form.id && permisionComments}"
+      >
+          <div>
+            <div v-for="(field, keyField) in fields.form" :key="keyField">
+            <dynamic-field
+              :field="field"
+              v-model="form[keyField]"
+              @input="zanetizeData(keyField)"
+              :class="{ 'tw-hidden': keyField === 'stationId' }"
+            />
+          </div>
+        </div>
+        <div>
+          <comments 
+            v-if="form.id && permisionComments"
+            apiRoute="apiRoutes.qramp.comments"
+            :commentableId="Number(form.id)"
+            commentableType="Modules\Ramp\Entities\WorkOrder"
+            permisionComments="ramp.work-orders-comments"
+            class="tw-py-4"
+          />
+        </div>
       </div>
     </q-form>
   </master-modal>
@@ -23,7 +42,9 @@
 <script>
 import scheduleField from "../fields/scheduleField.js";
 import qRampStore from '../../../_store/qRampStore.js';
+import comments from '@imagina/qsite/_components/master/comments/index.vue'
 export default {
+  components: {comments},
   mixins: [scheduleField],
   data() {
     return {
@@ -37,13 +58,20 @@ export default {
   },
   async created() {
     this.$nextTick(async function () {
-      await this.getScheduleStatusList();
+      this.sessionStationId =
+        sessionStorage.getItem("stationId") !== "null"
+          ? sessionStorage.getItem("stationId")
+          : null;
+      await this.getFlightStatusList();
     })
   },
   computed: {
     isBlank() {
       return qRampStore().getIsblank();
     },
+    permisionComments() {
+      return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
+    },  
     actions() {
       return [
         {
@@ -83,9 +111,10 @@ export default {
     },
   },
   methods: {
-    hideModal() {
+    async hideModal() {
+      this.$emit('setEventComments', this.form.id);
       this.show = false;
-      this.form = {};
+      this.form = {};      
     },
     async openModal(title = null, data = null, date) {
       try {
@@ -139,8 +168,8 @@ export default {
     setLoading(value) {
       this.loading = value;
     },
-    scheduleStatusComputed() {
-      return this.scheduleStatusList.find(item => item.id == this.form.scheduleStatusId) || null;
+    flightStatusComputed() {
+      return this.flightStatusList.find(item => item.id == this.form.flightStatusId) || null;
     },
   },
 };

@@ -50,7 +50,9 @@
       class="tw-w-full"
       animated
       hour24Format
-      @click:date2="eventSchedule"
+      @click:day2="eventSchedule"
+      @click:date2="event => eventSchedule(event, true)"
+      @click:day:header2="eventSchedule"
     >
       <template #day="{ timestamp }">
         <div
@@ -64,13 +66,19 @@
             <q-badge
               :key="index"
               class="tw-cursor-pointer tw-text-xs  tw-bg-white tw-border tw-border-grey-100"
-              :class="
-                event.scheduleStatus
-                  ? `tw-text-${event.scheduleStatus.color} tw-font-semibold`
-                  : 'tw-text-black'
-              "
+              :class="classSchedule(event)"
+              @click.stop.prevent="editSchedule(event)"
             >
-              <i class="fak fa-plane-right-thin-icon" /><span class="ellipsis">
+              <i
+                v-if="event.comments > 0 && permisionComments"
+                class="
+                  fa-light 
+                  fa-comment-lines 
+                  tw-px-1 
+                  tw-text-red-500 
+                  tw-font-semibold" 
+              />
+              <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i><span class="ellipsis">
                 {{ event.calendarTitle }}
               </span>
             </q-badge>
@@ -89,7 +97,7 @@
                 tw-p-3
                 tw-mx-2
                 tw-rounded-md
-                tw-border 
+                tw-border-2
                 tw-border-grey-100
                 tw-flex
               "
@@ -97,12 +105,22 @@
               :style="
                 badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
               "
+              @click.stop.prevent="editSchedule(event)"
             >
               <div 
                 class="tw-font-semibold"
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
-                <i class="fak fa-plane-right-thin-icon" />
+                <i
+                  v-if="event.comments > 0 && permisionComments"
+                  class="
+                    fa-light 
+                    fa-comment-lines 
+                    tw-px-1 
+                    tw-text-red-500 
+                    tw-font-semibold" 
+                />
+                <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i>
                 {{ event.calendarTitle }}
               </div>
               <div 
@@ -156,6 +174,7 @@
               @dismissEvent="dismissEvent"
               @addSchedule="addSchedule"
               @updateSchedule="updateSchedule"
+              @setEventComments="setEventComments"
             />
             
           </template>
@@ -208,6 +227,7 @@
       @addSchedule="addSchedule"
       @updateSchedule="updateSchedule"
       @deleteSchedule="deleteSchedule"
+      @setEventComments="setEventComments"
     />
     <form-orders ref="formOrders" />
     <stationModal
@@ -255,6 +275,7 @@ export default {
       stationId: null,
       filterData: null,
       cloneEvent: {},
+      STATUS_SCHEDULE,
     };
   },
   watch: {
@@ -276,13 +297,18 @@ export default {
     });
   },
   computed: {
+    permisionComments() {
+      return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
+    },
     classSchedule() {
       return event => {
-        const color = event.scheduleStatus ? event.scheduleStatus.color : 'black';
+        const color = event.carrier ? event.carrier.color : 'black';
+        const statusColor = event.flightStatus ? event.flightStatus.color : 'grey-100';
         return {
-          [`tw-text-${color}`] : event.scheduleStatus,
+          [`tw-text-${color} tw-font-semibold`] : event.carrier,
           'tw-cursor-pointer': this.scheduleType !== 'day-agenda',
-          'tw-text-black': !event.scheduleStatus
+          'tw-text-black': !event.carrier,
+          [`tw-border-${statusColor}`] : statusColor
         }
       }
     },
@@ -371,18 +397,6 @@ export default {
               clearable: true,
             },
           },
-          statusId: {
-            value: null,
-            type: "select",
-            loadOptions: {
-              apiRoute: "apiRoutes.qramp.workOrderStatuses",
-              select: { label: "statusName", id: "id" },
-            },
-            props: {
-              label: "Status",
-              clearable: true
-            },
-          },
           stationId: {
             value: this.stationId,
             type: "select",
@@ -392,6 +406,18 @@ export default {
             },
             props: {
               label: "Station",
+            },
+          },
+          statusId: {
+            value: STATUS_SCHEDULE,
+            type: 'select',
+            loadOptions: {
+              apiRoute: 'apiRoutes.qramp.workOrderStatuses',
+              select: { 'label': 'statusName', 'id': 'id' },
+            },
+            props: {
+              label: 'Status',
+              'clearable': true
             },
           },
           adHoc: {
@@ -545,9 +571,12 @@ export default {
         console.log(error);
       }
     },
-    eventSchedule(event) {
-      this.scheduleTypeComputed = 'day-agenda';
-      /*if(this.scheduleType !== 'day-agenda') {
+    eventSchedule(event, isDay = false) {
+      if(isDay){
+        this.scheduleTypeComputed = 'day-agenda';
+        return;
+      }
+      if(this.scheduleType !== 'day-agenda') {
         if(!this.isBlank && !event.scope.outside) {
           this.selectedData = event.scope.timestamp;
           this.$refs.modalForm.openModal(
@@ -556,7 +585,7 @@ export default {
             event.scope.timestamp.date
           );
         }
-      }*/
+      }
     },
     async editSchedule(event, type = null) {
       await this.showWorkOrder(event, type);
@@ -590,8 +619,10 @@ export default {
           dataForm.stationId = data.stationId;
           dataForm.preFlightNumber = data.preFlightNumber;
           dataForm.gateId = data.gateId;
-          dataForm.scheduleStatusId = data.scheduleStatusId;
+          dataForm.flightStatusId =  data.flightStatusId;
+          dataForm.acTypeId =  data.acTypeId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
+          dataForm.carrierId = data.carrierId;
           await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
@@ -691,8 +722,9 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,scheduleStatus",
+            include: "flightStatus,gate,carrier,acType",
             filter: {
+              statusId: STATUS_SCHEDULE,
               ...filterClone,
               withoutDefaultInclude: true,
               order: {
@@ -715,12 +747,13 @@ export default {
       }
     },
     async showWorkOrder(reponseSchedule, type = null) {
-      const response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
+          let response = {data: reponseSchedule};
+          if (response.data.statusId !== STATUS_SCHEDULE) {
+            response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
             refresh: true,
             include:
               "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
-      })
-          if (response.data.statusId !== STATUS_SCHEDULE) {
+            })
             await this.$refs.formOrders.loadform({
               modalProps: {
                 title: `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${
@@ -882,10 +915,23 @@ export default {
         if(eventFind) {
           eventFind.isUpdate = false;
         }
+        this.setEventComments(event.id);
         return;
       }
       this.events = this.events.filter(item => item.id !== event.id);
-    }
+    },
+    async setEventComments(workOrderId) {
+      try {
+        const event = this.events.find(item => item.id === workOrderId);
+        if(event) {
+          const response = await this.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
+              refresh: true})
+          event.comments = response.data.comments;
+        }
+      } catch (error) {
+       console.log(error)
+      }
+    },
   },
 };
 </script>
