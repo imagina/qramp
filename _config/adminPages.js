@@ -70,6 +70,21 @@ export default {
     subHeader: {
       refresh: true,
     }
-  }
+  },
+  oagStations: {
+    //permission: 'isite.logs.manage',
+    activated: true,
+    path: '/oagStations/index',
+    name: 'qsite.admin.oagStations.index',
+    crud: import('../_crud/oagStations'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'isite.cms.sidebar.oagStations',
+    icon: 'fa-light fa-building-flag',
+    authenticated: true,
+    subHeader: {
+      refresh: true
+    }
+  },
 }
 

@@ -12,4 +12,5 @@ export default [
       pages.qramp.scheduleStatus
     ]
   },
+  pages.qramp.oagStations
 ]
