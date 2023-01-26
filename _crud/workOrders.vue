@@ -118,7 +118,7 @@ export default {
               label: 'Comments',
               field: "comments",
               align: "left",
-              format: item => item !== 0 ? `<span class="tw-px-2 text-black tw-text-base">${item}</span>
+              format: item => item && item > 0 ? `<span class="tw-px-2 text-black tw-text-base">${item}</span>
               <i class="fa-light fa-comment-lines tw-text-lg tw-font-semibold" ></i>` : '',
               formatColumn: row => ({
                 textColor: row.comments ? `red-5` : ''
@@ -475,8 +475,8 @@ export default {
               },
               {
                 name: 'amount',
-                label: 'Amount',
-                field: 'amount'
+                label: 'ammount',
+                field: 'ammount'
               }
             ]
           }
