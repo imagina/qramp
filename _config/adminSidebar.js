@@ -12,5 +12,12 @@ export default [
       pages.qramp.scheduleStatus
     ]
   },
-  pages.qramp.oagStations
+  {
+    title: 'isite.cms.message.request',
+    icon: 'fa-light fa-browser',
+    children: [
+      pages.qramp.oagStations
+    ]
+  },
+  
 ]

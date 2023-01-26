@@ -219,6 +219,8 @@ export default {
               ],
             },
           },
+        },
+        formRight: {
           accountNumber: {
             value: "",
             type: "input",
