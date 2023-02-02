@@ -73,7 +73,7 @@ export default {
   },
   oagStations: {
     //permission: 'isite.logs.manage',
-    activated: true,
+    activated: false,
     path: '/oagStations/index',
     name: 'qsite.admin.oagStations.index',
     crud: import('../_crud/oagStations'),
