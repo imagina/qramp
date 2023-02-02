@@ -529,12 +529,12 @@ export default {
       await this.$refs.schedule.prev();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
-    async getListOfSelectedWorkOrders(type = false) {
+    async getListOfSelectedWorkOrders(type = false, refresh = false) {
       try {
         this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
-        await this.getWorkOrderFilter(true, lastStart, lastEnd, type);
+        await this.getWorkOrderFilter(refresh, lastStart, lastEnd, type);
       } catch (error) {
         console.log(error);
       }
