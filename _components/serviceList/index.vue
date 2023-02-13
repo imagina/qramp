@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from "vue";
-import serviceListModel from "./models/serviceList";
+import serviceListModel, { ServiceModelContract } from "./models/serviceList";
 import expansionComponent from '../expansionComponent.vue';
 
 export default defineComponent({
@@ -74,9 +74,9 @@ export default defineComponent({
     expansionComponent,
   },
   setup() {
-    const selectService = ref<any>({});
+    const selectService = ref<ServiceModelContract>({});
     const breadcrumbs = ref<any[]>([]);
-    const services = computed<any>(() => {
+    const services = computed<ServiceModelContract | any>(() => {
         if(breadcrumbs.value.length === 0) {
             const service = serviceListModel.find(item => item.id === selectService.value.id);
             if(service) {
@@ -90,7 +90,7 @@ export default defineComponent({
         }
         return selectService.value.dynamicField;
     });
-    const setBreadcrumbs = (item, index: null | number = null) => {
+    const setBreadcrumbs = (item: ServiceModelContract | null, index: null | number = null): void => {
         if(!item) {
             selectService.value = {};
             breadcrumbs.value = [];

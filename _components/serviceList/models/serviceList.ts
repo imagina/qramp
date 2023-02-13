@@ -71,14 +71,9 @@ export interface Quantity2 {
     id: number;
     props: PropsContract;
 }
-
-
-
-
-
 export interface ServiceModelContract {
-    id: number;
-    title: string;
+    id?: number;
+    title?: string;
     lists?: ListContract[];
     dynamicField?: DynamicField[];
 }
