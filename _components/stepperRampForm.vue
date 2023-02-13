@@ -37,13 +37,15 @@
             :cargoData="step.form" 
             :readonly="readonly"
           />
-          <i-services 
+          
+          <serviceList v-if="step.step == STEP_SERVICE"  />
+          <!--<i-services 
             ref="services" 
             @isError="isError" 
             v-if="step.step == STEP_SERVICE" 
             :servicesData="step.form" 
             :readonly="readonly"
-          />
+          />-->
           <i-equipment 
             ref="equipment" 
             v-if="step.step == STEP_EQUIPMENT" 
@@ -94,6 +96,7 @@ import {
   STEP_SIGNATURE
 }  from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
+import serviceList from './serviceList/index.vue';
 
 export default {
   name:'stepperRampForm',
@@ -105,7 +108,8 @@ export default {
     iCrew,
     iRemarks,
     iSignature,
-    iToolbar
+    iToolbar,
+    serviceList,
   },
   mixins:[responsive],
   props:{
