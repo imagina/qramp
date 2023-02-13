@@ -23,6 +23,7 @@
         :key="breadcrumb.id"
         :label="breadcrumb.title"
         @click="setBreadcrumbs(breadcrumb, index)"
+        :class="{'tw-cursor-pointer':  index + 1 !== breadcrumbs.length }"
       />
     </q-breadcrumbs>
     <div class="tw-py-6">
