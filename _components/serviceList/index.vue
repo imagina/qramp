@@ -45,6 +45,7 @@ export default defineComponent({
     </q-breadcrumbs>
     <div class="tw-py-6">
       <q-input
+        v-if="!selectService.component"
         borderless
         standout
         dense
@@ -62,7 +63,10 @@ export default defineComponent({
         </template>
       </q-input>
       <q-list
-        v-if="!selectService.dynamicField && filterService.length > 0"
+        v-if="
+            !selectService.component 
+            && !selectService.dynamicField 
+            && filterService.length > 0"
         bordered
         separator
         class="tw-shadow-lg tw-rounded-lg"
@@ -87,8 +91,13 @@ export default defineComponent({
       </q-list>
       
       <expansionComponent v-else :data="filterService" />
+      <component 
+        v-if="selectService.component" 
+        :is="selectService.component"
+        :cargoData="selectService.form" 
+       />
       <div
-        v-if="filterService.length === 0"
+        v-if="!selectService.component && filterService.length === 0"
         class="tw-text-center tw-text-gray-600 tw-text-xl"
       >
         <i class="fa-light fa-triangle-exclamation"></i>

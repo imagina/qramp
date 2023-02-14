@@ -1,5 +1,6 @@
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import serviceListModel, { ServiceModelContract } from "./models/serviceList";
+import { getCategories }  from '../../_store/actions/categories';
 export default function useServiceList(props = {}, emit = null) {
   const search = ref<string>("");
   const selectService = ref<ServiceModelContract>({});
@@ -60,6 +61,7 @@ export default function useServiceList(props = {}, emit = null) {
     }
     return services.value;
   });
+  getCategories();
   return {
     serviceListModel,
     breadcrumbs,

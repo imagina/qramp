@@ -251,7 +251,7 @@ export default {
   },
   methods: {
     init() {
-      if(Object.keys(this.cargoData).length > 0) {
+      if(this.cargoData && Object.keys(this.cargoData).length > 0) {
         const data = {};
         data.inboundCargoTotalUldsUnloaded = this.cargoData.inboundCargoTotalUldsUnloaded
         data.inboundCargoBulkUnloaded = this.cargoData.inboundCargoBulkUnloaded

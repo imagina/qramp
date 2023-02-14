@@ -46,7 +46,7 @@
             :servicesData="step.form" 
             :readonly="readonly"
           />-->
-          <i-equipment 
+          <!--<i-equipment 
             ref="equipment" 
             v-if="step.step == STEP_EQUIPMENT" 
             :equipmentData="step.form" 
@@ -57,7 +57,7 @@
             v-if="step.step == STEP_CREW" 
             :crewData="step.form" 
             :readonly="readonly" 
-          />
+          />-->
           <i-remarks 
             ref="remarks" 
             v-if="step.step == STEP_REMARKS" 

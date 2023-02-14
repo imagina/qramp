@@ -77,19 +77,19 @@ export default {
           step: 1,
           form: this.flight
         },
-        {
+        /*{
           title:'Cargo Op.',
           icon:'rv_hookup',
           step: 2,
           form: this.cargo
-        },
+        },*/
         {
           title:'Services',
           icon:'fas fa-briefcase',
           step: 3,
           form: this.services
         },
-        {
+        /*{
           title:'Equipment',
           icon:'extension',
           step: 4,
@@ -100,7 +100,7 @@ export default {
           icon:'fas fa-users',
           step: 5,
           form: this.crew
-        },
+        },*/
         {
           title:'Remark',
           icon:'far fa-edit',
