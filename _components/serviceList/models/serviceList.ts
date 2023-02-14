@@ -514,7 +514,11 @@ const dataModel: ServiceModelContract[] = [
             {
                 id: 6,
                 title: 'Fligth service 2',
-                lists: [],
+                lists: [{
+                    id:12,
+                    title: 'wilmer',
+                    dynamicField: [],
+                }],
             },
             {
                 id: 7,
