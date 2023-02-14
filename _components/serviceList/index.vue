@@ -1,3 +1,19 @@
+<script lang="ts">
+import { defineComponent, computed, ref } from "vue";
+import expansionComponent from "./expansionComponent.vue";
+import useServiceList from './useServiceList';
+
+export default defineComponent({
+  components: {
+    expansionComponent,
+  },
+  setup() {
+    return {
+        ...useServiceList()
+    };
+  },
+});
+</script>
 <template>
   <div
     class="
@@ -69,6 +85,7 @@
           </div>
         </q-item>
       </q-list>
+      
       <expansionComponent v-else :data="filterService" />
       <div
         v-if="filterService.length === 0"
@@ -80,24 +97,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, computed, ref } from "vue";
-import expansionComponent from "../expansionComponent.vue";
-import useServiceList from './useServiceList';
-
-export default defineComponent({
-  components: {
-    expansionComponent,
-  },
-  setup() {
-    return {
-        ...useServiceList()
-    };
-  },
-});
-</script>
-
 <style>
 .service-list-ctn .q-item {
   @apply tw-min-h-0;

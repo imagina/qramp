@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import expansionComponent from '../_components/expansionComponent.vue'
+import expansionComponent from '../_components/serviceList/expansionComponent.vue'
 import searchLocal from '../_components/searchLocal'
 import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js'
