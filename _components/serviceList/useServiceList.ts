@@ -63,7 +63,6 @@ export default function useServiceList(props = {}, emit = null) {
     return services.value;
   });
   async function init() {
-    console.log('hola');
     await serviceListStore().getServiceData();
   }
   
