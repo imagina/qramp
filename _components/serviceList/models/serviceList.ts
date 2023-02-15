@@ -95,17 +95,39 @@ const state = reactive<any>({
     serviceList: [],
 });
 
-
+/**
+   * @author Wilmer Ramiro Cristancho 
+   * @returns { getServiceData, setServiceList, getServiceList} 
+*/
 export default function serviceListStore() {
+    /**
+     *
+     * @param service - Selected service
+     * @param index - Service position
+     *
+     * @returns getServiceData 
+    */
     async function getServiceData(): Promise<void> {
-        console.log('ingreso');
-        const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
-        console.log(response);
-        setServiceList([...response, ...dataModel]);
+        try {
+            const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
+            setServiceList([...response, ...dataModel]);
+        } catch (error) {
+            console.log(error);
+        }
     }
+    /**
+     *
+     * @param value - Service
+     *
+     * @returns void set Service List
+    */
     function setServiceList(value: ServiceModelContract[]) {
         state.serviceList = value;
     }
+    /**
+     *
+     * @returns {Array<id, title, list?, dynamicField?, component?,form?>}  get Service List
+    */
     function getServiceList(): ServiceModelContract[] {
         return state.serviceList;
     }
