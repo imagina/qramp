@@ -74,14 +74,6 @@ export default {
   props:{
     data:[]
   },
-  data(){
-    return{
-      form:{}
-    }
-  },
-  mounted() {
-
-  },
   computed:{
     isDesktop() {
       return window.innerWidth >= '900';

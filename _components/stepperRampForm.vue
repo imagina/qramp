@@ -174,22 +174,22 @@ export default {
           }
           break;
         case 2:
-          this.$refs.cargo[0].saveInfo()
+          //this.$refs.cargo[0].saveInfo()
           break;
         case 3:
-          if(this.$refs.services) {
+          /*if(this.$refs.services) {
             if(individual) {
               this.$refs.services[0].saveFormService();
               return;
             };
             this.$refs.services[0].saveInfo()
-          }
+          }*/
           break;
         case 4:
-          this.$refs.equipment[0].saveInfo()
+          //this.$refs.equipment[0].saveInfo()
           break;
         case 5:
-          this.$refs.crew[0].saveInfo()
+          //this.$refs.crew[0].saveInfo()
           break;
         case 6:
           this.$refs.remarks[0].saveInfo()

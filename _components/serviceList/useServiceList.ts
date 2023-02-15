@@ -1,7 +1,8 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import serviceListModel, { ServiceModelContract } from "./models/serviceList";
-import { getCategories }  from '../../_store/actions/categories';
+import serviceListStore, {ServiceModelContract} from "./models/serviceList";
 export default function useServiceList(props = {}, emit = null) {
+  init();
+  const serviceListModel = computed(() => serviceListStore().getServiceList());
   const search = ref<string>("");
   const selectService = ref<ServiceModelContract>({});
   const breadcrumbs = ref<any[]>([]);
@@ -11,13 +12,13 @@ export default function useServiceList(props = {}, emit = null) {
   */
   const services = computed<ServiceModelContract | any>(() => {
     if (breadcrumbs.value.length === 0) {
-      const service = serviceListModel.find(
+      const service = serviceListModel.value.find(
         (item) => item.id === selectService.value.id
       );
       if (service) {
         return service.lists;
       }
-      return serviceListModel;
+      return serviceListModel.value;
     }
     if (selectService.value.lists) {
       return selectService.value.lists;
@@ -61,7 +62,11 @@ export default function useServiceList(props = {}, emit = null) {
     }
     return services.value;
   });
-  getCategories();
+  async function init() {
+    console.log('hola');
+    await serviceListStore().getServiceData();
+  }
+  
   return {
     serviceListModel,
     breadcrumbs,
