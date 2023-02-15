@@ -6,13 +6,18 @@ export const serviceListModel = {
     dynamicField: [],
 }
 export const getCategories = async (): Promise<any[]> => {
-    let requestParams = {
-        params: {
-            include: 'products,products.attributes,products,products.attributes.values'
+    try {
+        let requestParams = {
+            params: {
+                include: 'products,products.attributes,products,products.attributes.values'
+            }
         }
+        const response = await baseService.index('apiRoutes.qramp.categories', requestParams);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        return [];
     }
-    const response = await baseService.index('apiRoutes.qramp.categories', requestParams);
-    return response.data;
 }
 
 export async function buildServiceList(): Promise<any[]> {
