@@ -102,9 +102,6 @@ const state = reactive<any>({
 export default function serviceListStore() {
     /**
      *
-     * @param service - Selected service
-     * @param index - Service position
-     *
      * @returns getServiceData 
     */
     async function getServiceData(): Promise<void> {
