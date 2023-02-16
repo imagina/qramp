@@ -12,13 +12,13 @@ import { ServiceModelContract } from './@Contract/index.contract';
  */
 export default function useServiceList(props = {}, emit = null) {
   /**
-   * @param {boolean} loading  
-   * @param {ServiceModelContract[]} serviceListModel - computed
-   * @param {ServiceModelContract} selectService - computed
-   * @param {ServiceModelContract} breadcrumbs - ref 
-   * @param {string} search - ref 
-   * @param {boolean} showServiceList - computed
-   * @param {boolean} showNoData - computed 
+   * @constant {boolean} loading  
+   * @constant {ServiceModelContract[]} serviceListModel - computed
+   * @constant {ServiceModelContract} selectService - computed
+   * @constant {ServiceModelContract} breadcrumbs - ref 
+   * @constant {string} search - ref 
+   * @constant {boolean} showServiceList - computed
+   * @constant {boolean} showNoData - computed 
    * component variable list
   */
   const loading = computed((): Boolean => serviceListStore().getLoading());
