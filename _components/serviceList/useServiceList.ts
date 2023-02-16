@@ -26,18 +26,11 @@ export default function useServiceList(props = {}, emit = null) {
   const search = ref<string>("");
   const selectService = ref<ServiceModelContract>({});
   const breadcrumbs = ref<ServiceModelContract[]>([]);
-  /* This is a computed property that returns a boolean value. It returns true if the loading.value is
-    false, the selectService.value.component is false, and the filterService.value.length is equal
-  to
-    0. Otherwise, it returns false. */
   const showServiceList = computed((): boolean =>
     !loading.value &&
     !selectService.value.component &&
     !selectService.value.dynamicField &&
     filterService.value.length > 0);
-  /* This is a computed property that returns a boolean value. It returns true if the loading.value is
-  false, the selectService.value.component is false, and the filterService.value.length is equal to
-  0. Otherwise, it returns false. */
   const showNoData = computed((): boolean => !loading.value &&
     !selectService.value.component &&
     filterService.value.length === 0);
