@@ -1,11 +1,20 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import serviceListStore, {ServiceModelContract} from "./models/serviceList";
+import serviceListStore, { ServiceModelContract } from "./models/serviceList";
 export default function useServiceList(props = {}, emit = null) {
+  const loading = ref(false);
   init();
   const serviceListModel = computed(() => serviceListStore().getServiceList());
   const search = ref<string>("");
   const selectService = ref<ServiceModelContract>({});
   const breadcrumbs = ref<any[]>([]);
+  const showServiceList = computed(() =>
+    !loading.value &&
+    !selectService.value.component &&
+    !selectService.value.dynamicField &&
+    filterService.value.length > 0);
+  const showNoData = computed(() => !loading.value &&
+    !selectService.value.component &&
+    filterService.value.length === 0);
   /**
    *
    * @returns  the list of services
@@ -63,9 +72,11 @@ export default function useServiceList(props = {}, emit = null) {
     return services.value;
   });
   async function init() {
+    loading.value = true;
     await serviceListStore().getServiceData();
+    loading.value = false;
   }
-  
+
   return {
     serviceListModel,
     breadcrumbs,
@@ -74,5 +85,8 @@ export default function useServiceList(props = {}, emit = null) {
     services,
     filterService,
     search,
+    loading,
+    showServiceList,
+    showNoData,
   };
 }

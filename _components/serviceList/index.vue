@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from "vue";
 import expansionComponent from "./expansionComponent.vue";
-import useServiceList from './useServiceList';
+import useServiceList from "./useServiceList";
 
 export default defineComponent({
   components: {
@@ -9,7 +9,7 @@ export default defineComponent({
   },
   setup() {
     return {
-        ...useServiceList()
+      ...useServiceList(),
     };
   },
 });
@@ -44,6 +44,7 @@ export default defineComponent({
       />
     </q-breadcrumbs>
     <div class="tw-py-6">
+      <inner-loading :visible="loading"/>
       <q-input
         v-if="!selectService.component"
         borderless
@@ -63,10 +64,7 @@ export default defineComponent({
         </template>
       </q-input>
       <q-list
-        v-if="
-            !selectService.component 
-            && !selectService.dynamicField 
-            && filterService.length > 0"
+        v-if="showServiceList"
         bordered
         separator
         class="tw-shadow-lg tw-rounded-lg"
@@ -89,15 +87,18 @@ export default defineComponent({
           </div>
         </q-item>
       </q-list>
-      
-      <expansionComponent v-else :data="filterService" />
-      <component 
-        v-if="selectService.component" 
+
+      <expansionComponent 
+        v-if="!loading && selectService.dynamicField"
+        :data="filterService" 
+      />
+      <component
+        v-if="selectService.component"
         :is="selectService.component"
-        :cargoData="selectService.form" 
-       />
+        :cargoData="selectService.form"
+      />
       <div
-        v-if="!selectService.component && filterService.length === 0"
+        v-if="showNoData"
         class="tw-text-center tw-text-gray-600 tw-text-xl"
       >
         <i class="fa-light fa-triangle-exclamation"></i>
