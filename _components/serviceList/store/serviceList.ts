@@ -22,7 +22,7 @@ const state = reactive<ReactiveStoreContract>({
 
 /**
    * @author Wilmer Ramiro Cristancho 
-   * @returns { getServiceData, setServiceList, getServiceList} 
+   * @returns { ServiceListStoreContract } 
 */
 export default function serviceListStore(): ServiceListStoreContract {
     /**
