@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent, computed, ref } from "vue";
-import expansionComponent from "./expansionComponent.vue";
+import { defineComponent } from "vue";
+import expansionForm from "./expansionForm.vue";
 import useServiceList from "./useServiceList";
 
 export default defineComponent({
   components: {
-    expansionComponent,
+    expansionForm,
   },
   setup() {
     return {
@@ -88,7 +88,7 @@ export default defineComponent({
         </q-item>
       </q-list>
 
-      <expansionComponent 
+      <expansionForm 
         v-if="!loading && selectService.dynamicField"
         :data="filterService" 
       />

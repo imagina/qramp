@@ -1,3 +1,30 @@
+<script lang="ts">
+import { defineComponent, computed } from 'vue';
+
+export default defineComponent({
+  name:'expansionComponent',
+  props:{
+    data: {
+      type: Array,
+      default: () => [],
+    }
+  },
+  setup(props) {
+    const data: any = computed(() => props.data);
+    const isDesktop = computed(() => (window as any).innerWidth >= '900' );
+    function showValue(data: any) {
+      if(data) {
+        return  data.value
+      }
+    }
+    return {
+      isDesktop,
+      showValue,
+      data
+    }
+  },
+})
+</script>
 <template>
   <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
     <div v-if="!isDesktop">
@@ -68,40 +95,6 @@
     </q-list>
   </div>
 </template>
-<script>
-export default {
-  name:'expansionComponent',
-  props:{
-    data:[]
-  },
-  computed:{
-    isDesktop() {
-      return window.innerWidth >= '900';
-    }
-  },
-  methods: {
-    showValue(data) {
-      if(data) {
-        return  data.value
-      }
-    },
-    formatName(string) {
-      if(string.includes(" ")) {
-        return string
-      } else {
-        const arr = string.split(" ")
-        a.map((item, index) =>{ 
-            if (index == 0) { 
-                item.toLowerCase()
-            }
-            return item
-        }).join().replace(",","")
-        return a
-      }
-    },
-  }
-}
-</script>
 
 <style>
 #expansion-container {

@@ -3,13 +3,13 @@
     <div class="tw-p-4 tw-mb-12">
       <search-local @value="searchServices = $event" />
       <q-linear-progress v-if="services.length === 0"  stripe  indeterminate rounded color="primary" class="q-mt-sm" />
-      <expansion-component v-else :data="filterServices"/>
+      <expansionForm v-else :data="filterServices"/>
     </div>
   </div>
 </template>
 
 <script>
-import expansionComponent from '../_components/serviceList/expansionComponent.vue'
+import expansionForm from '../_components/serviceList/expansionForm.vue'
 import searchLocal from '../_components/searchLocal'
 import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js'
@@ -19,7 +19,7 @@ export default {
     toolbar:{},
     equipmentData:{}
   },
-  components:{expansionComponent, searchLocal},
+  components:{expansionForm, searchLocal},
   mixins:[responsive, services],
   methods: {
     async init() {
