@@ -471,7 +471,8 @@ export default {
               {
                 name: 'postedAt',
                 label: 'Date Posted',
-                field: 'postedAt'
+                field: 'postedAt',
+                format: (val) => (val ? this.$trdT(val) : "-"),
               },
               {
                 name: 'amount',
