@@ -37,6 +37,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
 import getProducts from '../_store/actions/getProducts.js';
+import serviceListStore from './serviceList/store/serviceList';
 
 export default {
   name:'formOrders',
@@ -306,6 +307,7 @@ export default {
         this.cargo.cargoTotalKilosUnloaded = updateData.data['cargoTotalKilosUnloaded'] ? updateData.data['cargoTotalKilosUnloaded'].toString() : ''
         this.cargo.delayList = updateData.data['delay'] || [];
         qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        await serviceListStore().init();
         this.services = await getProducts(1);
         this.equipments = await getProducts(2);
         this.crew = await getProducts(3);

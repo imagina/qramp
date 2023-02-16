@@ -1,6 +1,6 @@
 import cargo from '../../cargo.vue';
-import { ref, computed, reactive} from 'vue';
-import { buildServiceList }  from '../../../_store/actions/services';
+import { reactive, nextTick } from 'vue';
+import { buildServiceList } from '../../../_store/actions/services';
 export interface PropsContract {
     readonly?: boolean;
     mask?: string;
@@ -83,6 +83,16 @@ export interface ServiceModelContract {
     form?: any,
 }
 
+export interface ServiceListStoreContract {
+    getServiceData(): Promise<void>;
+    setServiceList(value: ServiceModelContract[]): void;
+    getServiceList(): ServiceModelContract[];
+    setLoading(value: boolean): void;
+    getLoading(): Boolean;
+    resetStore(): void;
+    init(): Promise<void>;
+}
+
 const dataModel: ServiceModelContract[] = [
     {
         id: 4,
@@ -93,13 +103,14 @@ const dataModel: ServiceModelContract[] = [
 ];
 const state = reactive<any>({
     serviceList: [],
+    loading: false,
 });
 
 /**
    * @author Wilmer Ramiro Cristancho 
    * @returns { getServiceData, setServiceList, getServiceList} 
 */
-export default function serviceListStore() {
+export default function serviceListStore(): ServiceListStoreContract {
     /**
      *
      * @returns getServiceData 
@@ -118,7 +129,7 @@ export default function serviceListStore() {
      *
      * @returns void set Service List
     */
-    function setServiceList(value: ServiceModelContract[]) {
+    function setServiceList(value: ServiceModelContract[]): void {
         state.serviceList = value;
     }
     /**
@@ -128,9 +139,46 @@ export default function serviceListStore() {
     function getServiceList(): ServiceModelContract[] {
         return state.serviceList;
     }
+    /**
+     *
+     * @param value {boolean}
+     *
+     * @returns void setLoading
+    */
+    function setLoading(value: boolean): void {
+        state.loading = value;
+    }
+    /**
+    *
+    *
+    * @returns {Boolean} get loading
+   */
+    function getLoading(): Boolean {
+        return state.loading;
+    }
+    /**
+     * @returns  {void} reset Store
+    */
+    function resetStore(): void {
+        setServiceList([]);
+    }
+    /**
+     * @returns  {void} get existing service list
+    */
+    async function init(): Promise<void> {
+      nextTick(async () => {
+        setLoading(true);
+        await getServiceData();
+        setLoading(false);
+      }) 
+    }
     return {
         getServiceData,
         setServiceList,
         getServiceList,
+        setLoading,
+        getLoading,
+        resetStore,
+        init,
     }
 }
