@@ -1,17 +1,33 @@
 import { ref, computed } from 'vue';
-import serviceListStore, { ServiceModelContract } from "./store/serviceList";
+import serviceListStore from "./store/serviceList";
+import { ServiceModelContract } from './@Contract/index.contract';
+/**
+   * @author Wilmer Ramiro Cristancho 
+   * @returns {serviceListModel,breadcrumbs,selectService,setBreadcrumbs,services,filterService,search,loading, showServiceList, showNoData} 
+   * use Service List
+*/
 export default function useServiceList(props = {}, emit = null) {
-  const loading = computed(() => serviceListStore().getLoading());
-  const serviceListModel = computed(() => serviceListStore().getServiceList());
+  /**
+   * @param {boolean} loading  
+   * @param {ServiceModelContract[]} serviceListModel - computed
+   * @param {ServiceModelContract} selectService - computed
+   * @param {ServiceModelContract} breadcrumbs - ref 
+   * @param {string} search - ref 
+   * @param {boolean} showServiceList - computed
+   * @param {boolean} showNoData - computed 
+   * component variable list
+  */
+  const loading = computed((): Boolean => serviceListStore().getLoading());
+  const serviceListModel = computed((): ServiceModelContract[] => serviceListStore().getServiceList());
   const search = ref<string>("");
   const selectService = ref<ServiceModelContract>({});
-  const breadcrumbs = ref<any[]>([]);
-  const showServiceList = computed(() =>
+  const breadcrumbs = ref<ServiceModelContract[]>([]);
+  const showServiceList = computed((): boolean =>
     !loading.value &&
     !selectService.value.component &&
     !selectService.value.dynamicField &&
     filterService.value.length > 0);
-  const showNoData = computed(() => !loading.value &&
+  const showNoData = computed((): boolean => !loading.value &&
     !selectService.value.component &&
     filterService.value.length === 0);
   /**
