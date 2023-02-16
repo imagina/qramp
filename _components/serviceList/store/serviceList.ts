@@ -20,10 +20,20 @@ const state = reactive<ReactiveStoreContract>({
     loading: false,
 });
 
-/**
-   * @author Wilmer Ramiro Cristancho 
-   * @returns { ServiceListStoreContract } 
-*/
+
+/** 
+ * @author Wilmer Ramiro Cristancho 
+ * The loading state is
+ * @returns An object with the following properties:
+ * getServiceData
+ * setServiceList
+ * getServiceList
+ * setLoading
+ * getLoading
+ * resetStore
+ * init
+ */
+
 export default function serviceListStore(): ServiceListStoreContract {
     /**
      *
@@ -38,46 +48,51 @@ export default function serviceListStore(): ServiceListStoreContract {
         }
     }
     /**
-     *
-     * @param value - Service
-     *
-     * @returns void set Service List
-    */
+     * This function takes an array of ServiceModelContract objects and assigns it to the serviceList
+     * property of the state object.
+     * @param {ServiceModelContract[]} value - ServiceModelContract[]
+     */
     function setServiceList(value: ServiceModelContract[]): void {
         state.serviceList = value;
     }
+    
     /**
-     *
-     * @returns {Array<id, title, list?, dynamicField?, component?,form?>}  get Service List
-    */
+     * This function returns an array of ServiceModelContract objects.
+     * @returns The serviceList array.
+     */
     function getServiceList(): ServiceModelContract[] {
         return state.serviceList;
     }
+   
     /**
-     *
-     * @param value {boolean}
-     *
-     * @returns void setLoading
+     * This function takes a boolean value and sets the loading property of the state object to that
+     * value.
+     * @param {boolean} value - boolean - The value to set the loading state to.
     */
     function setLoading(value: boolean): void {
         state.loading = value;
     }
+    
     /**
-    *
-    *
-    * @returns {Boolean} get loading
-   */
+     * This function returns a boolean value that is the value of the loading property of the state
+     * object.
+     * @returns The loading state.
+    */
     function getLoading(): Boolean {
         return state.loading;
     }
+    
     /**
-     * @returns  {void} reset Store
-    */
+     * The function is called resetStore and it takes no parameters and returns nothing.
+     */
     function resetStore(): void {
         setServiceList([]);
     }
     /**
-     * @returns  {void} get existing service list
+     * The loading state is set to true before the data is fetched because the nextTick function is
+     * called before the getServiceData function is called. 
+     * The loading state is set to false after the data is fetched because the getServiceData function
+     * is called before
     */
     async function init(): Promise<void> {
       nextTick(async () => {

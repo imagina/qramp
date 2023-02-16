@@ -83,7 +83,6 @@ export interface ReactiveStoreContract {
     serviceList: ServiceModelContract[],
     loading: Boolean,
 }
-
 export interface ServiceListStoreContract {
     getServiceData(): Promise<void>;
     setServiceList(value: ServiceModelContract[]): void;
