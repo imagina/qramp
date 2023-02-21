@@ -1,11 +1,18 @@
 import { reactive } from 'vue';
+import { 
+    CargoStoreContract, 
+    FormContract,
+    DelayListContract,
+    PayloadContract,
+    UseCargoStoreContract
+} from '../@Contract/cargo.contract';
 const modelDelay = [
     {
       code: '',
       hours: ''
     },
 ];
-const state = reactive({
+const state = reactive<CargoStoreContract>({
     form: {
         inboundCargoTotalUldsUnloaded: '',
         inboundCargoBulkUnloaded: '',
@@ -17,11 +24,11 @@ const state = reactive({
     delayList: [...modelDelay],
     delay: false,
 });
-export default function cargoStore() {
-    function getForm() {
+export default function cargoStore(): UseCargoStoreContract {
+    function getForm(): FormContract {
         return state.form;
     }
-    function setForm(cargo) {
+    function setForm(cargo: FormContract): void {
         state.form.inboundCargoTotalUldsUnloaded = cargo['inboundCargoTotalUldsUnloaded'] ? cargo['inboundCargoTotalUldsUnloaded'].toString() : '';
         state.form.inboundCargoBulkUnloaded = cargo['inboundCargoBulkUnloaded'] ? cargo['inboundCargoBulkUnloaded'].toString() : '';
         state.form.outboundCargoTotalUldsLoaded = cargo['outboundCargoTotalUldsLoaded'] ? cargo['outboundCargoTotalUldsLoaded'].toString() : '';
@@ -29,10 +36,10 @@ export default function cargoStore() {
         state.form.cargoTotalKilosLoaded = cargo['cargoTotalKilosLoaded'] ? cargo['cargoTotalKilosLoaded'].toString() : '';
         state.form.cargoTotalKilosUnloaded = cargo['cargoTotalKilosUnloaded'] ? cargo['cargoTotalKilosUnloaded'].toString() : '';
     }
-    function getDelayList() {
+    function getDelayList(): DelayListContract[] {
         return state.delayList;
     }
-    function setDelayList(data): void {
+    function setDelayList(data: DelayListContract[]): void {
         const delay = data['delay'] || [];
         if( delay.length === 0) {
             state.delayList = [...modelDelay];
@@ -44,13 +51,13 @@ export default function cargoStore() {
             ?  delay 
             : [...modelDelay];
     }
-    function getDelay() {
+    function getDelay(): boolean {
         return state.delay;
     }
     function setDelay(value: boolean): void {
         state.delay = value;
     }
-    function payload() {
+    function payload(): PayloadContract {
         const delay = state.delay ? state.delayList.filter(items => {
             return items.code && items.hours
         }) : [];
@@ -59,7 +66,7 @@ export default function cargoStore() {
             cargo: state.form,
         }
     }
-    function reset() {
+    function reset(): void {
         state.form = {
             inboundCargoTotalUldsUnloaded: '',
             inboundCargoBulkUnloaded: '',
