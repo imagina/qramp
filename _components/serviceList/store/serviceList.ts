@@ -1,6 +1,9 @@
 import cargo from '../../cargo.vue';
 import { reactive, nextTick } from 'vue';
-import { buildServiceList } from '../../../_store/actions/services';
+import {
+     buildServiceList, 
+     getListOfSelectedServices
+} from '../../../_store/actions/services';
 import { 
     ServiceModelContract, 
     ServiceListStoreContract, 
@@ -88,6 +91,29 @@ export default function serviceListStore(): ServiceListStoreContract {
     function resetStore(): void {
         setServiceList([]);
     }
+    async function getServiceListSelected(): Promise<any> {
+        const services = state.serviceList
+            .filter(item => item.id !== 4);
+        return await orderServicesWithTheStructureToSave(services);
+    }
+    /**
+     * It takes an array of objects, and for each object, it calls a function that returns an array of
+     * objects, and then pushes the returned array of objects to the data array.
+     * @param services 
+     * @returns An array of promises.
+     */
+    async function orderServicesWithTheStructureToSave(services): Promise < any > {
+        try {
+            const data: any[] = [];
+            services.forEach(async service => {
+                const dynamicField = await getListOfSelectedServices(service.dynamicField);
+                await data.push(...dynamicField);
+            })
+            return data;
+        } catch (error) {
+            console.log(error);
+        } 
+    }
     /**
      * The loading state is set to true before the data is fetched because the nextTick function is
      * called before the getServiceData function is called. 
@@ -109,5 +135,6 @@ export default function serviceListStore(): ServiceListStoreContract {
         getLoading,
         resetStore,
         init,
+        getServiceListSelected,
     }
 }

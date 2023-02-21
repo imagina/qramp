@@ -91,4 +91,5 @@ export interface ServiceListStoreContract {
     getLoading(): Boolean;
     resetStore(): void;
     init(): Promise<void>;
+    getServiceListSelected(): Promise<any>;
 }

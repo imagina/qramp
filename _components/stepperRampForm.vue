@@ -45,8 +45,8 @@
             v-if="step.step == STEP_SERVICE" 
             :servicesData="step.form" 
             :readonly="readonly"
-          />-->
-          <!--<i-equipment 
+          />
+          <i-equipment 
             ref="equipment" 
             v-if="step.step == STEP_EQUIPMENT" 
             :equipmentData="step.form" 
@@ -97,6 +97,7 @@ import {
 }  from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceList from './serviceList/index.vue';
+import serviceListStore from './serviceList/store/serviceList.ts';
 
 export default {
   name:'stepperRampForm',
@@ -209,6 +210,8 @@ export default {
       return obj
     },
     async sendInfo() {
+      serviceListStore().getServiceListSelected();
+      return;
       qRampStore().showLoading();     
       const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
       if(validateAllFieldsRequiredByStep) return;
