@@ -45,19 +45,8 @@
             v-if="step.step == STEP_SERVICE" 
             :servicesData="step.form" 
             :readonly="readonly"
-          />
-          <i-equipment 
-            ref="equipment" 
-            v-if="step.step == STEP_EQUIPMENT" 
-            :equipmentData="step.form" 
-            :readonly="readonly" 
-          />
-          <i-crew 
-            ref="crew" 
-            v-if="step.step == STEP_CREW" 
-            :crewData="step.form" 
-            :readonly="readonly" 
           />-->
+  
           <i-remarks 
             ref="remarks" 
             v-if="step.step == STEP_REMARKS" 
@@ -79,9 +68,6 @@
 <script>
 import iFlight from '../_components/flight.vue'
 import iCargo from '../_components/cargo.vue'
-import iCrew from '../_components/crew.vue'
-import iEquipment from '../_components/equipment.vue'
-import iServices from '../_components/services.vue'
 import iRemarks from '../_components/remarks.vue'
 import iSignature from '../_components/signature.vue'
 import responsive from '../_mixins/responsive.js'
@@ -90,8 +76,6 @@ import {
   STEP_FLIGTH, 
   STEP_CARGO,
   STEP_SERVICE,
-  STEP_EQUIPMENT,
-  STEP_CREW,
   STEP_REMARKS,
   STEP_SIGNATURE
 }  from '../_components/model/constants.js'
@@ -104,9 +88,6 @@ export default {
   components:{
     iFlight,
     iCargo,
-    iServices,
-    iEquipment,
-    iCrew,
     iRemarks,
     iSignature,
     iToolbar,
@@ -126,8 +107,6 @@ export default {
       STEP_FLIGTH, 
       STEP_CARGO,
       STEP_SERVICE,
-      STEP_EQUIPMENT,
-      STEP_CREW,
       STEP_REMARKS,
       STEP_SIGNATURE,
       disabled: false,
@@ -210,28 +189,31 @@ export default {
       return obj
     },
     async sendInfo() {
-      serviceListStore().getServiceListSelected();
-      return;
-      qRampStore().showLoading();     
-      const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
-      if(validateAllFieldsRequiredByStep) return;
-      const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
-      data.form.statusId = qRampStore().getStatusId();
-      const formatData = {
-        ...data.form,
-        adHoc: data.form.adHoc == 1,
-        customCustomer: data.form.customCustomer  == 1,
-        delay: data.delay,
-        workOrderItems: [
-          ...data.services,
-          ...data.equipments,
-          ...data.crew,
-        ]
+      try {
+        const serviceList = await serviceListStore().getServiceListSelected();
+        console.log(serviceList);
+        qRampStore().showLoading();     
+        const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
+        if(validateAllFieldsRequiredByStep) return;
+        const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
+        data.form.statusId = qRampStore().getStatusId();
+        const formatData = {
+          ...data.form,
+          adHoc: data.form.adHoc == 1,
+          customCustomer: data.form.customCustomer  == 1,
+          delay: data.delay,
+          workOrderItems: [
+            ...serviceList
+          ]
+        }
+        if (this.data.update) {
+          formatData.id = this.data.workOrderId;
+        }
+        this.sendWorkOrder(formatData);
+      } catch (error) {
+        qRampStore().hideLoading();
+        console.log(error);
       }
-      if (this.data.update) {
-        formatData.id = this.data.workOrderId;
-      }
-      this.sendWorkOrder(formatData);
     },
     clean(){
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
@@ -354,7 +336,7 @@ export default {
           this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           return true;
         }
-        const validateDateService = await this.validateFulldate();
+        /*const validateDateService = await this.validateFulldate();
         const service = this.$store.state.qrampApp.services;
         if(service.length === 0) {
           await this.setStep(STEP_SERVICE);
@@ -362,15 +344,15 @@ export default {
           qRampStore().hideLoading();
           await this.setData();
           return true;
-        }
-        if(!validateDateService) {
+        }*/
+        /*if(!validateDateService) {
           this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
           await this.setStep(STEP_SERVICE);
           this.error = true;
           qRampStore().hideLoading();
           await this.setData();
           return true;
-        }
+        }*/
         this.error = false;
         return false;
       } catch (error) {
