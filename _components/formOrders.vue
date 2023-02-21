@@ -51,9 +51,6 @@ export default {
       sp:null,
       flight:{},
       cargo:{},
-      services:[],
-      equipment:[],
-      crew:[],
       remark:[],
       signature:[],
       statusId: STATUS_DRAFT,
@@ -246,9 +243,6 @@ export default {
         this.signature = {}
         this.statusId = STATUS_DRAFT
         this.needToBePosted = false
-        this.services = []
-        this.equipments = []
-        this.crew = []
         qRampStore().setWorkOrderItems([]);
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
@@ -308,9 +302,6 @@ export default {
         this.cargo.delayList = updateData.data['delay'] || [];
         qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
         await serviceListStore().init();
-        this.services = await getProducts(1);
-        this.equipments = await getProducts(2);
-        this.crew = await getProducts(3);
         this.remark.remark = updateData.data['remark']
         this.remark.safetyMessage = updateData.data['safetyMessage']
 
@@ -324,9 +315,6 @@ export default {
         this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight )
         this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList)
         this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
-        this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services)
-        this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', this.equipments)
-        this.$store.commit('qrampApp/SET_FORM_CREW', this.crew)
         this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
         qRampStore().hideLoading();
       } catch (error) {
