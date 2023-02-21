@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
-import { 
-    CargoStoreContract, 
+import {
+    CargoStoreContract,
     FormContract,
     DelayListContract,
     PayloadContract,
@@ -9,8 +9,8 @@ import {
 /* A model for the delayList array. */
 const modelDelay = [
     {
-      code: '',
-      hours: ''
+        code: '',
+        hours: ''
     },
 ];
 /* Creating a reactive object. */
@@ -66,14 +66,14 @@ export default function cargoStore(): UseCargoStoreContract {
      */
     function setDelayList(data: DelayListContract[]): void {
         const delay = data['delay'] || [];
-        if( delay.length === 0) {
+        if (delay.length === 0) {
             state.delayList = [...modelDelay];
             return;
         }
         const validateDelay = delay.length > 0;
         setDelay(validateDelay);
-        state.delayList =  validateDelay 
-            ?  delay 
+        state.delayList = validateDelay
+            ? delay
             : [...modelDelay];
     }
     /**
@@ -118,8 +118,8 @@ export default function cargoStore(): UseCargoStoreContract {
         };
         state.delayList = [
             {
-              code: '',
-              hours: ''
+                code: '',
+                hours: ''
             },
         ];
         state.delay = false;
