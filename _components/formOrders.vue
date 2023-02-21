@@ -36,8 +36,8 @@ import {
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
-import getProducts from '../_store/actions/getProducts.js';
 import serviceListStore from './serviceList/store/serviceList';
+import cargoStore from './cargo/store/cargo.ts';
 
 export default {
   name:'formOrders',
@@ -75,30 +75,12 @@ export default {
           step: 1,
           form: this.flight
         },
-        /*{
-          title:'Cargo Op.',
-          icon:'rv_hookup',
-          step: 2,
-          form: this.cargo
-        },*/
         {
           title:'Services',
           icon:'fas fa-briefcase',
           step: 3,
           form: this.services
         },
-        /*{
-          title:'Equipment',
-          icon:'extension',
-          step: 4,
-          form: this.equipment
-        },
-        {
-          title:'Crew',
-          icon:'fas fa-users',
-          step: 5,
-          form: this.crew
-        },*/
         {
           title:'Remark',
           icon:'far fa-edit',
@@ -293,13 +275,8 @@ export default {
         this.flight.customerName = customerName || customCustomerName;
         this.flight.contractId = updateData.data.contractId ? updateData.data.contractId : null;
         this.flight.contractName = updateData.data.contract ? updateData.data.contract.contractName : null;
-        this.cargo.inboundCargoTotalUldsUnloaded = updateData.data['inboundCargoTotalUldsUnloaded'] ? updateData.data['inboundCargoTotalUldsUnloaded'].toString() : ''
-        this.cargo.inboundCargoBulkUnloaded = updateData.data['inboundCargoBulkUnloaded'] ? updateData.data['inboundCargoBulkUnloaded'].toString() : ''
-        this.cargo.outboundCargoTotalUldsLoaded = updateData.data['outboundCargoTotalUldsLoaded'] ? updateData.data['outboundCargoTotalUldsLoaded'].toString() : ''
-        this.cargo.outboundCargoBulkLoaded = updateData.data['outboundCargoBulkLoaded'] ? updateData.data['outboundCargoBulkLoaded'].toString() : ''
-        this.cargo.cargoTotalKilosLoaded = updateData.data['cargoTotalKilosLoaded'] ? updateData.data['cargoTotalKilosLoaded'].toString() : ''
-        this.cargo.cargoTotalKilosUnloaded = updateData.data['cargoTotalKilosUnloaded'] ? updateData.data['cargoTotalKilosUnloaded'].toString() : ''
-        this.cargo.delayList = updateData.data['delay'] || [];
+        cargoStore().setForm(updateData.data);
+        cargoStore().setDelayList(updateData.data);
         qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
         await serviceListStore().init();
         this.remark.remark = updateData.data['remark']
@@ -312,9 +289,7 @@ export default {
         this.signature.customerSignature = updateData.data['customerSignature']
         this.signature.representativeSignature = updateData.data['representativeSignature']
 
-        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight )
-        this.$store.commit('qrampApp/SET_FORM_DELAY', this.cargo.delayList)
-        this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
+        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight );
         this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
         qRampStore().hideLoading();
       } catch (error) {
@@ -328,6 +303,7 @@ export default {
       this.modalProps = {}
       this.show = false
       this.services = [];
+      cargoStore().reset();
     },
     setLoading(value) {
       this.loading = value;

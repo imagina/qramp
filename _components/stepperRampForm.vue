@@ -31,22 +31,9 @@
             :flightData="step.form"
             :readonly="readonly"
           />
-          <i-cargo 
-            ref="cargo" 
-            v-if="step.step == STEP_CARGO"
-            :cargoData="step.form" 
-            :readonly="readonly"
+          <serviceList 
+            v-if="step.step == STEP_SERVICE"  
           />
-          
-          <serviceList v-if="step.step == STEP_SERVICE"  />
-          <!--<i-services 
-            ref="services" 
-            @isError="isError" 
-            v-if="step.step == STEP_SERVICE" 
-            :servicesData="step.form" 
-            :readonly="readonly"
-          />-->
-  
           <i-remarks 
             ref="remarks" 
             v-if="step.step == STEP_REMARKS" 
@@ -67,7 +54,6 @@
 </template>
 <script>
 import iFlight from '../_components/flight.vue'
-import iCargo from '../_components/cargo.vue'
 import iRemarks from '../_components/remarks.vue'
 import iSignature from '../_components/signature.vue'
 import responsive from '../_mixins/responsive.js'
@@ -82,12 +68,12 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import serviceList from './serviceList/index.vue';
 import serviceListStore from './serviceList/store/serviceList.ts';
+import cargoStore from './cargo/store/cargo.ts';
 
 export default {
   name:'stepperRampForm',
   components:{
     iFlight,
-    iCargo,
     iRemarks,
     iSignature,
     iToolbar,
@@ -153,24 +139,6 @@ export default {
             await this.$refs.flight[0].saveInfo(error);
           }
           break;
-        case 2:
-          //this.$refs.cargo[0].saveInfo()
-          break;
-        case 3:
-          /*if(this.$refs.services) {
-            if(individual) {
-              this.$refs.services[0].saveFormService();
-              return;
-            };
-            this.$refs.services[0].saveInfo()
-          }*/
-          break;
-        case 4:
-          //this.$refs.equipment[0].saveInfo()
-          break;
-        case 5:
-          //this.$refs.crew[0].saveInfo()
-          break;
         case 6:
           this.$refs.remarks[0].saveInfo()
           break;
@@ -191,17 +159,18 @@ export default {
     async sendInfo() {
       try {
         const serviceList = await serviceListStore().getServiceListSelected();
-        console.log(serviceList);
         qRampStore().showLoading();     
         const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
         if(validateAllFieldsRequiredByStep) return;
-        const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
+        const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
+        const dataCargo = cargoStore().payload();
         data.form.statusId = qRampStore().getStatusId();
         const formatData = {
           ...data.form,
+          ...dataCargo.cargo,
           adHoc: data.form.adHoc == 1,
           customCustomer: data.form.customCustomer  == 1,
-          delay: data.delay,
+          delay: dataCargo.delay,
           workOrderItems: [
             ...serviceList
           ]
@@ -216,11 +185,8 @@ export default {
       }
     },
     clean(){
+      cargoStore().reset();
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
-      this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
-      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
-      this.$store.commit('qrampApp/SET_FORM_CREW', [] )
-      this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
       this.$emit('close', false)
     },
     async next() {

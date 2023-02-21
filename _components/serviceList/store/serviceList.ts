@@ -1,4 +1,4 @@
-import cargo from '../../cargo.vue';
+import cargo from '../../cargo/index.vue';
 import { reactive, nextTick } from 'vue';
 import {
      buildServiceList, 

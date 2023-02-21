@@ -65,6 +65,7 @@
       <q-btn v-if="delay" class="q-ml-sm" flat round icon="add" color="primary" @click="addDelay()"/>
     </div>
     <div v-if="delay" class="tw-px-6">
+      
       <div flat class="row">
         <template v-for="(field,keyField) in delayFields">
           <dynamic-field
@@ -89,27 +90,17 @@
 </template>
 
 <script>
-import responsive from '../_mixins/responsive.js'
-import qRampStore from '../_store/qRampStore.js'
+import responsive from '../../_mixins/responsive.js'
+import qRampStore from '../../_store/qRampStore.js'
+import cargoStore from './store/cargo.ts';
 
 export default {
   props:{
     readonly: true,
-    toolbar:{},
-    cargoData:{}
   },
-  inject: ['disabledReadonly'],
   mixins:[responsive],
   data(){
     return{
-      form:{},
-      delay:false,
-      delayList:[
-        {
-          code:"",
-          hours:""
-        },
-      ],
       codeList: [],
     }
   },
@@ -119,19 +110,33 @@ export default {
     })
   },
   computed:{
-    formComputed: {
+    disabledReadonly() {
+      return qRampStore().disabledReadonly();
+    },
+    delayList: {
       get() {
-        return this.form;
+        return cargoStore().getDelayList();
       },
       set(value) {
-        this.form = value;
+        cargoStore().setDelayList(value);
       }
+    },
+    delay: {
+      get() {
+        return cargoStore().getDelay();
+      },
+      set(value) {
+        cargoStore().setDelay(value);
+      }
+    },
+    form() {
+      return cargoStore().getForm();
     },
     showKilosFiels() {
       const contractsWithKilosFiels = this.$store.getters['qsiteApp/getSettingValueByName']('setup::contractsWithKilosFiels');
       return contractsWithKilosFiels.some((item) => item === qRampStore().getContractId());
     },
-    delayFields(){
+    delayFields() {
       const obj = {}
       this.delayList.forEach((delay,index) => {
           obj['code'+index] = {
@@ -251,20 +256,6 @@ export default {
   },
   methods: {
     init() {
-      if(this.cargoData && Object.keys(this.cargoData).length > 0) {
-        const data = {};
-        data.inboundCargoTotalUldsUnloaded = this.cargoData.inboundCargoTotalUldsUnloaded
-        data.inboundCargoBulkUnloaded = this.cargoData.inboundCargoBulkUnloaded
-        data.outboundCargoTotalUldsLoaded = this.cargoData.outboundCargoTotalUldsLoaded
-        data.outboundCargoBulkLoaded = this.cargoData.outboundCargoBulkLoaded
-        data.cargoTotalKilosUnloaded = this.cargoData.cargoTotalKilosUnloaded
-        data.cargoTotalKilosLoaded = this.cargoData.cargoTotalKilosLoaded
-        this.formComputed = data;
-        this.delay = this.cargoData.delayList.length > 0
-        if(this.cargoData.delayList.length > 0) {
-          this.delayList = this.cargoData.delayList
-        }
-      }
       this.getCodeList();
     },
     addDelay() {
@@ -273,12 +264,6 @@ export default {
         hours: ''
       })
     },
-    saveInfo() {
-      this.$store.commit('qrampApp/SET_FORM_DELAY', this.delayList.filter(items => {
-          return items.code && items.hours
-      }))
-      this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
-    },
     delDelay(index) {
       const i = parseInt(index.slice(-1))
       this.delayList.splice(i,1)
@@ -286,7 +271,6 @@ export default {
     resetDelayList() {
       if(!this.delay) {
         this.delayList = [];
-        this.addDelay();
       }
     },
     getCodeList() {
