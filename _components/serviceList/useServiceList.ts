@@ -1,6 +1,7 @@
-import { ref, computed } from 'vue';
+import Vue, { ref, computed } from 'vue';
 import serviceListStore from "./store/serviceList";
 import { ServiceModelContract } from './@Contract/index.contract';
+
 
 /**
  * @param props - This is an object that contains the props that are passed to the component.
@@ -18,9 +19,11 @@ export default function useServiceList(props = {}, emit = null) {
    * @constant {ServiceModelContract} breadcrumbs - ref 
    * @constant {string} search - ref 
    * @constant {boolean} showServiceList - computed
-   * @constant {boolean} showNoData - computed 
+   * @constant {boolean} showNoData - computed
+   * @constant {any} trans - computed 
    * component variable list
   */
+  const trans = computed((): any => Vue.prototype.$tr);
   const loading = computed((): Boolean => serviceListStore().getLoading());
   const serviceListModel = computed((): ServiceModelContract[] => serviceListStore().getServiceList());
   const search = ref<string>("");
@@ -99,5 +102,6 @@ export default function useServiceList(props = {}, emit = null) {
     loading,
     showServiceList,
     showNoData,
+    trans,
   };
 }
