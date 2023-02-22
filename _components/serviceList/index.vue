@@ -95,7 +95,6 @@ export default defineComponent({
       <component
         v-if="selectService.component"
         :is="selectService.component"
-        :cargoData="selectService.form"
       />
       <div
         v-if="showNoData"

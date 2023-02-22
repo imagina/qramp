@@ -92,4 +92,6 @@ export interface ServiceListStoreContract {
     resetStore(): void;
     init(): Promise<void>;
     getServiceListSelected(): Promise<any>;
+    orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise < any >;
+    getServiceItems(): Promise<ServiceModelContract[]>;
 }

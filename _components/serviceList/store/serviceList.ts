@@ -1,21 +1,20 @@
 import cargo from '../../cargo/index.vue';
 import { reactive, nextTick } from 'vue';
 import {
-     buildServiceList, 
-     getListOfSelectedServices
+    buildServiceList,
+    getListOfSelectedServices
 } from '../../../_store/actions/services';
-import { 
-    ServiceModelContract, 
-    ServiceListStoreContract, 
-    ReactiveStoreContract 
+import {
+    ServiceModelContract,
+    ServiceListStoreContract,
+    ReactiveStoreContract
 } from '../@Contract/index.contract';
-
+const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
     {
         id: 4,
         title: 'Cargo',
         component: cargo,
-        form: {},
     },
 ];
 const state = reactive<ReactiveStoreContract>({
@@ -58,7 +57,7 @@ export default function serviceListStore(): ServiceListStoreContract {
     function setServiceList(value: ServiceModelContract[]): void {
         state.serviceList = value;
     }
-    
+
     /**
      * This function returns an array of ServiceModelContract objects.
      * @returns The serviceList array.
@@ -66,7 +65,7 @@ export default function serviceListStore(): ServiceListStoreContract {
     function getServiceList(): ServiceModelContract[] {
         return state.serviceList;
     }
-   
+
     /**
      * This function takes a boolean value and sets the loading property of the state object to that
      * value.
@@ -75,7 +74,7 @@ export default function serviceListStore(): ServiceListStoreContract {
     function setLoading(value: boolean): void {
         state.loading = value;
     }
-    
+
     /**
      * This function returns a boolean value that is the value of the loading property of the state
      * object.
@@ -84,7 +83,7 @@ export default function serviceListStore(): ServiceListStoreContract {
     function getLoading(): Boolean {
         return state.loading;
     }
-    
+
     /**
      * The function is called resetStore and it takes no parameters and returns nothing.
      */
@@ -102,7 +101,7 @@ export default function serviceListStore(): ServiceListStoreContract {
      * @param services 
      * @returns An array of promises.
      */
-    async function orderServicesWithTheStructureToSave(services): Promise < any > {
+    async function orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise<any> {
         try {
             const data: any[] = [];
             services.forEach(async service => {
@@ -112,7 +111,16 @@ export default function serviceListStore(): ServiceListStoreContract {
             return data;
         } catch (error) {
             console.log(error);
-        } 
+        }
+    }
+    /**
+     * Get the service list, filter it by the category id, then order the services with the structure
+     * to save.
+     * @returns {Promise<ServiceModelContract[]>} An array of ServiceModelContract objects.
+     */
+    async function getServiceItems(): Promise<ServiceModelContract[]> {
+        const serviceList = getServiceList().filter(item => item.id === CATEGORY_SERVICES);
+        return await serviceListStore().orderServicesWithTheStructureToSave(serviceList);
     }
     /**
      * The loading state is set to true before the data is fetched because the nextTick function is
@@ -121,11 +129,11 @@ export default function serviceListStore(): ServiceListStoreContract {
      * is called before
     */
     async function init(): Promise<void> {
-      nextTick(async () => {
-        setLoading(true);
-        await getServiceData();
-        setLoading(false);
-      }) 
+        nextTick(async () => {
+            setLoading(true);
+            await getServiceData();
+            setLoading(false);
+        })
     }
     return {
         getServiceData,
@@ -136,5 +144,7 @@ export default function serviceListStore(): ServiceListStoreContract {
         resetStore,
         init,
         getServiceListSelected,
+        orderServicesWithTheStructureToSave,
+        getServiceItems,
     }
 }

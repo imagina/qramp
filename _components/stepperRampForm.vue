@@ -59,8 +59,7 @@ import iSignature from '../_components/signature.vue'
 import responsive from '../_mixins/responsive.js'
 import iToolbar from '../_components/toolbar.vue'
 import { 
-  STEP_FLIGTH, 
-  STEP_CARGO,
+  STEP_FLIGTH,
   STEP_SERVICE,
   STEP_REMARKS,
   STEP_SIGNATURE
@@ -69,6 +68,11 @@ import qRampStore from '../_store/qRampStore.js'
 import serviceList from './serviceList/index.vue';
 import serviceListStore from './serviceList/store/serviceList.ts';
 import cargoStore from './cargo/store/cargo.ts';
+import {
+  FlightformFieldModel, 
+  HalfTurnInBountModel, 
+  HalfTurnOutBountModel,
+} from './model/constants.js';
 
 export default {
   name:'stepperRampForm',
@@ -91,7 +95,6 @@ export default {
       error: false,
       sp:1,
       STEP_FLIGTH, 
-      STEP_CARGO,
       STEP_SERVICE,
       STEP_REMARKS,
       STEP_SIGNATURE,
@@ -118,7 +121,7 @@ export default {
       set(value) {
         this.error = value;
       }
-    }
+    },
   },
   methods: {
     init(){
@@ -129,7 +132,7 @@ export default {
     },
     async saveFormData(step, individual = false) {
       switch (step) {
-        case 1:
+        case STEP_FLIGTH:
           if(this.$refs.flight) {
             if(individual) {
               this.$refs.flight[0].saveIndividual();
@@ -139,10 +142,10 @@ export default {
             await this.$refs.flight[0].saveInfo(error);
           }
           break;
-        case 6:
+        case STEP_REMARKS:
           this.$refs.remarks[0].saveInfo()
           break;
-        case 7:
+        case STEP_SIGNATURE:
           this.$refs.signature[0].saveInfo()
           break;
       }
@@ -238,47 +241,28 @@ export default {
       })
     },
     validateFulldate() {
-      let validate = true;
-      this.$store.state.qrampApp.services.forEach((service) => {
-        service.work_order_item_attributes.forEach((attr) => {
-          if(attr.type === 'fullDate') {
-            if(!this.$moment(attr.value, 'MM/DD/YYYY HH:mm', true).isValid()) {
-                validate = false;
-                return;
+      return new Promise(async (resolve) => {
+        let validate = true;
+        const services = await serviceListStore().getServiceItems(serviceList);
+        services.forEach((service) => {
+          service.work_order_item_attributes.forEach((attr) => {
+            if(attr.type === 'fullDate') {
+              if(!this.$moment(attr.value, 'MM/DD/YYYY HH:mm', true).isValid()) {
+                  validate = false;
+                  return;
+              }
             }
-          }
+          })
         })
+        return resolve(validate);
       })
-      return validate; 
     },
     async validateAllFieldsRequiredByStep() {
       try {
         const flightForm = this.$store.state.qrampApp.form;
-        let flightformField = [
-          'customerId',
-          'stationId',
-          'acTypeId',
-          'operationTypeId',
-          'carrierId',
-          'gateId',
-          'statusId',
-          'inboundBlockIn',
-          'outboundBlockOut'
-        ];
-
-        const halfTurnInBount = [
-          'inboundFlightNumber',
-          'inboundOriginAirportId',
-          'inboundTailNumber',
-          'inboundScheduledArrival',
-        ];
-
-        const halfTurnOutBount = [
-          'outboundFlightNumber',
-          'outboundDestinationAirportId',
-          'outboundTailNumber',
-          'outboundScheduledDeparture',
-        ];
+        let flightformField = FlightformFieldModel;
+        const halfTurnInBount = HalfTurnInBountModel;
+        const halfTurnOutBount = HalfTurnOutBountModel;
         if(flightForm.operationTypeId == 3) {
           flightformField = flightformField.concat(halfTurnInBount);
         }
@@ -302,23 +286,24 @@ export default {
           this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           return true;
         }
-        /*const validateDateService = await this.validateFulldate();
-        const service = this.$store.state.qrampApp.services;
+        const validateDateService = await this.validateFulldate();
+        const service = await serviceListStore().getServiceItems(serviceList);
         if(service.length === 0) {
           await this.setStep(STEP_SERVICE);
           this.error = true;
           qRampStore().hideLoading();
           await this.setData();
+          this.$alert.error({message: this.$tr('Please at least select one service')});
           return true;
-        }*/
-        /*if(!validateDateService) {
+        }
+        if(!validateDateService) {
           this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
           await this.setStep(STEP_SERVICE);
           this.error = true;
-          qRampStore().hideLoading();
           await this.setData();
+          qRampStore().hideLoading();
           return true;
-        }*/
+        }
         this.error = false;
         return false;
       } catch (error) {

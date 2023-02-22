@@ -33,6 +33,10 @@ import {
   STATUS_SUBMITTED,
   STATUS_SCHEDULE,
   STATUS_CLOSED,
+  STEP_FLIGTH,
+  STEP_SERVICE,
+  STEP_REMARKS,
+  STEP_SIGNATURE
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
@@ -50,7 +54,6 @@ export default {
       modalProps: {},
       sp:null,
       flight:{},
-      cargo:{},
       remark:[],
       signature:[],
       statusId: STATUS_DRAFT,
@@ -72,25 +75,24 @@ export default {
         {
           title:'Flight',
           icon:'fas fa-plane',
-          step: 1,
+          step: STEP_FLIGTH,
           form: this.flight
         },
         {
           title:'Services',
           icon:'fas fa-briefcase',
-          step: 3,
-          form: this.services
+          step: STEP_SERVICE,
         },
         {
           title:'Remark',
           icon:'far fa-edit',
-          step: 6,
+          step: STEP_REMARKS,
           form: this.remark
         },
         {
           title: this.$tr('ifly.cms.label.signature'),
           icon:'draw',
-          step: 7,
+          step: STEP_SIGNATURE,
           form: this.signature
         }
       ]
@@ -220,7 +222,6 @@ export default {
         this.show = true
         this.modalProps = updateData.modalProps
         this.flight = {}
-        this.cargo = {}
         this.remark = {}
         this.signature = {}
         this.statusId = STATUS_DRAFT
