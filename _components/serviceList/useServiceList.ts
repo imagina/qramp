@@ -13,30 +13,37 @@ import { ServiceModelContract } from './@Contract/index.contract';
  */
 export default function useServiceList(props = {}, emit = null) {
   /**
-   * @constant {boolean} loading  
+   * @constant {boolean} loading
    * @constant {ServiceModelContract[]} serviceListModel - computed
    * @constant {ServiceModelContract} selectService - computed
-   * @constant {ServiceModelContract} breadcrumbs - ref 
-   * @constant {string} search - ref 
+   * @constant {ServiceModelContract} breadcrumbs - ref
+   * @constant {string} search - ref
    * @constant {boolean} showServiceList - computed
    * @constant {boolean} showNoData - computed
-   * @constant {any} trans - computed 
+   * @constant {any} trans - computed
    * component variable list
-  */
+   */
   const trans = computed((): any => Vue.prototype.$tr);
   const loading = computed((): Boolean => serviceListStore().getLoading());
-  const serviceListModel = computed((): ServiceModelContract[] => serviceListStore().getServiceList());
+  const serviceListModel = computed((): ServiceModelContract[] =>
+    serviceListStore().getServiceList()
+  );
   const search = ref<string>("");
   const selectService = ref<ServiceModelContract>({});
   const breadcrumbs = ref<ServiceModelContract[]>([]);
-  const showServiceList = computed((): boolean =>
-    !loading.value &&
-    !selectService.value.component &&
-    !selectService.value.dynamicField &&
-    filterService.value.length > 0);
-  const showNoData = computed((): boolean => !loading.value &&
-    !selectService.value.component &&
-    filterService.value.length === 0);
+  const showServiceList = computed(
+    (): boolean =>
+      !loading.value &&
+      !selectService.value.component &&
+      !selectService.value.dynamicField &&
+      filterService.value.length > 0
+  );
+  const showNoData = computed(
+    (): boolean =>
+      !loading.value &&
+      !selectService.value.component &&
+      filterService.value.length === 0
+  );
   /* This is a computed property that returns a list of services. */
   const services = computed<ServiceModelContract | any>(() => {
     if (breadcrumbs.value.length === 0) {
@@ -62,7 +69,7 @@ export default function useServiceList(props = {}, emit = null) {
    * @param {ServiceModelContract | null} service - ServiceModelContract | null,
    * @param {null | number} [index=null] - null | number = null
    * @returns BREAD CRUMBS SELECTED AS THE ARRANGEMENT TYPE.
-  */
+   */
   const setBreadcrumbs = (
     service: ServiceModelContract | null,
     index: null | number = null
