@@ -57,7 +57,11 @@
       <template #day="{ timestamp }">
         <div
           v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')"
-          class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2"
+          class="
+           tw-overflow-y-auto 
+           tw-overflow-x-auto 
+           tw-h-28 
+           tw-px-2"
         >
           <div
             v-for="(event, index) in getEvents(timestamp.date)"
@@ -78,9 +82,16 @@
                   tw-text-red-500 
                   tw-font-semibold" 
               />
-              <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i><span class="ellipsis">
-                {{ event.calendarTitle }}
-              </span>
+              <i
+                class="
+                 fa-solid 
+                 fa-circle-check
+                 tw-px-1"
+                 :class="colorCheckSchedule(event.statusId)"
+                 />
+                  <span class="ellipsis">
+                    {{ event.calendarTitle }}
+                  </span>
             </q-badge>
           </div>
         </div>
@@ -120,7 +131,12 @@
                     tw-text-red-500 
                     tw-font-semibold" 
                 />
-                <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i>
+                <i
+                  class="
+                   fa-solid 
+                   fa-circle-check"
+                   :class="colorCheckSchedule(event.statusId)" 
+                  />
                 {{ event.calendarTitle }}
               </div>
               <div 
@@ -245,6 +261,15 @@ import _ from "lodash";
 import qRampStore from '../../_store/qRampStore.js';
 import {
   STATUS_SCHEDULE,
+  STATUS_CLOSED,
+  STATUS_DRAFT,
+  STATUS_POSTED,
+  STATUS_SUBMITTED,
+  COLOR_CLOSED,
+  COLOR_DRAFT,
+  COLOR_POSTED,
+  COLOR_SCHEDULE,
+  COLOR_SUBMITTED,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 
@@ -297,6 +322,17 @@ export default {
     });
   },
   computed: {
+    colorCheckSchedule() {
+      return statusId => {
+        return {
+          [COLOR_CLOSED] : statusId === STATUS_CLOSED,
+          [COLOR_DRAFT] : statusId === STATUS_DRAFT,
+          [COLOR_POSTED] : statusId === STATUS_POSTED,
+          [COLOR_SCHEDULE] : statusId === STATUS_SCHEDULE,
+          [COLOR_SUBMITTED] : statusId === STATUS_SUBMITTED,
+        }
+      }
+    },
     permisionComments() {
       return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
     },
@@ -597,7 +633,9 @@ export default {
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-        await this.addNewDayToSchedule({ date: this.selectedDate });
+        if(this.scheduleTypeComputed === 'day-agenda') {
+          await this.addNewDayToSchedule({ date: this.selectedDate });
+        }
         this.$alert.success('workOrders was added correctly');
         //this.$router.go();
       } catch (error) {
@@ -724,7 +762,6 @@ export default {
           params: {
             include: "flightStatus,gate,carrier,acType",
             filter: {
-              statusId: STATUS_SCHEDULE,
               ...filterClone,
               withoutDefaultInclude: true,
               order: {
@@ -840,7 +877,11 @@ export default {
         const origin = window.location.href.split("?");
         const dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         const dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}
+          &type=${scheduleTypeId ? scheduleTypeId.id : 1 }
+          &dateStart=${dateStart}
+          &dateEnd=${dateEnd}
+          &statusId=${STATUS_SCHEDULE}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
