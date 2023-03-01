@@ -13,6 +13,16 @@ export default [
     ]
   },
   {
+    title: 'ifly.cms.sidebar.passengerInfo',
+    icon: 'fa-light fa-tickets-airline',
+    children: [
+      pages.qramp.passenger,
+      pages.qramp.passengerFlightMap,
+      pages.qramp.passengerSchedule,
+      pages.qramp.passengerScheduleStatus
+    ]
+  },
+  {
     title: 'isite.cms.message.request',
     icon: 'fa-light fa-browser',
     children: [
