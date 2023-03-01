@@ -85,6 +85,7 @@ export default {
       this.event.sta = this.$moment(this.event.sta, "HH:mm:ss").format("HH:mm");
       this.event.std = this.$moment(this.event.std, "HH:mm:ss").format("HH:mm");
       return {
+        isClone: this.event.isClone || false,
         sta: this.event.sta,
         std: this.event.std,
         stationId: this.event.stationId,

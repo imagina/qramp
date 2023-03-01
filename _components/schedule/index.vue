@@ -154,6 +154,20 @@
                 v-if="event.id && scheduleType === 'day-agenda'"
               >
                 <button
+                  v-if="!isBlank && !events.some(item => item.isUpdate)"
+                  class="
+                    tw-bg-blue-500 
+                    tw-rounded-lg 
+                    tw-px-2  
+                    tw-text-white"
+                    @click="duplicateSchedule(event)" 
+                  >
+                  <i class="fa-thin fa-clone tw-text-sm" />
+                  <q-tooltip>
+                    Duplicate
+                  </q-tooltip>
+                </button>
+                <button
                   v-if="!events.some(item => item.isUpdate)"
                   @click.stop.prevent="editSchedule(event, 'day')"
                   class="
@@ -612,7 +626,7 @@ export default {
           ["time"],
           ["asc"]
         );
-        return order;
+        return order.sort(item => !item.isClone ? 1 : -1);
       } catch (error) {
         console.log(error);
       }
@@ -638,12 +652,13 @@ export default {
     },
     async addSchedule(data) {
       try {
+        const isClone = data.isClone || false;
         await this.$refs.modalForm.setLoading(true);
         const response = await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-        if(this.scheduleTypeComputed === 'day-agenda') {
+        if(this.scheduleTypeComputed === 'day-agenda' && !isClone) {
           await this.addNewDayToSchedule({ date: this.selectedDate });
         }
         this.$alert.success('workOrders was added correctly');
@@ -785,7 +800,7 @@ export default {
           "apiRoutes.qramp.workOrders",
           params
         );
-        this.events = response.data.map((item) => ({ ...item, isUpdate: false }));
+        this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
         //this.events = eventModel;
         this.loading = false;
       } catch (error) {
@@ -959,6 +974,13 @@ export default {
       } catch (error) {
         console.log(error);
       } 
+    },
+    duplicateSchedule(event) {
+      try {
+        this.events.push(this.$clone({...event, id: this.$uid(), isUpdate: true, isClone: true}));
+      } catch (error) {
+        console.log('duplicate', error);
+      }
     },
     dismissEvent(event) {
       if(typeof event.id === "number") {
