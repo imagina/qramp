@@ -156,7 +156,7 @@
                 <button
                   v-if="!isBlank && !events.some(item => item.isUpdate)"
                   class="
-                    tw-bg-blue-500 
+                    tw-bg-blue-800 
                     tw-rounded-lg 
                     tw-px-2  
                     tw-text-white"
