@@ -73,12 +73,17 @@
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
+              <span 
+                v-if="event.comments && event.comments > 0"
+              > 
+                {{ event.comments }} 
+              </span>
               <i
                 v-if="event.comments > 0 && permisionComments"
                 class="
                   fa-light 
                   fa-comment-lines 
-                  tw-px-1 
+                  tw-pr-1 
                   tw-text-red-500 
                   tw-font-semibold" 
               />
@@ -122,12 +127,17 @@
                 class="tw-font-semibold"
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
+                <span 
+                  v-if="event.comments && event.comments > 0"
+                > 
+                  {{ event.comments }} 
+                </span>
                 <i
                   v-if="event.comments > 0 && permisionComments"
                   class="
                     fa-light 
                     fa-comment-lines 
-                    tw-px-1 
+                    tw-pr-1 
                     tw-text-red-500 
                     tw-font-semibold" 
                 />
