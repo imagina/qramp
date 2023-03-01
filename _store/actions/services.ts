@@ -153,10 +153,6 @@ function setProps(type, name, options, index) {
         };
     }
     if (type == "fullDate") {
-        const options =
-            index === 0
-                ? qRampStore().validateDateInboundBlockIn
-                : qRampStore().validateDateOutboundBlockOut;
         return {
             readonly,
             label: name,
@@ -164,8 +160,6 @@ function setProps(type, name, options, index) {
             mask: "MM/DD/YYYY HH:mm",
             "place-holder": "MM/DD/YYYY HH:mm",
             format24h: true,
-            options,
-            typeIndexDate: index,
         };
     }
     if (type === "quantityFloat") {

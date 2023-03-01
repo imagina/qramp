@@ -597,7 +597,10 @@ export default {
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-        await this.addNewDayToSchedule({ date: this.selectedDate });
+        if(this.scheduleTypeComputed === 'day-agenda') {
+          await this.addNewDayToSchedule({ date: this.selectedDate });
+        }
+        
         this.$alert.success('workOrders was added correctly');
         //this.$router.go();
       } catch (error) {
@@ -902,7 +905,7 @@ export default {
           gateId: null,
           scheduleStatusId: null,
           inboundScheduledArrival: date,
-          isUpdate: true, 
+          isUpdate: true,
         }
         this.events.push({...data});
       } catch (error) {
