@@ -93,7 +93,11 @@
                  fa-circle-check
                  tw-px-1"
                  :class="colorCheckSchedule(event.statusId)"
-                 />
+                 >
+                 <q-tooltip>
+                    {{ titleStatus(event.statusId) }}
+                  </q-tooltip>
+                 </i>
                   <span class="ellipsis">
                     {{ event.calendarTitle }}
                   </span>
@@ -146,7 +150,11 @@
                    fa-solid 
                    fa-circle-check"
                    :class="colorCheckSchedule(event.statusId)" 
-                  />
+                  >
+                  <q-tooltip>
+                    {{ titleStatus(event.statusId) }}
+                  </q-tooltip>
+                </i>
                 {{ event.calendarTitle }}
               </div>
               <div 
@@ -355,6 +363,26 @@ export default {
           [COLOR_SCHEDULE] : statusId === STATUS_SCHEDULE,
           [COLOR_SUBMITTED] : statusId === STATUS_SUBMITTED,
         }
+      }
+    },
+    titleStatus() {
+      return statusId => {
+        if(statusId === STATUS_DRAFT) {
+          return 'Draft';
+        }
+        if(statusId === STATUS_CLOSED) {
+          return 'Closed';
+        }
+        if(statusId === STATUS_POSTED) {
+          return 'Posted';
+        }
+        if(statusId === STATUS_SUBMITTED) {
+          return 'Submitted';
+        }
+        if(statusId === STATUS_SCHEDULE) {
+          return 'Shedule';
+        }
+        return '';
       }
     },
     permisionComments() {
