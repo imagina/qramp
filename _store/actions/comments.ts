@@ -1,7 +1,12 @@
 import baseService from '@imagina/qcrud/_services/baseService.js';
 import {reactive} from 'vue';
 
-const state = reactive({
+interface StateComment {
+    lastComment: string;
+    loading: boolean;
+}
+
+const state = reactive<StateComment>({
     lastComment: '',
     loading: false, 
 });
