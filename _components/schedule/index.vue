@@ -770,7 +770,7 @@ export default {
           dataForm.carrierId = data.carrierId;
           dataForm.statusId = data.statusId;
           if(data.statusId === STATUS_DRAFT) {
-            this.changeStatus(data.statusId, data.id);
+            await this.changeStatus(data.statusId, data.id);
           } else {
             await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           }
