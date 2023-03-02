@@ -128,19 +128,6 @@
                 v-if="event.id && scheduleType === 'day-agenda'"
               >
                 <button
-                  class="
-                  tw-bg-blue-800  
-                    tw-rounded-lg 
-                    tw-px-2  
-                    tw-text-white"
-                    @click="$helper.copyToClipboard(event.calendarTitle.trim(), 'Calendar Title Copied!')" 
-                  >
-                  <i class="fa-thin fa-copy tw-text-sm"></i>
-                  <q-tooltip>
-                    Copy Calendar Title
-                  </q-tooltip>
-                </button>
-                <button
                   v-if="!events.some(item => item.isUpdate)"
                   @click.stop.prevent="editSchedule(event, 'day')"
                   class="
