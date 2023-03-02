@@ -25,7 +25,9 @@ export async function getCommentsFilter(commentableId: number): Promise<void> {
         const response = await baseService.index('apiRoutes.qramp.comments', requestParams);
         const comment = response.data.length > 0 ? response.data[0].comment : '';
         setLastComment(comment);
-        state.loading = false;
+        setTimeout(() => {
+            state.loading = false;
+        }, 100);
     } catch (error) {
         setLastComment('');
         state.loading = false;
