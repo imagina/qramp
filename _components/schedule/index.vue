@@ -141,7 +141,7 @@
               class="
                 tw-text-lg
                 tw-my-1
-                tw-p-3
+                tw-p-1
                 tw-mx-2
                 tw-rounded-md
                 tw-border-2
