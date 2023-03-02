@@ -77,7 +77,7 @@ export default {
       return [
         {
           props: {
-            vIf: !this.isBlank,
+            vIf: this.isEdit && !this.isBlank,
             color: "green",
             label: 'Start Work Order',
           },
