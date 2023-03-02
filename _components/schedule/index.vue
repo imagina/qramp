@@ -766,6 +766,7 @@ export default {
           (item) => item.id === data.id
         );
         if (event) {
+          
           const dataForm = {};
           dataForm.id = data.id;
           dataForm.sta = data.sta;
@@ -777,7 +778,13 @@ export default {
           dataForm.acTypeId =  data.acTypeId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           dataForm.carrierId = data.carrierId;
-          await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
+          dataForm.statusId = data.statusId;
+          if(data.statusId === STATUS_DRAFT) {
+            this.changeStatus(data.statusId, data.id);
+          } else {
+            await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
+          }
+         
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
           this.$alert.info('The workOrders was updated correctly');
@@ -788,6 +795,18 @@ export default {
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         console.log(error);
+      }
+    },
+    async changeStatus(statusId, workOrderId) {
+      try {
+        const route = 'apiRoutes.qramp.workOrderChangeStatus';
+        const payload = {
+          id: workOrderId,
+          statusId,
+        }
+        await this.$crud.create(route, payload);
+      } catch (error) {
+        console.log('Error changeStatus Schedule',error);
       }
     },
     deleteSchedule(scheduleId) {
