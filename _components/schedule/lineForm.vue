@@ -17,7 +17,7 @@
         </div>
         <div class="tw-space-x-2 tw-my-1">
           <button
-            v-if="event.isUpdate && !isBlank"
+            v-if="!isNaN(event.id) && event.isUpdate && !isBlank"
             class="tw-bg-green-500 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
             @click.prevent="save(STATUS_DRAFT)"
           >
