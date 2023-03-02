@@ -443,7 +443,7 @@ export default {
           return 'Submitted';
         }
         if(statusId === STATUS_SCHEDULE) {
-          return 'Shedule';
+          return 'Scheduled';
         }
         return '';
       }
@@ -1093,11 +1093,11 @@ export default {
       }
     },
     async changeLastComment(event) {
+      await setLastComment('');
       if(event.showCommentTooltip){
         await getCommentsFilter(event.id);
         return;
       }
-      setLastComment('');
     },
   },
 };
