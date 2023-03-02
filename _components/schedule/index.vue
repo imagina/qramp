@@ -119,7 +119,7 @@
                  fa-solid 
                  fa-circle-check
                  tw-px-1"
-                 :class="colorCheckSchedule(event.statusId)"
+                 :class="colorCheckSchedule(event)"
                  >
                  <q-tooltip>
                     {{ titleStatus(event.statusId) }}
@@ -201,7 +201,7 @@
                   class="
                    fa-solid 
                    fa-circle-check"
-                   :class="colorCheckSchedule(event.statusId)" 
+                   :class="colorCheckSchedule(event)" 
                   >
                   <q-tooltip>
                     {{ titleStatus(event.statusId) }}
@@ -349,11 +349,6 @@ import {
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED,
-  COLOR_CLOSED,
-  COLOR_DRAFT,
-  COLOR_POSTED,
-  COLOR_SCHEDULE,
-  COLOR_SUBMITTED,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css'
@@ -418,14 +413,9 @@ export default {
       return getLoading();
     },
     colorCheckSchedule() {
-      return statusId => {
-        return {
-          [COLOR_CLOSED] : statusId === STATUS_CLOSED,
-          [COLOR_DRAFT] : statusId === STATUS_DRAFT,
-          [COLOR_POSTED] : statusId === STATUS_POSTED,
-          [COLOR_SCHEDULE] : statusId === STATUS_SCHEDULE,
-          [COLOR_SUBMITTED] : statusId === STATUS_SUBMITTED,
-        }
+      return item => {
+        const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
+        return color;
       }
     },
     titleStatus() {
@@ -895,7 +885,7 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,carrier,acType",
+            include: "flightStatus,gate,carrier,acType,workOrderStatus",
             filter: {
               ...filterClone,
               withoutDefaultInclude: true,
