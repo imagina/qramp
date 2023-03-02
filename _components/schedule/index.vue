@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }">
+  <div class="schedule-ctn" :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }">
     <div class="box box-auto-height q-mb-md">
       <page-actions
         ref="pageActions"
@@ -73,20 +73,47 @@
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
-              <span 
-                v-if="event.comments && event.comments > 0"
-              > 
-                {{ event.comments }} 
-              </span>
-              <i
-                v-if="event.comments > 0 && permisionComments"
-                class="
-                  fa-light 
-                  fa-comment-lines 
-                  tw-pr-1 
-                  tw-text-red-500 
-                  tw-font-semibold" 
-              />
+              <div>
+                <span 
+                  v-if="event.comments && event.comments > 0"
+                > 
+                  {{ event.comments }} 
+                </span>
+                <i
+                  v-if="event.comments > 0 && permisionComments"
+                  class="
+                    fa-light 
+                    fa-comment-lines 
+                    tw-pr-1 
+                    tw-text-red-500 
+                    tw-font-semibold" 
+                >
+                  <q-tooltip
+                    v-model="event.showCommentTooltip"
+                    :content-class="{
+                      'tooltipComments': true,
+                      'tw-text-center': loadingComment,
+                    }"
+                    @input="changeLastComment(event)" 
+                    :offset="[10, 10]">
+                      <div v-if="loadingComment" class="tw-py-2">
+                        <i 
+                          class="
+                           fa-thin 
+                           fa-spinner-third 
+                           fa-spin 
+                           fa-pulse 
+                           tw-text-2xl"
+                        />
+                      </div>
+                      <div
+                        v-else
+                        class="tw-text-sm"
+                        v-html="lastComment"
+                      />
+                  </q-tooltip>
+                </i>
+              </div>
               <i
                 class="
                  fa-solid 
@@ -136,15 +163,40 @@
                 > 
                   {{ event.comments }} 
                 </span>
-                <i
-                  v-if="event.comments > 0 && permisionComments"
-                  class="
-                    fa-light 
-                    fa-comment-lines 
-                    tw-pr-1 
-                    tw-text-red-500 
-                    tw-font-semibold" 
-                />
+                  <i
+                    v-if="event.comments > 0 && permisionComments"
+                    class="
+                      fa-light 
+                      fa-comment-lines 
+                      tw-pr-1 
+                      tw-text-red-500 
+                      tw-font-semibold" 
+                  >
+                    <q-tooltip
+                        v-model="event.showCommentTooltip"
+                        :content-class="{
+                          'tooltipComments': true,
+                          'tw-text-center': loadingComment,
+                        }"
+                        @input="changeLastComment(event)" 
+                        :offset="[10, 10]">
+                          <div v-if="loadingComment" class="tw-py-2">
+                            <i 
+                              class="
+                              fa-thin 
+                              fa-spinner-third 
+                              fa-spin 
+                              fa-pulse 
+                              tw-text-2xl"
+                            />
+                          </div>
+                          <div
+                            v-else
+                            class="tw-text-sm"
+                            v-html="lastComment"
+                          />
+                    </q-tooltip>
+                  </i>
                 <i
                   class="
                    fa-solid 
@@ -304,7 +356,12 @@ import {
   COLOR_SUBMITTED,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
-
+import '@quasar/quasar-ui-qcalendar/dist/index.css'
+import { 
+  getCommentsFilter, 
+  getLastComment, 
+  setLastComment, 
+  getLoading } from '../../_store/actions/comments.ts';
 export default {
   props:{
     isBlank: {
@@ -354,6 +411,12 @@ export default {
     });
   },
   computed: {
+    lastComment() {
+      return getLastComment();
+    },
+    loadingComment() {
+      return getLoading();
+    },
     colorCheckSchedule() {
       return statusId => {
         return {
@@ -1001,7 +1064,7 @@ export default {
     },
     duplicateSchedule(event) {
       try {
-        this.events.push(this.$clone({...event, id: this.$uid(), isUpdate: true, isClone: true}));
+        this.events.push(this.$clone({...event, id: this.$uid(), isUpdate: true, isClone: true, showCommentTooltip: false }));
       } catch (error) {
         console.log('duplicate', error);
       }
@@ -1029,9 +1092,19 @@ export default {
        console.log(error)
       }
     },
+    async changeLastComment(event) {
+      if(event.showCommentTooltip){
+        await getCommentsFilter(event.id);
+        return;
+      }
+      setLastComment('');
+    },
   },
 };
 </script>
 
-<style src="@quasar/quasar-ui-qcalendar/dist/index.css">
+<style>
+.tooltipComments {
+  @apply tw-bg-white tw-text-black tw-shadow-lg tw-border tw-w-52 tw-break-normal;
+}
 </style>
