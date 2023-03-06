@@ -9,7 +9,7 @@ export default [
       pages.qramp.workOrders,
       pages.qramp.flightMap,
       pages.qramp.schedule,
-      pages.qramp.scheduleStatus
+      pages.qramp.workOrderStatuses
     ]
   },
   {

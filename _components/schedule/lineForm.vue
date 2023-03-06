@@ -17,6 +17,16 @@
         </div>
         <div class="tw-space-x-2 tw-my-1">
           <button
+            v-if="!isNaN(event.id) && event.isUpdate && !isBlank"
+            class="tw-bg-green-500 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
+            @click.prevent="save(STATUS_DRAFT)"
+          >
+            <i class="fa-sharp fa-regular fa-bring-forward" />
+            <q-tooltip>
+              Start Work Order
+            </q-tooltip>
+          </button>
+          <button
             v-if="event.isUpdate && !isBlank"
             class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
             @click.prevent="save"
@@ -27,7 +37,7 @@
             </q-tooltip>
           </button>
           <button
-            v-if="event.isUpdate && !isBlank && permisionComments"
+            v-if="!isNaN(event.id) && event.isUpdate && !isBlank && permisionComments"
             class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
             @click.prevent="openCommentsModal"
           >
@@ -48,7 +58,7 @@
       </div>
     </q-form>
     <commentsModal
-      v-if="event.id"
+      v-if="!isNaN(event.id)"
       :key="event.id"
       ref="commentsModal"
       :commentableId="event.id"
@@ -59,6 +69,7 @@
 import scheduleField from "./fields/scheduleField.js";
 import qRampStore from "../../_store/qRampStore.js";
 import commentsModal from "./modals/commentsModal.vue";
+import {STATUS_DRAFT} from '../model/constants.js';
 export default {
   components: { commentsModal },
   mixins: [scheduleField],
@@ -67,6 +78,11 @@ export default {
       type: Object,
       default: () => {},
     },
+  },
+  data() {
+    return {
+      STATUS_DRAFT,
+    }
   },
   created() {
     this.$nextTick(async function () {
@@ -85,6 +101,7 @@ export default {
       this.event.sta = this.$moment(this.event.sta, "HH:mm:ss").format("HH:mm");
       this.event.std = this.$moment(this.event.std, "HH:mm:ss").format("HH:mm");
       return {
+        isClone: this.event.isClone || false,
         sta: this.event.sta,
         std: this.event.std,
         stationId: this.event.stationId,
@@ -94,6 +111,7 @@ export default {
         acTypeId: this.event.acTypeId,
         inboundScheduledArrival: inboundScheduledArrival,
         carrierId: this.event.carrierId,
+        statusId: this.event.statusId,
       };
     },
     isBlank() {
@@ -104,7 +122,7 @@ export default {
     },
   },
   methods: {
-    save() {
+    save(statusId = null) {
       try {
         this.$refs.lineForm.validate().then(async (success) => {
           if (success) {
@@ -113,6 +131,9 @@ export default {
               this.$emit("addSchedule", this.tranformaDate);
             } else {
               this.event.isUpdate = false;
+              if(statusId) {
+                this.event.statusId = statusId;
+              }
               this.$emit("updateSchedule", {
                 ...this.tranformaDate,
                 id: this.event.id,

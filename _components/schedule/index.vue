@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }">
+  <div class="schedule-ctn" :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }">
     <div class="box box-auto-height q-mb-md">
       <page-actions
         ref="pageActions"
@@ -57,7 +57,11 @@
       <template #day="{ timestamp }">
         <div
           v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')"
-          class="tw-overflow-y-auto tw-overflow-x-hidden tw-h-28 tw-px-2"
+          class="
+           tw-overflow-y-auto 
+           tw-overflow-x-auto 
+           tw-h-28 
+           tw-px-2"
         >
           <div
             v-for="(event, index) in getEvents(timestamp.date)"
@@ -69,18 +73,61 @@
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
+              <div>
+                <span 
+                  v-if="event.comments && event.comments > 0"
+                > 
+                  {{ event.comments }} 
+                </span>
+                <i
+                  v-if="event.comments > 0 && permisionComments"
+                  class="
+                    fa-light 
+                    fa-comment-lines 
+                    tw-pr-1 
+                    tw-text-red-500 
+                    tw-font-semibold" 
+                >
+                  <q-tooltip
+                    v-model="event.showCommentTooltip"
+                    :content-class="{
+                      'tooltipComments': true,
+                      'tw-text-center': loadingComment,
+                    }"
+                    @input="changeLastComment(event)" 
+                    :offset="[10, 10]">
+                      <div v-if="loadingComment" class="tw-py-2">
+                        <i 
+                          class="
+                           fa-thin 
+                           fa-spinner-third 
+                           fa-spin 
+                           fa-pulse 
+                           tw-text-2xl"
+                        />
+                      </div>
+                      <div
+                        v-else
+                        class="tw-text-sm"
+                        v-html="lastComment"
+                      />
+                  </q-tooltip>
+                </i>
+              </div>
               <i
-                v-if="event.comments > 0 && permisionComments"
                 class="
-                  fa-light 
-                  fa-comment-lines 
-                  tw-px-1 
-                  tw-text-red-500 
-                  tw-font-semibold" 
-              />
-              <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i><span class="ellipsis">
-                {{ event.calendarTitle }}
-              </span>
+                 fa-solid 
+                 fa-circle-check
+                 tw-px-1"
+                 :class="colorCheckSchedule(event)"
+                 >
+                 <q-tooltip>
+                    {{ titleStatus(event.statusId) }}
+                  </q-tooltip>
+                 </i>
+                  <span class="ellipsis">
+                    {{ event.calendarTitle }}
+                  </span>
             </q-badge>
           </div>
         </div>
@@ -94,7 +141,7 @@
               class="
                 tw-text-lg
                 tw-my-1
-                tw-p-3
+                tw-p-1
                 tw-mx-2
                 tw-rounded-md
                 tw-border-2
@@ -111,22 +158,75 @@
                 class="tw-font-semibold"
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
+                <span 
+                  v-if="event.comments && event.comments > 0"
+                > 
+                  {{ event.comments }} 
+                </span>
+                  <i
+                    v-if="event.comments > 0 && permisionComments"
+                    class="
+                      fa-light 
+                      fa-comment-lines 
+                      tw-pr-1 
+                      tw-text-red-500 
+                      tw-font-semibold" 
+                  >
+                    <q-tooltip
+                        v-model="event.showCommentTooltip"
+                        :content-class="{
+                          'tooltipComments': true,
+                          'tw-text-center': loadingComment,
+                        }"
+                        @input="changeLastComment(event)" 
+                        :offset="[10, 10]">
+                          <div v-if="loadingComment" class="tw-py-2">
+                            <i 
+                              class="
+                              fa-thin 
+                              fa-spinner-third 
+                              fa-spin 
+                              fa-pulse 
+                              tw-text-2xl"
+                            />
+                          </div>
+                          <div
+                            v-else
+                            class="tw-text-sm"
+                            v-html="lastComment"
+                          />
+                    </q-tooltip>
+                  </i>
                 <i
-                  v-if="event.comments > 0 && permisionComments"
                   class="
-                    fa-light 
-                    fa-comment-lines 
-                    tw-px-1 
-                    tw-text-red-500 
-                    tw-font-semibold" 
-                />
-                <i v-if="event.statusId !== STATUS_SCHEDULE" class="fa-solid fa-circle-check tw-text-green-500"></i>
+                   fa-solid 
+                   fa-circle-check"
+                   :class="colorCheckSchedule(event)" 
+                  >
+                  <q-tooltip>
+                    {{ titleStatus(event.statusId) }}
+                  </q-tooltip>
+                </i>
                 {{ event.calendarTitle }}
               </div>
               <div 
                 class="tw-text-right tw-w-1/2 tw-space-x-2"
                 v-if="event.id && scheduleType === 'day-agenda'"
               >
+                <button
+                  v-if="!isBlank && !events.some(item => item.isUpdate)"
+                  class="
+                    tw-bg-blue-800 
+                    tw-rounded-lg 
+                    tw-px-2  
+                    tw-text-white"
+                    @click="duplicateSchedule(event)" 
+                  >
+                  <i class="fa-thin fa-clone tw-text-sm" />
+                  <q-tooltip>
+                    Duplicate
+                  </q-tooltip>
+                </button>
                 <button
                   v-if="!events.some(item => item.isUpdate)"
                   @click.stop.prevent="editSchedule(event, 'day')"
@@ -245,9 +345,18 @@ import _ from "lodash";
 import qRampStore from '../../_store/qRampStore.js';
 import {
   STATUS_SCHEDULE,
+  STATUS_CLOSED,
+  STATUS_DRAFT,
+  STATUS_POSTED,
+  STATUS_SUBMITTED,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
-
+import '@quasar/quasar-ui-qcalendar/dist/index.css'
+import { 
+  getCommentsFilter, 
+  getLastComment, 
+  setLastComment, 
+  getLoading } from '../../_store/actions/comments.ts';
 export default {
   props:{
     isBlank: {
@@ -297,6 +406,38 @@ export default {
     });
   },
   computed: {
+    lastComment() {
+      return getLastComment();
+    },
+    loadingComment() {
+      return getLoading();
+    },
+    colorCheckSchedule() {
+      return item => {
+        const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
+        return color;
+      }
+    },
+    titleStatus() {
+      return statusId => {
+        if(statusId === STATUS_DRAFT) {
+          return 'Draft';
+        }
+        if(statusId === STATUS_CLOSED) {
+          return 'Closed';
+        }
+        if(statusId === STATUS_POSTED) {
+          return 'Posted';
+        }
+        if(statusId === STATUS_SUBMITTED) {
+          return 'Submitted';
+        }
+        if(statusId === STATUS_SCHEDULE) {
+          return 'Scheduled';
+        }
+        return '';
+      }
+    },
     permisionComments() {
       return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
     },
@@ -566,7 +707,7 @@ export default {
           ["time"],
           ["asc"]
         );
-        return order;
+        return order.sort(item => !item.isClone ? 1 : -1);
       } catch (error) {
         console.log(error);
       }
@@ -592,12 +733,15 @@ export default {
     },
     async addSchedule(data) {
       try {
+        const isClone = data.isClone || false;
         await this.$refs.modalForm.setLoading(true);
         const response = await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-        await this.addNewDayToSchedule({ date: this.selectedDate });
+        if(this.scheduleTypeComputed === 'day-agenda' && !isClone) {
+          await this.addNewDayToSchedule({ date: this.selectedDate });
+        }
         this.$alert.success('workOrders was added correctly');
         //this.$router.go();
       } catch (error) {
@@ -612,6 +756,7 @@ export default {
           (item) => item.id === data.id
         );
         if (event) {
+          
           const dataForm = {};
           dataForm.id = data.id;
           dataForm.sta = data.sta;
@@ -623,7 +768,13 @@ export default {
           dataForm.acTypeId =  data.acTypeId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           dataForm.carrierId = data.carrierId;
-          await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
+          dataForm.statusId = data.statusId;
+          if(data.statusId === STATUS_DRAFT) {
+            await this.changeStatus(data.statusId, data.id);
+          } else {
+            await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
+          }
+         
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
           this.$alert.info('The workOrders was updated correctly');
@@ -634,6 +785,18 @@ export default {
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         console.log(error);
+      }
+    },
+    async changeStatus(statusId, workOrderId) {
+      try {
+        const route = 'apiRoutes.qramp.workOrderChangeStatus';
+        const payload = {
+          id: workOrderId,
+          statusId,
+        }
+        await this.$crud.create(route, payload);
+      } catch (error) {
+        console.log('Error changeStatus Schedule',error);
       }
     },
     deleteSchedule(scheduleId) {
@@ -722,9 +885,8 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,carrier,acType",
+            include: "flightStatus,gate,carrier,acType,workOrderStatus",
             filter: {
-              statusId: STATUS_SCHEDULE,
               ...filterClone,
               withoutDefaultInclude: true,
               order: {
@@ -738,7 +900,7 @@ export default {
           "apiRoutes.qramp.workOrders",
           params
         );
-        this.events = response.data.map((item) => ({ ...item, isUpdate: false }));
+        this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
         //this.events = eventModel;
         this.loading = false;
       } catch (error) {
@@ -840,7 +1002,7 @@ export default {
         const origin = window.location.href.split("?");
         const dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         const dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}&statusId=${STATUS_SCHEDULE}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
@@ -909,6 +1071,13 @@ export default {
         console.log(error);
       } 
     },
+    duplicateSchedule(event) {
+      try {
+        this.events.push(this.$clone({...event, id: this.$uid(), isUpdate: true, isClone: true, showCommentTooltip: false }));
+      } catch (error) {
+        console.log('duplicate', error);
+      }
+    },
     dismissEvent(event) {
       if(typeof event.id === "number") {
         const eventFind = this.events.find(item => item.id === event.id);
@@ -932,9 +1101,19 @@ export default {
        console.log(error)
       }
     },
+    async changeLastComment(event) {
+      await setLastComment('');
+      if(event.showCommentTooltip){
+        await getCommentsFilter(event.id);
+        return;
+      }
+    },
   },
 };
 </script>
 
-<style src="@quasar/quasar-ui-qcalendar/dist/index.css">
+<style>
+.tooltipComments {
+  @apply tw-bg-white tw-text-black tw-shadow-lg tw-border tw-w-52 tw-break-normal;
+}
 </style>
