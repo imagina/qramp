@@ -1041,7 +1041,10 @@ export default {
       return !!val || this.$tr('isite.cms.message.fieldRequired');
     },
     setCustomerForm() {
-      const selectCustomers = this.selectCustomers === undefined || this.selectCustomers === '' ? {} : this.selectCustomers;
+      console.log(this.selectCustomers);
+      const selectCustomers = this.selectCustomers === null || 
+      this.selectCustomers === undefined || 
+      this.selectCustomers === '' ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
