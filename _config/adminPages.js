@@ -95,7 +95,7 @@ export default {
     crud: import('../_crud/workOrders'),
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
-    title: 'ifly.cms.sidebar.passengerInfo',
+    title: 'ifly.cms.sidebar.workOrders',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,
