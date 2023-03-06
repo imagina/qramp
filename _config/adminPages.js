@@ -158,16 +158,16 @@ export default {
       refresh: true,
     }
   },
-  passengerScheduleStatus: {
-    permission: 'ramp.schedule-statuses.manage',
+  passengerWorkOrderStatuses: {
+    permission: 'ramp.work-order-statuses.manage',
     activated: true,
     authenticated: true,
     path: '/passenger/schedule-status/index',
-    name: 'qramp.admin.passengerScheduleStatus',
-    crud: import('../_crud/scheduleStatus.vue'),
+    name: 'qramp.admin.workOrderStatuses',
+    crud: import('../_crud/workOrderStatuses.vue'),
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
-    title: 'ifly.cms.sidebar.scheduleStatus',
+    title: 'ifly.cms.sidebar.workOrderStatuses',
     icon: 'fa-thin fa-calendar-days',
     subHeader: {
       refresh: true,
