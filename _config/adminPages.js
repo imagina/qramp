@@ -56,7 +56,7 @@ export default {
       refresh: true,
     }
   },
-  scheduleStatus: {
+  /*scheduleStatus: {
     permission: 'ramp.schedule-statuses.manage',
     activated: true,
     authenticated: true,
@@ -66,6 +66,21 @@ export default {
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'ifly.cms.sidebar.scheduleStatus',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },*/
+  workOrderStatuses: {
+    permission: 'ramp.work-order-statuses.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/schedule-status/index',
+    name: 'qramp.admin.workOrderStatuses',
+    crud: import('../_crud/workOrderStatuses.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.workOrderStatuses',
     icon: 'fa-thin fa-calendar-days',
     subHeader: {
       refresh: true,

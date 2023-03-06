@@ -43,6 +43,7 @@
 import scheduleField from "../fields/scheduleField.js";
 import qRampStore from '../../../_store/qRampStore.js';
 import comments from '@imagina/qsite/_components/master/comments/index.vue'
+import {STATUS_DRAFT , STATUS_SCHEDULE} from '../../model/constants.js'
 export default {
   components: {comments},
   mixins: [scheduleField],
@@ -74,6 +75,16 @@ export default {
     },  
     actions() {
       return [
+        {
+          props: {
+            vIf: this.isEdit && !this.isBlank,
+            color: "green",
+            label: 'Start Work Order',
+          },
+          action: async() => {
+            await this.saveScheduleForm(STATUS_DRAFT);
+          },
+        },
         {
           props: {
             vIf: !this.isBlank,
@@ -136,12 +147,15 @@ export default {
         console.log(error);
       }
     },
-    async saveScheduleForm() {
+    async saveScheduleForm(statusId = null) {
       try {
         this.$refs.formSchedule.validate().then(async (success) => {
           if (success) {
             this.tranformData();
             if (this.isEdit) {
+              if(statusId) {
+                this.form.statusId = statusId;
+              }
               this.$emit("updateSchedule", this.form);
             } else {
               this.$emit("addSchedule", this.form);
