@@ -223,6 +223,7 @@ export default function qRampStore() {
             outbound: `${outboundTime} - ${airportName}`,
             aircraftType: items.aircraftType,
             faFlightId: items.faFlightId,
+            cancelled: items.cancelled,
           }
           dataTable.push(flight)
         })
