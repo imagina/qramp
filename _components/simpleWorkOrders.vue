@@ -158,6 +158,8 @@ export default {
     setCustomerForm(key) {
       if (key !== "customerId") return;
       const selectCustomers =
+        this.selectCustomers === null || 
+        this.selectCustomers === undefined ||
         this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
