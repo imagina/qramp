@@ -30,7 +30,15 @@
       >
         <div>
           <q-form :ref="section.refs">
-            <component :is="section.component" />
+            <div v-if="section.id !== 1">
+              <component :is="section.component" />
+            </div>
+            <div v-else>
+              <component 
+                :is="section.component"
+                :flightData="flight"
+              />
+            </div>
           </q-form>
         </div>
       </q-step>

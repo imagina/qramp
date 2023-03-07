@@ -9,9 +9,8 @@
         @validateBound="validateBound(flightNumberField)"
       />
       <div class="col-12 col-md-6">
-        <div v-for="(field, keyField) in formFields.flyFormLeft" :style="`${readonly ? 'height: 50px' : ''}`">
+        <div v-for="(field, keyField) in formFields.flyFormLeft">
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
-            <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
               v-if="bannerMessage"
               class="q-mb-md" 
@@ -197,6 +196,7 @@ import responsive from '../_mixins/responsive.js'
 import tableFlight from '../_components/modal/tableFlight.vue'
 import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts.js';
 import qRampStore from '../_store/qRampStore.js';
+import storePassengers from './passengers/stores/index.ts';
 export default {
   props:{
     readonly: true,
@@ -206,7 +206,6 @@ export default {
       default:()=>{}
     }
   },
-  inject: ['disabledReadonly'],
   components:{tableFlight},
   mixins:[responsive],
   mounted() {
@@ -235,17 +234,12 @@ export default {
       },
       refresh: 1,
       selected:[],
-      newOutbound:true,
-      newInbound:true,
-      thereInFlight:true,
-      thereOutFlight:true,
       loadingState:false,
       openAlert:false,
       update:false,
       dialog:false,
       inOutBound:null,
       timeoutID: '',
-      type:'',
       dataTable:[],
       mainData:[],
       selectCustomers: '',
@@ -290,6 +284,9 @@ export default {
     }
   },
   computed: {
+    disabledReadonly() {
+      return qRampStore().disabledReadonly();
+    },
     isDesktop() {
       return window.innerWidth >= '900';
     },
@@ -351,7 +348,7 @@ export default {
       return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
     },
     formFields(){
-      return{
+      return {
         banner: {
           type: 'banner',
           props: {
@@ -503,6 +500,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              vIf: !storePassengers.isPassenger.get(),
               rules: [
                 val => this.validateSpecialCharacters(val)
               ],
@@ -807,7 +805,7 @@ export default {
       this.updateData()
     },
     updateData() {
-      if(Object.keys(this.flightData).length > 0) {
+      if(this.flightData && Object.keys(this.flightData).length > 0) {
         this.update = true
         const updateForm = this.$clone(this.flightData)
         this.form.statusId = updateForm.statusId

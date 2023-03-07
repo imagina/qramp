@@ -24,6 +24,7 @@ import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import passengers from '../_components/passengers';
 import storePassengers from '../_components/passengers/stores/index.ts';
 import serviceListStore from '../_components/serviceList/store/serviceList.ts';
+import storeFlight from '../_components/flight/store.ts'
 
 export default {
   name: 'RampCrud',
@@ -535,15 +536,10 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible"
           }
         }).then(async (item) => {
-          /*this.$refs.formOrders.loadform({
-            modalProps: {
-              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
-              update: true,
-              workOrderId: data.id,
-              width: '90vw'
-            },
-            data: item.data,
-          })*/
+          await storeFlight().setForm(item.data);
+          await qRampStore().setResponsible(item.data['responsible']);
+          await qRampStore().setWorkOrderItems(item.data['workOrderItems']);
+          await storePassengers.isPassenger.set(true);
           await serviceListStore().init();
           storePassengers.modalPropsTitle.set(`${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`);
           storePassengers.showModal.set(true);

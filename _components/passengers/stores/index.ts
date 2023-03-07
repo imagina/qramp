@@ -8,6 +8,7 @@ export interface StateContract {
     showModal: boolean,
     loading: boolean,
     modalProps: ModalPropsContract,
+    isPassenger: boolean;
 }
 const state = reactive<StateContract>({
     showModal: false,
@@ -17,6 +18,7 @@ const state = reactive<StateContract>({
         title: '',
         width: '90vw'
     },
+    isPassenger: false,
 });
 
 const store = {
@@ -45,10 +47,18 @@ const store = {
         },
     },
     modalProps: state.modalProps,
+    isPassenger: {
+        get: (): boolean => state.isPassenger,
+        set(value: boolean) {
+            console.log(value);
+            state.isPassenger = value;
+        },
+    },
     reset: (): void => {
         // set form
     },
     clear: (): void => {
+        state.isPassenger = false;
         state.showModal = false;
     },
 }
