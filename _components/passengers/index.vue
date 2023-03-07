@@ -9,15 +9,19 @@
     :actions="actions"
     :maximized="$q.screen.lt.md"
   >
-    Hola
+    <steppers />
   </master-modal>
 </template>
 
 <script lang="ts">
 import Vue, { defineComponent, computed } from "vue";
-import store from './store';
+import store from './stores/index';
+import steppers from './steppers.vue';
 
 export default defineComponent({
+  components: {
+    steppers,
+  },
   setup() {
     const showModal = computed({
         get: () => {
@@ -55,4 +59,15 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style>
+#passengersModalComponent .boundColor {
+  background-color: #F1F4FA;
+}
+#passengersModalComponent .master-dialog__actions {
+  @apply tw-py-4 tw-px-7 tw-absolute tw-w-full tw-bottom-0;
+  background-color: #F1F4FA;
+}
+#passengersModalComponent .master-dialog__body {
+  @apply tw-p-0 tw-m-0;
+}
+</style>

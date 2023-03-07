@@ -107,7 +107,7 @@ export default {
     authenticated: true,
     path: '/passenger/work-orders/index',
     name: 'qramp.admin.passenger',
-    crud: import('../_crud/workOrders'),
+    crud: import('../_crud/passengers'),
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'ifly.cms.sidebar.workOrders',

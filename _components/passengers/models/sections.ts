@@ -1,3 +1,5 @@
+import serviceList from '../../serviceList/index.vue';
+import flight from '../../flight.vue';
 export enum STEP {
     FLIGTH = 1,
     SERVICE,
@@ -7,7 +9,7 @@ export type TYPE_SECCION = STEP.FLIGTH | STEP.SERVICE | STEP.REMARKS;
 export interface SectionsContract {
     id: TYPE_SECCION;
     title: string;
-    prefix: number;
+    icon?: string,
     component?: any;
     done: boolean;
     refs: string;
@@ -19,8 +21,8 @@ const data = ref<SectionsContract[]>([
     {
         id: STEP.FLIGTH,
         title: 'Flight',
-        prefix: 1,
-        component: null,
+        icon:'fas fa-plane',
+        component: flight,
         done: false,
         refs: 'flightRefs',
         error: false
@@ -28,8 +30,8 @@ const data = ref<SectionsContract[]>([
     {
         id: STEP.SERVICE,
         title: 'Services',
-        prefix: 2,
-        component: null,
+        icon:'fas fa-briefcase',
+        component: serviceList,
         done: false,
         refs: 'servicesRefs',
         error: false
@@ -37,7 +39,7 @@ const data = ref<SectionsContract[]>([
     {
         id: STEP.REMARKS,
         title: 'Remarks',
-        prefix: 3,
+        icon:'far fa-edit',
         component: null,
         done: false,
         refs: 'remarksRefs',
