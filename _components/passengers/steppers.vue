@@ -50,9 +50,6 @@ export default defineComponent({
 </script>
 
 <style>
-.stepper-modal-passenger .q-form .q-field {
-  @apply tw-pb-0 !important;
-}
 .stepper-modal-passenger .q-stepper .q-stepper-title {
   @apply tw-relative tw-mb-6 tw-overflow-x-hidden;
 }

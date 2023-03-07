@@ -56,7 +56,7 @@ export default defineComponent({
         :placeholder="`${trans('ifly.cms.label.search', {
           capitalize: true,
         })}...`"
-        class="tw-mb-6 search tw-shadow-inner"
+        class="tw-mb-6 search tw-shadow-inner search-service-list"
         v-model="search"
       >
         <template v-slot:prepend>
@@ -110,7 +110,9 @@ export default defineComponent({
 .service-list-ctn .q-item {
   @apply tw-min-h-0;
 }
-
+.service-list-ctn .search-service-list {
+  @apply tw-p-0 !important;
+}
 .service-list-ctn .q-list--bordered {
   @apply tw-border-0;
 }
