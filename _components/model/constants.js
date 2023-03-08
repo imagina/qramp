@@ -44,6 +44,16 @@ export const FlightformFieldModel = [
     'inboundBlockIn',
     'outboundBlockOut'
   ];
+  export const FlightformFieldPassengerModel = [
+    'customerId',
+    'stationId',
+    'acTypeId',
+    'operationTypeId',
+    'carrierId',
+    'statusId',
+    'inboundBlockIn',
+    'outboundBlockOut'
+  ];
 
   export const HalfTurnInBountModel = [
     'inboundFlightNumber',

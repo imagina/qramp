@@ -18,12 +18,6 @@
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
         >
-          <i-toolbar
-            class="hidden" 
-            @edit="readonly = $event" 
-            @send-info="sendInfo()"
-            :update="data.update"
-          />
           <i-flight 
             ref="flight" 
             @isError="error = $event"
@@ -40,9 +34,9 @@
             :remarksData="step.form" 
             :readonly="readonly" 
           />
-          <i-signature 
+          <i-signature
             ref="signature" 
-            v-if="step.step == STEP_SIGNATURE" 
+            v-if="step.step == STEP_SIGNATURE && !isPassenger" 
             :signatureData="step.form" 
             :readonly="readonly" 
             @send-info="sendInfo()" 
@@ -72,7 +66,10 @@ import {
   FlightformFieldModel, 
   HalfTurnInBountModel, 
   HalfTurnOutBountModel,
+  FlightformFieldPassengerModel
 } from './model/constants.js';
+import storePassengers from './passengers/stores/index.ts';
+
 
 export default {
   name:'stepperRampForm',
@@ -114,6 +111,9 @@ export default {
     }
   },
   computed: {
+    isPassenger() {
+      return storePassengers.isPassenger.get();
+    },
     stepError: {
       get() {
         return this.error;
@@ -260,7 +260,7 @@ export default {
     async validateAllFieldsRequiredByStep() {
       try {
         const flightForm = this.$store.state.qrampApp.form;
-        let flightformField = FlightformFieldModel;
+        let flightformField = this.isPassenger ? FlightformFieldPassengerModel: FlightformFieldModel;
         const halfTurnInBount = HalfTurnInBountModel;
         const halfTurnOutBount = HalfTurnOutBountModel;
         if(flightForm.operationTypeId == 3) {

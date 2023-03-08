@@ -20,6 +20,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
+import storePassengers from '../_components/passengers/stores/index.ts';
 
 export default {
   name: 'RampCrud',
@@ -529,7 +530,8 @@ export default {
           params: {
             include: "customer,workOrderStatus,operationType,station,contract,responsible"
           }
-        }).then((item) => {
+        }).then(async(item) => {
+          await storePassengers.isPassenger.set(false);
           this.$refs.formOrders.loadform({
             modalProps: {
               title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,

@@ -25,6 +25,7 @@ import passengers from '../_components/passengers';
 import storePassengers from '../_components/passengers/stores/index.ts';
 import serviceListStore from '../_components/serviceList/store/serviceList.ts';
 import storeFlight from '../_components/flight/store.ts'
+import cargoStore from '../_components/cargo/store/cargo.ts';
 
 export default {
   name: 'RampCrud',
@@ -536,13 +537,24 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible"
           }
         }).then(async (item) => {
-          await storeFlight().setForm(item.data);
+          await storePassengers.isPassenger.set(true);
+          this.$refs.formOrders.loadform({
+            modalProps: {
+              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
+              update: true,
+              workOrderId: data.id,
+              width: '90vw',
+            },
+            data: item.data,
+          })
+          /*await storeFlight().setForm(item.data);
+          cargoStore().setForm(item.data);
+          cargoStore().setDelayList(item.data);
           await qRampStore().setResponsible(item.data['responsible']);
           await qRampStore().setWorkOrderItems(item.data['workOrderItems']);
-          await storePassengers.isPassenger.set(true);
           await serviceListStore().init();
           storePassengers.modalPropsTitle.set(`${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`);
-          storePassengers.showModal.set(true);
+          storePassengers.showModal.set(true);*/
         }).catch((err) => {
           console.log(err);
         });

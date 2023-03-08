@@ -19,7 +19,7 @@
       :data="modalProps" 
       @close-modal="close($event)"
     />
-    <simpleWorkOrders ref="simpleWorkOrder" v-else/>
+    <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder"/>
   </master-modal>
 </template>
 <script>
@@ -27,6 +27,8 @@ import { computed } from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js';
+import steppersPassengers from './passengers/steppers.vue';
+import storePassengers from './passengers/stores/index.ts';
 import { 
   STATUS_DRAFT,
   STATUS_POSTED,
@@ -46,7 +48,11 @@ import storeFlight from './flight/store.ts'
 
 export default {
   name:'formOrders',
-  components: { stepperRampForm, simpleWorkOrders },
+  components: { 
+    stepperRampForm, 
+    simpleWorkOrders,
+    steppersPassengers,
+  },
   mixins:[responsive, services],
   data() {
     return {
@@ -71,6 +77,9 @@ export default {
     }
   },
   computed:{
+    isPassenger() {
+      return storePassengers.isPassenger.get();
+    },
     steppers () {
       return [
         {
@@ -96,7 +105,7 @@ export default {
           step: STEP_SIGNATURE,
           form: this.signature
         }
-      ]
+      ].filter( item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
     },
     nextLabel(){
       return this.sp === this.steppers.length ? 'Save to Draft' : this.$tr('isite.cms.label.next')
