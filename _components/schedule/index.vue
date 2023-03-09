@@ -69,7 +69,12 @@
           >
             <q-badge
               :key="index"
-              class="tw-cursor-pointer tw-text-xs  tw-bg-white tw-border tw-border-grey-100"
+              class="
+                tw-cursor-pointer 
+                tw-text-xs
+                tw-bg-white 
+                tw-border 
+                tw-border-grey-100"
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
@@ -77,6 +82,7 @@
                 :event="event" 
                 :sizeBadge="7"
                 iconClass="tw-text-sm"
+                mainClass="tw-mr-1"
               />
               <i
                 class="
@@ -123,7 +129,8 @@
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
                 <badgeComment 
-                  :event="event" 
+                  :event="event"
+                  mainClass="tw-mr-2" 
                 />
                 <i
                   class="

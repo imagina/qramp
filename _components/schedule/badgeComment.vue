@@ -2,6 +2,7 @@
   <div
     v-if="event.comments > 0 && permisionComments"
     class="
+     badger-comment
      tw-relative 
      tw-inline-flex 
      tw-items-center 
@@ -15,10 +16,9 @@
      dark:bg-blue-600
      dark:hover:bg-blue-700 
      dark:focus:ring-blue-800 
-     tw-text-xl 
-     tw-mx-2 
+     tw-text-xl
      tw-cursor-pointer"
-     
+     :class="mainClass"
   >
     <i 
       class="
@@ -88,6 +88,10 @@ export default defineComponent({
       default: () => 9,
     },
     iconClass: {
+      type: String,
+      default: () => '',
+    },
+    mainClass: {
       type: String,
       default: () => '',
     },
