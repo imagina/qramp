@@ -196,7 +196,7 @@ import responsive from '../_mixins/responsive.js'
 import tableFlight from '../_components/modal/tableFlight.vue'
 import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts.js';
 import qRampStore from '../_store/qRampStore.js';
-import storePassengers from './passengers/stores/index.ts';
+import storePassengers from '../_store/storePassengers.ts';
 export default {
   props:{
     readonly: true,

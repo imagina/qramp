@@ -7,7 +7,6 @@
       :commentableId="commentableId"
       isCrud
     />
-    <passengers />
   </div>
 </template>
 <script>
@@ -21,11 +20,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
-import passengers from '../_components/passengers';
-import storePassengers from '../_components/passengers/stores/index.ts';
-import serviceListStore from '../_components/serviceList/store/serviceList.ts';
-import storeFlight from '../_components/flight/store.ts'
-import cargoStore from '../_components/cargo/store/cargo.ts';
+import storePassengers from '../_store/storePassengers';
 
 export default {
   name: 'RampCrud',
@@ -33,7 +28,6 @@ export default {
     formOrders,
     flightDetail,
     commentsModal,
-    passengers,
   },
   data() {
     return {

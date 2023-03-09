@@ -48,7 +48,7 @@ import {
   HalfTurnOutBountModel,
   FlightformFieldPassengerModel
 } from './model/constants.js';
-import storePassengers from './passengers/stores/index.ts';
+import storePassengers from '../_store/storePassengers';
 
 
 export default {

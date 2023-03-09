@@ -20,7 +20,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
-import storePassengers from '../_components/passengers/stores/index.ts';
+import storePassengers from '../_store/storePassengers';
 
 export default {
   name: 'RampCrud',

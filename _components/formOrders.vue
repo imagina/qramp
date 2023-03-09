@@ -27,8 +27,7 @@ import { computed } from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js';
-import steppersPassengers from './passengers/steppers.vue';
-import storePassengers from './passengers/stores/index.ts';
+import storePassengers from '../_store/storePassengers.ts';
 import { 
   STATUS_DRAFT,
   STATUS_POSTED,
@@ -55,7 +54,6 @@ export default {
   components: { 
     stepperRampForm, 
     simpleWorkOrders,
-    steppersPassengers,
   },
   mixins:[responsive, services],
   data() {
