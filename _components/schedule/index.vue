@@ -286,12 +286,7 @@ import {
   STATUS_SUBMITTED,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
-import '@quasar/quasar-ui-qcalendar/dist/index.css'
-import { 
-  getCommentsFilter, 
-  getLastComment, 
-  setLastComment, 
-  getLoading } from '../../_store/actions/comments.ts';
+import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
 export default {
   props:{
@@ -343,12 +338,6 @@ export default {
     });
   },
   computed: {
-    lastComment() {
-      return getLastComment();
-    },
-    loadingComment() {
-      return getLoading();
-    },
     colorCheckSchedule() {
       return item => {
         const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
@@ -437,12 +426,7 @@ export default {
             icon: "fa-light fa-copy",
           },
           action: () => {
-            let hrefSplit = window.location.href.split("?");
-            let tinyUrl =
-              this.$store.state.qsiteApp.originURL +
-              "/#/ramp/schedule/public/index";
-            if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-            this.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
+            this.$helper.copyToClipboard(window.location.href, "Tiny URL copied!");
           },
         },
         {
@@ -1037,13 +1021,6 @@ export default {
         }
       } catch (error) {
        console.log(error)
-      }
-    },
-    async changeLastComment(event) {
-      await setLastComment('');
-      if(event.showCommentTooltip){
-        await getCommentsFilter(event.id);
-        return;
       }
     },
   },
