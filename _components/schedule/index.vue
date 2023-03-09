@@ -771,6 +771,7 @@ export default {
           dataForm.statusId = data.statusId;
           if(data.statusId === STATUS_DRAFT) {
             await this.changeStatus(data.statusId, data.id);
+            this.showWorkOrder(data);
           } else {
             await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           }
