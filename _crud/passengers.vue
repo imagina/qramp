@@ -541,14 +541,6 @@ export default {
             },
             data: item.data,
           })
-          /*await storeFlight().setForm(item.data);
-          cargoStore().setForm(item.data);
-          cargoStore().setDelayList(item.data);
-          await qRampStore().setResponsible(item.data['responsible']);
-          await qRampStore().setWorkOrderItems(item.data['workOrderItems']);
-          await serviceListStore().init();
-          storePassengers.modalPropsTitle.set(`${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`);
-          storePassengers.showModal.set(true);*/
         }).catch((err) => {
           console.log(err);
         });
