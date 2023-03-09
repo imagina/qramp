@@ -288,6 +288,7 @@ import {
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
+import storePassengers from '../../_store//storePassengers.ts'
 export default {
   props:{
     isBlank: {
@@ -338,6 +339,9 @@ export default {
     });
   },
   computed: {
+    isPassenger() {
+      return storePassengers.isPassenger.get();
+    },
     colorCheckSchedule() {
       return item => {
         const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
@@ -426,7 +430,13 @@ export default {
             icon: "fa-light fa-copy",
           },
           action: () => {
-            this.$helper.copyToClipboard(window.location.href, "Tiny URL copied!");
+            const routeName = this.isPassenger ? 'passenger' : 'ramp';
+            let hrefSplit = window.location.href.split("?");
+            let tinyUrl =
+              this.$store.state.qsiteApp.originURL +
+              `/#/${routeName}/schedule/public/index`;
+            if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
+            this.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
           },
         },
         {
