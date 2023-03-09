@@ -73,7 +73,7 @@
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
-              <div>
+              <div v-if="event.comments > 0 && permisionComments" >
               <div 
                 class="
                   tw-relative 
@@ -94,7 +94,6 @@
                   tw-cursor-pointer"
                 >
                 <i
-                  v-if="event.comments > 0 && permisionComments"
                   class="
                     fa-light 
                     fa-comment-lines 
@@ -138,7 +137,7 @@
                         />
                       </div>
                       <div v-else>
-                          <p class="tw-text-base tw-font-semibold">Last comment</p>
+                          <p class="tw-text-sm tw-font-semibold">Last comment</p>
                           <div
                             class="tw-text-sm"
                             v-html="lastComment"
@@ -191,7 +190,8 @@
                 class="tw-font-semibold"
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
-                <div 
+                <div
+                  v-if="event.comments > 0 && permisionComments" 
                   class="
                     tw-relative 
                     tw-inline-flex 
@@ -211,7 +211,6 @@
                     tw-cursor-pointer"
                   >
                   <i
-                    v-if="event.comments > 0 && permisionComments"
                     class="
                       fa-light 
                       fa-comment-lines 
@@ -255,7 +254,7 @@
                           />
                         </div>
                         <div v-else>
-                          <p class="tw-text-base tw-font-semibold">Last comment</p>
+                          <p class="tw-text-sm tw-font-semibold">Last comment</p>
                           <div
                             class="tw-text-sm"
                             v-html="lastComment"
