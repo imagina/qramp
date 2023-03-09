@@ -21,6 +21,7 @@ import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import storePassengers from '../_store/storePassengers';
+import htmlComment from '../_components//model/htmlComment.js';
 
 export default {
   name: 'RampCrud',
@@ -119,8 +120,7 @@ export default {
               label: 'Comments',
               field: "comments",
               align: "left",
-              format: item => item && item > 0 ? `<span class="tw-px-2 text-black tw-text-base">${item}</span>
-              <i class="fa-light fa-comment-lines tw-text-lg tw-font-semibold" ></i>` : '',
+              format: item => item && item > 0 ? htmlComment(item) : '',
               formatColumn: row => ({
                 textColor: row.comments ? `red-5` : ''
               }),
