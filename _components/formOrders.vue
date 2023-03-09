@@ -44,7 +44,11 @@ import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
 import serviceListStore from './serviceList/store/serviceList';
 import cargoStore from './cargo/store/cargo.ts';
-import storeFlight from './flight/store.ts'
+import storeFlight from './flight/store.ts';
+import iFlight from '../_components/flight.vue'
+import iRemarks from '../_components/remarks.vue'
+import iSignature from '../_components/signature.vue';
+import serviceList from './serviceList/index.vue';
 
 export default {
   name:'formOrders',
@@ -83,27 +87,35 @@ export default {
     steppers () {
       return [
         {
+          ref: 'flight',
           title:'Flight',
           icon:'fas fa-plane',
           step: STEP_FLIGTH,
-          form: this.flight
+          form: this.flight,
+          component: iFlight,
         },
         {
+          ref: 'services',
           title:'Services',
           icon:'fas fa-briefcase',
           step: STEP_SERVICE,
+          component: serviceList,
         },
         {
+          ref: 'remark',
           title:'Remark',
           icon:'far fa-edit',
           step: STEP_REMARKS,
-          form: this.remark
+          form: this.remark,
+          component: iRemarks,
         },
         {
+          ref:"signature",
           title: this.$tr('ifly.cms.label.signature'),
           icon:'draw',
           step: STEP_SIGNATURE,
-          form: this.signature
+          form: this.signature,
+          component: iSignature,
         }
       ].filter( item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
     },

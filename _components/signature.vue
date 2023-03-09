@@ -54,7 +54,7 @@ export default {
   props:{
     readonly: true,
     toolbar:{},
-    signatureData:{}
+    dataCompoment:{}
   },
   inject: ['disabledReadonly'],
   mixins:[responsive],
@@ -146,8 +146,8 @@ export default {
   },
   methods:{
     init() {
-      if(Object.keys(this.signatureData).length > 0) {
-        this.form = this.signatureData
+      if(Object.keys(this.dataCompoment).length > 0) {
+        this.form = this.dataCompoment
       }
     },
     launchFullScreen(name) {

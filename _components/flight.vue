@@ -201,7 +201,7 @@ export default {
   props:{
     readonly: true,
     toolbar:{},
-    flightData:{
+    dataCompoment:{
       type:Object,
       default:()=>{}
     }
@@ -805,9 +805,9 @@ export default {
       this.updateData()
     },
     updateData() {
-      if(this.flightData && Object.keys(this.flightData).length > 0) {
+      if(this.dataCompoment && Object.keys(this.dataCompoment).length > 0) {
         this.update = true
-        const updateForm = this.$clone(this.flightData)
+        const updateForm = this.$clone(this.dataCompoment)
         this.form.statusId = updateForm.statusId
         this.form.stationId = updateForm.stationId
         this.form.acTypeId = updateForm.acTypeId

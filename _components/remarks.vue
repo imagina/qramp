@@ -13,7 +13,7 @@ export default {
   props:{
     readonly: true,
     toolbar:{},
-    remarksData:{}
+    dataCompoment:{}
   },
   inject: ['disabledReadonly'],
   mixins:[responsive],
@@ -59,8 +59,8 @@ export default {
   },
   methods: {
     init(){
-      if(Object.keys(this.remarksData).length > 0) {
-        this.form = this.remarksData
+      if(Object.keys(this.dataCompoment).length > 0) {
+        this.form = this.dataCompoment
       }
     },
     saveInfo() {

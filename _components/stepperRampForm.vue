@@ -10,48 +10,28 @@
       :contracted="$q.screen.lt.md"
       keep-alive
     >
-      <template v-for="(step, index) in steps">
         <q-step
+          v-for="(step, index) in steps"
           :key="index"
           :name="index + 1"
           :title="step.title"
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
         >
-          <i-flight 
-            ref="flight" 
+          <component
+            :ref="step.ref" 
+            :is="step.component"
             @isError="error = $event"
-            v-if="step.step == STEP_FLIGTH" 
-            :flightData="step.form"
+            :dataCompoment="step.form || null"
             :readonly="readonly"
-          />
-          <serviceList 
-            v-if="step.step == STEP_SERVICE"  
-          />
-          <i-remarks 
-            ref="remarks" 
-            v-if="step.step == STEP_REMARKS" 
-            :remarksData="step.form" 
-            :readonly="readonly" 
-          />
-          <i-signature
-            ref="signature" 
-            v-if="step.step == STEP_SIGNATURE && !isPassenger" 
-            :signatureData="step.form" 
-            :readonly="readonly" 
             @send-info="sendInfo()" 
           />
         </q-step>
-      </template>
     </q-stepper>
   </div>
 </template>
 <script>
-import iFlight from '../_components/flight.vue'
-import iRemarks from '../_components/remarks.vue'
-import iSignature from '../_components/signature.vue'
 import responsive from '../_mixins/responsive.js'
-import iToolbar from '../_components/toolbar.vue'
 import { 
   STEP_FLIGTH,
   STEP_SERVICE,
@@ -73,13 +53,7 @@ import storePassengers from './passengers/stores/index.ts';
 
 export default {
   name:'stepperRampForm',
-  components:{
-    iFlight,
-    iRemarks,
-    iSignature,
-    iToolbar,
-    serviceList,
-  },
+  components:{},
   mixins:[responsive],
   props:{
     steps:{},
