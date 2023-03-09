@@ -426,7 +426,12 @@ export default {
             icon: "fa-light fa-copy",
           },
           action: () => {
-            this.$helper.copyToClipboard(window.location.href, "Tiny URL copied!");
+            let hrefSplit = window.location.href.split("?");
+            let tinyUrl =
+              this.$store.state.qsiteApp.originURL +
+              "/#/ramp/schedule/public/index";
+            if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
+            this.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
           },
         },
         {
