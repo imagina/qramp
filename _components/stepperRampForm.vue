@@ -49,6 +49,7 @@ import {
   FlightformFieldPassengerModel
 } from './model/constants.js';
 import storePassengers from '../_store/storePassengers';
+import remarkStore from './remarks/store.ts';
 
 
 export default {
@@ -116,11 +117,10 @@ export default {
             await this.$refs.flight[0].saveInfo(error);
           }
           break;
-        case STEP_REMARKS:
-          this.$refs.remarks[0].saveInfo()
-          break;
         case STEP_SIGNATURE:
-          this.$refs.signature[0].saveInfo()
+          if(this.$refs.signature) {
+            this.$refs.signature[0].saveInfo()
+          }
           break;
       }
     },
@@ -135,6 +135,7 @@ export default {
     },
     async sendInfo() {
       try {
+        const remarks = remarkStore().getForm();
         const serviceList = await serviceListStore().getServiceListSelected();
         qRampStore().showLoading();     
         const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
@@ -145,6 +146,7 @@ export default {
         const formatData = {
           ...data.form,
           ...dataCargo.cargo,
+          ...remarks,
           adHoc: data.form.adHoc == 1,
           customCustomer: data.form.customCustomer  == 1,
           delay: dataCargo.delay,

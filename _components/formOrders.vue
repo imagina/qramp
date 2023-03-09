@@ -45,9 +45,10 @@ import serviceListStore from './serviceList/store/serviceList';
 import cargoStore from './cargo/store/cargo.ts';
 import storeFlight from './flight/store.ts';
 import iFlight from '../_components/flight.vue'
-import iRemarks from '../_components/remarks.vue'
+import iRemarks from './remarks/index.vue'
 import iSignature from '../_components/signature.vue';
 import serviceList from './serviceList/index.vue';
+import remarksStore from './remarks/store.ts';
 
 export default {
   name:'formOrders',
@@ -264,9 +265,7 @@ export default {
         cargoStore().setDelayList(updateData.data);
         qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
         await serviceListStore().init();
-        this.remark.remark = updateData.data['remark']
-        this.remark.safetyMessage = updateData.data['safetyMessage']
-
+        remarksStore().setForm(updateData.data);
         this.signature.customerName = updateData.data['customerName']
         this.signature.customerTitle = updateData.data['customerTitle']
         this.signature.representativeName = updateData.data['representativeName']
@@ -288,6 +287,7 @@ export default {
       this.show = false
       this.services = [];
       cargoStore().reset();
+      remarksStore().reset();
     },
     setLoading(value) {
       this.loading = value;

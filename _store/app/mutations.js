@@ -4,12 +4,6 @@ export function SET_FORM_FLIGHT(state, data) {
     ...data
   };
 }
-export function SET_FORM_REMARK(state, data) {
-  state.form = {
-    ...state.form,
-    ...data
-  };
-}
 export function SET_FORM_SIGNATURE(state, data) {
   state.form = {
     ...state.form,
