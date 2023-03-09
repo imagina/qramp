@@ -431,6 +431,7 @@ export default {
           },
           action: () => {
             const routeName = this.isPassenger ? 'passenger' : 'ramp';
+            
             let hrefSplit = window.location.href.split("?");
             let tinyUrl =
               this.$store.state.qsiteApp.originURL +
