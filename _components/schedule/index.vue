@@ -69,51 +69,21 @@
           >
             <q-badge
               :key="index"
-              class="tw-cursor-pointer tw-text-xs  tw-bg-white tw-border tw-border-grey-100"
+              class="
+                tw-cursor-pointer 
+                tw-text-xs
+                tw-bg-white 
+                tw-border 
+                tw-border-grey-100"
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
-              <div>
-                <span 
-                  v-if="event.comments && event.comments > 0"
-                > 
-                  {{ event.comments }} 
-                </span>
-                <i
-                  v-if="event.comments > 0 && permisionComments"
-                  class="
-                    fa-light 
-                    fa-comment-lines 
-                    tw-pr-1 
-                    tw-text-red-500 
-                    tw-font-semibold" 
-                >
-                  <q-tooltip
-                    v-model="event.showCommentTooltip"
-                    :content-class="{
-                      'tooltipComments': true,
-                      'tw-text-center': loadingComment,
-                    }"
-                    @input="changeLastComment(event)" 
-                    :offset="[10, 10]">
-                      <div v-if="loadingComment" class="tw-py-2">
-                        <i 
-                          class="
-                           fa-thin 
-                           fa-spinner-third 
-                           fa-spin 
-                           fa-pulse 
-                           tw-text-2xl"
-                        />
-                      </div>
-                      <div
-                        v-else
-                        class="tw-text-sm"
-                        v-html="lastComment"
-                      />
-                  </q-tooltip>
-                </i>
-              </div>
+              <badgeComment 
+                :event="event" 
+                :sizeBadge="7"
+                iconClass="tw-text-sm"
+                mainClass="tw-mr-1"
+              />
               <i
                 class="
                  fa-solid 
@@ -158,45 +128,10 @@
                 class="tw-font-semibold"
                 :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
               >
-                <span 
-                  v-if="event.comments && event.comments > 0"
-                > 
-                  {{ event.comments }} 
-                </span>
-                  <i
-                    v-if="event.comments > 0 && permisionComments"
-                    class="
-                      fa-light 
-                      fa-comment-lines 
-                      tw-pr-1 
-                      tw-text-red-500 
-                      tw-font-semibold" 
-                  >
-                    <q-tooltip
-                        v-model="event.showCommentTooltip"
-                        :content-class="{
-                          'tooltipComments': true,
-                          'tw-text-center': loadingComment,
-                        }"
-                        @input="changeLastComment(event)" 
-                        :offset="[10, 10]">
-                          <div v-if="loadingComment" class="tw-py-2">
-                            <i 
-                              class="
-                              fa-thin 
-                              fa-spinner-third 
-                              fa-spin 
-                              fa-pulse 
-                              tw-text-2xl"
-                            />
-                          </div>
-                          <div
-                            v-else
-                            class="tw-text-sm"
-                            v-html="lastComment"
-                          />
-                    </q-tooltip>
-                  </i>
+                <badgeComment 
+                  :event="event"
+                  mainClass="tw-mr-2" 
+                />
                 <i
                   class="
                    fa-solid 
@@ -220,7 +155,7 @@
                     tw-rounded-lg 
                     tw-px-2  
                     tw-text-white"
-                    @click="duplicateSchedule(event)" 
+                    @click.stop.prevent="duplicateSchedule(event)" 
                   >
                   <i class="fa-thin fa-clone tw-text-sm" />
                   <q-tooltip>
@@ -258,7 +193,7 @@
                     tw-rounded-lg 
                     tw-px-2  
                     tw-text-white"
-                    @click="deleteSchedule(event.id)" 
+                    @click.stop.prevent="deleteSchedule(event.id)" 
                   >
                   <i class="fa-light fa-trash-can tw-text-sm"/>
                   <q-tooltip>
@@ -351,12 +286,8 @@ import {
   STATUS_SUBMITTED,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
-import '@quasar/quasar-ui-qcalendar/dist/index.css'
-import { 
-  getCommentsFilter, 
-  getLastComment, 
-  setLastComment, 
-  getLoading } from '../../_store/actions/comments.ts';
+import '@quasar/quasar-ui-qcalendar/dist/index.css';
+import badgeComment from './badgeComment.vue';
 export default {
   props:{
     isBlank: {
@@ -370,6 +301,7 @@ export default {
     formOrders,
     stationModal,
     lineForm,
+    badgeComment,
   },
   data() {
     return {
@@ -406,12 +338,6 @@ export default {
     });
   },
   computed: {
-    lastComment() {
-      return getLastComment();
-    },
-    loadingComment() {
-      return getLoading();
-    },
     colorCheckSchedule() {
       return item => {
         const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
@@ -500,12 +426,7 @@ export default {
             icon: "fa-light fa-copy",
           },
           action: () => {
-            let hrefSplit = window.location.href.split("?");
-            let tinyUrl =
-              this.$store.state.qsiteApp.originURL +
-              "/#/ramp/schedule/public/index";
-            if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-            this.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
+            this.$helper.copyToClipboard(window.location.href, "Tiny URL copied!");
           },
         },
         {
@@ -771,6 +692,7 @@ export default {
           dataForm.statusId = data.statusId;
           if(data.statusId === STATUS_DRAFT) {
             await this.changeStatus(data.statusId, data.id);
+            this.showWorkOrder(data);
           } else {
             await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           }
@@ -1099,13 +1021,6 @@ export default {
         }
       } catch (error) {
        console.log(error)
-      }
-    },
-    async changeLastComment(event) {
-      await setLastComment('');
-      if(event.showCommentTooltip){
-        await getCommentsFilter(event.id);
-        return;
       }
     },
   },
