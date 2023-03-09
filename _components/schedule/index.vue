@@ -220,7 +220,7 @@
                     tw-rounded-lg 
                     tw-px-2  
                     tw-text-white"
-                    @click="duplicateSchedule(event)" 
+                    @click.stop.prevent="duplicateSchedule(event)" 
                   >
                   <i class="fa-thin fa-clone tw-text-sm" />
                   <q-tooltip>
@@ -258,7 +258,7 @@
                     tw-rounded-lg 
                     tw-px-2  
                     tw-text-white"
-                    @click="deleteSchedule(event.id)" 
+                    @click.stop.prevent="deleteSchedule(event.id)" 
                   >
                   <i class="fa-light fa-trash-can tw-text-sm"/>
                   <q-tooltip>
