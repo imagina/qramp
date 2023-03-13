@@ -1,6 +1,59 @@
 import { reactive } from 'vue';
+import qRampStore from '../../_store/qRampStore.js'
+export interface FormContarct {
+    operationTypeId: string;
+    statusId: string;
+    inboundCustomFlightNumber: string;
+    outboundCustomFlightNumber: string;
+    inboundFlightNumber: string;
+    inboundOriginAirportId: string;
+    outboundFlightNumber: string;
+    outboundDestinationAirportId: string;
+    customerId: string;
+    customCustomer: number | string;
+    adHoc: number | string;
+    carrierId: string;
+    stationId: string;
+    inboundTailNumber: string;
+    inboundBlockIn: string;
+    inboundScheduledArrival: string;
+    outboundTailNumber: string;
+    outboundScheduledDeparture: string;
+    outboundBlockOut: string;
+    gateId: string;
+    acTypeId: string;
+    responsibleId?: any;
+    faFlightId?: any;
+    flightStatusId?: any;
+    preFlightNumber?: any;
+    date: any;
+    sta?: any;
+    std?: any;
+    scheduleStatusId?: any;
+    estimatedOffUtc?: any;
+    estimatedOnUtc?: any;
+    comments: number;
+    customerName?: any;
+    contractId?: any;
+    contractName?: any;
+    gateDestination?: any;
+    gateOrigin?: any;
+    customer?: any;
+    customCustomerName? : string;
+    contract?: any;
+}
+export interface StateContarct {
+    form: FormContarct;
+}
 
-const state = reactive({
+export interface FlightStoreContract {
+    getForm(): FormContarct,
+    setForm(flight: FormContarct): void,
+    reset(): void,
+    payload(): void,
+}
+
+const state = reactive<StateContarct>({
     form: {
         operationTypeId: '',
         statusId: '',
@@ -37,18 +90,16 @@ const state = reactive({
         customerName: null,
         contractId: null,
         contractName: null,
-        gateDestination: null,
-        gateOrigin: null,
     },
 });
 
-export default function flightStore() {
+export default function flightStore() : FlightStoreContract {
     
-    function getForm() {
+    function getForm(): FormContarct {
         return state.form;
     }
     
-    function setForm(flight): void {
+    function setForm(flight: FormContarct): void {
         state.form.operationTypeId = flight['operationTypeId'] ? flight['operationTypeId'].toString() : ''
         state.form.statusId = flight['statusId'] ? flight['statusId'].toString() : ''
         state.form.inboundCustomFlightNumber = flight['inboundCustomFlightNumber'] ? flight['inboundCustomFlightNumber'] : ''
@@ -86,11 +137,13 @@ export default function flightStore() {
         state.form.customerName = customerName || customCustomerName;
         state.form.contractId = flight.contractId ? flight.contractId : null;
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
-        state.form.gateDestination = flight.gateDestination || null;
-        state.form.gateOrigin = flight.gateOrigin || null;
+        if(qRampStore().getIsPassenger()) {
+            state.form.gateDestination = flight.gateDestination || null;
+            state.form.gateOrigin = flight.gateOrigin || null;  
+        }
     }
     
-    function payload() {
+    function payload(): void {
         
     }
     /**
