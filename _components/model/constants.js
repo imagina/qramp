@@ -13,6 +13,8 @@ export const COLOR_POSTED = 'tw-text-green-500';
 export const COLOR_SUBMITTED = 'tw-text-purple-500';
 export const COLOR_CLOSED = 'tw-text-blue-300';
 export const COLOR_SCHEDULE = 'tw-text-pink-500';
+export const COMPANY_PASSENGER = 30;
+export const COMPANY_RAMP = 26;
 
 export const modelDataBound = {
     destinationAirport: {

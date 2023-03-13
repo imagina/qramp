@@ -93,6 +93,7 @@
 import responsive from '../../_mixins/responsive.js'
 import qRampStore from '../../_store/qRampStore.js'
 import cargoStore from './store/cargo.ts';
+import {COMPANY_PASSENGER, COMPANY_RAMP} from '../model/constants.js'
 
 export default {
   props:{
@@ -110,6 +111,12 @@ export default {
     })
   },
   computed:{
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
     },
@@ -274,7 +281,15 @@ export default {
       }
     },
     getCodeList() {
-      this.$crud.index('apiRoutes.qramp.workOrderDelays', { refresh: true }).then(res => {
+      const params = {
+        refresh: true,
+        params: {
+          filter: {
+            companyId: this.filterCompany
+          },
+        }
+      };
+      this.$crud.index('apiRoutes.qramp.workOrderDelays', params).then(res => {
         const data = res.data || [];
         this.codeList = data.map((item) => ({
           id: item.id,

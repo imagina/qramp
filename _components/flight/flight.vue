@@ -196,6 +196,7 @@ import responsive from '../../_mixins/responsive.js'
 import tableFlight from '../modal/tableFlight.vue'
 import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
+import { COMPANY_PASSENGER , COMPANY_RAMP} from '../model//constants.js'
 
 export default {
   props:{
@@ -350,6 +351,9 @@ export default {
     isPassenger() {
      return qRampStore().getIsPassenger();
     },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     formFields() {
       return {
         banner: {
@@ -424,7 +428,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.setupStations',
               select: {label: 'stationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
           },
           acTypeId: {
@@ -446,7 +450,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.aircraftTypes',
               select: {label: 'model', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.acType'),
           },
@@ -469,7 +473,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.operationTypes',
               select: {label: 'operationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.operation'),
           },
@@ -494,7 +498,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airlines',
               select: {label: 'airlineName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
@@ -517,7 +521,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qsetupagione.gates',
               select: {label: 'name', id: 'id'},
-              requestParams: {filter: {stationId: this.form.stationId}}
+              requestParams: {filter: {stationId: this.form.stationId, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.gate'),
           },
@@ -540,7 +544,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
               select: {label: 'statusName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.status'),
           },
@@ -563,7 +567,8 @@ export default {
             loadOptions: {
               apiRoute: "apiRoutes.quser.users",
               select: { label: "fullName", id: "id", value:"fullName" },
-              filterByQuery: true
+              filterByQuery: true,
+              requestParams: {filter: {companyId: this.filterCompany}}
             },
           },
         },
@@ -606,7 +611,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh}}
+              requestParams: {filter: {status: this.refresh, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.origin'),
           },
@@ -704,7 +709,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh}}
+              requestParams: {filter: {status: this.refresh, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.destination'),
           },
@@ -1139,14 +1144,16 @@ export default {
               filter: {
                 withoutContracts: true,
                 adHocWorkOrders: true,
-                customerStatusId: 1
+                customerStatusId: 1,
+                companyId: this.filterCompany,
               }
             },
         }
         const contractParams = {
             params: {
               filter: {
-                contractStatusId: 1
+                contractStatusId: 1,
+                companyId: this.filterCompany,
               }
             },
         }

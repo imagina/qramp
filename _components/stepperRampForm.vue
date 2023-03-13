@@ -36,7 +36,9 @@ import {
   STEP_FLIGHT,
   STEP_SERVICE,
   STEP_REMARKS,
-  STEP_SIGNATURE
+  STEP_SIGNATURE,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
 }  from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceList from './serviceList/index.vue';
@@ -89,6 +91,9 @@ export default {
   computed: {
     isPassenger() {
       return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
     stepError: {
       get() {
@@ -153,7 +158,8 @@ export default {
           delay: dataCargo.delay,
           workOrderItems: [
             ...serviceList
-          ]
+          ],
+          companyId: this.filterCompany
         }
         if (this.data.update) {
           formatData.id = this.data.workOrderId;

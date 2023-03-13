@@ -15,7 +15,9 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_CLOSED,
-  STATUS_DRAFT, STATUS_SCHEDULE
+  STATUS_DRAFT, 
+  STATUS_SCHEDULE,
+  COMPANY_RAMP
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -238,6 +240,11 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qramp.setupCustomers',
                 select: { 'label': 'customerName', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: COMPANY_RAMP,
+                  },
+                },
               },
               props: {
                 label: 'Customer',
@@ -251,6 +258,11 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qramp.workOrderStatuses',
                 select: { 'label': 'statusName', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: COMPANY_RAMP,
+                  },
+                },
               },
               props: {
                 label: 'Status',
@@ -263,6 +275,11 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.setupStations',
                 select: { 'label': 'stationName', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: COMPANY_RAMP,
+                  },
+                },
               },
               props: {
                 label: 'Station',
@@ -289,6 +306,11 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qfly.flightStatuses',
                 select: {'label': 'name', 'id': 'id'},
+                requestParams: {
+                  filter: {
+                    companyId: COMPANY_RAMP,
+                  },
+                },
               },
               props: {
                 label: 'Flight Status',
@@ -301,11 +323,19 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.areas',
                 select: { 'label': 'name', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: COMPANY_RAMP,
+                  },
+                },
               },
               props: {
                 label: 'Areas',
                 'clearable': true
               },
+            },
+            companyId: {
+              value: COMPANY_RAMP,
             },
           },
           requestParams: {

@@ -80,7 +80,7 @@
 import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
-import { STATUS_DRAFT } from './model/constants.js';
+import { COMPANY_PASSENGER, STATUS_DRAFT } from './model/constants.js';
 
 export default {
   components: {
@@ -125,6 +125,12 @@ export default {
     },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
+    },
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
   },
   methods: {
@@ -295,7 +301,7 @@ export default {
         qRampStore().showLoading();
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
-          this.form
+          {...this.form, companyId: this.filterCompany}
         );
         qRampStore().hideLoading();
         return response;
