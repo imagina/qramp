@@ -192,11 +192,11 @@
   </div>
 </template>
 <script>
-import responsive from '../_mixins/responsive.js'
-import tableFlight from '../_components/modal/tableFlight.vue'
-import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts.js';
-import qRampStore from '../_store/qRampStore.js';
-import storePassengers from '../_store/storePassengers.ts';
+import responsive from '../../_mixins/responsive.js'
+import tableFlight from '../modal/tableFlight.vue'
+import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
+import qRampStore from '../../_store/qRampStore.js';
+
 export default {
   props:{
     readonly: true,
@@ -347,7 +347,10 @@ export default {
     manageResponsiblePermissions() {
       return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
     },
-    formFields(){
+    isPassenger() {
+     return qRampStore().getIsPassenger();
+    },
+    formFields() {
       return {
         banner: {
           type: 'banner',
@@ -500,7 +503,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              vIf: !storePassengers.isPassenger.get(),
+              vIf: !this.isPassenger,
               rules: [
                 val => this.validateSpecialCharacters(val)
               ],
@@ -645,6 +648,22 @@ export default {
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
+          gateDestination: {
+            name:'gateDestination',
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.isPassenger,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              readonly:  this.disabledReadonly || this.flightBoundFormStatus.gateDestination,
+              label: '*Gate Destination',
+              clearable: true,
+              color:"primary"
+            },
+            label: 'Gate Destination',
+          }
         },
         outboundRight:{
           outboundFlightNumber: {
@@ -726,6 +745,22 @@ export default {
               format24h: true,
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
+          },
+          gateOrigin: {
+            name:'gateOrigin',
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.isPassenger,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              readonly:  this.disabledReadonly || this.flightBoundFormStatus.gateOrigin,
+              label: '*Gate Origin',
+              clearable: true,
+              color:"primary"
+            },
+            label: 'Gate Origin',
           },
         },
         dateBound: {
@@ -850,6 +885,10 @@ export default {
           this.flightBoundFormStatus.boundScheduledDeparture = this.checkIfDataArrives(updateForm.outboundScheduledDeparture);
           this.flightBoundFormStatus.boundOriginAirportId = this.checkIfDataArrives(updateForm.inboundOriginAirportId);
           this.flightBoundFormStatus.boundDestinationAirport = this.checkIfDataArrives(updateForm.outboundDestinationAirportId);
+          if(this.isPassenger) {
+            this.flightBoundFormStatus.gateDestination = this.checkIfDataArrives(updateForm.gateDestination);
+            this.flightBoundFormStatus.gateOrigin = this.checkIfDataArrives(updateForm.gateOrigin);
+          }
           this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
           this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)
           this.form.outboundDestinationAirportId = updateForm.outboundDestinationAirportId
@@ -986,21 +1025,33 @@ export default {
     },
     setForm(data) {
       this.refresh = 0
+      const {
+        ident,
+        destinationAirport,
+        estimatedOff,
+        registration,
+        originAirport,
+        estimatedOn,
+        gateDestination,
+        gateOrigin,
+      } = data;
       if(this.name.includes('outboundFlightNumber')){
-        const destinationAirportId = data.destinationAirport ? data.destinationAirport.id : null;
-        this.$set(this.form, "outboundFlightNumber",  data.ident)
-        this.$set(this.form, "outboundDestinationAirportId",  destinationAirportId)
-        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.estimatedOff))
-        this.$set(this.form, "outboundTailNumber",  data.registration)
+        const destinationAirportId = destinationAirport?.id || null;
+        this.$set(this.form, "outboundFlightNumber", ident)
+        this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
+        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
+        this.$set(this.form, "outboundTailNumber", registration)
+        if(this.isPassenger) this.$set(this.form, "gateDestination", gateDestination);
       } else {
-        this.$set(this.form, "inboundFlightNumber", data.ident)
-        const originAirportId = data.originAirport ? data.originAirport.id : null;
+        this.$set(this.form, "inboundFlightNumber", ident)
+        const originAirportId = originAirport?.id || null;
         this.$set(this.form, "inboundOriginAirportId", originAirportId)
-        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.estimatedOn))
-        this.$set(this.form, "inboundTailNumber", data.registration)
+        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(estimatedOn))
+        this.$set(this.form, "inboundTailNumber", registration)
         if(this.form.outboundTailNumber) {
-          this.$set(this.form, "outboundTailNumber",  data.registration);
+          this.$set(this.form, "outboundTailNumber", registration);
         }
+        if(this.isPassenger) this.$set(this.form, "gateOrigin", gateOrigin);
       }
       qRampStore().validateStatusSelectedFlight(data);
     },

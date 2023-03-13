@@ -33,7 +33,7 @@
 <script>
 import responsive from '../_mixins/responsive.js'
 import { 
-  STEP_FLIGTH,
+  STEP_FLIGHT,
   STEP_SERVICE,
   STEP_REMARKS,
   STEP_SIGNATURE
@@ -46,9 +46,10 @@ import {
   FlightformFieldModel, 
   HalfTurnInBountModel, 
   HalfTurnOutBountModel,
-  FlightformFieldPassengerModel
+  FlightformFieldPassengerModel,
+  HalfTurnInBountPassengerModel,
+  HalfTurnOutBountPassengerModel
 } from './model/constants.js';
-import storePassengers from '../_store/storePassengers';
 import remarkStore from './remarks/store.ts';
 
 
@@ -66,7 +67,7 @@ export default {
       form:{},
       error: false,
       sp:1,
-      STEP_FLIGTH, 
+      STEP_FLIGHT, 
       STEP_SERVICE,
       STEP_REMARKS,
       STEP_SIGNATURE,
@@ -87,7 +88,7 @@ export default {
   },
   computed: {
     isPassenger() {
-      return storePassengers.isPassenger.get();
+      return qRampStore().getIsPassenger();
     },
     stepError: {
       get() {
@@ -107,7 +108,7 @@ export default {
     },
     async saveFormData(step, individual = false) {
       switch (step) {
-        case STEP_FLIGTH:
+        case STEP_FLIGHT:
           if(this.$refs.flight) {
             if(individual) {
               this.$refs.flight[0].saveIndividual();
@@ -237,8 +238,8 @@ export default {
       try {
         const flightForm = this.$store.state.qrampApp.form;
         let flightformField = this.isPassenger ? FlightformFieldPassengerModel: FlightformFieldModel;
-        const halfTurnInBount = HalfTurnInBountModel;
-        const halfTurnOutBount = HalfTurnOutBountModel;
+        const halfTurnInBount = this.isPassenger ? HalfTurnInBountPassengerModel : HalfTurnInBountModel;
+        const halfTurnOutBount = this.isPassenger ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
         if(flightForm.operationTypeId == 3) {
           flightformField = flightformField.concat(halfTurnInBount);
         }
@@ -256,7 +257,7 @@ export default {
           .some(item => flightForm[item] === null || flightForm[item] === '')
         if(validateflightform) {
           this.error = true;
-          await this.setStep(STEP_FLIGTH);
+          await this.setStep(STEP_FLIGHT);
           qRampStore().hideLoading();
           await this.setData();
           this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})

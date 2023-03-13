@@ -37,6 +37,8 @@ const state = reactive({
         customerName: null,
         contractId: null,
         contractName: null,
+        gateDestination: null,
+        gateOrigin: null,
     },
 });
 
@@ -84,6 +86,8 @@ export default function flightStore() {
         state.form.customerName = customerName || customCustomerName;
         state.form.contractId = flight.contractId ? flight.contractId : null;
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
+        state.form.gateDestination = flight.gateDestination || null;
+        state.form.gateOrigin = flight.gateOrigin || null;
     }
     
     function payload() {

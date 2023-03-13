@@ -27,14 +27,13 @@ import { computed } from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js';
-import storePassengers from '../_store/storePassengers.ts';
 import { 
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_SCHEDULE,
   STATUS_CLOSED,
-  STEP_FLIGTH,
+  STEP_FLIGHT,
   STEP_SERVICE,
   STEP_REMARKS,
   STEP_SIGNATURE
@@ -44,14 +43,13 @@ import simpleWorkOrders from './simpleWorkOrders.vue'
 import serviceListStore from './serviceList/store/serviceList';
 import cargoStore from './cargo/store/cargo.ts';
 import storeFlight from './flight/store.ts';
-import iFlight from '../_components/flight.vue'
+import iFlight from './flight/flight.vue'
 import iRemarks from './remarks/index.vue'
 import iSignature from '../_components/signature.vue';
 import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 
 export default {
-  name:'formOrders',
   components: { 
     stepperRampForm, 
     simpleWorkOrders,
@@ -81,7 +79,7 @@ export default {
   },
   computed:{
     isPassenger() {
-      return storePassengers.isPassenger.get();
+      return qRampStore().getIsPassenger();
     },
     steppers () {
       return [
@@ -89,7 +87,7 @@ export default {
           ref: 'flight',
           title:'Flight',
           icon:'fas fa-plane',
-          step: STEP_FLIGTH,
+          step: STEP_FLIGHT,
           form: this.flight,
           component: iFlight,
         },

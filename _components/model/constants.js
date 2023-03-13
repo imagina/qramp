@@ -1,4 +1,4 @@
-export const STEP_FLIGTH = 1;
+export const STEP_FLIGHT = 1;
 export const STEP_SERVICE = 2;
 export const STEP_REMARKS = 3;
 export const STEP_SIGNATURE = 4;
@@ -67,4 +67,20 @@ export const FlightformFieldModel = [
     'outboundDestinationAirportId',
     'outboundTailNumber',
     'outboundScheduledDeparture',
+  ];
+
+  export const HalfTurnInBountPassengerModel = [
+    'inboundFlightNumber',
+    'inboundOriginAirportId',
+    'inboundTailNumber',
+    'inboundScheduledArrival',
+    'gateDestination',
+  ];
+
+  export const HalfTurnOutBountPassengerModel = [
+    'outboundFlightNumber',
+    'outboundDestinationAirportId',
+    'outboundTailNumber',
+    'outboundScheduledDeparture',
+    'gateOrigin'
   ];

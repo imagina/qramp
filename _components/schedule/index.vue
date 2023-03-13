@@ -288,7 +288,6 @@ import {
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
-import storePassengers from '../../_store//storePassengers.ts'
 export default {
   props:{
     isBlank: {
@@ -340,7 +339,7 @@ export default {
   },
   computed: {
     isPassenger() {
-      return storePassengers.isPassenger.get();
+      return qRampStore().getIsPassenger();
     },
     colorCheckSchedule() {
       return item => {
