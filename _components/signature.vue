@@ -145,11 +145,19 @@ export default {
     }
   },
   methods:{
+    /**
+      * Initializes the component's form data.
+    */
     init() {
       if(Object.keys(this.dataCompoment).length > 0) {
         this.form = this.dataCompoment
       }
     },
+    /**
+      * Launches full screen mode for the provided element.
+      * @param {string} name - The ID of the element 
+      * to launch full screen mode for.
+    */
     launchFullScreen(name) {
       const element = document.getElementById(name)
       if(element.requestFullScreen) {
@@ -166,6 +174,10 @@ export default {
         element.webkitRequestFullScreen();
       }
     },
+    /**
+      * Cancels full screen mode for the provided element.
+      * @param {string} name - The ID of the element to cancel full screen mode for.
+    */
     cancelFullScreen(name) {
       const element = document.getElementById(name)
       if(document.cancelFullScreen) {
@@ -182,6 +194,9 @@ export default {
           document.webkitCancelFullScreen();
       }
     },
+    /**
+      * Saves the component's form signature.
+    */
     saveInfo() {
       this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.form )
       //this.$emit('send-info')

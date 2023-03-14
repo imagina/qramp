@@ -229,11 +229,25 @@ export default {
     }
   },
   methods: {
+    /**
+     * Close the modal and emit an event to refresh data.
+     * 
+     * @param {boolean} show - Whether to show the modal.
+     * @returns {void} Nothing.
+     */
     close(show) {
       this.show = show
       this.$root.$emit('crud.data.refresh')
       this.services = [];
     },
+    /**
+     * Loads the form asynchronously with the given parameters.
+     * 
+     * @async
+     * @param {Object} params - The parameters to be loaded in the form.
+     * @throws {Error} An error if loading fails.
+     * @returns {void} Nothing.
+    */
     async loadform(params) {
       try {
         qRampStore().showLoading();
@@ -279,7 +293,11 @@ export default {
         console.log(error);
       }
     },
-    //Clear
+    /**
+     * Clear the modal properties and form data.
+     * 
+     * @returns {void} Nothing.
+    */
     clear() {
       this.modalProps = {}
       this.show = false
@@ -287,6 +305,12 @@ export default {
       cargoStore().reset();
       remarksStore().reset();
     },
+    /**
+     * Set the loading state of the modal.
+     * 
+     * @param {boolean} value - Whether to show the loading state.
+     * @returns {void} Nothing.
+    */
     setLoading(value) {
       this.loading = value;
     },

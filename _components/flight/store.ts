@@ -39,7 +39,7 @@ export interface FormContarct {
     gateDestination?: any;
     gateOrigin?: any;
     customer?: any;
-    customCustomerName? : string;
+    customCustomerName?: string;
     contract?: any;
 }
 export interface StateContarct {
@@ -92,13 +92,26 @@ const state = reactive<StateContarct>({
         contractName: null,
     },
 });
-
-export default function flightStore() : FlightStoreContract {
-    
+/**
+ * Creates a FlightStore object.
+ *
+ * @returns {FlightStoreContract} The created FlightStore object.
+*/
+export default function flightStore(): FlightStoreContract {
+    /**
+    * Gets the current form data.
+    *
+   * @returns {FormContract} The current form data.
+   */
     function getForm(): FormContarct {
         return state.form;
     }
-    
+    /**
+   * Sets the form data with the given Flight data.
+   *
+   * @param {FormContract} flight The Flight data to set the form data with.
+   * @returns {void}
+   */
     function setForm(flight: FormContarct): void {
         state.form.operationTypeId = flight['operationTypeId'] ? flight['operationTypeId'].toString() : ''
         state.form.statusId = flight['statusId'] ? flight['statusId'].toString() : ''
@@ -133,22 +146,28 @@ export default function flightStore() : FlightStoreContract {
         state.form.estimatedOnUtc = flight['estimatedOnUtc'] ? flight['estimatedOnUtc'] : null;
         state.form.comments = flight['comments'] ? flight['comments'] : 0;
         const customerName = flight.customer ? flight.customer.customerName : null;
-        const customCustomerName =  flight.customCustomerName ? flight.customCustomerName : null;
+        const customCustomerName = flight.customCustomerName ? flight.customCustomerName : null;
         state.form.customerName = customerName || customCustomerName;
         state.form.contractId = flight.contractId ? flight.contractId : null;
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
-        if(qRampStore().getIsPassenger()) {
+        if (qRampStore().getIsPassenger()) {
             state.form.gateDestination = flight.gateDestination || null;
-            state.form.gateOrigin = flight.gateOrigin || null;  
+            state.form.gateOrigin = flight.gateOrigin || null;
         }
     }
-    
+    /**
+    * Does not do anything - just a placeholder function.
+    *
+    * @returns {void}
+    */
     function payload(): void {
-        
+
     }
     /**
-     * It resets the state of the form and delayList to their default values.
-     */
+     * Resets the form data to its default values.
+     *
+     * @returns {void}
+    */
     function reset(): void {
     }
     return {
