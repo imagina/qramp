@@ -13,6 +13,12 @@ export default {
     flightMap,
     flightDetail,
   },
+  created() {
+    this.$nextTick(async function () {
+      const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
+      qRampStore().setIsPassenger(currentRouteName !== -1);
+    });
+  },
   async mounted() {
     await qRampStore().getFlights();
   },

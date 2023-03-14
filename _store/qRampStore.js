@@ -2,7 +2,9 @@ import {
     STATUS_DRAFT,
     STATUS_POSTED,
     STATUS_SUBMITTED,
-    modelFlightBoundFormStatus
+    modelFlightBoundFormStatus,
+    COMPANY_PASSENGER,
+    COMPANY_RAMP
 } from '../_components/model/constants.js'
 import * as moment from 'moment';
 import baseService from '@imagina/qcrud/_services/baseService.js'
@@ -367,11 +369,18 @@ export default function qRampStore() {
     }
     async function getFlights() {
         try {
+          const isPassenger = getIsPassenger();
+          const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
           const workOrderId = state.flightId;
-          const params = {refresh: true}
-          if(workOrderId) {
-              params.params = {filter:{ id: workOrderId }}
-          }
+          const params = {
+            refresh: true, 
+            params: {
+                filter: {
+                    companyId,
+                }
+            }
+          };
+          if(workOrderId) params.params.filter.id = workOrderId;
           const response = await baseService.index("apiRoutes.qramp.flightPosition", params);
           const data = workOrderId ? [response.data] : response.data;
           setFlightList(data);
@@ -379,7 +388,7 @@ export default function qRampStore() {
         } catch (error) {
           console.log(error)
         }
-      }
+    }
     return {
         disabledReadonly,
         setStatusId,

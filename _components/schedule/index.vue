@@ -284,6 +284,8 @@ import {
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
@@ -327,6 +329,12 @@ export default {
       },
     },
   },
+  created() {
+    this.$nextTick(async function () {
+      const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
+      qRampStore().setIsPassenger(currentRouteName !== -1);
+    });
+  },
   mounted() {
     this.$nextTick(async function () {
         await this.init();
@@ -338,9 +346,6 @@ export default {
     });
   },
   computed: {
-    isPassenger() {
-      return qRampStore().getIsPassenger();
-    },
     colorCheckSchedule() {
       return item => {
         const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
@@ -540,6 +545,12 @@ export default {
         callBack: this.getFilter,
         storeFilter: true,
       };
+    },
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
   },
   methods: {
@@ -808,6 +819,7 @@ export default {
     },
     async getWorkOrders(refresh = false, filter) {
       try {
+        const companyId = this.filterCompany;
         const filterClone = this.$clone(filter);
         delete filterClone.type;
         delete filterClone.dateStart;
@@ -818,6 +830,7 @@ export default {
           params: {
             include: "flightStatus,gate,carrier,acType,workOrderStatus",
             filter: {
+              companyId,
               ...filterClone,
               withoutDefaultInclude: true,
               order: {
@@ -891,9 +904,13 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
+        const companyId = this.filterCompany;
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
-          form
+          {
+            ...form,
+            companyId,
+          }
         );
         return response;
       } catch (error) {
