@@ -83,7 +83,8 @@ export default {
         apiRoute: 'apiRoutes.qramp.workOrders',
         permission: 'ramp.work-orders',
         create: {
-          method: () => {
+          method: async () => {
+            await qRampStore().setIsPassenger(false);
             this.$refs.formOrders.loadform({
               modalProps: {
                 title: this.$tr('ifly.cms.form.newWorkOrder'),
