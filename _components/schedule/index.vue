@@ -485,7 +485,7 @@ export default {
             },
           },
           statusId: {
-            value: STATUS_SCHEDULE,
+            value: null,
             type: 'select',
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
@@ -950,7 +950,7 @@ export default {
         const origin = window.location.href.split("?");
         const dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         const dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}&statusId=${STATUS_SCHEDULE}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
