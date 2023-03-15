@@ -1,33 +1,33 @@
 <template>
-  <master-modal 
-    id="formRampComponent" 
-    v-model="show" 
-    v-bind="modalProps" 
-    :persistent="true"
-    :loading="loading"
-    @hide="clear" 
-    :actions="actions" 
-    :width="modalProps.width" 
-    :maximized="$q.screen.lt.md"
+  <master-modal
+      id="formRampComponent"
+      v-model="show"
+      v-bind="modalProps"
+      :persistent="true"
+      :loading="loading"
+      @hide="clear"
+      :actions="actions"
+      :width="modalProps.width"
+      :maximized="$q.screen.lt.md"
   >
     <stepper-ramp-form
-      v-if="modalProps.update"
-      @sp="sp = $event" 
-      @loading="setLoading"
-      ref="stepper" 
-      :steps="steppers" 
-      :data="modalProps" 
-      @close-modal="close($event)"
+        v-if="modalProps.update"
+        @sp="sp = $event"
+        @loading="setLoading"
+        ref="stepper"
+        :steps="steppers"
+        :data="modalProps"
+        @close-modal="close($event)"
     />
     <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder"/>
   </master-modal>
 </template>
 <script>
-import { computed } from 'vue';
+import {computed} from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js';
-import { 
+import {
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED,
@@ -50,20 +50,20 @@ import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 
 export default {
-  components: { 
-    stepperRampForm, 
+  components: {
+    stepperRampForm,
     simpleWorkOrders,
   },
-  mixins:[responsive, services],
+  mixins: [responsive, services],
   data() {
     return {
       show: false,
       loading: false,
       modalProps: {},
-      sp:null,
-      flight:{},
-      remark:[],
-      signature:[],
+      sp: null,
+      flight: {},
+      remark: [],
+      signature: [],
       statusId: STATUS_DRAFT,
       needToBePosted: false,
       STATUS_DRAFT,
@@ -77,63 +77,63 @@ export default {
       closeModal: this.close
     }
   },
-  computed:{
+  computed: {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    steppers () {
+    steppers() {
       return [
         {
           ref: 'flight',
-          title:'Flight',
-          icon:'fas fa-plane',
+          title: 'Flight',
+          icon: 'fas fa-plane',
           step: STEP_FLIGHT,
           form: this.flight,
           component: iFlight,
         },
         {
           ref: 'services',
-          title:'Services',
-          icon:'fas fa-briefcase',
+          title: 'Services',
+          icon: 'fas fa-briefcase',
           step: STEP_SERVICE,
           component: serviceList,
         },
         {
           ref: 'remark',
-          title:'Remark',
-          icon:'far fa-edit',
+          title: 'Remark',
+          icon: 'far fa-edit',
           step: STEP_REMARKS,
           form: this.remark,
           component: iRemarks,
         },
         {
-          ref:"signature",
+          ref: "signature",
           title: this.$tr('ifly.cms.label.signature'),
-          icon:'draw',
+          icon: 'draw',
           step: STEP_SIGNATURE,
           form: this.signature,
           component: iSignature,
         }
-      ].filter( item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
+      ].filter(item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
     },
-    nextLabel(){
+    nextLabel() {
       return this.sp === this.steppers.length ? 'Save to Draft' : this.$tr('isite.cms.label.next')
     },
     loadingComputed() {
       return qRampStore().getLoading();
     },
     actions() {
-      if(!qRampStore().getIsblank()) {
+      if (!qRampStore().getIsblank()) {
         return this.modalProps.update ? this.actionsStepperButtom : this.actionSimpleWorkOrder;
       }
       return [];
     },
     actionSimpleWorkOrder() {
       return [
-      {
-          props:{
+        {
+          props: {
             vIf: !this.modalProps.update,
-            color:'primary',
+            color: 'primary',
             label: this.$tr('isite.cms.label.save'),
           },
           action: async () => {
@@ -147,14 +147,14 @@ export default {
     editPermissionseSubmitted() {
       return qRampStore().editPermissionseSubmitted();
     },
-    actionsStepperButtom(){
+    actionsStepperButtom() {
       const statusId = qRampStore().getStatusId();
       const actions = [
         {
-          props:{
+          props: {
             vIf: this.sp > 1,
-            color:'white',
-            'text-color':'primary',
+            color: 'white',
+            'text-color': 'primary',
             icon: 'fas fa-arrow-left',
             label: this.$tr('isite.cms.label.back'),
           },
@@ -163,9 +163,9 @@ export default {
           }
         },
         {
-          props:{
+          props: {
             vIf: this.sp !== this.steppers.length,
-            color:'primary',
+            color: 'primary',
             'icon-right': 'fas fa-arrow-right',
             label: this.$tr('isite.cms.label.next')
           },
@@ -174,25 +174,25 @@ export default {
           }
         },
         {
-          props:{
-            color:'primary',
+          props: {
+            color: 'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
             label: 'Save to Draft',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
           action: async () => {
-              qRampStore().setStatusId(STATUS_DRAFT);
-              await this.$refs.stepper.setData();
-              setTimeout(async () => {
-                await this.$refs.stepper.sendInfo();
-              }, 1000);
-              qRampStore().hideLoading();
+            qRampStore().setStatusId(STATUS_DRAFT);
+            await this.$refs.stepper.setData();
+            setTimeout(async () => {
+              await this.$refs.stepper.sendInfo();
+            }, 1000);
+            qRampStore().hideLoading();
           }
         },
         {
-          props:{
-            color:'primary',
+          props: {
+            color: 'primary',
             'icon-right': 'fal fa-check',
             label: this.$tr('isite.cms.label.closeFlight'),
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
@@ -202,14 +202,14 @@ export default {
             await qRampStore().setStatusId(STATUS_CLOSED);
             await this.$refs.stepper.setData();
             setTimeout(async () => {
-                await this.$refs.stepper.sendInfo();
+              await this.$refs.stepper.sendInfo();
             }, 1000);
             qRampStore().hideLoading();
           }
         },
         {
-          props:{
-            color:'primary',
+          props: {
+            color: 'primary',
             'icon-right': 'fa-thin fa-floppy-disk',
             label: this.$tr('isite.cms.label.save'),
             vIf: statusId == null || statusId == STATUS_POSTED || (statusId == STATUS_SUBMITTED && this.editPermissionseSubmitted),
@@ -231,7 +231,7 @@ export default {
   methods: {
     /**
      * Close the modal and emit an event to refresh data.
-     * 
+     *
      * @param {boolean} show - Whether to show the modal.
      * @returns {void} Nothing.
      */
@@ -242,12 +242,12 @@ export default {
     },
     /**
      * Loads the form asynchronously with the given parameters.
-     * 
+     *
      * @async
      * @param {Object} params - The parameters to be loaded in the form.
      * @throws {Error} An error if loading fails.
      * @returns {void} Nothing.
-    */
+     */
     async loadform(params) {
       try {
         qRampStore().showLoading();
@@ -262,14 +262,14 @@ export default {
         qRampStore().setWorkOrderItems([]);
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
-        if(!updateData.data) {
+        if (!updateData.data) {
           qRampStore().hideLoading();
           return;
-        };
+        }
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
         qRampStore().setStatusId(this.statusId);
-        qRampStore().setNeedToBePosted(this.needToBePosted); 
+        qRampStore().setNeedToBePosted(this.needToBePosted);
         storeFlight().setForm(updateData.data);
         this.flight = storeFlight().getForm();
         qRampStore().setResponsible(updateData.data['responsible']);
@@ -284,8 +284,8 @@ export default {
         this.signature.representativeTitle = updateData.data['representativeTitle']
         this.signature.customerSignature = updateData.data['customerSignature']
         this.signature.representativeSignature = updateData.data['representativeSignature']
-        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight );
-        this.$store.commit('qrampApp/SET_FORM_SIGNATURE',this.signature)
+        this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight);
+        this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.signature)
         qRampStore().hideLoading();
       } catch (error) {
         this.loading = false;
@@ -295,9 +295,9 @@ export default {
     },
     /**
      * Clear the modal properties and form data.
-     * 
+     *
      * @returns {void} Nothing.
-    */
+     */
     clear() {
       this.modalProps = {}
       this.show = false
@@ -307,10 +307,10 @@ export default {
     },
     /**
      * Set the loading state of the modal.
-     * 
+     *
      * @param {boolean} value - Whether to show the loading state.
      * @returns {void} Nothing.
-    */
+     */
     setLoading(value) {
       this.loading = value;
     },
@@ -318,9 +318,9 @@ export default {
 }
 </script>
 <style lang="stylus">
-  #formRampComponent
-    .boundColor
-      background-color #F1F4FA
+#formRampComponent
+.boundColor
+background-color #F1F4FA
 </style>
 
 

@@ -1,5 +1,5 @@
 import cargo from '../../cargo/index.vue';
-import { reactive, nextTick } from 'vue';
+import {reactive, nextTick} from 'vue';
 import {
     buildServiceList,
     getListOfSelectedServices
@@ -9,6 +9,7 @@ import {
     ServiceListStoreContract,
     ReactiveStoreContract
 } from '../@Contract/index.contract';
+
 const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
     {
@@ -23,8 +24,8 @@ const state = reactive<ReactiveStoreContract>({
 });
 
 
-/** 
- * @author Wilmer Ramiro Cristancho 
+/**
+ * @author Wilmer Ramiro Cristancho
  * The loading state is
  * @returns An object with the following properties:
  * getServiceData
@@ -39,8 +40,8 @@ const state = reactive<ReactiveStoreContract>({
 export default function serviceListStore(): ServiceListStoreContract {
     /**
      *
-     * @returns getServiceData 
-    */
+     * @returns getServiceData
+     */
     async function getServiceData(): Promise<void> {
         try {
             const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
@@ -49,6 +50,7 @@ export default function serviceListStore(): ServiceListStoreContract {
             console.log(error);
         }
     }
+
     /**
      * This function takes an array of ServiceModelContract objects and assigns it to the serviceList
      * property of the state object.
@@ -70,7 +72,7 @@ export default function serviceListStore(): ServiceListStoreContract {
      * This function takes a boolean value and sets the loading property of the state object to that
      * value.
      * @param {boolean} value - boolean - The value to set the loading state to.
-    */
+     */
     function setLoading(value: boolean): void {
         state.loading = value;
     }
@@ -79,7 +81,7 @@ export default function serviceListStore(): ServiceListStoreContract {
      * This function returns a boolean value that is the value of the loading property of the state
      * object.
      * @returns The loading state.
-    */
+     */
     function getLoading(): Boolean {
         return state.loading;
     }
@@ -90,15 +92,17 @@ export default function serviceListStore(): ServiceListStoreContract {
     function resetStore(): void {
         setServiceList([]);
     }
+
     async function getServiceListSelected(): Promise<any> {
         const services = state.serviceList
             .filter(item => item.id !== 4);
         return await orderServicesWithTheStructureToSave(services);
     }
+
     /**
      * It takes an array of objects, and for each object, it calls a function that returns an array of
      * objects, and then pushes the returned array of objects to the data array.
-     * @param services 
+     * @param services
      * @returns An array of promises.
      */
     async function orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise<any> {
@@ -113,6 +117,7 @@ export default function serviceListStore(): ServiceListStoreContract {
             console.log(error);
         }
     }
+
     /**
      * Get the service list, filter it by the category id, then order the services with the structure
      * to save.
@@ -122,12 +127,13 @@ export default function serviceListStore(): ServiceListStoreContract {
         const serviceList = getServiceList().filter(item => item.id === CATEGORY_SERVICES);
         return await serviceListStore().orderServicesWithTheStructureToSave(serviceList);
     }
+
     /**
      * The loading state is set to true before the data is fetched because the nextTick function is
-     * called before the getServiceData function is called. 
+     * called before the getServiceData function is called.
      * The loading state is set to false after the data is fetched because the getServiceData function
      * is called before
-    */
+     */
     async function init(): Promise<void> {
         nextTick(async () => {
             setLoading(true);
@@ -135,6 +141,7 @@ export default function serviceListStore(): ServiceListStoreContract {
             setLoading(false);
         })
     }
+
     return {
         getServiceData,
         setServiceList,

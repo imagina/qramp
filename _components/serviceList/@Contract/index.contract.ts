@@ -71,6 +71,7 @@ export interface Quantity2 {
     id: number;
     props: PropsContract;
 }
+
 export interface ServiceModelContract {
     id?: number;
     title?: string;
@@ -79,19 +80,30 @@ export interface ServiceModelContract {
     component?: any;
     form?: any,
 }
+
 export interface ReactiveStoreContract {
     serviceList: ServiceModelContract[],
     loading: Boolean,
 }
+
 export interface ServiceListStoreContract {
     getServiceData(): Promise<void>;
+
     setServiceList(value: ServiceModelContract[]): void;
+
     getServiceList(): ServiceModelContract[];
+
     setLoading(value: boolean): void;
+
     getLoading(): Boolean;
+
     resetStore(): void;
+
     init(): Promise<void>;
+
     getServiceListSelected(): Promise<any>;
-    orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise < any >;
+
+    orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise<any>;
+
     getServiceItems(): Promise<ServiceModelContract[]>;
 }
