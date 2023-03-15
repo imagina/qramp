@@ -353,24 +353,14 @@ export default {
       }
     },
     titleStatus() {
-      return statusId => {
-        if(statusId === STATUS_DRAFT) {
-          return 'Draft';
-        }
-        if(statusId === STATUS_CLOSED) {
-          return 'Closed';
-        }
-        if(statusId === STATUS_POSTED) {
-          return 'Posted';
-        }
-        if(statusId === STATUS_SUBMITTED) {
-          return 'Submitted';
-        }
-        if(statusId === STATUS_SCHEDULE) {
-          return 'Scheduled';
-        }
-        return '';
-      }
+      const statuses = {
+        [STATUS_DRAFT]: 'Draft',
+        [STATUS_CLOSED]: 'Closed',
+        [STATUS_POSTED]: 'Posted',
+        [STATUS_SUBMITTED]: 'Submitted',
+        [STATUS_SCHEDULE]: 'Scheduled',
+      };
+      return statusId => statuses[statusId] || '';
     },
     permisionComments() {
       return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
