@@ -80,7 +80,7 @@
 import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
-import { COMPANY_PASSENGER, STATUS_DRAFT } from './model/constants.js';
+import { COMPANY_PASSENGER, COMPANY_RAMP, STATUS_DRAFT } from './model/constants.js';
 
 export default {
   components: {
@@ -163,27 +163,21 @@ export default {
     },
     setCustomerForm(key) {
       if (key !== "customerId") return;
-      const selectCustomers =
-        this.selectCustomers === null || 
-        this.selectCustomers === undefined ||
-        this.selectCustomers === "" ? {} : this.selectCustomers;
+      const selectCustomers = this.selectCustomers ?? {};
       this.form.customerId = selectCustomers.id || null;
-      const customCustomerName = selectCustomers.label || null;
-      this.form.customCustomerName = this.form.customerId
-        ? null
-        : customCustomerName;
+      const customCustomerName = selectCustomers.label ?? null;
+      this.form.customCustomerName = this.form.customerId || customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
       const message = this.form.contractId
         ? `${this.$tr("ifly.cms.message.selectedCustomerWithContract")}`
         : this.$tr("ifly.cms.message.selectedCustomerWithoutContract");
 
-      this.bannerMessage =
-        selectCustomers && !this.form.contractId ? message : null;
-      this.form.adHoc = this.form.contractId ? false : true;
-      this.form.customCustomer = this.form.contractId ? false : true;
+      this.bannerMessage = this.form.contractId ? null : message;
+      this.form.adHoc = !this.form.contractId;
+      this.form.customCustomer = !this.form.contractId;
     },
     setCustomerName(query) {
-      this.customerName = query !== "" ? query : "";
+      this.customerName = query || "";
     },
     saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
