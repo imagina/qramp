@@ -319,23 +319,6 @@ export default {
                 'clearable': true
               },
             },
-            areaId: {
-              value: null,
-              type: 'select',
-              loadOptions: {
-                apiRoute: 'apiRoutes.qsetupagione.areas',
-                select: { 'label': 'name', 'id': 'id' },
-                requestParams: {
-                  filter: {
-                    companyId: COMPANY_PASSENGER,
-                  },
-                },
-              },
-              props: {
-                label: 'Areas',
-                'clearable': true
-              },
-            },
             companyId: {
               value: COMPANY_PASSENGER,
             },
