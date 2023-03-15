@@ -13,13 +13,18 @@ export default {
     flightMap,
     flightDetail,
   },
-  created() {
-    this.$nextTick(async function () {
-      const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
-      qRampStore().setIsPassenger(currentRouteName !== -1);
-    });
+  watch: {
+    '$route.name': {
+      deep: true,
+      handle: async (newValue) => {
+        const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
+        qRampStore().setIsPassenger(currentRouteName !== -1);
+      }
+    },
   },
   async mounted() {
+    const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
+    await qRampStore().setIsPassenger(currentRouteName !== -1);
     await qRampStore().getFlights();
   },
   beforeDestroy() {
