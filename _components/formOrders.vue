@@ -317,10 +317,10 @@ export default {
   },
 }
 </script>
-<style lang="stylus">
-#formRampComponent
-.boundColor
-background-color #F1F4FA
+<style>
+#formRampComponent .boundColor {
+  background-color: #F1F4FA;
+}
 </style>
 
 
