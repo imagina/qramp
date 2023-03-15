@@ -9,6 +9,7 @@ import {
     ServiceListStoreContract,
     ReactiveStoreContract
 } from '../@Contract/index.contract';
+import qRampStore from '../../../_store//qRampStore';
 
 const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
@@ -45,7 +46,13 @@ export default function serviceListStore(): ServiceListStoreContract {
     async function getServiceData(): Promise<void> {
         try {
             const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
-            setServiceList([...response, ...dataModel]);
+            const serviceList = [...response, ...dataModel].filter(item => {
+                if(qRampStore().getIsPassenger()) {
+                    return item.id !== 4;
+                }
+                return item;
+            });
+            setServiceList(serviceList);
         } catch (error) {
             console.log(error);
         }

@@ -102,29 +102,28 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  */
 function getDynamicField(attributes) {
     try {
-        return attributes.reduce((previousValue, currentValue, currentIndex) => {
+        const result = {};
+        for (let i = 0; i < attributes.length; i++) {
+            const currentValue = attributes[i];
             const props = setProps(
-                currentValue.type,
-                currentValue.name,
-                currentValue.values,
-                currentIndex
+            currentValue.type,
+            currentValue.name,
+            currentValue.values,
+            i
             );
-            const key = `${currentValue.type}${currentValue.name ? currentValue.name : ""
-                }`;
-            const type =
-                currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
-            previousValue = {
-                ...previousValue,
-                [key]: {
-                    name: currentValue.name,
-                    value: currentValue.value ? currentValue.value : null,
-                    type,
-                    id: currentValue.id,
-                    props: { ...props },
-                },
+            const key = `${currentValue.type}${currentValue.name ? currentValue.name : ""}`;
+            const type = currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
+
+            result[key] = {
+            name: currentValue.name,
+            value: currentValue.value ? currentValue.value : null,
+            type,
+            id: currentValue.id,
+            props: { ...props },
             };
-            return previousValue;
-        }, {});
+        }
+
+        return result;
     } catch (error) {
         console.log(error);
     }
