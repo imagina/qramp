@@ -10,17 +10,17 @@ export interface Options {
 export interface OperationType {
     operationName: string;
     companyId: number;
-    company?: any;
+    company?: number;
     id: number;
-    createdAt?: any;
-    updatedAt?: any;
-    deletedAt?: any;
-    restoredAt?: any;
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;
+    restoredAt?: string;
     createdBy?: any;
     updatedBy?: any;
     deletedBy?: any;
     restoredBy?: any;
-    externalId?: any;
+    externalId?: number;
     options: Options;
     isReportable: boolean;
     forceDelete: boolean;
