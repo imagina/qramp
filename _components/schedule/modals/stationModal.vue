@@ -59,7 +59,7 @@ export default {
           type: "select",
           loadOptions: {
             apiRoute: "apiRoutes.qsetupagione.setupStations",
-            select: { label: "stationName", id: "id" },
+            select: { label: "fullName", id: "id" },
             requestParams: {
               filter: {
                 companyId: this.filterCompany,
