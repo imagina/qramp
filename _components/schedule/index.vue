@@ -457,6 +457,11 @@ export default {
             loadOptions: {
               apiRoute: "apiRoutes.qramp.setupCustomers",
               select: { label: "customerName", id: "id" },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: "Customer",
@@ -469,6 +474,11 @@ export default {
             loadOptions: {
               apiRoute: "apiRoutes.qsetupagione.setupStations",
               select: { label: "stationName", id: "id" },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: "Station",
@@ -480,6 +490,11 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
               select: { 'label': 'statusName', 'id': 'id' },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: 'Status',
@@ -504,6 +519,11 @@ export default {
             loadOptions: {
               apiRoute: "apiRoutes.qfly.flightStatuses",
               select: { label: "name", id: "id" },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: "Flight Status",
@@ -516,6 +536,11 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.areas',
                 select: { label: 'name', id: 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+                },
               },
               props: {
                 label: 'Areas',

@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import qRampStore from '../../../_store/qRampStore.js';
+import {COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js';
 export default {
   data: () => ({
     visible: false,
@@ -23,6 +25,12 @@ export default {
     stationId: null,
   }),
   computed: {
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     actions() {
       return [
         {
@@ -52,6 +60,11 @@ export default {
           loadOptions: {
             apiRoute: "apiRoutes.qsetupagione.setupStations",
             select: { label: "stationName", id: "id" },
+            requestParams: {
+              filter: {
+                companyId: this.filterCompany,
+              },
+            },
           },
           props: {
             label: "Station",
