@@ -61,7 +61,9 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-      <div class="col-12 col-md-6">
+      <div 
+        class="col-12 col-md-6"
+      >
         <div 
           v-for="(field, keyField) in formFields.flyFormRight" 
           :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`"
@@ -93,8 +95,10 @@
         <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-
-      <div v-if="isInbound" class="col-12 col-md-6">
+      <div
+        v-if="isbound[0]"
+        class="col-12 col-md-6"
+      >
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
             <div>{{$tr('isite.cms.label.inbound')}}</div>
@@ -121,7 +125,10 @@
           </div>
         </div>
       </div>
-      <div v-if="isOutbound" class="col-12 col-md-6">
+      <div
+        v-if="isbound[1]" 
+        class="col-12 col-md-6"
+      >
         <div :class="`${readonly? '' :'card-bound'}`">
           <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
             <div>{{$tr('isite.cms.label.outbound')}}</div>
@@ -196,7 +203,8 @@ import responsive from '../../_mixins/responsive.js'
 import tableFlight from '../modal/tableFlight.vue'
 import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
-import { COMPANY_PASSENGER , COMPANY_RAMP} from '../model//constants.js'
+import { COMPANY_PASSENGER , COMPANY_RAMP} from '../model/constants.js'
+import workOrderList from '../../_store/actions/workOrderList.ts';
 
 export default {
   props:{
@@ -209,6 +217,11 @@ export default {
   },
   components:{tableFlight},
   mixins:[responsive],
+  created() {
+    this.$nextTick(function () {
+      workOrderList().getOperationType();
+    })
+  },
   mounted() {
      this.$nextTick(function () {
       document.querySelector('.master-dialog__body')
@@ -285,6 +298,9 @@ export default {
     }
   },
   computed: {
+    operationTypeList() {
+      return workOrderList().getOperationTypeList()
+    },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
     },
@@ -325,19 +341,24 @@ export default {
       }
       return false
     },
-    isOutbound() {
+    isbound() {
       if(this.form.operationTypeId) {
-        const validator = this.form.operationTypeId == 4 || this.form.operationTypeId != 3;
-        return validator;
+        const operationType = this.operationTypeList
+          .find(item => item.id === Number(this.form.operationTypeId));
+        const type = operationType?.options?.type;
+        if(type) {
+          if(type === 'full'){
+            return [true, true];
+          }
+          if(type === 'inbound') {
+            return [true, false]
+          }
+          if(type === 'outbound') {
+            return [false, true];
+          }
+        }
       }
-      return false
-    },
-    isInbound() {
-      if(this.form.operationTypeId) {
-        const validator = this.form.operationTypeId == 3 || this.form.operationTypeId != 4;
-        return validator
-      }
-      return false
+      return [false, false];
     },
     readStatus(){
       return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly || this.disabledReadonly
@@ -468,12 +489,8 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
               clearable: true,
               color:"primary",
-              'hide-bottom-space': false
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qramp.operationTypes',
-              select: {label: 'operationName', id: 'id'},
-              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
+              'hide-bottom-space': false,
+              options: this.operationTypeList
             },
             label: this.$tr('ifly.cms.form.operation'),
           },
@@ -721,7 +738,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundTailNumber,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.outboundTailNumber,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
@@ -886,6 +903,7 @@ export default {
           this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
           this.form.inboundTailNumber = updateForm.inboundTailNumber;
           this.flightBoundFormStatus.boundTailNumber = this.checkIfDataArrives(updateForm.inboundTailNumber);
+          this.flightBoundFormStatus.outboundTailNumber = this.checkIfDataArrives(updateForm.outboundTailNumber);
           this.flightBoundFormStatus.boundScheduled = this.checkIfDataArrives(updateForm.inboundScheduledArrival);
           this.flightBoundFormStatus.boundScheduledDeparture = this.checkIfDataArrives(updateForm.outboundScheduledDeparture);
           this.flightBoundFormStatus.boundOriginAirportId = this.checkIfDataArrives(updateForm.inboundOriginAirportId);
