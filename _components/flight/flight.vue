@@ -427,7 +427,7 @@ export default {
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.setupStations',
-              select: {label: 'stationName', id: 'id'},
+              select: {label: 'fullName', id: 'id'},
               requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
           },
