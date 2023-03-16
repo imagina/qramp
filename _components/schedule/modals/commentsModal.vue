@@ -1,7 +1,7 @@
 <template>
   <master-modal
     v-model="visible"
-    title="Work Order Data"
+    :title="`Comments Work Order Id:${commentableId}`"
     :persistent="true"
     :loading="loading"
     @hide="hideModal"
