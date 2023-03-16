@@ -38,7 +38,7 @@ export interface State {
 export interface WorkOrderList {
     setOperationTypeList: (data: OperationType[]) => void;
     getOperationTypeList: () => OperationType[];
-    getOperationType: () => Promise<OperationType[]>;
+    getOperationType: () => Promise<OperationType[] | void>;
 }
 
 const state = reactive<State>({
@@ -54,20 +54,24 @@ export default function workOrderList(): WorkOrderList {
         return state.operationTypeList;
     }
     // actions 
-    async function getOperationType(): Promise<OperationType[]> {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-        const params = {
-            params: {
-                filter: {
-                    companyId,
-                }
-            },
+    async function getOperationType(): Promise<OperationType[] | void> {
+        try {
+            const isPassenger = qRampStore().getIsPassenger();
+            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const params = {
+                params: {
+                    filter: {
+                        companyId,
+                    }
+                },
+            }
+            const response = await baseService.index('apiRoutes.qramp.operationTypes', params);
+            const data = response.data.map(item => ({ label: item.operationName, ...item, value: item.id }))
+            setOperationTypeList(data);
+            return data; 
+        } catch (error) {
+            console.log(error);
         }
-        const response = await baseService.index('apiRoutes.qramp.operationTypes', params);
-        const data = response.data.map(item => ({ label: item.operationName, ...item, value: item.id }))
-        setOperationTypeList(data);
-        return data;
     }
     return {
         setOperationTypeList,
