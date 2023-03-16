@@ -1,6 +1,14 @@
 import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
+import qRampStore from '../../_store/qRampStore.js';
+import {COMPANY_PASSENGER, COMPANY_RAMP} from '../model/constants.js';
 export default {
   computed: {
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+     },
+     filterCompany() {
+       return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     allowContractName() {
       return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
     },
@@ -111,6 +119,7 @@ export default {
               withoutContracts: true,
               adHocWorkOrders: true,
               customerStatusId: 1,
+              companyId: this.filterCompany,
             },
           },
           refresh: false,
@@ -119,6 +128,7 @@ export default {
           params: {
             filter: {
               contractStatusId: 1,
+              companyId: this.filterCompany,
             },
           },
           refresh: false,
