@@ -6,7 +6,7 @@ import {
     COMPANY_PASSENGER,
     COMPANY_RAMP
 } from '../_components/model/constants.js'
-import * as moment from 'moment';
+import moment from 'moment';
 import baseService from '@imagina/qcrud/_services/baseService.js'
 import Vue, { reactive } from "vue";
 
