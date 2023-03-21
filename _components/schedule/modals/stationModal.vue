@@ -18,6 +18,8 @@
 <script>
 import qRampStore from '../../../_store/qRampStore.js';
 import {COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js';
+import cache from '@imagina/qsite/_plugins/cache';
+
 export default {
   data: () => ({
     visible: false,
@@ -88,7 +90,7 @@ export default {
       try {
         this.$refs.formStation.validate().then(async (success) => {
           if (success) {
-            sessionStorage.setItem("stationId", this.stationId);
+            cache.set("stationId", this.stationId);
             this.$emit("saveFilterStationId", this.stationId);
             this.hideModal();
           }

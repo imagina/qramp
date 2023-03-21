@@ -70,6 +70,7 @@ import scheduleField from "./fields/scheduleField.js";
 import qRampStore from "../../_store/qRampStore.js";
 import commentsModal from "./modals/commentsModal.vue";
 import {STATUS_DRAFT} from '../model/constants.js';
+import cache from '@imagina/qsite/_plugins/cache';
 export default {
   components: { commentsModal },
   mixins: [scheduleField],
@@ -87,8 +88,8 @@ export default {
   created() {
     this.$nextTick(async function () {
       this.sessionStationId =
-        sessionStorage.getItem("stationId") !== "null"
-          ? sessionStorage.getItem("stationId")
+        await cache.get.item("stationId") !== "null"
+          ? await cache.get.item("stationId")
           : null;
       await this.getFlightStatusList();
     });

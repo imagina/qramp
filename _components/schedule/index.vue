@@ -290,6 +290,8 @@ import {
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
+import cache from '@imagina/qsite/_plugins/cache';
+
 export default {
   props:{
     isBlank: {
@@ -582,7 +584,7 @@ export default {
     },
     async initUrlMutate() {
       const obj = await this.$helper.convertStringToObject();
-      const localStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+      const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
         if (!this.stationId) {
           await this.$refs.stationModal.showModal();
@@ -907,7 +909,7 @@ export default {
     async getFilter() {
       this.events = [];
       if (this.stationId) {
-        await sessionStorage.setItem("stationId", this.filter.values.stationId || null);
+        await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(true);
       }
     },
@@ -1016,7 +1018,7 @@ export default {
     async addNewDayToSchedule(event) {
       try {
         const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T23:59:59`;
-        this.sessionStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+        this.sessionStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         const data = {
           calendarTitle: null,
           id: this.$uid(),
