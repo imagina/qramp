@@ -241,7 +241,7 @@ export default function workOrderList(): WorkOrderList {
             getCustomer(),
             //getContract(),
             getFlightStatuses(),
-            getWorkOrderStatusesList(),
+            getWorkOrderStatuses(),
         ]);
     }
 
