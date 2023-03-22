@@ -373,7 +373,7 @@ export default {
             },
           },
           requestParams: {
-            include: 'responsible,inboundOriginAirport,outboundDestinationAirport',
+            include: 'responsible',
             filter: {
               withoutDefaultInclude: true,
             },

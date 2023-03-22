@@ -68,6 +68,8 @@ const state = reactive<State>({
     flightStatusesList: [],
     workOrderStatusesList: [],
 });
+const cacheTimeForm24Hour: number = 60*60*24;
+const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
 
 
 export default function workOrderList(): WorkOrderList {
@@ -118,6 +120,7 @@ export default function workOrderList(): WorkOrderList {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
                         companyId,
@@ -138,6 +141,7 @@ export default function workOrderList(): WorkOrderList {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
                         companyId,
@@ -158,6 +162,7 @@ export default function workOrderList(): WorkOrderList {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                cacheTime: cacheTimeForm24Hour,
                 params: {
                     filter: {
                         companyId,
@@ -198,6 +203,7 @@ export default function workOrderList(): WorkOrderList {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
                         companyId,
@@ -218,6 +224,7 @@ export default function workOrderList(): WorkOrderList {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
                         companyId,
