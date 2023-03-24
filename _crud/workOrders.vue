@@ -132,7 +132,7 @@ export default {
               label: 'Comments',
               field: "comments",
               align: "left",
-              format: item => item && item > 0 ? htmlComment(item) : '',
+              format: item => !this.$store.state.qofflineMaster.isAppOffline && item && item > 0 ? htmlComment(item) : '',
               formatColumn: row => ({
                 textColor: row.comments ? `red-5` : ''
               }),
@@ -454,7 +454,8 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.permisionCommentsIndex
+                  vIf: this.permisionCommentsIndex 
+                  && !this.$store.state.qofflineMaster.isAppOffline
                 }),
             },
           ],
