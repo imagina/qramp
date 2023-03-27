@@ -1,4 +1,4 @@
-import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   mounted() {
@@ -49,7 +49,6 @@ export default {
     async getProducts(requestParams, id){
       this.services = [];
       await this.$crud.index('apiRoutes.qramp.products', requestParams).then(({data}) => {
-        this.$emit('isError', false)
         const formatData = this.formatData(data, id)
         formatData.forEach(item => {
           this.services.push({
@@ -59,13 +58,13 @@ export default {
             categoryId: item.categoryId,
             formField: {
               ...item.attributes.reduce((previousValue, currentValue, currentIndex, array) => {
-                const props = this.setProps(currentValue.type, currentValue.name, currentValue.values)
+                const props = this.setProps(currentValue.type, currentValue.name, currentValue.values, currentIndex)
                   previousValue = {
                     ...previousValue,
                       [`${currentValue.type}${currentValue.name ? currentValue.name : ''}`] : {
                       name: currentValue.name,
                       value: currentValue.value ? currentValue.value : null,
-                      type: currentValue.type,
+                      type: currentValue.type === 'quantityFloat' ? 'quantity' : currentValue.type,
                       id: currentValue.id,
                       props :{ ...props}
                     }
@@ -106,33 +105,49 @@ export default {
     saveInfo() {
       this.isProducts = this.services.find(items => {
         for(let item in items.formField){
-          for(let key in items.formField[item]){
-            if (key == 'value'){
+          for(let key in items.formField[item]) {
+            if (key == 'value') {
               return items.formField[item][key]
             }
           }
         }
-      })
+      });
       if(this.isProducts) {
         this.$emit('isError', false)
-        this.$store.commit('qrampApp/SET_FORM_SERVICES', this.services.filter(items => {
-            for(let item in items.formField){
-              for(let key in items.formField[item]){
-                if (key == 'value'){
-                  return items.formField[item][key]
-                }
-              }
-            }
-        }))
+        this.saveFormService();
       } else {
         this.$alert.error({message: this.$tr('ifly.cms.message.servicesMessage')})
         this.$emit('isError', true)
       }
+      const validate = this.validateFulldate();
+      if(!validate) {
+        this.$emit('isError', true);
+        return;
+      }
     },
-    setProps(type, name, options) {
+    validateFulldate() {
+      let validate = true;
+      this.services.forEach(item => {
+       Object.keys(item.formField).forEach(key => {
+          Object.keys(item.formField[key]).forEach(type => {
+            if(item.formField[key][type] === 'fullDate' 
+              && item.formField[key].value !== null
+            ) {
+              if(!this.$moment(item.formField[key].value, 'MM/DD/YYYY HH:mm', true).isValid()) {
+                validate = this.$moment(item.formField[key].value, 'MM/DD/YYYY HH:mm', true).isValid()
+                return;
+              }
+            }
+          })
+        })
+      })
+      return validate; 
+    },
+    setProps(type, name, options, index) {
       if (type == 'quantity') {
         return {
-          readonly: this.readonly || this.disabledReadonly
+          readonly: this.readonly || this.disabledReadonly,
+          mask:'###################',
         }
       }else if(type == 'select') {
         return {
@@ -145,6 +160,8 @@ export default {
           type
         }
       }else if(type == 'fullDate') {
+        const options = index === 0 ? qRampStore().validateDateInboundBlockIn
+        : qRampStore().validateDateOutboundBlockOut;
         return {
           readonly: this.readonly || this.disabledReadonly,
           label: name,
@@ -152,6 +169,14 @@ export default {
           mask:'MM/DD/YYYY HH:mm',
           'place-holder': 'MM/DD/YYYY HH:mm',
           format24h: true,
+          options,
+          typeIndexDate: index,
+        }
+      } else if(type === 'quantityFloat') {
+        return {
+          readonly: this.readonly || this.disabledReadonly,
+          type: 'number',
+          step:"0.1"
         }
       } else {
         return {
@@ -160,5 +185,17 @@ export default {
         }
       }
     },
+    saveFormService() {
+      const services = this.services.filter(items => {
+        for(let item in items.formField){
+          for(let key in items.formField[item]){
+            if (key == 'value'){
+              return items.formField[item][key]
+            }
+          }
+        }
+      });
+      this.$store.commit('qrampApp/SET_FORM_SERVICES', services)
+    }
   },
 }

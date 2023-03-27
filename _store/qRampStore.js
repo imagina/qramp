@@ -1,10 +1,14 @@
-import { reactive } from '@vue/composition-api';
-import { 
+//import { reactive } from 'vue';
+import {
     STATUS_DRAFT,
     STATUS_POSTED,
     STATUS_SUBMITTED,
     modelFlightBoundFormStatus
-} from '@imagina/qramp/_components/model/constants.js'
+} from '../_components/model/constants.js'
+import * as moment from 'moment';
+import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts';
+import baseService from '@imagina/qcrud/_services/baseService.js'
+import Vue, { reactive } from "vue";
 
 const state = reactive({
     statusId: STATUS_DRAFT,
@@ -13,25 +17,52 @@ const state = reactive({
     contractId: 0,
     workOrderItems: [],
     loading: false,
-    flightBoundFormStatus: {...modelFlightBoundFormStatus},
+    flightBoundFormStatus: { ...modelFlightBoundFormStatus },
+    dateBoundBlock: {
+        outboundBlockOut: null,
+        inboundBlockIn: null,
+        outboundScheduledDeparture: null,
+        inboundScheduledArrival: null,
+    },
+    responsible: {},
+    visibleMapModal: false,
+    flightMap: null,
+    loadingModalMap: false,
+    flightList: [],
+    flightId: 0,
+    isblank: false,
 });
 
 export default function qRampStore() {
     function setStatusId(value) {
         state.statusId = value;
     }
+    function getStatusId() {
+        return state.statusId;
+    }
     function setNeedToBePosted(value) {
         state.needToBePosted = value;
     }
+    function getIsblank(value) {
+        return state.isblank;
+    }
+    function setIsblank(value) {
+        state.isblank = value;
+    }
     function disabledReadonly() {
         const statusId = Number(state.statusId);
-        if(statusId === STATUS_DRAFT && state.needToBePosted) {
-          return true;
+        if(state.isblank) {
+            return true;
         }
-        if(statusId === STATUS_POSTED 
-          || statusId === STATUS_SUBMITTED
+        if (statusId === STATUS_DRAFT && state.needToBePosted) {
+            return true;
+        }
+        if (statusId === STATUS_SUBMITTED && !editPermissionseSubmitted()) {
+            return true;
+        }
+        if (statusId === STATUS_POSTED
         ) {
-          return true;
+            return true;
         }
         return false;
     }
@@ -66,14 +97,14 @@ export default function qRampStore() {
         state.flightBoundFormStatus.boundOriginAirportId = this.isData(data.destinationAirport.id);
         state.flightBoundFormStatus.boundTailNumber = this.isData(data.registration);
         state.flightBoundFormStatus.boundDestinationAirport = this.isData(data.originAirport.id);
-        state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOff);
-        state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOn);
+        state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOn);
+        state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOff);
     }
     function isData(data) {
         return data ? true : false;
     }
     function resetFlightBoundFormStatus() {
-        state.flightBoundFormStatus = {...modelFlightBoundFormStatus};
+        state.flightBoundFormStatus = { ...modelFlightBoundFormStatus };
     }
     function showFielFlightBoundFormStatus() {
         const status = {
@@ -87,9 +118,252 @@ export default function qRampStore() {
     function getFlightBoundFormStatus() {
         return state.flightBoundFormStatus;
     }
+    function validateFutureDateTime(dateTime, dateMin = null, currentDate) {
+        const current = moment(currentDate).format('YYYY/MM/DD');
+        const date = moment();
+        const today = date.format('YYYY/MM/DD');
+        const hour = date.format('H');
+        const min = date.format('mm');
+        if (isNaN(dateTime)) {
+            return dateTime <= today
+        }
+        if (dateMin) {
+            return today === current ? Number(dateMin) <= min : true;
+        }
+        return today === current ? dateTime <= hour : true;
+    }
+    function setDateInboundBlockIn(value) {
+        state.dateBoundBlock.inboundBlockIn = value;
+    }
+    function getDateInboundBlockIn() {
+        return state.dateBoundBlock.inboundBlockIn;
+    }
+    function setDateOutboundBlockOut(value) {
+        state.dateBoundBlock.outboundBlockOut = value;
+    }
+    function getDateOutboundBlockOut() {
+        return state.dateBoundBlock.outboundBlockOut;
+    }
+
+    function setDateOutboundScheduledDeparture(value) {
+        state.dateBoundBlock.outboundScheduledDeparture = value;
+    }
+    function getDateOutboundScheduledDeparture() {
+        return state.dateBoundBlock.outboundScheduledDeparture;
+    }
+    function setDateinboundScheduledArrival(value) {
+        state.dateBoundBlock.inboundScheduledArrival = value;
+    }
+    function getDateinboundScheduledArrival() {
+        return state.dateBoundBlock.inboundScheduledArrival;
+    }
+
+    function validateDateInboundBlockIn(dateTime, dateMin = null) {
+        const date = getDateInboundBlockIn()
+            ? moment(getDateInboundBlockIn()) : moment();
+        const today = date.format('YYYY/MM/DD');
+        const hour = date.format('H');
+        const min = date.format('mm')
+        if (isNaN(dateTime)) {
+            if (getDateInboundBlockIn()) {
+                return dateTime <= today;
+            }
+            return dateTime <= moment().format('YYYY/MM/DD');
+        }
+        if (dateMin) {
+            return Number(dateMin) <= min;
+        }
+        return dateTime <= hour;
+    }
+    function validateDateOutboundBlockOut(dateTime, dateMin = null) {
+        const date = getDateOutboundBlockOut()
+            ? moment(getDateOutboundBlockOut()) : moment();
+        const hour = date.format('H');
+        const min = date.format('mm');
+        if (isNaN(dateTime)) {
+            if (getDateOutboundBlockOut()) {
+                return dateTime <= date.format('YYYY/MM/DD')
+                    && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
+            }
+            return dateTime <= moment().format('YYYY/MM/DD')
+                && dateTime >= moment(getDateInboundBlockIn()).format('YYYY/MM/DD');
+        }
+        if (dateMin) {
+            return Number(dateMin) <= min;
+        }
+        return dateTime <= hour;
+    }
+    function getDifferenceInHours(start, end) {
+        if (start) {
+            const dateStart = moment(start);
+            const dateEnd = moment(end);
+            const hour = dateEnd.diff(dateStart, 'minutes') / 60;
+            return Math.round(hour * 100) / 100;
+        }
+        return 0;
+    }
+    function dateFormatter(date) {
+        if (!date) return null
+        const [year, month, day] = date.substr(0, 10).split('-')
+        return `${month}/${day}/${year}`
+    }
+    function getTableListOfFlights(data) {
+        const dataTable = [];
+        data.forEach((items, index) => {
+          const date = items.scheduledOn ? dateFormatter(items.scheduledOn.split("T")[0]) : '';
+          const inboundTime = items.estimatedOn ? moment(items.estimatedOn).utc().format('MM-DD-YYYY h:mm:ss a') : '';
+          const outboundTime = items.estimatedOff ? moment(items.estimatedOff).utc().format('MM-DD-YYYY h:mm:ss a') : '';
+          const airportName = items.originAirport ? items.originAirport.fullName : '';
+          const destinationairportName = items.destinationAirport ? items.destinationAirport.fullName : '';
+          const flight = {
+            index,
+            date,
+            registration: items.registration,
+            inbound: `${inboundTime} - ${destinationairportName}`,
+            outbound: `${outboundTime} - ${airportName}`,
+            aircraftType: items.aircraftType,
+            faFlightId: items.faFlightId,
+            cancelled: items.cancelled,
+          }
+          dataTable.push(flight)
+        })
+        return dataTable;
+    }
+    function setResponsible(data) {
+        state.responsible = data;
+    }
+    function getResponsible() {
+        return state.responsible;
+    }
+    function numberInRange(max, min) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    function hideVisibleMapModal() {
+        state.visibleMapModal = false;
+    }
+    function showVisibleMapModal() {
+        state.visibleMapModal = true;
+    }
+    function getVisibleMapModal() {
+        return state.visibleMapModal;
+    }
+    function setVisibleMapModal(value) {
+        state.visibleMapModal = value;
+    }
+    function setFlightMap(data) {
+        state.flightMap = data;
+    }
+    function getFlightMap() {
+        return state.flightMap;
+    }
+    function getLoadingModalMap() {
+        return state.loadingModalMap;
+    }
+    function setLoadingModalMap(value) {
+        state.loadingModalMap = value;
+    }
+    function setFlightList(value) {
+        state.flightList = value;
+    }
+    function getFlightList() {
+        return state.flightList;
+    }
+    function getFlightId() {
+        return state.flightId;
+    }
+    function setFlightId(value) {
+        state.flightId = value;
+    }
+    function editPermissionseSubmitted() {
+        return Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-when-submitted');
+    }
+    function setAttr(obj) {
+        try {
+            const att = [];
+            for (let key in obj) {
+                if (obj[key].id && obj[key].attributeId) {
+                    att.push({
+                        name: obj[key].name,
+                        value: obj[key].value,
+                        attribute_id: obj[key].attributeId,
+                        id: obj[key].id,
+                    })
+                } else if (obj[key].id && !obj[key].attributeId) {
+                    att.push({
+                        name: obj[key].name,
+                        value: obj[key].value,
+                        attribute_id: obj[key].id,
+                    })
+                } else if (obj[key].attributeId && obj[key].value) {
+                    att.push({
+                        name: obj[key].name,
+                        value: obj[key].value,
+                        attribute_id: obj[key].attributeId,
+                    })
+                }
+            }
+            return att
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    function productDataTransformation(data = []) {
+        try {
+            const products = [];
+            data.forEach((items) => {
+                if (items.id && items.productsId) {
+                    products.push({
+                        id: items.id,
+                        product_id: items.productsId,
+                        work_order_item_attributes: setAttr(items.formField)
+                    })
+                } else if (items.id && !items.productsId) {
+                    products.push({
+                        product_id: items.id,
+                        work_order_item_attributes: setAttr(items.formField)
+                    })
+                } else if (items.id && isDelete(items.formField)) {
+                    products.push({
+                        product_id: items.productsId,
+                        work_order_item_attributes: setAttr(items.formField)
+                    })
+                }
+            })
+            return products;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    function isDelete(obj) {
+        try {
+            const att = []
+            for (let key in obj) {
+                return obj[key].value && obj[key].value != ""
+            }
+            return att
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async function getFlights() {
+        try {
+          const workOrderId = state.flightId;
+          const params = {refresh: true}
+          if(workOrderId) {
+              params.params = {filter:{ id: workOrderId }}
+          }
+          const response = await baseService.index("apiRoutes.qramp.flightPosition", params);
+          const data = workOrderId ? [response.data] : response.data;
+          setFlightList(data);
+          return response;
+        } catch (error) {
+          console.log(error)
+        }
+      }
     return {
         disabledReadonly,
         setStatusId,
+        getStatusId,
         setNeedToBePosted,
         setFlightNumberField,
         getFlightNumberField,
@@ -105,5 +379,41 @@ export default function qRampStore() {
         resetFlightBoundFormStatus,
         showFielFlightBoundFormStatus,
         isData,
+        validateFutureDateTime,
+        setDateInboundBlockIn,
+        getDateInboundBlockIn,
+        setDateOutboundBlockOut,
+        getDateOutboundBlockOut,
+        setDateOutboundScheduledDeparture,
+        setDateinboundScheduledArrival,
+        getDateOutboundScheduledDeparture,
+        getDateinboundScheduledArrival,
+        validateDateOutboundBlockOut,
+        validateDateInboundBlockIn,
+        getDifferenceInHours,
+        dateFormatter,
+        getTableListOfFlights,
+        setResponsible,
+        getResponsible,
+        numberInRange,
+        hideVisibleMapModal,
+        showVisibleMapModal,
+        getVisibleMapModal,
+        setVisibleMapModal,
+        setFlightMap,
+        getFlightMap,
+        getLoadingModalMap,
+        setLoadingModalMap,
+        setFlightList,
+        getFlightList,
+        getFlightId,
+        setFlightId,
+        editPermissionseSubmitted,
+        setAttr,
+        productDataTransformation,
+        isDelete,
+        getFlights,
+        setIsblank,
+        getIsblank,
     }
 }

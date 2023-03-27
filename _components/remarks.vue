@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="row q-px-xs">
-      <dynamic-field :class="`col-12 col-md-6 q-pb-md ${readonly ? 'q-px-md':'q-px-sm'}`" v-for="(field, keyField) in formFields" :key="keyField" :field="field"
+    <div class="tw-p-6 row q-col-gutter-lg tw-mb-10" >
+      <dynamic-field class="col-12 col-md-6" v-for="(field, keyField) in formFields" :key="keyField" :field="field"
         v-model="form[field.name || keyField]"/>
     </div>
   </div>
 </template>
 
 <script>
-import responsive from '@imagina/qramp/_mixins/responsive.js'
+import responsive from '../_mixins/responsive.js'
 export default {
   props:{
     readonly: true,

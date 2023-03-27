@@ -1,6 +1,6 @@
 <template>
   <div id="services-container">
-    <div class="q-px-xs">
+    <div class="tw-p-4">
       <search-local @value="searchServices = $event" />
       <q-linear-progress v-if="services.length == 0"  stripe  indeterminate rounded color="primary" class="q-mt-sm" />
       <expansion-component :data="filterServices"/>
@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import expansionComponent from '@imagina/qramp/_components/expansionComponent.vue'
-import searchLocal from '@imagina/qramp/_components/searchLocal'
-import responsive from '@imagina/qramp/_mixins/responsive.js'
-import services from '@imagina/qramp/_mixins/services.js'
+import expansionComponent from '../_components/expansionComponent.vue'
+import searchLocal from '../_components/searchLocal'
+import responsive from '../_mixins/responsive.js'
+import services from '../_mixins/services.js'
 export default {
   props:{
     readonly: true,
@@ -25,7 +25,6 @@ export default {
     async init() {
       //Request params
       let requestParams = {
-        refresh: true,
         params: {
         filter: {categoryId: 3},
         include: 'category,attributes,attributes.values'
@@ -57,9 +56,5 @@ export default {
 </script>
 
 <style lang="stylus">
-  #services-container
-    .search
-      background #e9edf6
-      border-radius 99px
-    
+
 </style>

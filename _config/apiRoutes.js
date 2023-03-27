@@ -5,7 +5,6 @@ const urlBase = `/${moduleName}/${moduleVersion}`
 const setupModuleName = 'setup';
 const setupUrlBase = `/${setupModuleName}/${moduleVersion}`
 
-
 export default {
   urlBase: urlBase,
   version: moduleVersion,
@@ -24,4 +23,12 @@ export default {
   workOrderTransactions: `${urlBase}/workday-transactions`,
   contractRules: `${urlBase}/contract-rules`,
   setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
+  simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
+  flightPosition: `${urlBase}/work-orders/flight-position`,
+  scheduleStatuses: `${urlBase}/schedule-statuses`,
+  schedule: `${urlBase}/work-orders/schedule`,
+  workOrdersByStatus: `${urlBase}/dashboard/work-orders-by-status`,
+  percentageWorkOrdersPosted: `${urlBase}/dashboard/percentage-work-orders-posted`,
+  workOrdersByStatusLines: `${urlBase}/dashboard/work-orders-by-status-lines`,
+  comments: `${urlBase}/comments`,
 }

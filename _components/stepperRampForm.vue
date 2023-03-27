@@ -1,9 +1,10 @@
 <template>
-  <div id="stepComponent" class="bg-white dynamicComponent" style="border-radius: 8px;">
+  <div id="stepComponent" class="bg-white dynamicComponent stepper-modal">
     <q-stepper
       v-model="sp"
       ref="stepper"
       color="primary"
+      header-nav
       alternative-labels
       animated
       :contracted="$q.screen.lt.md"
@@ -17,14 +18,15 @@
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
         >
-          <i-toolbar 
+          <i-toolbar
+            class="hidden" 
             @edit="readonly = $event" 
             @send-info="sendInfo()"
             :update="data.update"
           />
           <i-flight 
             ref="flight" 
-            @isError="error = $event" 
+            @isError="error = $event"
             v-if="step.step == STEP_FLIGTH" 
             :flightData="step.form"
             :readonly="readonly"
@@ -37,7 +39,7 @@
           />
           <i-services 
             ref="services" 
-            @isError="error = $event" 
+            @isError="isError" 
             v-if="step.step == STEP_SERVICE" 
             :servicesData="step.form" 
             :readonly="readonly"
@@ -73,15 +75,15 @@
   </div>
 </template>
 <script>
-import iFlight from '@imagina/qramp/_components/flight.vue'
-import iCargo from '@imagina/qramp/_components/cargo.vue'
-import iCrew from '@imagina/qramp/_components/crew.vue'
-import iEquipment from '@imagina/qramp/_components/equipment.vue'
-import iServices from '@imagina/qramp/_components/services.vue'
-import iRemarks from '@imagina/qramp/_components/remarks.vue'
-import iSignature from '@imagina/qramp/_components/signature.vue'
-import responsive from '@imagina/qramp/_mixins/responsive.js'
-import iToolbar from '@imagina/qramp/_components/toolbar.vue'
+import iFlight from '../_components/flight.vue'
+import iCargo from '../_components/cargo.vue'
+import iCrew from '../_components/crew.vue'
+import iEquipment from '../_components/equipment.vue'
+import iServices from '../_components/services.vue'
+import iRemarks from '../_components/remarks.vue'
+import iSignature from '../_components/signature.vue'
+import responsive from '../_mixins/responsive.js'
+import iToolbar from '../_components/toolbar.vue'
 import { 
   STEP_FLIGTH, 
   STEP_CARGO,
@@ -90,8 +92,8 @@ import {
   STEP_CREW,
   STEP_REMARKS,
   STEP_SIGNATURE
-}  from '@imagina/qramp/_components/model/constants.js'
-import qRampStore from '@imagina/qramp/_store/qRampStore.js'
+}  from '../_components/model/constants.js'
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   name:'stepperRampForm',
@@ -133,24 +135,51 @@ export default {
     })
   },
   watch: {
-    sp(value) {
-      this.$emit('sp', value)
+    async sp(value, oldStep) {
+      await this.saveFormData(oldStep, true);
+      this.$emit('sp', value);
+    }
+  },
+  computed: {
+    stepError: {
+      get() {
+        return this.error;
+      },
+      set(value) {
+        this.error = value;
+      }
     }
   },
   methods: {
     init(){
       this.$emit('sp', this.sp)
     },
-    setData() {
-      switch (this.sp) {
+    async setData() {
+      await this.saveFormData(this.sp);
+    },
+    async saveFormData(step, individual = false) {
+      switch (step) {
         case 1:
-          this.$refs.flight[0].saveInfo()
+          if(this.$refs.flight) {
+            if(individual) {
+              this.$refs.flight[0].saveIndividual();
+              return;
+            };
+            const error = await this.$refs.flight[0].menssageValidate();
+            await this.$refs.flight[0].saveInfo(error);
+          }
           break;
         case 2:
           this.$refs.cargo[0].saveInfo()
           break;
         case 3:
-          this.$refs.services[0].saveInfo()
+          if(this.$refs.services) {
+            if(individual) {
+              this.$refs.services[0].saveFormService();
+              return;
+            };
+            this.$refs.services[0].saveInfo()
+          }
           break;
         case 4:
           this.$refs.equipment[0].saveInfo()
@@ -175,9 +204,12 @@ export default {
       }
       return obj
     },
-    sendInfo() {
-      qRampStore().showLoading();
-      const data = JSON.parse(JSON.stringify( this.$store.state.qrampApp))
+    async sendInfo() {
+      qRampStore().showLoading();     
+      const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
+      if(validateAllFieldsRequiredByStep) return;
+      const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
+      data.form.statusId = qRampStore().getStatusId();
       const formatData = {
         ...data.form,
         adHoc: data.form.adHoc == 1,
@@ -202,10 +234,18 @@ export default {
       this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
       this.$emit('close', false)
     },
-    next(){
-      this.setData()
+    async next() {
+      await this.setData();
       setTimeout(()=>{
-        if(this.error) return;
+        if(this.error) {
+          if(this.sp === STEP_SERVICE) {
+            const validateDateService = this.validateFulldate();
+            if(!validateDateService) {
+              this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
+            }
+          }
+          return
+        };
         this.$refs.stepper.next()
       },500)
     },
@@ -221,10 +261,10 @@ export default {
       }
       if(this.disabled) return;
       this.disabled = true;
+      this.$emit('loading', true)
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
         :this.$crud.create(route, formatData);
       request.then(res => {
-        this.$emit('loading', true)
         this.clean()
         this.$emit('close-modal', false)
         const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}` 
@@ -242,30 +282,174 @@ export default {
         console.log('SEND INFO ERROR:', err)
       })
     },
+    validateFulldate() {
+      let validate = true;
+      this.$store.state.qrampApp.services.forEach((service) => {
+        service.work_order_item_attributes.forEach((attr) => {
+          if(attr.type === 'fullDate') {
+            if(!this.$moment(attr.value, 'MM/DD/YYYY HH:mm', true).isValid()) {
+                validate = false;
+                return;
+            }
+          }
+        })
+      })
+      return validate; 
+    },
+    async validateAllFieldsRequiredByStep() {
+      try {
+        const flightForm = this.$store.state.qrampApp.form;
+        let flightformField = [
+          'customerId',
+          'stationId',
+          'acTypeId',
+          'operationTypeId',
+          'carrierId',
+          'gateId',
+          'statusId',
+          'inboundBlockIn',
+          'outboundBlockOut'
+        ];
+
+        const halfTurnInBount = [
+          'inboundFlightNumber',
+          'inboundOriginAirportId',
+          'inboundTailNumber',
+          'inboundScheduledArrival',
+        ];
+
+        const halfTurnOutBount = [
+          'outboundFlightNumber',
+          'outboundDestinationAirportId',
+          'outboundTailNumber',
+          'outboundScheduledDeparture',
+        ];
+        if(flightForm.operationTypeId == 3) {
+          flightformField = flightformField.concat(halfTurnInBount);
+        }
+        if(flightForm.operationTypeId == 4) {
+          flightformField = flightformField.concat(halfTurnOutBount);
+        }
+        if(flightForm.operationTypeId == 2
+          || flightForm.operationTypeId == 1
+          || flightForm.operationTypeId == 6
+          || flightForm.operationTypeId == 5) {
+          const bount = halfTurnInBount.concat(halfTurnOutBount);
+          flightformField = flightformField.concat(bount);
+        }
+        const validateflightform = flightformField
+          .some(item => flightForm[item] === null || flightForm[item] === '')
+        if(validateflightform) {
+          this.error = true;
+          await this.setStep(STEP_FLIGTH);
+          qRampStore().hideLoading();
+          await this.setData();
+          this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
+          return true;
+        }
+        const validateDateService = await this.validateFulldate();
+        const service = this.$store.state.qrampApp.services;
+        if(service.length === 0) {
+          await this.setStep(STEP_SERVICE);
+          this.error = true;
+          qRampStore().hideLoading();
+          await this.setData();
+          return true;
+        }
+        if(!validateDateService) {
+          this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
+          await this.setStep(STEP_SERVICE);
+          this.error = true;
+          qRampStore().hideLoading();
+          await this.setData();
+          return true;
+        }
+        this.error = false;
+        return false;
+      } catch (error) {
+        console.log(error);
+        qRampStore().hideLoading();
+      }
+    },
+    async setStep(value) {
+      this.sp = value;
+    },
+    isError(value) {
+      this.stepError = value;
+    },
   },
 }
 </script>
-<style lang="stylus">
-  #stepComponent
-    hr.line
-      position absolute
-      border-top 1px solid #9e9e9e
-      width 50%
-      left 73%
-      top 11%
-    .q-stepper--horizontal .q-stepper__step-inner
-      padding: 10px;
-    .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot
-      transform: translateX(6px)
-    .q-stepper__header--contracted .q-stepper__tab:last-child .q-stepper__dot
-      transform: translateX(-6px)
-    .q-stepper--horizontal .q-stepper__line 
-      padding 17px
-    
-      
-      span
-        position absolute
-        font-size 20px
-
+<style>
+.stepper-modal .q-stepper .q-stepper-title {
+  @apply tw-relative tw-mb-6 tw-overflow-x-hidden;
+}
+.stepper-modal .q-stepper .q-stepper-title > h3 {
+  @apply tw-text-lg tw-font-bold tw-bg-white tw-pr-4 tw-inline-block tw-z-20 tw-relative;
+}
+.stepper-modal .q-stepper .q-stepper-title > div {
+  @apply tw-block tw-w-full tw-h-px tw-bg-gray-200 tw-top-2/4 tw-absolute tw-z-10;
+}
+.stepper-modal .q-stepper {
+  @apply tw-border-0 tw-shadow-none;
+}
+.stepper-modal  .q-stepper__header {
+  @apply tw-border-b-0;
+}
+.stepper-modal .q-stepper__tab .q-stepper__dot {
+  @apply md:tw-w-10 md:tw-h-10 tw-font-bold md:tw-text-base tw-border-0;
+}
+.stepper-modal .q-stepper__tab .q-stepper__dot .q-icon {
+  @apply tw-text-xs sm:tw-text-sm md:tw-text-xl;
+}
+.stepper-modal .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot {
+  @apply tw-transform tw-translate-x-3.5;
+}
+.stepper-modal .q-stepper__header--contracted .q-stepper__tab:last-child .q-stepper__dot {
+  @apply tw-transform tw--translate-x-3.5;
+}
+.stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot {
+  @apply tw-border-2;
+  background-color: #F1F4FA;
+  border-color: #F1F4FA;
+}
+.stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot span {
+  color: #8A98C3; font-size: 20px;
+}
+.stepper-modal .q-stepper__tab--active .q-stepper__dot {
+  @apply tw-border-current tw-border-2;
+}
+.stepper-modal .text-red.q-stepper__tab--active .q-stepper__dot {
+  @apply tw-border-current tw-border-2;
+}
+.stepper-modal .q-stepper__tab--active .q-stepper__dot span {
+  @apply tw-text-white;
+}
+.stepper-modal .q-stepper .q-stepper__dot:before {
+  @apply lg:tw-mr-8;
+}
+.stepper-modal .q-stepper .q-stepper__dot:after {
+  @apply lg:tw-ml-8;
+}
+.stepper-modal .q-stepper .q-stepper__line:after, 
+.stepper-modal .q-stepper .q-stepper__line:before {
+  @apply tw-h-0.5;
+}
+.stepper-modal .q-stepper__title {
+  @apply tw-text-base tw-font-normal tw-text-black;
+}
+.stepper-modal .q-stepper__step-inner {
+  @apply tw-py-4 lg:tw-py-5 tw-px-0 lg:tw-px-0;
+}
+.stepper-modal .q-stepper__step-inner .q-form {
+  @apply tw-px-4 lg:tw-px-5;
+} 
+#formRampComponent .master-dialog__actions {
+  @apply tw-py-4 tw-px-7 tw-absolute tw-w-full tw-bottom-0;
+  background-color: #F1F4FA;
+}
+#formRampComponent .master-dialog__body {
+  @apply tw-p-0 tw-m-0;
+}
 </style>
 

@@ -26,10 +26,35 @@
               </template>
             </q-input>
           </template>
+          <template v-slot:body="props">
+            <q-tr 
+              :props="props"
+              :class="{
+                'tw-bg-red-500': props.row.cancelled
+              }"
+            >
+              <q-td auto-width>
+                <q-checkbox 
+                  dense 
+                  v-model="props.selected" 
+                  :label="props.row.name"
+                  :disabled="props.row.cancelled"
+                />
+              </q-td>
+              <q-td
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+              >
+                {{ col.value }}
+              </q-td>
+            </q-tr>
+          </template>
         </q-table>
       </q-card-section>
       <q-card-actions align="right" class="q-mr-sm">
         <q-btn
+          v-if="manually"
           rounded
           label="Add manually"
           class="q-ml-sm text-capitalize"
@@ -64,6 +89,10 @@ export default {
     dialog: {
       type: Boolean,
       default: false
+    },
+    manually: {
+      type: Boolean,
+      default: true,
     }
   },
   data(){
@@ -71,10 +100,9 @@ export default {
       selected:[],
       filter:'',
       columns:[
-        { name: 'date', label: 'Date', field: 'date', sortable: true , align: 'left'},
         { name: 'tailNumber', label: 'Tail Number', field: 'registration', sortable: true , align: 'left'},
-        { name: 'inbound', label: 'Departure ', field: 'inbound', align: 'left'},
-        { name: 'outbound', label: 'Arrival', field: 'outbound' , align: 'left'},
+        { name: 'outbound', label: 'Departure', field: 'outbound' , align: 'left'},
+        { name: 'inbound', label: 'Arrival ', field: 'inbound', align: 'left'},
         { name: 'aircraftType', label: 'Aircraft', field: 'aircraftType', align: 'left'}
       ],
     }
