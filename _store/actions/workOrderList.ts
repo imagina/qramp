@@ -186,6 +186,33 @@ export interface OperationType {
     label: string,
     value: string | number;
 }
+export interface Gates {
+    stationId:        number;
+    station:          null;
+    areaId:           number;
+    area:             null;
+    name:             string;
+    id:               number;
+    createdAt:        null;
+    updatedAt:        null;
+    deletedAt:        null;
+    restoredAt:       null;
+    createdBy:        null;
+    updatedBy:        null;
+    deletedBy:        null;
+    restoredBy:       null;
+    externalId:       null;
+    options:          null;
+    isReportable:     boolean;
+    forceDelete:      boolean;
+    defaultInclude:   string;
+    searchableFields: SearchableFields;
+    fileFormats:      null;
+}
+
+export enum SearchableFields {
+    IDName = "id,name",
+}
 
 export interface State {
     operationTypeList: OperationType[];
@@ -194,6 +221,7 @@ export interface State {
     contractList: Contract[];
     flightStatusesList: FlightStatusContract[];
     workOrderStatusesList: WorkOrderStatusesContract[];
+    gatesList: Gates[];
 }
 
 export interface WorkOrderList {
@@ -214,6 +242,9 @@ export interface WorkOrderList {
     setWorkOrderStatusesList: (data: WorkOrderStatusesContract[]) => void;
     getWorkOrderStatusesList: () => WorkOrderStatusesContract[];
     getWorkOrderStatuses: () => void;
+    getGatesList: () => Gates[];
+    setGatesList: (data: Gates[]) => void;
+    getGates: () => Promise<Gates[] | void>;
 }
 
 const state = reactive<State>({
@@ -223,6 +254,7 @@ const state = reactive<State>({
     contractList: [],
     flightStatusesList: [],
     workOrderStatusesList: [],
+    gatesList: [],
 });
 const cacheTimeForm24Hour: number = 60 * 60 * 24;
 const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
@@ -329,6 +361,14 @@ export default function workOrderList(): WorkOrderList {
      */
     function getWorkOrderStatusesList(): WorkOrderStatusesContract[] {
         return state.workOrderStatusesList;
+    }
+
+    function setGatesList(data: Gates[]): void {
+        state.gatesList = data;
+    }
+    
+    function getGatesList(): Gates[] {
+        return state.gatesList;
     }
 
     // actions 
@@ -485,6 +525,27 @@ export default function workOrderList(): WorkOrderList {
         }
     }
 
+    async function getGates(): Promise<Gates[] | void> {
+        try {
+            const isPassenger = qRampStore().getIsPassenger();
+            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const params = {
+                cacheTime: cacheTimeForThirtyDays,
+                params: {
+                    filter: {
+                        companyId,
+                    }
+                },
+            }
+            const response = await baseService.index('apiRoutes.qsetupagione.gates', params);
+            const data = response.data;
+            setGatesList(data);
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     /**
      * The function getAllList() returns a Promise that resolves to void.
@@ -497,6 +558,7 @@ export default function workOrderList(): WorkOrderList {
             getContract(),
             getFlightStatuses(),
             getWorkOrderStatuses(),
+            getGates(),
         ]);
     }
 
@@ -562,5 +624,8 @@ export default function workOrderList(): WorkOrderList {
         getWorkOrderStatusesList,
         setWorkOrderStatusesList,
         getWorkOrderStatuses,
+        getGatesList,
+        setGatesList,
+        getGates,
     }
 }

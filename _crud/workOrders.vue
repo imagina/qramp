@@ -63,6 +63,9 @@ export default {
     qRampStore().setFlightId(null);
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     permisionCommentsIndex() {
       return this.$auth.hasAccess('ramp.work-orders-comments.index');
     },
@@ -589,7 +592,23 @@ export default {
 
         })
     },
+    async openModal(item) {
+      await qRampStore().setIsPassenger(false);
+      await this.$refs.formOrders.loadform({
+            modalProps: {
+              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+              update: true,
+              workOrderId: item.id,
+              width: '90vw'
+            },
+            data: item.data,
+          })
+    },
     showWorkOrder(data) {
+      if(this.isAppOffline) {
+        this.openModal(data);
+        return; 
+      }
       this.$crud.show('apiRoutes.qramp.workOrders', data.id,
         {
           refresh: true,
@@ -597,16 +616,7 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible"
           }
         }).then(async(item) => {
-          await qRampStore().setIsPassenger(false);
-          this.$refs.formOrders.loadform({
-            modalProps: {
-              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
-              update: true,
-              workOrderId: data.id,
-              width: '90vw'
-            },
-            data: item.data,
-          })
+          this.openModal(item);
         }).catch((err) => {
           console.log(err);
         });
