@@ -88,8 +88,7 @@
               :field="field"
               :class="`${readonly ? 'col-7': ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
-              v-model="selectResponsible"
-              @input="setSelectResponsible"
+              v-model="form[keyField]"
             />
           </div>
         <hr v-if="readonly" class="label-container"/>
@@ -257,7 +256,6 @@ export default {
       dataTable:[],
       mainData:[],
       selectCustomers: '',
-      selectResponsible: '',
       bannerMessage: null,
       customerName: '',
       newCustumerAdHoc: [],
@@ -324,14 +322,6 @@ export default {
         this.selectCustomers = value;
       }
     },
-    selecteResponsibleComputed: {
-      get() {
-        return this.selectResponsible;
-      },
-      set(value) {
-        this.selectResponsible = value;
-      }
-    },
     showLabel(){
       if(this.readonly && !this.responsive ){
         return true
@@ -374,6 +364,14 @@ export default {
     },
     filterCompany() {
       return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
+    filterGates() {
+      return workOrderList().getGatesList().filter(item => item.stationId == this.form.stationId).map(item =>
+        ({
+          value: item.id,
+          label: item.name
+        })
+      );
     },
     formFields() {
       return {
@@ -533,12 +531,8 @@ export default {
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.gate')}`,
               clearable: true,
-              color:"primary"
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qsetupagione.gates',
-              select: {label: 'name', id: 'id'},
-              requestParams: {filter: {stationId: this.form.stationId, companyId: this.filterCompany}}
+              color:"primary",
+              options: this.filterGates,
             },
             label: this.$tr('ifly.cms.form.gate'),
           },
@@ -578,12 +572,10 @@ export default {
               label: '*Responsible',
               clearable: true,
               color: "primary",
-              emitValue: false,
-              options: this.responsibleList,
             },
             loadOptions: {
               apiRoute: "apiRoutes.quser.users",
-              select: { label: "fullName", id: "id", value:"fullName" },
+              select: { label: "fullName", id: "id"},
               filterByQuery: true,
               requestParams: {filter: {companyId: this.filterCompany}}
             },
@@ -887,17 +879,7 @@ export default {
         setTimeout(() => {
           this.form.date = this.dateFormatterFull(updateForm.date)
           this.update = false
-          
           this.form.responsibleId = updateForm.responsibleId;
-          const responsible = qRampStore().getResponsible();
-          this.responsibleList = this.optionResponsible(responsible);
-          if(responsible) {
-            this.selecteResponsibleComputed = {
-              id: responsible.id,
-              value: responsible.fullName,
-              label: responsible.fullName,
-            }
-          }
           this.form.inboundFlightNumber = updateForm.inboundFlightNumber 
           this.form.outboundFlightNumber = updateForm.outboundFlightNumber 
           this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
@@ -1262,11 +1244,6 @@ export default {
     },
     optionResponsible(item) {
       return item ? [{id: String(item.id), label: item.fullName, value: item.id}]: [];
-    },
-    setSelectResponsible() {
-      const responsibleId = this.selecteResponsibleComputed.id || null;
-      this.form.responsibleId = responsibleId;
-      console.log(this.form.responsibleId);
     },
     zanetizeData(key) {
         if(key === 'inboundFlightNumber' || key === 'outboundFlightNumber') {
