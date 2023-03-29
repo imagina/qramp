@@ -187,31 +187,218 @@ export interface OperationType {
     value: string | number;
 }
 export interface Gates {
-    stationId:        number;
-    station:          null;
-    areaId:           number;
-    area:             null;
-    name:             string;
-    id:               number;
-    createdAt:        null;
-    updatedAt:        null;
-    deletedAt:        null;
-    restoredAt:       null;
-    createdBy:        null;
-    updatedBy:        null;
-    deletedBy:        null;
-    restoredBy:       null;
-    externalId:       null;
-    options:          null;
-    isReportable:     boolean;
-    forceDelete:      boolean;
-    defaultInclude:   string;
+    stationId: number;
+    station: null;
+    areaId: number;
+    area: null;
+    name: string;
+    id: number;
+    createdAt: null;
+    updatedAt: null;
+    deletedAt: null;
+    restoredAt: null;
+    createdBy: null;
+    updatedBy: null;
+    deletedBy: null;
+    restoredBy: null;
+    externalId: null;
+    options: null;
+    isReportable: boolean;
+    forceDelete: boolean;
+    defaultInclude: string;
     searchableFields: SearchableFields;
-    fileFormats:      null;
+    fileFormats: null;
 }
 
 export enum SearchableFields {
     IDName = "id,name",
+}
+
+export interface WorkOrders {
+    data: DataWorkOrder[];
+    meta: Meta;
+}
+
+export interface DataWorkOrder {
+    workdayTransactions: null;
+    carrierId: number;
+    carrier: null;
+    stationId: number;
+    station: null;
+    customerId: number;
+    customer: null;
+    acTypeId: number;
+    acType: null;
+    operationTypeId: number;
+    operationType: null;
+    statusId: number;
+    workOrderStatus: null;
+    inboundOriginAirportId: number;
+    inboundOriginAirport: null;
+    outboundDestinationAirportId: number;
+    outboundDestinationAirport: null;
+    contractId: number;
+    contract: null;
+    responsibleId: number;
+    responsible: Responsible;
+    flightStatusId: number;
+    flightStatus: null;
+    scheduleStatusId: null;
+    scheduleStatus: null;
+    workOrderItems: any[];
+    gateId: number;
+    gate: null;
+    companyId: number;
+    company: null;
+    adHoc: boolean;
+    customCustomer: boolean;
+    inboundCustomFlightNumber: null;
+    needToBePosted: boolean;
+    customCustomerName: null;
+    remark: string;
+    delay: any[];
+    safetyMessage: string;
+    customerSignature: string;
+    customerName: string;
+    customerTitle: string;
+    representativeSignature: string;
+    representativeName: string;
+    representativeTitle: string;
+    date: null;
+    referenceId: string;
+    inboundFlightNumber: string;
+    inboundTailNumber: string;
+    inboundScheduledArrival: string;
+    inboundBlockIn: string;
+    estimatedOnUtc: null;
+    inboundCargoTotalUldsUnloaded: null;
+    inboundCargoBulkUnloaded: null;
+    outboundFlightNumber: string;
+    outboundTailNumber: string;
+    outboundScheduledDeparture: string;
+    outboundBlockOut: string;
+    estimatedOffUtc: null;
+    calendarTitle: string;
+    outboundCustomFlightNumber: null;
+    outboundCargoTotalUldsLoaded: null;
+    outboundCargoBulkLoaded: null;
+    cargoTotalKilosLoaded: null;
+    cargoTotalKilosUnloaded: null;
+    preFlightNumber: string;
+    faFlightId: string;
+    faFlightStatus: null;
+    comments: number;
+    sta: string;
+    std: string;
+    flightPosition: null;
+    isReportable: boolean;
+    transactions: Transaction[];
+    flightStatusColor: null;
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+    restoredAt: null;
+    createdBy: number;
+    updatedBy: number;
+    deletedBy: null;
+    restoredBy: null;
+    externalId: null;
+    options: null;
+    forceDelete: boolean;
+    defaultInclude: string;
+    searchableFields: string;
+    fileFormats: null;
+}
+
+export interface Responsible {
+    email: string;
+    password: string;
+    permissions: { [key: string]: boolean };
+    allSettings: AllPermissions;
+    socialData: AllPermissions;
+    defaultInclude: string;
+    allPermissions: AllPermissions;
+    lastLogin: string;
+    fullName: string;
+    firstName: string;
+    lastName: string;
+    timezone: null;
+    language: null;
+    createdBy: null;
+    updatedBy: null;
+    deletedBy: null;
+    externalGuid: null;
+    roles: any[];
+    departments: any[];
+    folders: null;
+    reports: null;
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+    restoredAt: null;
+    restoredBy: null;
+    externalId: null;
+    options: Options;
+    isReportable: boolean;
+    forceDelete: boolean;
+    searchableFields: string;
+    fileFormats: null;
+}
+
+export interface AllPermissions {
+}
+
+export interface Options {
+    buildingsAssigned: any[];
+    businessUnitType: string;
+    stationsAssigned: any[];
+    companyAssigned: null;
+}
+
+export interface Transaction {
+    work_order_id: number;
+    workOrder: null;
+    contract_line_id: null;
+    contractLine: null;
+    product_id: number;
+    product: null;
+    transaction_id: null;
+    quantity: number;
+    posted_at: null;
+    dateTransaction: null;
+    ammount: number;
+    status: number;
+    id: number;
+    created_at: null;
+    updated_at: null;
+    deleted_at: null;
+    restored_at: null;
+    created_by: null;
+    updated_by: null;
+    deleted_by: null;
+    restored_by: null;
+    external_id: null;
+    options: null;
+    is_reportable: boolean;
+    force_delete: boolean;
+    dynamic_parameters: AllPermissions;
+    default_include: string;
+    searchable_fields: string;
+    file_formats: null;
+}
+
+export interface Meta {
+    page: Page;
+}
+
+export interface Page {
+    total: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    currentPage: number;
+    perPage: number;
 }
 
 export interface State {
@@ -222,6 +409,7 @@ export interface State {
     flightStatusesList: FlightStatusContract[];
     workOrderStatusesList: WorkOrderStatusesContract[];
     gatesList: Gates[];
+    workOrderList: WorkOrders;
 }
 
 export interface WorkOrderList {
@@ -245,6 +433,9 @@ export interface WorkOrderList {
     getGatesList: () => Gates[];
     setGatesList: (data: Gates[]) => void;
     getGates: () => Promise<Gates[] | void>;
+    getDataWorkOrderList: () => WorkOrders;
+    setDataWorkOrderList: (data: WorkOrders) => void;
+    getWorkOrders: () => Promise<WorkOrders | void>;
 }
 
 const state = reactive<State>({
@@ -255,6 +446,19 @@ const state = reactive<State>({
     flightStatusesList: [],
     workOrderStatusesList: [],
     gatesList: [],
+    /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
+    workOrderList: {
+        data: [],
+        meta: {
+            page: {
+                total: 0,
+                hasNextPage: false,
+                hasPreviousPage: false,
+                currentPage: 1,
+                perPage: 1,
+            },
+        }
+    },
 });
 const cacheTimeForm24Hour: number = 60 * 60 * 24;
 const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
@@ -267,11 +471,29 @@ const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
 */
 export default function workOrderList(): WorkOrderList {
     /**
+     * This function returns the workOrderList property of the state object.
+     * @returns the state.workOrderList.
+     */
+    
+    function getDataWorkOrderList(): WorkOrders {
+        return state.workOrderList;
+    }
+
+    /**
+     * This function takes a parameter of type WorkOrders and sets the state.workOrderList to the value
+     * of the parameter.
+     * @param {WorkOrders} data - WorkOrders
+     */
+    function setDataWorkOrderList(data: WorkOrders): void {
+        state.workOrderList = data;
+    }
+    /**
      * This function takes an array of OperationType objects and assigns it to the operationTypeList
      * property of the state object.
      * @param {OperationType[]} data - OperationType[] - this is the data that is being passed in from
      * the component.
      */
+
     function setOperationTypeList(data: OperationType[]): void {
         state.operationTypeList = data;
     }
@@ -363,10 +585,19 @@ export default function workOrderList(): WorkOrderList {
         return state.workOrderStatusesList;
     }
 
+    /**
+     * This function takes an array of Gates objects and sets the gatesList property of the state
+     * object to that array.
+     * @param {Gates[]} data - Gates[] - this is the data that is being passed in from the API call.
+     */
     function setGatesList(data: Gates[]): void {
         state.gatesList = data;
     }
-    
+
+    /**
+     * The function getGatesList() returns an array of Gates objects.
+     * @returns The gatesList array.
+     */
     function getGatesList(): Gates[] {
         return state.gatesList;
     }
@@ -525,6 +756,10 @@ export default function workOrderList(): WorkOrderList {
         }
     }
 
+    /**
+     * "getGates() is an async function that returns a Promise of Gates[] or void"</code>
+     * @returns The data is being returned as an array of objects.
+     */
     async function getGates(): Promise<Gates[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
@@ -546,12 +781,46 @@ export default function workOrderList(): WorkOrderList {
         }
     }
 
+    /**
+     * This function is an async function that returns a promise of type WorkOrders or void. It calls a
+     * function called baseService.index() which returns a promise of type WorkOrders. The function
+     * then sets the dataWorkOrderList to the response and returns the data.
+     * @returns The data is being returned as an array of objects.
+     */
+    async function getWorkOrders(): Promise<WorkOrders | void> {
+        try {
+            const isPassenger = qRampStore().getIsPassenger();
+            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const params = {
+                cacheTime: cacheTimeForThirtyDays,
+                params: {
+                    filter: {
+                        companyId,
+                        order: {
+                            field: "id",
+                            way: "desc"
+                        },
+                        withoutDefaultInclude: true
+                    },
+                    take: 100
+                },
+            }
+            const response = await baseService.index('apiRoutes.qramp.workOrders', params);
+            const data = response;
+            setDataWorkOrderList(response);
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     /**
      * The function getAllList() returns a Promise that resolves to void.
      */
     async function getAllList(): Promise<void> {
         await Promise.all([
+            getWorkOrders(),
             getStation(),
             getOperationType(),
             getCustomer(),
@@ -627,5 +896,8 @@ export default function workOrderList(): WorkOrderList {
         getGatesList,
         setGatesList,
         getGates,
+        getDataWorkOrderList,
+        setDataWorkOrderList,
+        getWorkOrders
     }
 }
