@@ -71,7 +71,7 @@ export default {
       refresh: true,
     }
   },*/
-  workOrderStatuses: {
+  /*workOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,
     authenticated: true,
@@ -85,7 +85,7 @@ export default {
     subHeader: {
       refresh: true,
     }
-  },
+  },*/
   oagStations: {
     //permission: 'isite.logs.manage',
     activated: false,
@@ -101,5 +101,77 @@ export default {
       refresh: true
     }
   },
+  passenger: {
+    permission: 'ramp.work-orders.manage',
+    activated: true,
+    authenticated: true,
+    path: '/passenger/work-orders/index',
+    name: 'qramp.admin.passenger',
+    crud: import('../_crud/passengers'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.workOrders',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  passengerFlightMap: {
+    //permission: 'ramp.work-orders.manage',
+    activated: true,
+    authenticated: true,
+    path: '/passenger/flight-map/index',
+    name: 'qramp.admin.passengerFlightMap',
+    page: () => import('../_components/flightMap/index.vue'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.map',
+    icon: 'fa-light fa-map', 
+    subHeader: {
+      refresh: true,
+    }
+  },
+  passengerSchedule: {
+    permission: 'ramp.work-order-schedules.manage',
+    activated: true,
+    authenticated: true,
+    path: '/passenger/schedule/index',
+    name: 'qramp.admin.passengerSchedule',
+    page: () => import('../_components/schedule/index.vue'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.schedule',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  passengerPublicSchedule: {
+    //permission: 'ramp.work-orders.manage',
+    activated: true,
+    authenticated: false,
+    path: '/passenger/schedule/public/index',
+    name: 'qramp.admin.public.passengerSchedule',
+    page: () => import('../_components/schedule/indexBlank.vue'),
+    layout: () => import('@imagina/qsite/_layouts/blank.vue'),
+    title: 'ifly.cms.sidebar.schedule',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  /*passengerWorkOrderStatuses: {
+    permission: 'ramp.work-order-statuses.manage',
+    activated: true,
+    authenticated: true,
+    path: '/passenger/schedule-status/index',
+    name: 'qramp.admin.workOrderStatuses',
+    crud: import('../_crud/workOrderStatuses.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.workOrderStatuses',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },*/
 }
 

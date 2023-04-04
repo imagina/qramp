@@ -1,128 +1,81 @@
 <template>
-  <div id="stepComponent" class="bg-white dynamicComponent stepper-modal">
+  <div id="stepComponent"
+       class="
+        bg-white
+        dynamicComponent
+        stepper-modal"
+  >
     <q-stepper
-      v-model="sp"
-      ref="stepper"
-      color="primary"
-      header-nav
-      alternative-labels
-      animated
-      :contracted="$q.screen.lt.md"
-      keep-alive
+        v-model="sp"
+        ref="stepper"
+        color="primary"
+        header-nav
+        alternative-labels
+        animated
+        :contracted="$q.screen.lt.md"
+        keep-alive
     >
-      <template v-for="(step, index) in steps">
-        <q-step
+      <q-step
+          v-for="(step, index) in steps"
           :key="index"
           :name="index + 1"
           :title="step.title"
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
-        >
-          <i-toolbar
-            class="hidden" 
-            @edit="readonly = $event" 
-            @send-info="sendInfo()"
-            :update="data.update"
-          />
-          <i-flight 
-            ref="flight" 
+      >
+        <component
+            :ref="step.ref"
+            :is="step.component"
             @isError="error = $event"
-            v-if="step.step == STEP_FLIGTH" 
-            :flightData="step.form"
+            :dataCompoment="step.form || null"
             :readonly="readonly"
-          />
-          <i-cargo 
-            ref="cargo" 
-            v-if="step.step == STEP_CARGO"
-            :cargoData="step.form" 
-            :readonly="readonly"
-          />
-          <i-services 
-            ref="services" 
-            @isError="isError" 
-            v-if="step.step == STEP_SERVICE" 
-            :servicesData="step.form" 
-            :readonly="readonly"
-          />
-          <i-equipment 
-            ref="equipment" 
-            v-if="step.step == STEP_EQUIPMENT" 
-            :equipmentData="step.form" 
-            :readonly="readonly" 
-          />
-          <i-crew 
-            ref="crew" 
-            v-if="step.step == STEP_CREW" 
-            :crewData="step.form" 
-            :readonly="readonly" 
-          />
-          <i-remarks 
-            ref="remarks" 
-            v-if="step.step == STEP_REMARKS" 
-            :remarksData="step.form" 
-            :readonly="readonly" 
-          />
-          <i-signature 
-            ref="signature" 
-            v-if="step.step == STEP_SIGNATURE" 
-            :signatureData="step.form" 
-            :readonly="readonly" 
-            @send-info="sendInfo()" 
-          />
-        </q-step>
-      </template>
+            @send-info="sendInfo()"
+        />
+      </q-step>
     </q-stepper>
   </div>
 </template>
 <script>
-import iFlight from '../_components/flight.vue'
-import iCargo from '../_components/cargo.vue'
-import iCrew from '../_components/crew.vue'
-import iEquipment from '../_components/equipment.vue'
-import iServices from '../_components/services.vue'
-import iRemarks from '../_components/remarks.vue'
-import iSignature from '../_components/signature.vue'
 import responsive from '../_mixins/responsive.js'
-import iToolbar from '../_components/toolbar.vue'
-import { 
-  STEP_FLIGTH, 
-  STEP_CARGO,
+import {
+  STEP_FLIGHT,
   STEP_SERVICE,
-  STEP_EQUIPMENT,
-  STEP_CREW,
   STEP_REMARKS,
-  STEP_SIGNATURE
-}  from '../_components/model/constants.js'
+  STEP_SIGNATURE,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
+} from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
+import serviceList from './serviceList/index.vue';
+import serviceListStore from './serviceList/store/serviceList.ts';
+import cargoStore from './cargo/store/cargo.ts';
+import {
+  FlightformFieldModel,
+  HalfTurnInBountModel,
+  HalfTurnOutBountModel,
+  FlightformFieldPassengerModel,
+  HalfTurnInBountPassengerModel,
+  HalfTurnOutBountPassengerModel
+} from './model/constants.js';
+import remarkStore from './remarks/store.ts';
+
 
 export default {
-  name:'stepperRampForm',
-  components:{
-    iFlight,
-    iCargo,
-    iServices,
-    iEquipment,
-    iCrew,
-    iRemarks,
-    iSignature,
-    iToolbar
-  },
-  mixins:[responsive],
-  props:{
-    steps:{},
-    data:{},
+  name: 'stepperRampForm',
+  components: {},
+  mixins: [responsive],
+  props: {
+    steps: {},
+    data: {},
   },
   data() {
     return {
-      readonly:false,
-      form:{},
+      readonly: false,
+      form: {},
       error: false,
-      sp:1,
-      STEP_FLIGTH, 
-      STEP_CARGO,
+      sp: 1,
+      STEP_FLIGHT,
       STEP_SERVICE,
-      STEP_EQUIPMENT,
-      STEP_CREW,
       STEP_REMARKS,
       STEP_SIGNATURE,
       disabled: false,
@@ -141,6 +94,12 @@ export default {
     }
   },
   computed: {
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     stepError: {
       get() {
         return this.error;
@@ -148,10 +107,10 @@ export default {
       set(value) {
         this.error = value;
       }
-    }
+    },
   },
   methods: {
-    init(){
+    init() {
       this.$emit('sp', this.sp)
     },
     async setData() {
@@ -159,209 +118,182 @@ export default {
     },
     async saveFormData(step, individual = false) {
       switch (step) {
-        case 1:
-          if(this.$refs.flight) {
-            if(individual) {
+        case STEP_FLIGHT:
+          if (this.$refs.flight) {
+            if (individual) {
               this.$refs.flight[0].saveIndividual();
               return;
-            };
+            }
+            ;
             const error = await this.$refs.flight[0].menssageValidate();
             await this.$refs.flight[0].saveInfo(error);
           }
           break;
-        case 2:
-          this.$refs.cargo[0].saveInfo()
-          break;
-        case 3:
-          if(this.$refs.services) {
-            if(individual) {
-              this.$refs.services[0].saveFormService();
-              return;
-            };
-            this.$refs.services[0].saveInfo()
+        case STEP_SIGNATURE:
+          if (this.$refs.signature) {
+            this.$refs.signature[0].saveInfo()
           }
-          break;
-        case 4:
-          this.$refs.equipment[0].saveInfo()
-          break;
-        case 5:
-          this.$refs.crew[0].saveInfo()
-          break;
-        case 6:
-          this.$refs.remarks[0].saveInfo()
-          break;
-        case 7:
-          this.$refs.signature[0].saveInfo()
           break;
       }
     },
-    camelToSnakeCase(str) {return str.replace(/[A-Z]/g,(letter) => `_${letter.toLowerCase()}`)},
+    camelToSnakeCase(str) {
+      return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+    },
     formatData(data) {
       const obj = {}
-      for (let key in data){
+      for (let key in data) {
         const name = this.camelToSnakeCase(key)
         obj[name] = data[key]
       }
       return obj
     },
     async sendInfo() {
-      qRampStore().showLoading();     
-      const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
-      if(validateAllFieldsRequiredByStep) return;
-      const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp))
-      data.form.statusId = qRampStore().getStatusId();
-      const formatData = {
-        ...data.form,
-        adHoc: data.form.adHoc == 1,
-        customCustomer: data.form.customCustomer  == 1,
-        delay: data.delay,
-        workOrderItems: [
-          ...data.services,
-          ...data.equipments,
-          ...data.crew,
-        ]
+      try {
+        const remarks = remarkStore().getForm();
+        const serviceList = await serviceListStore().getServiceListSelected();
+        qRampStore().showLoading();
+        const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
+        if (validateAllFieldsRequiredByStep) return;
+        const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
+        const dataCargo = cargoStore().payload();
+        data.form.statusId = qRampStore().getStatusId();
+        const formatData = {
+          ...data.form,
+          ...dataCargo.cargo,
+          ...remarks,
+          adHoc: data.form.adHoc == 1,
+          customCustomer: data.form.customCustomer == 1,
+          delay: dataCargo.delay,
+          workOrderItems: [
+            ...serviceList
+          ],
+          companyId: this.filterCompany
+        }
+        if (this.data.update) {
+          formatData.id = this.data.workOrderId;
+        }
+        this.sendWorkOrder(formatData);
+      } catch (error) {
+        qRampStore().hideLoading();
+        console.log(error);
       }
-      if (this.data.update) {
-        formatData.id = this.data.workOrderId;
-      }
-      this.sendWorkOrder(formatData);
     },
-    clean(){
-      this.$store.commit('qrampApp/SET_FORM_FLIGHT', {} )
-      this.$store.commit('qrampApp/SET_FORM_SERVICES', [] )
-      this.$store.commit('qrampApp/SET_FORM_EQUIPMENTS', [] )
-      this.$store.commit('qrampApp/SET_FORM_CREW', [] )
-      this.$store.commit('qrampApp/SET_FORM_DELAY', [] )
+    clean() {
+      cargoStore().reset();
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', {})
       this.$emit('close', false)
     },
     async next() {
       await this.setData();
-      setTimeout(()=>{
-        if(this.error) {
-          if(this.sp === STEP_SERVICE) {
+      setTimeout(() => {
+        if (this.error) {
+          if (this.sp === STEP_SERVICE) {
             const validateDateService = this.validateFulldate();
-            if(!validateDateService) {
+            if (!validateDateService) {
               this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
             }
           }
           return
-        };
+        }
+        ;
         this.$refs.stepper.next()
-      },500)
+      }, 500)
     },
-    previous(){
+    previous() {
       this.$refs.stepper.previous()
     },
     sendWorkOrder(formatData) {
       const route = 'apiRoutes.qramp.workOrders';
-      if(this.disabledReadonly) {
+      if (this.disabledReadonly) {
         this.$emit('close-modal', false);
         this.$emit('loading', false);
         return;
       }
-      if(this.disabled) return;
+      if (this.disabled) return;
       this.disabled = true;
       this.$emit('loading', true)
-      const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData) 
-        :this.$crud.create(route, formatData);
+      const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData)
+          : this.$crud.create(route, formatData);
       request.then(res => {
         this.clean()
         this.$emit('close-modal', false)
-        const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}` 
-          : `${this.$tr('isite.cms.message.recordCreated')}`;
+        const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}`
+            : `${this.$tr('isite.cms.message.recordCreated')}`;
         this.$alert.info({message})
-         this.$emit('loading', false)
-         this.disabled = false;
-         qRampStore().hideLoading();
-      })
-      .catch(err => {
+        this.$emit('loading', false)
+        this.disabled = false;
         qRampStore().hideLoading();
-         this.disabled = false;
-         this.$emit('loading', false)
-        this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
-        console.log('SEND INFO ERROR:', err)
       })
+          .catch(err => {
+            qRampStore().hideLoading();
+            this.disabled = false;
+            this.$emit('loading', false)
+            this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
+            console.log('SEND INFO ERROR:', err)
+          })
     },
     validateFulldate() {
-      let validate = true;
-      this.$store.state.qrampApp.services.forEach((service) => {
-        service.work_order_item_attributes.forEach((attr) => {
-          if(attr.type === 'fullDate') {
-            if(!this.$moment(attr.value, 'MM/DD/YYYY HH:mm', true).isValid()) {
+      return new Promise(async (resolve) => {
+        let validate = true;
+        const services = await serviceListStore().getServiceItems(serviceList);
+        services.forEach((service) => {
+          service.work_order_item_attributes.forEach((attr) => {
+            if (attr.type === 'fullDate') {
+              if (!this.$moment(attr.value, 'MM/DD/YYYY HH:mm', true).isValid()) {
                 validate = false;
                 return;
+              }
             }
-          }
+          })
         })
+        return resolve(validate);
       })
-      return validate; 
     },
     async validateAllFieldsRequiredByStep() {
       try {
         const flightForm = this.$store.state.qrampApp.form;
-        let flightformField = [
-          'customerId',
-          'stationId',
-          'acTypeId',
-          'operationTypeId',
-          'carrierId',
-          'gateId',
-          'statusId',
-          'inboundBlockIn',
-          'outboundBlockOut'
-        ];
-
-        const halfTurnInBount = [
-          'inboundFlightNumber',
-          'inboundOriginAirportId',
-          'inboundTailNumber',
-          'inboundScheduledArrival',
-        ];
-
-        const halfTurnOutBount = [
-          'outboundFlightNumber',
-          'outboundDestinationAirportId',
-          'outboundTailNumber',
-          'outboundScheduledDeparture',
-        ];
-        if(flightForm.operationTypeId == 3) {
+        let flightformField = this.isPassenger ? FlightformFieldPassengerModel : FlightformFieldModel;
+        const halfTurnInBount = this.isPassenger ? HalfTurnInBountPassengerModel : HalfTurnInBountModel;
+        const halfTurnOutBount = this.isPassenger ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
+        if (flightForm.operationTypeId == 3) {
           flightformField = flightformField.concat(halfTurnInBount);
         }
-        if(flightForm.operationTypeId == 4) {
+        if (flightForm.operationTypeId == 4) {
           flightformField = flightformField.concat(halfTurnOutBount);
         }
-        if(flightForm.operationTypeId == 2
-          || flightForm.operationTypeId == 1
-          || flightForm.operationTypeId == 6
-          || flightForm.operationTypeId == 5) {
+        if (flightForm.operationTypeId == 2
+            || flightForm.operationTypeId == 1
+            || flightForm.operationTypeId == 6
+            || flightForm.operationTypeId == 5) {
           const bount = halfTurnInBount.concat(halfTurnOutBount);
           flightformField = flightformField.concat(bount);
         }
         const validateflightform = flightformField
-          .some(item => flightForm[item] === null || flightForm[item] === '')
-        if(validateflightform) {
+            .some(item => flightForm[item] === null || flightForm[item] === '')
+        if (validateflightform) {
           this.error = true;
-          await this.setStep(STEP_FLIGTH);
+          await this.setStep(STEP_FLIGHT);
           qRampStore().hideLoading();
           await this.setData();
           this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           return true;
         }
         const validateDateService = await this.validateFulldate();
-        const service = this.$store.state.qrampApp.services;
-        if(service.length === 0) {
+        const service = await serviceListStore().getServiceItems(serviceList);
+        if (service.length === 0) {
           await this.setStep(STEP_SERVICE);
           this.error = true;
           qRampStore().hideLoading();
           await this.setData();
+          this.$alert.error({message: this.$tr('Please at least select one service')});
           return true;
         }
-        if(!validateDateService) {
+        if (!validateDateService) {
           this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
           await this.setStep(STEP_SERVICE);
           this.error = true;
-          qRampStore().hideLoading();
           await this.setData();
+          qRampStore().hideLoading();
           return true;
         }
         this.error = false;
@@ -384,70 +316,92 @@ export default {
 .stepper-modal .q-stepper .q-stepper-title {
   @apply tw-relative tw-mb-6 tw-overflow-x-hidden;
 }
+
 .stepper-modal .q-stepper .q-stepper-title > h3 {
   @apply tw-text-lg tw-font-bold tw-bg-white tw-pr-4 tw-inline-block tw-z-20 tw-relative;
 }
+
 .stepper-modal .q-stepper .q-stepper-title > div {
   @apply tw-block tw-w-full tw-h-px tw-bg-gray-200 tw-top-2/4 tw-absolute tw-z-10;
 }
+
 .stepper-modal .q-stepper {
   @apply tw-border-0 tw-shadow-none;
 }
-.stepper-modal  .q-stepper__header {
+
+.stepper-modal .q-stepper__header {
   @apply tw-border-b-0;
 }
+
 .stepper-modal .q-stepper__tab .q-stepper__dot {
   @apply md:tw-w-10 md:tw-h-10 tw-font-bold md:tw-text-base tw-border-0;
 }
+
 .stepper-modal .q-stepper__tab .q-stepper__dot .q-icon {
   @apply tw-text-xs sm:tw-text-sm md:tw-text-xl;
 }
+
 .stepper-modal .q-stepper__header--contracted .q-stepper__tab:first-child .q-stepper__dot {
   @apply tw-transform tw-translate-x-3.5;
 }
+
 .stepper-modal .q-stepper__header--contracted .q-stepper__tab:last-child .q-stepper__dot {
   @apply tw-transform tw--translate-x-3.5;
 }
+
 .stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot {
   @apply tw-border-2;
   background-color: #F1F4FA;
   border-color: #F1F4FA;
 }
+
 .stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot span {
-  color: #8A98C3; font-size: 20px;
+  color: #8A98C3;
+  font-size: 20px;
 }
+
 .stepper-modal .q-stepper__tab--active .q-stepper__dot {
   @apply tw-border-current tw-border-2;
 }
+
 .stepper-modal .text-red.q-stepper__tab--active .q-stepper__dot {
   @apply tw-border-current tw-border-2;
 }
+
 .stepper-modal .q-stepper__tab--active .q-stepper__dot span {
   @apply tw-text-white;
 }
+
 .stepper-modal .q-stepper .q-stepper__dot:before {
   @apply lg:tw-mr-8;
 }
+
 .stepper-modal .q-stepper .q-stepper__dot:after {
   @apply lg:tw-ml-8;
 }
-.stepper-modal .q-stepper .q-stepper__line:after, 
+
+.stepper-modal .q-stepper .q-stepper__line:after,
 .stepper-modal .q-stepper .q-stepper__line:before {
   @apply tw-h-0.5;
 }
+
 .stepper-modal .q-stepper__title {
   @apply tw-text-base tw-font-normal tw-text-black;
 }
+
 .stepper-modal .q-stepper__step-inner {
   @apply tw-py-4 lg:tw-py-5 tw-px-0 lg:tw-px-0;
 }
+
 .stepper-modal .q-stepper__step-inner .q-form {
   @apply tw-px-4 lg:tw-px-5;
-} 
+}
+
 #formRampComponent .master-dialog__actions {
   @apply tw-py-4 tw-px-7 tw-absolute tw-w-full tw-bottom-0;
   background-color: #F1F4FA;
 }
+
 #formRampComponent .master-dialog__body {
   @apply tw-p-0 tw-m-0;
 }

@@ -9,7 +9,15 @@ export default [
       pages.qramp.workOrders,
       pages.qramp.flightMap,
       pages.qramp.schedule,
-      pages.qramp.workOrderStatuses
+    ]
+  },
+  {
+    title: 'ifly.cms.sidebar.passengerInfo',
+    icon: 'fa-light fa-tickets-airline',
+    children: [
+      pages.qramp.passenger,
+      pages.qramp.passengerFlightMap,
+      pages.qramp.passengerSchedule,
     ]
   },
   {

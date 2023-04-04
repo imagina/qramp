@@ -284,10 +284,15 @@ import {
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
+import cache from '@imagina/qsite/_plugins/cache';
+import workOrderList from '../../_store/actions/workOrderList.ts';
+
 export default {
   props:{
     isBlank: {
@@ -327,6 +332,13 @@ export default {
       },
     },
   },
+  created() {
+    this.$nextTick(async function () {
+      await workOrderList().getAllList();
+      const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
+      qRampStore().setIsPassenger(currentRouteName !== -1);
+    });
+  },
   mounted() {
     this.$nextTick(async function () {
         await this.init();
@@ -338,6 +350,9 @@ export default {
     });
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     colorCheckSchedule() {
       return item => {
         const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
@@ -345,24 +360,14 @@ export default {
       }
     },
     titleStatus() {
-      return statusId => {
-        if(statusId === STATUS_DRAFT) {
-          return 'Draft';
-        }
-        if(statusId === STATUS_CLOSED) {
-          return 'Closed';
-        }
-        if(statusId === STATUS_POSTED) {
-          return 'Posted';
-        }
-        if(statusId === STATUS_SUBMITTED) {
-          return 'Submitted';
-        }
-        if(statusId === STATUS_SCHEDULE) {
-          return 'Scheduled';
-        }
-        return '';
-      }
+      const statuses = {
+        [STATUS_DRAFT]: 'Draft',
+        [STATUS_CLOSED]: 'Closed',
+        [STATUS_POSTED]: 'Posted',
+        [STATUS_SUBMITTED]: 'Submitted',
+        [STATUS_SCHEDULE]: 'Scheduled',
+      };
+      return statusId => statuses[statusId] || '';
     },
     permisionComments() {
       return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
@@ -426,10 +431,11 @@ export default {
             icon: "fa-light fa-copy",
           },
           action: () => {
+            const routeName = this.isPassenger ? 'passenger' : 'ramp';
             let hrefSplit = window.location.href.split("?");
             let tinyUrl =
               this.$store.state.qsiteApp.originURL +
-              "/#/ramp/schedule/public/index";
+              `/#/${routeName}/schedule/public/index`;
             if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
             this.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
           },
@@ -458,6 +464,11 @@ export default {
             loadOptions: {
               apiRoute: "apiRoutes.qramp.setupCustomers",
               select: { label: "customerName", id: "id" },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: "Customer",
@@ -469,18 +480,28 @@ export default {
             type: "select",
             loadOptions: {
               apiRoute: "apiRoutes.qsetupagione.setupStations",
-              select: { label: "stationName", id: "id" },
+              select: { label: "fullName", id: "id" },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: "Station",
             },
           },
           statusId: {
-            value: STATUS_SCHEDULE,
+            value: null,
             type: 'select',
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
               select: { 'label': 'statusName', 'id': 'id' },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: 'Status',
@@ -505,6 +526,11 @@ export default {
             loadOptions: {
               apiRoute: "apiRoutes.qfly.flightStatuses",
               select: { label: "name", id: "id" },
+              requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+              },
             },
             props: {
               label: "Flight Status",
@@ -517,6 +543,11 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.areas',
                 select: { label: 'name', id: 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+                },
               },
               props: {
                 label: 'Areas',
@@ -537,6 +568,12 @@ export default {
         storeFilter: true,
       };
     },
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
   },
   methods: {
    async init() {
@@ -552,7 +589,7 @@ export default {
     },
     async initUrlMutate() {
       const obj = await this.$helper.convertStringToObject();
-      const localStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+      const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
         if (!this.stationId) {
           await this.$refs.stationModal.showModal();
@@ -661,7 +698,25 @@ export default {
       try {
         const isClone = data.isClone || false;
         await this.$refs.modalForm.setLoading(true);
-        const response = await this.saveRequestSimpleWorkOrder(data);
+        if(this.isAppOffline) {
+          const flightStatusColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(data.flightStatusId))?.color;
+          this.events.push(this.$clone(
+            {
+            ...data, 
+            id: this.$uid(), 
+            calendarTitle: `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
+            inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
+            statusId: STATUS_SCHEDULE,
+            workOrderStatus: {
+              color: 'pink-500',
+            },
+            flightStatus: {
+              color: flightStatusColor || 'gray-200',
+            },  
+          }));
+          await cache.set("scheduleList", this.events);
+        }
+        await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
@@ -684,6 +739,7 @@ export default {
         if (event) {
           
           const dataForm = {};
+          dataForm.calendarTitle = `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
           dataForm.id = data.id;
           dataForm.sta = data.sta;
           dataForm.std = data.std;
@@ -804,6 +860,7 @@ export default {
     },
     async getWorkOrders(refresh = false, filter) {
       try {
+        const companyId = this.filterCompany;
         const filterClone = this.$clone(filter);
         delete filterClone.type;
         delete filterClone.dateStart;
@@ -814,6 +871,7 @@ export default {
           params: {
             include: "flightStatus,gate,carrier,acType,workOrderStatus",
             filter: {
+              companyId,
               ...filterClone,
               withoutDefaultInclude: true,
               order: {
@@ -875,7 +933,7 @@ export default {
     async getFilter() {
       this.events = [];
       if (this.stationId) {
-        await sessionStorage.setItem("stationId", this.filter.values.stationId || null);
+        await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(true);
       }
     },
@@ -887,9 +945,13 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
+        const companyId = this.filterCompany;
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
-          form
+          {
+            ...form,
+            companyId,
+          }
         );
         return response;
       } catch (error) {
@@ -929,7 +991,7 @@ export default {
         const origin = window.location.href.split("?");
         const dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         const dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}&statusId=${STATUS_SCHEDULE}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
@@ -980,7 +1042,7 @@ export default {
     async addNewDayToSchedule(event) {
       try {
         const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T23:59:59`;
-        this.sessionStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+        this.sessionStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         const data = {
           calendarTitle: null,
           id: this.$uid(),
@@ -991,7 +1053,7 @@ export default {
           gateId: null,
           scheduleStatusId: null,
           inboundScheduledArrival: date,
-          isUpdate: true, 
+          isUpdate: true,
         }
         this.events.push({...data});
       } catch (error) {

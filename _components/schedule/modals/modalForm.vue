@@ -44,6 +44,7 @@ import scheduleField from "../fields/scheduleField.js";
 import qRampStore from '../../../_store/qRampStore.js';
 import comments from '@imagina/qsite/_components/master/comments/index.vue'
 import {STATUS_DRAFT , STATUS_SCHEDULE} from '../../model/constants.js'
+import cache from '@imagina/qsite/_plugins/cache';
 export default {
   components: {comments},
   mixins: [scheduleField],
@@ -60,8 +61,8 @@ export default {
   async created() {
     this.$nextTick(async function () {
       this.sessionStationId =
-        sessionStorage.getItem("stationId") !== "null"
-          ? sessionStorage.getItem("stationId")
+        await cache.get.item("stationId") !== "null"
+          ? await cache.get.item("stationId")
           : null;
       await this.getFlightStatusList();
     })
@@ -129,7 +130,7 @@ export default {
     },
     async openModal(title = null, data = null, date) {
       try {
-        this.sessionStationId = sessionStorage.getItem("stationId") !== 'null' ? sessionStorage.getItem("stationId") : null;
+        this.sessionStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         this.dataLoad = true;
         let currentDate = this.$moment().format('MM/DD/YYYY');
         if(this.$moment().format('YYYY-MM-DD') !== date) {

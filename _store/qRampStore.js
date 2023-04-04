@@ -1,12 +1,12 @@
-//import { reactive } from 'vue';
 import {
     STATUS_DRAFT,
     STATUS_POSTED,
     STATUS_SUBMITTED,
-    modelFlightBoundFormStatus
+    modelFlightBoundFormStatus,
+    COMPANY_PASSENGER,
+    COMPANY_RAMP
 } from '../_components/model/constants.js'
-import * as moment from 'moment';
-import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts';
+import moment from 'moment';
 import baseService from '@imagina/qcrud/_services/baseService.js'
 import Vue, { reactive } from "vue";
 
@@ -31,9 +31,17 @@ const state = reactive({
     flightList: [],
     flightId: 0,
     isblank: false,
+    isPassenger: false,
 });
 
 export default function qRampStore() {
+    function setIsPassenger(value) {
+        state.isPassenger = value;
+    }
+    function getIsPassenger() {
+        return state.isPassenger;
+    }
+
     function setStatusId(value) {
         state.statusId = value;
     }
@@ -99,6 +107,11 @@ export default function qRampStore() {
         state.flightBoundFormStatus.boundDestinationAirport = this.isData(data.originAirport.id);
         state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOn);
         state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOff);
+        if(state.isPassenger) {
+            state.flightBoundFormStatus.gateDestination = this.isData(data.gateDestination);
+            state.flightBoundFormStatus.gateOrigin = this.isData(data.gateOrigin);
+        }
+        
     }
     function isData(data) {
         return data ? true : false;
@@ -112,6 +125,10 @@ export default function qRampStore() {
             boundTailNumber: false,
             boundScheduled: false,
             boundScheduledDeparture: false,
+        }
+        if(state.isPassenger) {
+            status.gateDestination = false;
+            status.gateOrigin = false;
         }
         state.flightBoundFormStatus = status;
     }
@@ -225,6 +242,11 @@ export default function qRampStore() {
             faFlightId: items.faFlightId,
             cancelled: items.cancelled,
           }
+          if(state.isPassenger) {
+            flight.gateDestination = items.gateDestination || '';
+            flight.gateOrigin = items.gateOrigin || '';
+          }
+          console.log(flight);
           dataTable.push(flight)
         })
         return dataTable;
@@ -347,11 +369,18 @@ export default function qRampStore() {
     }
     async function getFlights() {
         try {
+          const isPassenger = getIsPassenger();
+          const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
           const workOrderId = state.flightId;
-          const params = {refresh: true}
-          if(workOrderId) {
-              params.params = {filter:{ id: workOrderId }}
-          }
+          const params = {
+            refresh: true, 
+            params: {
+                filter: {
+                    companyId,
+                }
+            }
+          };
+          if(workOrderId) params.params.filter.id = workOrderId;
           const response = await baseService.index("apiRoutes.qramp.flightPosition", params);
           const data = workOrderId ? [response.data] : response.data;
           setFlightList(data);
@@ -359,7 +388,7 @@ export default function qRampStore() {
         } catch (error) {
           console.log(error)
         }
-      }
+    }
     return {
         disabledReadonly,
         setStatusId,
@@ -415,5 +444,7 @@ export default function qRampStore() {
         getFlights,
         setIsblank,
         getIsblank,
+        setIsPassenger,
+        getIsPassenger,
     }
 }
