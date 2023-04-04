@@ -285,12 +285,13 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   COMPANY_PASSENGER,
-  COMPANY_RAMP
+  COMPANY_RAMP,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
 import cache from '@imagina/qsite/_plugins/cache';
+import workOrderList from '../../_store/actions/workOrderList.ts';
 
 export default {
   props:{
@@ -333,6 +334,7 @@ export default {
   },
   created() {
     this.$nextTick(async function () {
+      await workOrderList().getAllList();
       const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
       qRampStore().setIsPassenger(currentRouteName !== -1);
     });
@@ -348,6 +350,9 @@ export default {
     });
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     colorCheckSchedule() {
       return item => {
         const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
@@ -693,7 +698,25 @@ export default {
       try {
         const isClone = data.isClone || false;
         await this.$refs.modalForm.setLoading(true);
-        const response = await this.saveRequestSimpleWorkOrder(data);
+        if(this.isAppOffline) {
+          const flightStatusColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(data.flightStatusId))?.color;
+          this.events.push(this.$clone(
+            {
+            ...data, 
+            id: this.$uid(), 
+            calendarTitle: `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
+            inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
+            statusId: STATUS_SCHEDULE,
+            workOrderStatus: {
+              color: 'pink-500',
+            },
+            flightStatus: {
+              color: flightStatusColor || 'gray-200',
+            },  
+          }));
+          await cache.set("scheduleList", this.events);
+        }
+        await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
@@ -716,6 +739,7 @@ export default {
         if (event) {
           
           const dataForm = {};
+          dataForm.calendarTitle = `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
           dataForm.id = data.id;
           dataForm.sta = data.sta;
           dataForm.std = data.std;

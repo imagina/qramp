@@ -53,7 +53,15 @@ export default {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
         this.areaId = this.$filter.values.areaId;
       }
-    }
+    },
+    'isAppOffline': {
+      deep: true,
+      handler: async function (newValue) {
+        if(!newValue) {
+          await workOrderList().getWorkOrders(true);
+        }
+      }
+    },
   },
   async created() {
     await workOrderList().getAllList();

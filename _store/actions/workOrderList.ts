@@ -364,11 +364,12 @@ export default function workOrderList(): WorkOrderList {
      * then sets the dataWorkOrderList to the response and returns the data.
      * @returns The data is being returned as an array of objects.
      */
-    async function getWorkOrders(): Promise<WorkOrders | void> {
+    async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -379,12 +380,13 @@ export default function workOrderList(): WorkOrderList {
                         },
                         withoutDefaultInclude: true
                     },
-                    take: 100
+                    take: 200,
+                    page: 1
                 },
             }
-            const response = await baseService.index('apiRoutes.qramp.workOrders', params);
+            const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
             const data = response;
-            setDataWorkOrderList(response);
+            setDataWorkOrderList(data);
             return data;
         } catch (error) {
             console.log(error);
@@ -396,7 +398,7 @@ export default function workOrderList(): WorkOrderList {
      * The function getAllList() returns a Promise that resolves to void.
      */
     async function getAllList(): Promise<void> {
-        await Promise.all([
+        Promise.all([
             getWorkOrders(),
             getStation(),
             getOperationType(),
