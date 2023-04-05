@@ -600,16 +600,19 @@ export default {
         })
     },
     async openModal(item) {
+      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
       await qRampStore().setIsPassenger(false);
       await this.$refs.formOrders.loadform({
             modalProps: {
-              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+              title: titleModal,
               update: true,
               workOrderId: item.id,
               width: '90vw'
             },
             data: item.data,
           })
+      
+      qRampStore.setTitleOffline(titleModal);
     },
     showWorkOrder(data) {
       if(this.isAppOffline) {

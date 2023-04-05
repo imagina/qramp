@@ -11,6 +11,7 @@ import baseService from '@imagina/qcrud/_services/baseService.js'
 import Vue, { reactive } from "vue";
 
 const state = reactive({
+    titleOffline: '',
     statusId: STATUS_DRAFT,
     needToBePosted: false,
     flightNumberField: null,
@@ -41,7 +42,12 @@ export default function qRampStore() {
     function getIsPassenger() {
         return state.isPassenger;
     }
-
+    function getTitleOffline() {
+        return state.titleOffline;
+    }
+    function setTitleOffline(value) {
+        state.titleOffline = value;
+    }
     function setStatusId(value) {
         state.statusId = value;
     }
@@ -390,6 +396,8 @@ export default function qRampStore() {
         }
     }
     return {
+        getTitleOffline,
+        setTitleOffline,
         disabledReadonly,
         setStatusId,
         getStatusId,
