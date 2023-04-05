@@ -80,7 +80,13 @@
 import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
-import {COMPANY_PASSENGER, COMPANY_RAMP, STATUS_DRAFT} from './model/constants.js';
+import {
+  COMPANY_PASSENGER, 
+  COMPANY_RAMP, 
+  STATUS_DRAFT,
+  modelWorkOrder
+} from './model/constants.js';
+import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
 
 export default {
   components: {
@@ -115,6 +121,9 @@ export default {
   ],
   inject: ["showWorkOrder", "closeModal"],
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     selectCustomerComputed: {
       get() {
         return this.selectCustomers;
@@ -163,18 +172,23 @@ export default {
     },
     setCustomerForm(key) {
       if (key !== "customerId") return;
-      const selectCustomers = this.selectCustomers ?? {};
+      const selectCustomers =
+        this.selectCustomers === null || 
+        this.selectCustomers === undefined ||
+        this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
-      const customCustomerName = selectCustomers.label ?? null;
-      this.form.customCustomerName = this.form.customerId || customCustomerName;
+      const customCustomerName = selectCustomers.label || null;
+      this.form.customCustomerName = this.form.customerId
+        ? null
+        : customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
       const message = this.form.contractId
-          ? `${this.$tr("ifly.cms.message.selectedCustomerWithContract")}`
-          : this.$tr("ifly.cms.message.selectedCustomerWithoutContract");
-
-      this.bannerMessage = this.form.contractId ? null : message;
-      this.form.adHoc = !this.form.contractId;
-      this.form.customCustomer = !this.form.contractId;
+        ? `${this.$tr("ifly.cms.message.selectedCustomerWithContract")}`
+        : this.$tr("ifly.cms.message.selectedCustomerWithoutContract");
+      this.bannerMessage =
+        selectCustomers && !this.form.contractId ? message : null;
+      this.form.adHoc = this.form.contractId ? false : true;
+      this.form.customCustomer = this.form.contractId ? false : true;
     },
     setCustomerName(query) {
       this.customerName = query || "";
@@ -182,14 +196,14 @@ export default {
     saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
-          if (this.acceptSchedule || this.form.faFlightId) {
+          if (this.isAppOffline || this.acceptSchedule || this.form.faFlightId) {
             await this.messageWhenFlightIsNotChosen();
             return;
           }
 
-          if (!this.form.faFlightId || !this.acceptSchedule) {
-            this.search({type: 'search'});
-            return;
+          if ((!this.form.faFlightId || !this.acceptSchedule) && !this.isAppOffline) {
+              this.search({type: 'search'});
+              return;
           }
 
         } else {
@@ -256,29 +270,31 @@ export default {
       });
     },
     search({type}) {
-      if (
-          type != "search" &&
-          (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
-      )
-        return;
-      const params = {
-        refresh: true,
-        params: {
-          filter: {search: this.form.preFlightNumber.toUpperCase()},
-        },
-      };
-      this.loadingState = true;
-      //Request
-      this.$crud
-          .index("apiRoutes.qfly.flightaware", params)
-          .then((response) => {
-            this.responseStatus(response);
-          })
-          .catch((error) => {
-            this.loadingState = false;
-            this.$alert.error({message: this.$tr("ifly.cms.message.errorlookingForFlight")})
-            console.log(error);
-          });
+      if(!this.isAppOffline) {
+        if (
+            type != "search" &&
+            (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
+        )
+          return;
+        const params = {
+          refresh: true,
+          params: {
+            filter: {search: this.form.preFlightNumber.toUpperCase()},
+          },
+        };
+        this.loadingState = true;
+        //Request
+        this.$crud
+            .index("apiRoutes.qfly.flightaware", params)
+            .then((response) => {
+              this.responseStatus(response);
+            })
+            .catch((error) => {
+              this.loadingState = false;
+              this.$alert.error({message: this.$tr("ifly.cms.message.errorlookingForFlight")})
+              console.log(error);
+            });
+      }
     },
     setDataTable({select, dialog}) {
       this.form.faFlightId = select.faFlightId || null;
@@ -297,7 +313,21 @@ export default {
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
             {...this.form, companyId: this.filterCompany}
-        );
+        ).catch(error => {
+          qRampStore().hideLoading();
+        });
+        if(this.isAppOffline) {
+          const offlineWorkOrder = {
+            ...modelWorkOrder,
+            stationId: Number(this.form.stationId),
+            customerId: Number(this.form.customerId),
+            inboundFlightNumber: this.form.preFlightNumber,
+            outboundFlightNumber: this.form.preFlightNumber,
+            offline: this.isAppOffline,
+          };
+          cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", offlineWorkOrder);
+        }
+        
         qRampStore().hideLoading();
         return response;
       } catch (error) {

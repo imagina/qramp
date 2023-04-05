@@ -131,7 +131,6 @@ export default {
               label: this.$tr('isite.cms.label.customer'),
               field: item => item.customCustomerName || item.customer,
               formatAsync: async item => {
-                if(item.customCustomerName) return `${item.customCustomerName}`;
                 const response = await workOrderList().getCustomerList()
                   .find(customer => customer.id === item.customerId) || {};
                 return `${response.customerName || '-' }`;
