@@ -204,6 +204,8 @@ export default {
     },
     sendWorkOrder(formatData) {
       const route = 'apiRoutes.qramp.workOrders';
+      const titleOffline = qRampStore().getTitleOffline();
+      const params = {params: {titleOffline}};
       if (this.disabledReadonly) {
         this.$emit('close-modal', false);
         this.$emit('loading', false);
@@ -212,8 +214,8 @@ export default {
       if (this.disabled) return;
       this.disabled = true;
       this.$emit('loading', true)
-      const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData)
-          : this.$crud.create(route, formatData);
+      const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData, params)
+          : this.$crud.create(route, formatData, params);
       request.then(res => {
         this.clean()
         this.$emit('close-modal', false)

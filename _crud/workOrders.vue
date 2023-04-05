@@ -96,11 +96,12 @@ export default {
     crudData() {
       return {
         crudId: this.crudId,
-        entityName: config("main.qfly.entityNames.workOrder"),
+        entityName: config("main.qramp.entityNames.workOrders"),
         apiRoute: 'apiRoutes.qramp.workOrders',
         permission: 'ramp.work-orders',
         create: {
           method: async () => {
+            await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
             await qRampStore().setIsPassenger(false);
             this.$refs.formOrders.loadform({
               modalProps: {
@@ -612,7 +613,7 @@ export default {
             data: item,
           })
       
-      qRampStore.setTitleOffline(titleModal);
+      qRampStore().setTitleOffline(titleModal);
     },
     showWorkOrder(data) {
       if(this.isAppOffline) {

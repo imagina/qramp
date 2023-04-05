@@ -310,7 +310,7 @@ export default {
     async saveRequestSimpleWorkOrder() {
       try {
         qRampStore().showLoading();
-        const params = {params: { titleOffline: qRampStore.getTitleOffline() }};
+        const params = {params: { titleOffline: qRampStore().getTitleOffline() }};
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
             {...this.form, companyId: this.filterCompany},
