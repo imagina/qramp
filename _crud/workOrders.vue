@@ -609,7 +609,7 @@ export default {
               workOrderId: item.id,
               width: '90vw'
             },
-            data: item.data,
+            data: item,
           })
       
       qRampStore.setTitleOffline(titleModal);
@@ -626,7 +626,7 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible"
           }
         }).then(async(item) => {
-          this.openModal(item);
+          this.openModal(item.data);
         }).catch((err) => {
           console.log(err);
         });
