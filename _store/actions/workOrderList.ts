@@ -374,6 +374,12 @@ export default function workOrderList(): WorkOrderList {
                 params: {
                     filter: {
                         companyId,
+                        date: {
+                            field: "inbound_scheduled_arrival",
+                            type: "currentMonth",
+                            from: null,
+                            to: null
+                        },
                         order: {
                             field: "id",
                             way: "desc"

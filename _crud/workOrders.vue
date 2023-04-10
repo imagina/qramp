@@ -588,8 +588,10 @@ export default {
         id: itemId,
         statusId: status
       }
+      let customParams = {params: {titleOffline: this.crudData.entityName || ''}}
+
       this.$emit('loading', true)
-      const request = this.$crud.create(route, payload);
+      const request = this.$crud.update(route, itemId, payload, customParams);
       request.then(res => {
         this.$root.$emit('crud.data.refresh')
         this.$emit('loading', false)
