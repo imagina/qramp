@@ -59,7 +59,7 @@ export interface DynamicField {
 export interface ListContract {
     id: number;
     title: string;
-    dynamicField?: DynamicField[];
+    dynamicField?: DynamicField[] | any;
     lists?: any[];
 }
 
@@ -75,8 +75,8 @@ export interface Quantity2 {
 export interface ServiceModelContract {
     id?: number;
     title?: string;
-    lists?: ListContract[];
-    dynamicField?: DynamicField[];
+    lists?: ListContract[] | any[];
+    dynamicField?: DynamicField[] | any;
     component?: any;
     form?: any,
 }

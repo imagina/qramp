@@ -1,6 +1,6 @@
-import Vue, {ref, computed} from 'vue';
+import Vue, { ref, computed } from 'vue';
 import serviceListStore from "./store/serviceList";
-import {ServiceModelContract} from './@Contract/index.contract';
+import { ServiceModelContract } from './@Contract/index.contract';
 
 
 /**
@@ -36,13 +36,14 @@ export default function useServiceList(props = {}, emit = null) {
             !loading.value &&
             !selectService.value.component &&
             !selectService.value.dynamicField &&
-            filterService.value.length > 0
+            filterService.value && filterService.value.length > 0
     );
     const showNoData = computed(
         (): boolean =>
             !loading.value &&
             !selectService.value.component &&
-            filterService.value.length === 0
+            filterService.value
+            && filterService.value.length === 0
     );
     /* This is a computed property that returns a list of services. */
     const services = computed<ServiceModelContract | any>(() => {
@@ -55,10 +56,10 @@ export default function useServiceList(props = {}, emit = null) {
             }
             return serviceListModel.value;
         }
-        if (selectService.value.lists) {
+        if (selectService.value.lists && selectService.value.lists.length > 0) {
             return selectService.value.lists;
         }
-        return selectService.value.dynamicField;
+        return selectService.value.dynamicField || [];
     });
     /**
      * If the service is null, then set the selectService.value to an empty object, and set the

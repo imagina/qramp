@@ -45,15 +45,31 @@ export const getCategories = async (): Promise<any[]> => {
  */
 export async function buildServiceList(): Promise<any[]> {
     try {
-        const categoryList = await getCategories();
+        const categoryList = Vue.prototype.$array.tree(await getCategories());
         const build = categoryList.map((item) => {
-            const dynamicField = {
+            let dynamicField: any = {
                 dynamicField: getIfItIsTypeListOrDynamicField(item.products),
             };
+            dynamicField = dynamicField.dynamicField.length === 0 ? {} : dynamicField;
+            let lists = {};
+            if(item.children && item.children.length > 0) {
+                lists = item.children.map(item => {
+                    let dynamicFieldChildren: any = {
+                        dynamicField: getIfItIsTypeListOrDynamicField(item.products),
+                    };
+                    return {
+                        id: item.id,
+                        title: item.name,
+                        ...dynamicFieldChildren
+                    };
+                })
+                lists = { lists }
+            }
             return {
                 id: item.id,
                 title: item.name,
                 ...dynamicField,
+                ...lists,
             };
         });
         return build;
