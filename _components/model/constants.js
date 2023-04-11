@@ -54,8 +54,6 @@ export const FlightformFieldModel = [
     'operationTypeId',
     'carrierId',
     'statusId',
-    'inboundBlockIn',
-    'outboundBlockOut'
   ];
 
   export const HalfTurnInBountModel = [

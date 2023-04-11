@@ -116,7 +116,7 @@ export default function serviceListStore(): ServiceListStoreContract {
         try {
             const data: any[] = [];
             services.forEach(async service => {
-                const dynamicField = await getListOfSelectedServices(service.dynamicField);
+                const dynamicField = await getListOfSelectedServices(service.dynamicField || []);
                 await data.push(...dynamicField);
             })
             return data;

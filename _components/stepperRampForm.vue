@@ -237,7 +237,7 @@ export default {
     validateFulldate() {
       return new Promise(async (resolve) => {
         let validate = true;
-        const services = await serviceListStore().getServiceItems(serviceList);
+        const services = await serviceListStore().getServiceItems();
         services.forEach((service) => {
           service.work_order_item_attributes.forEach((attr) => {
             if (attr.type === 'fullDate') {
@@ -280,15 +280,18 @@ export default {
           this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           return true;
         }
+
         const validateDateService = await this.validateFulldate();
-        const service = await serviceListStore().getServiceItems(serviceList);
-        if (service.length === 0) {
-          await this.setStep(STEP_SERVICE);
-          this.error = true;
-          qRampStore().hideLoading();
-          await this.setData();
-          this.$alert.error({message: this.$tr('Please at least select one service')});
-          return true;
+        if(!this.isPassenger) {
+          const service = await serviceListStore().getServiceItems();
+          if (service.length === 0) {
+            await this.setStep(STEP_SERVICE);
+            this.error = true;
+            qRampStore().hideLoading();
+            await this.setData();
+            this.$alert.error({message: this.$tr('Please at least select one service')});
+            return true;
+          }
         }
         if (!validateDateService) {
           this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});

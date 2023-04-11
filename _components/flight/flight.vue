@@ -373,6 +373,14 @@ export default {
         })
       );
     },
+    validateRulesBlock() {
+      const rules = !this.isPassenger ? {
+        rules: [
+            val => !!val || this.$tr('isite.cms.message.fieldRequired')
+        ]
+      } : {};
+      return rules;
+    },
     formFields() {
       return {
         banner: {
@@ -783,9 +791,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
+              ...this.validateRulesBlock,
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
@@ -805,9 +811,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
+              ...this.validateRulesBlock,
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
