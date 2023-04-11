@@ -284,8 +284,8 @@ import {
   STATUS_DRAFT,
   STATUS_POSTED,
   STATUS_SUBMITTED,
-  COMPANY_PASSENGER,
-  COMPANY_RAMP,
+  BUSSINESS_UNIT_PASSENGER,
+  BUSSINESS_UNIT_RAMP,
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
@@ -466,7 +466,7 @@ export default {
               select: { label: "customerName", id: "id" },
               requestParams: {
                   filter: {
-                    companyId: this.filterCompany,
+                    bussinessUnitId: this.filterBussinessUnit,
                   },
               },
             },
@@ -483,7 +483,7 @@ export default {
               select: { label: "fullName", id: "id" },
               requestParams: {
                   filter: {
-                    companyId: this.filterCompany,
+                    bussinessUnitId: this.filterBussinessUnit,
                   },
               },
             },
@@ -499,7 +499,7 @@ export default {
               select: { 'label': 'statusName', 'id': 'id' },
               requestParams: {
                   filter: {
-                    companyId: this.filterCompany,
+                    bussinessUnitId: this.filterBussinessUnit,
                   },
               },
             },
@@ -528,7 +528,7 @@ export default {
               select: { label: "name", id: "id" },
               requestParams: {
                   filter: {
-                    companyId: this.filterCompany,
+                    bussinessUnitId: this.filterBussinessUnit,
                   },
               },
             },
@@ -545,7 +545,7 @@ export default {
                 select: { label: 'name', id: 'id' },
                 requestParams: {
                   filter: {
-                    companyId: this.filterCompany,
+                    bussinessUnitId: this.filterBussinessUnit,
                   },
                 },
               },
@@ -571,8 +571,8 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    filterBussinessUnit() {
+      return this.isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
     },
   },
   methods: {
@@ -860,7 +860,7 @@ export default {
     },
     async getWorkOrders(refresh = false, filter) {
       try {
-        const companyId = this.filterCompany;
+        const bussinessUnitId = this.filterBussinessUnit;
         const filterClone = this.$clone(filter);
         delete filterClone.type;
         delete filterClone.dateStart;
@@ -871,7 +871,7 @@ export default {
           params: {
             include: "flightStatus,gate,carrier,acType,workOrderStatus",
             filter: {
-              companyId,
+              bussinessUnitId,
               ...filterClone,
               withoutDefaultInclude: true,
               order: {
@@ -945,12 +945,12 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
-        const companyId = this.filterCompany;
+        const bussinessUnitId = this.filterBussinessUnit;
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
           {
             ...form,
-            companyId,
+            bussinessUnitId,
           }
         );
         return response;

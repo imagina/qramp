@@ -81,8 +81,8 @@ import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
 import {
-  COMPANY_PASSENGER, 
-  COMPANY_RAMP, 
+  BUSSINESS_UNIT_PASSENGER, 
+  BUSSINESS_UNIT_RAMP, 
   STATUS_DRAFT,
   modelWorkOrder
 } from './model/constants.js';
@@ -138,8 +138,8 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    filterBussinessUnit() {
+      return this.isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
     },
   },
   methods: {
@@ -313,7 +313,7 @@ export default {
         const params = {params: { titleOffline: qRampStore().getTitleOffline() }};
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
-            {...this.form, companyId: this.filterCompany},
+            {...this.form, bussinessUnitId: this.filterBussinessUnit},
             params
         ).catch(error => {
           qRampStore().hideLoading();
