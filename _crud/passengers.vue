@@ -321,7 +321,11 @@ export default {
             },
           },
           requestParams: {
-            include: 'customer,workOrderStatus,operationType,station,contract,responsible,inboundOriginAirport,outboundDestinationAirport,flightStatus',
+            include: 'responsible',
+            filter: {
+              withoutDefaultInclude: true,
+              bussinessUnitId: BUSSINESS_UNIT_PASSENGER,
+            },
           },
           actions: [
             {

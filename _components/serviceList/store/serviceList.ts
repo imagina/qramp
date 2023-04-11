@@ -7,9 +7,11 @@ import {
 import {
     ServiceModelContract,
     ServiceListStoreContract,
-    ReactiveStoreContract
+    ReactiveStoreContract,
+    DynamicField
 } from '../@Contract/index.contract';
 import qRampStore from '../../../_store//qRampStore';
+import _ from 'lodash';
 
 const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
@@ -106,6 +108,24 @@ export default function serviceListStore(): ServiceListStoreContract {
         return await orderServicesWithTheStructureToSave(services);
     }
 
+    
+    function getAllServices(services: ServiceModelContract[]): ServiceModelContract[]  {
+        const servicesData: any = [];
+        services.forEach(obj => {
+            const item: any = _.cloneDeep(obj);
+            if (item.dynamicField) {
+                servicesData.push(item);
+            } 
+            if (item.lists) {
+                item.lists.forEach(list => {
+                    const listServicesData = getAllServices([list]);
+                    servicesData.push(...listServicesData);
+                });
+            }
+        });
+
+        return servicesData;
+    }
     /**
      * It takes an array of objects, and for each object, it calls a function that returns an array of
      * objects, and then pushes the returned array of objects to the data array.
@@ -114,11 +134,13 @@ export default function serviceListStore(): ServiceListStoreContract {
      */
     async function orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise<any> {
         try {
-            const data: any[] = [];
-            services.forEach(async service => {
+            const data: any = [];
+            const allServices = getAllServices(services);
+            allServices.forEach(async service => {
                 const dynamicField = await getListOfSelectedServices(service.dynamicField || []);
                 await data.push(...dynamicField);
             })
+            console.log(data);
             return data;
         } catch (error) {
             console.log(error);

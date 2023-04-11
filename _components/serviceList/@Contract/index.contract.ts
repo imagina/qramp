@@ -76,7 +76,7 @@ export interface ServiceModelContract {
     id?: number;
     title?: string;
     lists?: ListContract[] | any[];
-    dynamicField?: DynamicField[] | any;
+    dynamicField?: DynamicField[] | null;
     component?: any;
     form?: any,
 }

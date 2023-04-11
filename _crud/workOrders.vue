@@ -379,14 +379,12 @@ export default {
                 'clearable': true
               },
             },
-            bussinessUnitId: {
-              value: BUSSINESS_UNIT_RAMP,
-            },
           },
           requestParams: {
             include: 'responsible',
             filter: {
               withoutDefaultInclude: true,
+              bussinessUnitId: BUSSINESS_UNIT_RAMP,
             },
           },
           actions: [
