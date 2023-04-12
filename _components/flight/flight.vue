@@ -1052,17 +1052,15 @@ export default {
         gateDestination,
         gateOrigin,
       } = data;
-      console.log(data);
-      console.log(this.name);
-      if(this.name.includes('outboundFlightNumber')){
+      if(this.isbound[0]){
         const destinationAirportId = destinationAirport?.id || null;
         this.$set(this.form, "outboundFlightNumber", ident)
         this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
         this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
         this.$set(this.form, "outboundTailNumber", registration)
-        console.log(gateDestination);
         if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
-      } else {
+      }
+      if(this.isbound[1]) {
         this.$set(this.form, "inboundFlightNumber", ident)
         const originAirportId = originAirport?.id || null;
         this.$set(this.form, "inboundOriginAirportId", originAirportId)
