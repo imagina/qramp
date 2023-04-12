@@ -317,9 +317,10 @@ export default {
       try {
         qRampStore().showLoading();
         const params = {params: { titleOffline: qRampStore().getTitleOffline() }};
+        const offlineId = 'work-order-' + this.$uid();
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
-            {...this.form, companyId: this.filterCompany},
+            {...this.form, offlineId, companyId: this.filterCompany},
             params
         ).catch(error => {
           qRampStore().hideLoading();
@@ -332,6 +333,7 @@ export default {
             inboundFlightNumber: this.form.preFlightNumber,
             outboundFlightNumber: this.form.preFlightNumber,
             offline: this.isAppOffline,
+            id: offlineId
           };
           cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", offlineWorkOrder);
         }
