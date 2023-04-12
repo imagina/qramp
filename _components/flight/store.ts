@@ -36,8 +36,8 @@ export interface FormContarct {
     customerName?: any;
     contractId?: any;
     contractName?: any;
-    gateDestination?: any;
-    gateOrigin?: any;
+    inboundGateArrival?: string | null;
+    outboundGateDeparture?: string | null;
     customer?: any;
     customCustomerName?: string;
     contract?: any;
@@ -151,8 +151,8 @@ export default function flightStore(): FlightStoreContract {
         state.form.contractId = flight.contractId ? flight.contractId : null;
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
         if (qRampStore().getIsPassenger()) {
-            state.form.gateDestination = flight.gateDestination || null;
-            state.form.gateOrigin = flight.gateOrigin || null;
+            state.form.inboundGateArrival = flight.inboundGateArrival || null;
+            state.form.outboundGateDeparture = flight.outboundGateDeparture || null;
         }
     }
     /**

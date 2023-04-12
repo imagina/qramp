@@ -688,11 +688,11 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.inboundGateArrival,
-              label: '*Gate Destination',
+              label: 'Inbound Gate Arrival',
               clearable: true,
               color:"primary"
             },
-            label: 'Gate Destination',
+            label: 'Inbound Gate Arrival',
           }
         },
         outboundRight:{
@@ -786,11 +786,11 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
-              label: '*Gate Origin',
+              label: 'Outbound Gate Departure',
               clearable: true,
               color:"primary"
             },
-            label: 'Gate Origin',
+            label: 'Outbound Gate Departure',
           },
         },
         dateBound: {
@@ -903,6 +903,8 @@ export default {
           this.flightBoundFormStatus.boundOriginAirportId = this.checkIfDataArrives(updateForm.inboundOriginAirportId);
           this.flightBoundFormStatus.boundDestinationAirport = this.checkIfDataArrives(updateForm.outboundDestinationAirportId);
           if(this.isPassenger) {
+            this.form.inboundGateArrival = updateForm.inboundGateArrival;
+            this.form.outboundGateDeparture = updateForm.outboundGateDeparture;
             this.flightBoundFormStatus.inboundGateArrival = this.checkIfDataArrives(updateForm.inboundGateArrival);
             this.flightBoundFormStatus.outboundGateDeparture = this.checkIfDataArrives(updateForm.outboundGateDeparture);
           }
