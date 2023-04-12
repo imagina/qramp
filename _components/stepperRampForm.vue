@@ -280,19 +280,17 @@ export default {
           this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
           return true;
         }
-
         const validateDateService = await this.validateFulldate();
-        if(!this.isPassenger) {
-          const service = await serviceListStore().getServiceItems();
-          if (service.length === 0) {
-            await this.setStep(STEP_SERVICE);
-            this.error = true;
-            qRampStore().hideLoading();
-            await this.setData();
-            this.$alert.error({message: this.$tr('Please at least select one service')});
-            return true;
-          }
+        const service = await serviceListStore().getServiceItems();
+        if (service.length === 0) {
+          await this.setStep(STEP_SERVICE);
+          this.error = true;
+          qRampStore().hideLoading();
+          await this.setData();
+          this.$alert.error({message: this.$tr('Please at least select one service')});
+          return true;
         }
+    
         if (!validateDateService) {
           this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
           await this.setStep(STEP_SERVICE);

@@ -153,7 +153,7 @@ export default function serviceListStore(): ServiceListStoreContract {
      * @returns {Promise<ServiceModelContract[]>} An array of ServiceModelContract objects.
      */
     async function getServiceItems(): Promise<ServiceModelContract[]> {
-        const serviceList = getServiceList().filter(item => item.id === CATEGORY_SERVICES);
+        const serviceList = getServiceList();
         return await serviceListStore().orderServicesWithTheStructureToSave(serviceList);
     }
 
