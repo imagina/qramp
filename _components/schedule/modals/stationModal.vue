@@ -17,7 +17,7 @@
 
 <script>
 import qRampStore from '../../../_store/qRampStore.js';
-import {BUSSINESS_UNIT_PASSENGER, BUSSINESS_UNIT_RAMP} from '../../model/constants.js';
+import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP} from '../../model/constants.js';
 import cache from '@imagina/qsite/_plugins/cache';
 
 export default {
@@ -30,8 +30,8 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterBussinessUnit() {
-      return this.isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+    filterBusinessUnit() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     actions() {
       return [
@@ -64,7 +64,7 @@ export default {
             select: { label: "fullName", id: "id" },
             requestParams: {
               filter: {
-                bussinessUnitId: this.filterBussinessUnit,
+                businessUnitId: this.filterBusinessUnit,
               },
             },
           },

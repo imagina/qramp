@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import baseService from '@imagina/qcrud/_services/baseService.js'
 import qRampStore from '../qRampStore.js'
-import { BUSSINESS_UNIT_PASSENGER, BUSSINESS_UNIT_RAMP } from '../../_components/model/constants.js';
+import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP } from '../../_components/model/constants.js';
 import { 
     Contract, 
     CustomerContract, 
@@ -188,12 +188,12 @@ export default function workOrderList(): WorkOrderList {
     async function getOperationType(): Promise<OperationType[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                     }
                 },
             }
@@ -214,12 +214,12 @@ export default function workOrderList(): WorkOrderList {
     async function getStation(): Promise<StationContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                     }
                 },
             }
@@ -238,12 +238,12 @@ export default function workOrderList(): WorkOrderList {
     async function getCustomer(): Promise<CustomerContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 cacheTime: cacheTimeForm24Hour,
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                     }
                 },
             }
@@ -264,11 +264,11 @@ export default function workOrderList(): WorkOrderList {
     async function getContract(): Promise<any[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                     }
                 },
             }
@@ -289,12 +289,12 @@ export default function workOrderList(): WorkOrderList {
     async function getFlightStatuses(): Promise<FlightStatusContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                     }
                 },
             }
@@ -315,12 +315,12 @@ export default function workOrderList(): WorkOrderList {
     async function getWorkOrderStatuses(): Promise<WorkOrderStatusesContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                     }
                 },
             }
@@ -340,12 +340,12 @@ export default function workOrderList(): WorkOrderList {
     async function getGates(): Promise<Gates[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                     }
                 },
             }
@@ -367,13 +367,13 @@ export default function workOrderList(): WorkOrderList {
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const bussinessUnitId = isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        bussinessUnitId,
+                        businessUnitId,
                         date: {
                             field: "inbound_scheduled_arrival",
                             type: "currentMonth",

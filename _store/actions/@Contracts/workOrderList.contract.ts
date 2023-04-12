@@ -32,7 +32,7 @@ export interface StationContract {
     airportId: number | null;
     airport: null;
     companyId: number;
-    bussinessUnitId: number;
+    businessUnitId: number;
     company: null;
     buildings: null;
     gates: null;
@@ -127,7 +127,6 @@ export interface Contract {
     businessUnitId: number;
     businessUnit: null;
     companyId: number;
-    bussinessUnitId: number;
     company: null;
     oldId: null;
     id: number;
@@ -162,7 +161,7 @@ export interface Options {
 export interface OperationType {
     operationName: string;
     companyId: number;
-    bussinessUnitId: number;
+    businessUnitId: number;
     company?: number;
     id: number;
     createdAt?: string;
@@ -246,7 +245,7 @@ export interface DataWorkOrder {
     gateId: number;
     gate: null;
     companyId: number;
-    bussinessUnitId: number;
+    businessUnitId: number;
     company: null;
     adHoc: boolean;
     customCustomer: boolean;

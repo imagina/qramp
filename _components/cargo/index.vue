@@ -93,7 +93,7 @@
 import responsive from '../../_mixins/responsive.js'
 import qRampStore from '../../_store/qRampStore.js'
 import cargoStore from './store/cargo.ts';
-import {BUSSINESS_UNIT_PASSENGER, BUSSINESS_UNIT_RAMP} from '../model/constants.js'
+import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP} from '../model/constants.js'
 
 export default {
   props:{
@@ -114,8 +114,8 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterBussinessUnit() {
-      return this.isPassenger ? BUSSINESS_UNIT_PASSENGER : BUSSINESS_UNIT_RAMP;
+    filterBusinessUnit() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
@@ -285,7 +285,7 @@ export default {
         refresh: true,
         params: {
           filter: {
-            bussinessUnitId: this.filterBussinessUnit
+            businessUnitId: this.filterBusinessUnit
           },
         }
       };
