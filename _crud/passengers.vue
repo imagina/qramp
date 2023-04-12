@@ -18,6 +18,7 @@ import {
   STATUS_DRAFT, 
   STATUS_SCHEDULE,
   BUSINESS_UNIT_PASSENGER,
+  COMPANY_PASSENGER
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -244,7 +245,7 @@ export default {
                 select: { 'label': 'customerName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    businessUnitId: BUSINESS_UNIT_PASSENGER,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },
@@ -262,7 +263,7 @@ export default {
                 select: { 'label': 'statusName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    businessUnitId: BUSINESS_UNIT_PASSENGER,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },
@@ -279,7 +280,7 @@ export default {
                 select: { 'label': 'fullName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    businessUnitId: BUSINESS_UNIT_PASSENGER,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },
@@ -310,7 +311,7 @@ export default {
                 select: {'label': 'name', 'id': 'id'},
                 requestParams: {
                   filter: {
-                    businessUnitId: BUSINESS_UNIT_PASSENGER,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },

@@ -117,6 +117,9 @@ export default {
     filterBusinessUnit() {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
     },
@@ -285,7 +288,7 @@ export default {
         refresh: true,
         params: {
           filter: {
-            businessUnitId: this.filterBusinessUnit
+            businessUnitId: this.filterCompany
           },
         }
       };

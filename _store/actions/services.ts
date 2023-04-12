@@ -2,7 +2,12 @@
 import baseService from "@imagina/qcrud/_services/baseService.js";
 import qRampStore from "../qRampStore.js";
 import Vue from 'vue';
-import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP} from '../../_components/model/constants.js';
+import {
+    BUSINESS_UNIT_PASSENGER, 
+    BUSINESS_UNIT_RAMP,
+    COMPANY_PASSENGER,
+    COMPANY_RAMP,
+} from '../../_components/model/constants.js';
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -17,13 +22,13 @@ export const serviceListModel = {
 export const getCategories = async (): Promise<any[]> => {
     try {
         const isPassenger = qRampStore().getIsPassenger();
-        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP; 
         let requestParams = {
             params: {
                 include:
                     "products,products.attributes,products,products.attributes.values",
                 filter: {
-                    businessUnitId,
+                    companyId,
                 }    
             },
         };

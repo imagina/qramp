@@ -43,7 +43,9 @@ import {
   STEP_REMARKS,
   STEP_SIGNATURE,
   BUSINESS_UNIT_PASSENGER,
-  BUSINESS_UNIT_RAMP
+  BUSINESS_UNIT_RAMP, 
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceList from './serviceList/index.vue';
@@ -99,6 +101,9 @@ export default {
     },
     filterBusinessUnit() {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
     stepError: {
       get() {
@@ -167,7 +172,7 @@ export default {
           workOrderItems: [
             ...serviceList
           ],
-          businessUnitId: this.filterBusinessUnit
+          companyId: this.filterCompany
         }
         if (this.data.update) {
           formatData.id = this.data.workOrderId;

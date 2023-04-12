@@ -9,6 +9,9 @@ export default {
      filterBusinessUnit() {
        return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     allowContractName() {
       return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
     },
@@ -119,7 +122,7 @@ export default {
               withoutContracts: true,
               adHocWorkOrders: true,
               customerStatusId: 1,
-              businessUnitId: this.filterBusinessUnit,
+              companyId: this.filterCompany,
             },
           },
           refresh: false,
@@ -128,7 +131,7 @@ export default {
           params: {
             filter: {
               contractStatusId: 1,
-              businessUnitId: this.filterBusinessUnit,
+              companyId: this.filterCompany,
             },
           },
           refresh: false,

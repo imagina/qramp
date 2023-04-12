@@ -114,8 +114,8 @@ export default function qRampStore() {
         state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOn);
         state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOff);
         if(state.isPassenger) {
-            state.flightBoundFormStatus.gateDestination = this.isData(data.gateDestination);
-            state.flightBoundFormStatus.gateOrigin = this.isData(data.gateOrigin);
+            state.flightBoundFormStatus.inboundGateArrival = this.isData(data.gateDestination);
+            state.flightBoundFormStatus.outboundGateDeparture = this.isData(data.gateOrigin);
         }
         
     }
@@ -133,8 +133,8 @@ export default function qRampStore() {
             boundScheduledDeparture: false,
         }
         if(state.isPassenger) {
-            status.gateDestination = false;
-            status.gateOrigin = false;
+            status.inboundGateArrival = false;
+            status.outboundGateDeparture = false;
         }
         state.flightBoundFormStatus = status;
     }
@@ -252,7 +252,6 @@ export default function qRampStore() {
             flight.gateDestination = items.gateDestination || '';
             flight.gateOrigin = items.gateOrigin || '';
           }
-          console.log(flight);
           dataTable.push(flight)
         })
         return dataTable;

@@ -202,7 +202,12 @@ import responsive from '../../_mixins/responsive.js'
 import tableFlight from '../modal/tableFlight.vue'
 import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
-import { BUSINESS_UNIT_PASSENGER , BUSINESS_UNIT_RAMP} from '../model/constants.js'
+import { 
+  BUSINESS_UNIT_PASSENGER , 
+  BUSINESS_UNIT_RAMP,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
+} from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 
 export default {
@@ -362,8 +367,11 @@ export default {
     isPassenger() {
      return qRampStore().getIsPassenger();
     },
-    filterBusinessUnit() {
+    filterCompany() {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
     filterGates() {
       return workOrderList().getGatesList().filter(item => item.stationId == this.form.stationId).map(item =>
@@ -455,7 +463,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.setupStations',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: 1, businessUnitId: this.filterBusinessUnit}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
           },
           acTypeId: {
@@ -477,7 +485,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.aircraftTypes',
               select: {label: 'model', id: 'id'},
-              requestParams: {filter: {status: 1, businessUnitId: this.filterBusinessUnit}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.acType'),
           },
@@ -521,7 +529,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airlines',
               select: {label: 'airlineName', id: 'id'},
-              requestParams: {filter: {status: 1, businessUnitId: this.filterBusinessUnit}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
@@ -563,7 +571,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
               select: {label: 'statusName', id: 'id'},
-              requestParams: {filter: {status: 1, businessUnitId: this.filterBusinessUnit}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.status'),
           },
@@ -585,7 +593,7 @@ export default {
               apiRoute: "apiRoutes.quser.users",
               select: { label: "fullName", id: "id"},
               filterByQuery: true,
-              requestParams: {filter: {businessUnitId: this.filterBusinessUnit}}
+              requestParams: {filter: {companyId: this.filterCompany}}
             },
           },
         },
@@ -628,7 +636,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh, businessUnitId: this.filterBusinessUnit}}
+              requestParams: {filter: {status: this.refresh, businessUnitId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.origin'),
           },
@@ -670,8 +678,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
-          gateDestination: {
-            name:'gateDestination',
+          inboundGateArrival: {
+            name:'inboundGateArrival',
             value: '',
             type: 'input',
             props: {
@@ -679,7 +687,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly:  this.disabledReadonly || this.flightBoundFormStatus.gateDestination,
+              readonly:  this.disabledReadonly || this.flightBoundFormStatus.inboundGateArrival,
               label: '*Gate Destination',
               clearable: true,
               color:"primary"
@@ -726,7 +734,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh, businessUnitId: this.filterBusinessUnit}}
+              requestParams: {filter: {status: this.refresh, businessUnitId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.destination'),
           },
@@ -768,8 +776,8 @@ export default {
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
-          gateOrigin: {
-            name:'gateOrigin',
+          outboundGateDeparture: {
+            name:'outboundGateDeparture',
             value: '',
             type: 'input',
             props: {
@@ -777,7 +785,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly:  this.disabledReadonly || this.flightBoundFormStatus.gateOrigin,
+              readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
               label: '*Gate Origin',
               clearable: true,
               color:"primary"
@@ -895,8 +903,8 @@ export default {
           this.flightBoundFormStatus.boundOriginAirportId = this.checkIfDataArrives(updateForm.inboundOriginAirportId);
           this.flightBoundFormStatus.boundDestinationAirport = this.checkIfDataArrives(updateForm.outboundDestinationAirportId);
           if(this.isPassenger) {
-            this.flightBoundFormStatus.gateDestination = this.checkIfDataArrives(updateForm.gateDestination);
-            this.flightBoundFormStatus.gateOrigin = this.checkIfDataArrives(updateForm.gateOrigin);
+            this.flightBoundFormStatus.inboundGateArrival = this.checkIfDataArrives(updateForm.inboundGateArrival);
+            this.flightBoundFormStatus.outboundGateDeparture = this.checkIfDataArrives(updateForm.outboundGateDeparture);
           }
           this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
           this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)
@@ -1044,13 +1052,16 @@ export default {
         gateDestination,
         gateOrigin,
       } = data;
+      console.log(data);
+      console.log(this.name);
       if(this.name.includes('outboundFlightNumber')){
         const destinationAirportId = destinationAirport?.id || null;
         this.$set(this.form, "outboundFlightNumber", ident)
         this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
         this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
         this.$set(this.form, "outboundTailNumber", registration)
-        if(this.isPassenger) this.$set(this.form, "gateDestination", gateDestination);
+        console.log(gateDestination);
+        if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
       } else {
         this.$set(this.form, "inboundFlightNumber", ident)
         const originAirportId = originAirport?.id || null;
@@ -1060,7 +1071,7 @@ export default {
         if(this.form.outboundTailNumber) {
           this.$set(this.form, "outboundTailNumber", registration);
         }
-        if(this.isPassenger) this.$set(this.form, "gateOrigin", gateOrigin);
+        if(this.isPassenger) this.$set(this.form, "outboundGateDeparture", gateOrigin);
       }
       qRampStore().validateStatusSelectedFlight(data);
     },
@@ -1149,7 +1160,7 @@ export default {
                 withoutContracts: true,
                 adHocWorkOrders: true,
                 customerStatusId: 1,
-                businessUnitId: this.filterBusinessUnit,
+                businessUnitId: this.filterCompany,
               }
             },
         }
@@ -1157,7 +1168,7 @@ export default {
             params: {
               filter: {
                 contractStatusId: 1,
-                businessUnitId: this.filterBusinessUnit,
+                businessUnitId: this.filterCompany,
               }
             },
         }

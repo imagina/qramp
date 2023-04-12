@@ -84,9 +84,12 @@ import {
   BUSINESS_UNIT_PASSENGER, 
   BUSINESS_UNIT_RAMP, 
   STATUS_DRAFT,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP,
   modelWorkOrder
 } from './model/constants.js';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
+
 
 export default {
   components: {
@@ -140,6 +143,9 @@ export default {
     },
     filterBusinessUnit() {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
   },
   methods: {
@@ -313,7 +319,7 @@ export default {
         const params = {params: { titleOffline: qRampStore().getTitleOffline() }};
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
-            {...this.form, businessUnitId: this.filterBusinessUnit},
+            {...this.form, companyId: this.filterCompany},
             params
         ).catch(error => {
           qRampStore().hideLoading();

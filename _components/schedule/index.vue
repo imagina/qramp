@@ -466,7 +466,7 @@ export default {
               select: { label: "customerName", id: "id" },
               requestParams: {
                   filter: {
-                    businessUnitId: this.filterBusinessUnit,
+                    companyId: this.filterCompany,
                   },
               },
             },
@@ -483,7 +483,7 @@ export default {
               select: { label: "fullName", id: "id" },
               requestParams: {
                   filter: {
-                    businessUnitId: this.filterBusinessUnit,
+                    companyId: this.filterCompany,
                   },
               },
             },
@@ -499,7 +499,7 @@ export default {
               select: { 'label': 'statusName', 'id': 'id' },
               requestParams: {
                   filter: {
-                    businessUnitId: this.filterBusinessUnit,
+                    companyId: this.filterCompany,
                   },
               },
             },
@@ -528,7 +528,7 @@ export default {
               select: { label: "name", id: "id" },
               requestParams: {
                   filter: {
-                    businessUnitId: this.filterBusinessUnit,
+                    companyId: this.filterCompany,
                   },
               },
             },
@@ -545,7 +545,7 @@ export default {
                 select: { label: 'name', id: 'id' },
                 requestParams: {
                   filter: {
-                    businessUnitId: this.filterBusinessUnit,
+                    companyId: this.filterCompany,
                   },
                 },
               },
@@ -573,6 +573,9 @@ export default {
     },
     filterBusinessUnit() {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
   },
   methods: {
@@ -945,12 +948,12 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
-        const businessUnitId = this.filterBusinessUnit;
+        const companyId = this.filterCompany
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
           {
             ...form,
-            businessUnitId,
+            companyId,
           }
         );
         return response;
