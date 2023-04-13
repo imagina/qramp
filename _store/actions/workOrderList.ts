@@ -19,6 +19,7 @@ import {
     WorkOrders, 
     WorkOrderStatusesContract 
 } from './@Contracts/workOrderList.contract';
+import { buildServiceList } from './services';
 
 const state = reactive<State>({
     operationTypeList: [],
@@ -225,6 +226,7 @@ export default function workOrderList(): WorkOrderList {
                 params: {
                     filter: {
                         companyId,
+                        "status":1
                     }
                 },
             }
@@ -248,6 +250,9 @@ export default function workOrderList(): WorkOrderList {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
+                        "withoutContracts":true,
+                        "adHocWorkOrders":true,
+                        "customerStatusId":1,
                         companyId,
                     }
                 },
@@ -274,6 +279,7 @@ export default function workOrderList(): WorkOrderList {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
+                        "contractStatusId": 1,
                         companyId,
                     }
                 },
@@ -390,13 +396,14 @@ export default function workOrderList(): WorkOrderList {
                             field: "id",
                             way: "desc"
                         },
-                        withoutDefaultInclude: true
+                        withoutDefaultInclude: true,
                     },
                     take: 200,
                     page: 1
                 },
             }
             const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
+            console.log(response)
             const data = response;
             setDataWorkOrderList(data);
             return data;
@@ -410,6 +417,7 @@ export default function workOrderList(): WorkOrderList {
      * The function getAllList() returns a Promise that resolves to void.
      */
     async function getAllList(): Promise<void> {
+        console.log("XDDDDDDDDDD")
         Promise.all([
             getWorkOrders(),
             getStation(),
@@ -419,6 +427,7 @@ export default function workOrderList(): WorkOrderList {
             getFlightStatuses(),
             getWorkOrderStatuses(),
             getGates(),
+            buildServiceList()
         ]);
     }
 
