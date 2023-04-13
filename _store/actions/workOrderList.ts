@@ -388,7 +388,7 @@ export default function workOrderList(): WorkOrderList {
                         businessUnitId,
                         date: {
                             field: "inbound_scheduled_arrival",
-                            type: "currentMonth",
+                            type: "15DaysAroundToday",
                             from: null,
                             to: null
                         },
