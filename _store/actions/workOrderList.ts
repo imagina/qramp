@@ -441,6 +441,7 @@ export default function workOrderList(): WorkOrderList {
                 refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
+                    include: 'responsible',
                     filter: {
                         businessUnitId,
                         date: {

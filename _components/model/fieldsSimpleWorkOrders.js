@@ -1,13 +1,13 @@
 import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
-import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP} from '../model/constants.js';
+import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP } from '../model/constants.js';
 export default {
   computed: {
     isPassenger() {
       return qRampStore().getIsPassenger();
-     },
-     filterBusinessUnit() {
-       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterBusinessUnit() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
       return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -88,7 +88,7 @@ export default {
             loadOptions: {
               apiRoute: "apiRoutes.qsetupagione.setupStations",
               select: { label: "stationName", id: "id" },
-              requestParams: { filter: { status: 1 } },
+              requestParams: { filter: { status: 1, companyId: this.filterCompany, "allTranslations": true } },
             },
           },
           responsibleId: {
@@ -113,7 +113,7 @@ export default {
       };
     },
   },
-  methods:{
+  methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
         const custemerParams = {
@@ -147,6 +147,6 @@ export default {
 
         return resolve(customerList);
       });
-  }
+    }
   }
 };

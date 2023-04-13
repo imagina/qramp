@@ -209,6 +209,7 @@ import {
   COMPANY_RAMP
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
+import flightStore from './store';
 
 export default {
   props:{
@@ -301,6 +302,9 @@ export default {
     }
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     operationTypeList() {
       return workOrderList().getOperationTypeList()
     },
@@ -588,6 +592,7 @@ export default {
               label: '*Responsible',
               clearable: true,
               color: "primary",
+              options: this.isAppOffline ? flightStore().getReponsible() : []
             },
             loadOptions: {
               apiRoute: "apiRoutes.quser.users",
