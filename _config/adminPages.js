@@ -71,7 +71,7 @@ export default {
       refresh: true,
     }
   },*/
-  /*workOrderStatuses: {
+  workOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,
     authenticated: true,
@@ -85,7 +85,7 @@ export default {
     subHeader: {
       refresh: true,
     }
-  },*/
+  },
   oagStations: {
     //permission: 'isite.logs.manage',
     activated: false,
