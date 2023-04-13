@@ -93,7 +93,12 @@
 import responsive from '../../_mixins/responsive.js'
 import qRampStore from '../../_store/qRampStore.js'
 import cargoStore from './store/cargo.ts';
-import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP} from '../model/constants.js'
+import {
+  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_RAMP,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
+} from '../model/constants.js'
 
 export default {
   props:{
