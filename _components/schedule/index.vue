@@ -286,6 +286,8 @@ import {
   STATUS_SUBMITTED,
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
