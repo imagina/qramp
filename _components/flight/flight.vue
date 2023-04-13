@@ -636,7 +636,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh, businessUnitId: this.filterCompany}}
+              requestParams: {filter: {status: this.refresh, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.origin'),
           },
@@ -734,7 +734,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh, businessUnitId: this.filterCompany}}
+              requestParams: {filter: {status: this.refresh, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.destination'),
           },
@@ -865,7 +865,7 @@ export default {
       this.currentDate()
       this.updateData()
     },
-    updateData() {
+    async updateData() {
       if(this.dataCompoment && Object.keys(this.dataCompoment).length > 0) {
         this.update = true
         const updateForm = this.$clone(this.dataCompoment)
@@ -876,15 +876,10 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        const label = (this.allowContractName && updateForm.contractId) ? `${updateForm.customerName} (${updateForm.contractName})` : updateForm.customerName;
-        this.selectCustomerComputed = {
-          id: updateForm.customerId,
-          value: updateForm.customerName,
-          label: updateForm.adHoc ? `${label} (Ad Hoc)`: label,
-          contractId: updateForm.contractId,
-          contractName: updateForm.contractName,
-        }
-        this.setCustomerForm();
+        const customer = workOrderList().getCustomerWithContractLists().find(item => item.customerId == updateForm.customerId) || {};
+        customer.label = updateForm.adHoc ? `${customer.label} (Ad Hoc)`: customer.label;
+        this.selectCustomerComputed = customer;
+        await this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gateId = updateForm.gateId
         this.form.operationTypeId = updateForm.operationTypeId
@@ -1160,7 +1155,7 @@ export default {
                 withoutContracts: true,
                 adHocWorkOrders: true,
                 customerStatusId: 1,
-                businessUnitId: this.filterCompany,
+                companyId: this.filterCompany,
               }
             },
         }
@@ -1168,7 +1163,7 @@ export default {
             params: {
               filter: {
                 contractStatusId: 1,
-                businessUnitId: this.filterCompany,
+                companyId: this.filterCompany,
               }
             },
         }

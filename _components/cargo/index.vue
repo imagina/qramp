@@ -288,7 +288,7 @@ export default {
         refresh: true,
         params: {
           filter: {
-            businessUnitId: this.filterCompany
+            companyId: this.filterCompany
           },
         }
       };

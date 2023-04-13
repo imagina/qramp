@@ -4,7 +4,9 @@ import {
     STATUS_SUBMITTED,
     modelFlightBoundFormStatus,
     BUSINESS_UNIT_PASSENGER,
-    BUSINESS_UNIT_RAMP
+    BUSINESS_UNIT_RAMP,
+    COMPANY_PASSENGER,
+    COMPANY_RAMP
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from '@imagina/qcrud/_services/baseService.js'
@@ -375,13 +377,13 @@ export default function qRampStore() {
     async function getFlights() {
         try {
           const isPassenger = getIsPassenger();
-          const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+          const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
           const workOrderId = state.flightId;
           const params = {
             refresh: true, 
             params: {
                 filter: {
-                    businessUnitId,
+                    companyId,
                 }
             }
           };

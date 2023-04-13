@@ -66,6 +66,7 @@ export default {
   },
   async created() {
     await workOrderList().getAllList();
+    await workOrderList().getCustomerWithContractList()
   },
   beforeDestroy() {
     qRampStore().setFlightList([]);
@@ -618,6 +619,7 @@ export default {
     },
     showWorkOrder(data) {
       if(this.isAppOffline) {
+        console.log(data);
         this.openModal(data);
         return; 
       }

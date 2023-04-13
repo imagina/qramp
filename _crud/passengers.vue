@@ -325,7 +325,7 @@ export default {
             include: 'responsible',
             filter: {
               withoutDefaultInclude: true,
-              businessUnitId: BUSINESS_UNIT_PASSENGER,
+              companyId: COMPANY_PASSENGER,
             },
           },
           actions: [

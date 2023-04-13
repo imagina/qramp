@@ -407,6 +407,7 @@ export interface State {
     workOrderStatusesList: WorkOrderStatusesContract[];
     gatesList: Gates[];
     workOrderList: WorkOrders;
+    customerWithContractList: any[];
 }
 
 export interface WorkOrderList {
@@ -433,4 +434,7 @@ export interface WorkOrderList {
     getDataWorkOrderList: () => WorkOrders;
     setDataWorkOrderList: (data: WorkOrders) => void;
     getWorkOrders: () => Promise<WorkOrders | void>;
+    getCustomerWithContract: () =>  Promise<void>;
+    setCustomerWithContractLists: (data: any) => void;
+    getCustomerWithContractLists: () => any;
 }

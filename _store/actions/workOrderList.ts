@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import Vue, { reactive } from 'vue';
 import baseService from '@imagina/qcrud/_services/baseService.js'
 import qRampStore from '../qRampStore.js'
 import { 
@@ -20,6 +20,7 @@ import {
     WorkOrderStatusesContract 
 } from './@Contracts/workOrderList.contract';
 import { buildServiceList } from './services';
+import factoryCustomerWithContracts from '../../_components/factories/factoryCustomerWithContracts.js'
 
 const state = reactive<State>({
     operationTypeList: [],
@@ -29,6 +30,7 @@ const state = reactive<State>({
     flightStatusesList: [],
     workOrderStatusesList: [],
     gatesList: [],
+    customerWithContractList: [],
     /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
     workOrderList: {
         data: [],
@@ -57,7 +59,14 @@ export default function workOrderList(): WorkOrderList {
      * This function returns the workOrderList property of the state object.
      * @returns the state.workOrderList.
      */
-    
+    function getCustomerWithContractLists() {
+        return state.customerWithContractList;
+    }
+
+    function setCustomerWithContractLists(data: any) {
+        return state.customerWithContractList = data;
+    }
+
     function getDataWorkOrderList(): WorkOrders {
         return state.workOrderList;
     }
@@ -412,6 +421,41 @@ export default function workOrderList(): WorkOrderList {
         }
     }
 
+    function getCustomerWithContract(): Promise<void> {
+        return new Promise(async(resolve) => {
+          const allowContractName = Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name');
+          const isPassenger = qRampStore().getIsPassenger();
+          const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+          const custemerParams = {
+              params: {
+                filter: {
+                  withoutContracts: true,
+                  adHocWorkOrders: true,
+                  customerStatusId: 1,
+                  companyId,
+                }
+              },
+          }
+          const contractParams = {
+              params: {
+                filter: {
+                  contractStatusId: 1,
+                  companyId,
+                }
+              },
+          }
+          const customersData = await Promise.all([
+            baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
+            baseService.index('apiRoutes.qramp.setupContracts', contractParams)
+          ]);
+          
+          const customerList = factoryCustomerWithContracts(customersData, allowContractName);
+          state.customerWithContractList = customerList;
+          console.log(state.customerWithContractList);
+          return resolve(customerList);
+        })
+    }
+
 
     /**
      * The function getAllList() returns a Promise that resolves to void.
@@ -498,6 +542,9 @@ export default function workOrderList(): WorkOrderList {
         getGates,
         getDataWorkOrderList,
         setDataWorkOrderList,
-        getWorkOrders
+        getWorkOrders,
+        getCustomerWithContract,
+        getCustomerWithContractLists,
+        setCustomerWithContractLists
     }
 }
