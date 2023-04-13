@@ -450,8 +450,7 @@ export default function workOrderList(): WorkOrderList {
           ]);
           
           const customerList = factoryCustomerWithContracts(customersData, allowContractName);
-          state.customerWithContractList = customerList;
-          console.log(state.customerWithContractList);
+          setCustomerWithContractLists(customerList);
           return resolve(customerList);
         })
     }

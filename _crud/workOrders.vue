@@ -65,8 +65,10 @@ export default {
     },
   },
   async created() {
-    await workOrderList().getAllList();
-    await workOrderList().getCustomerWithContractList()
+    this.$nextTick(async () => {
+      await workOrderList().getAllList();
+      await workOrderList().getCustomerWithContract()
+    })
   },
   beforeDestroy() {
     qRampStore().setFlightList([]);
