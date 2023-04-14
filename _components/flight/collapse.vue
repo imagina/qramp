@@ -1,0 +1,81 @@
+<template>
+    <div 
+      :class="{
+        'expandible-ramp-ctn': expandible
+      }">
+      <q-expansion-item
+        v-model="expandible"
+        header-class="
+          text-primary 
+          tw-rounded-t-md 
+          tw-text-base 
+          boundColor 
+          tw-p-2 
+          text-center 
+          text-weight-bold 
+          tw-mb-4"
+      >
+        <template v-slot:header>
+          <div class="tw-w-full">
+            <p>
+              {{ title }}
+            </p>
+            <div>
+              <p>Flight Number: {{ flightNumber }}</p>
+              <div v-if="isComplete" >
+                <p class="tw-text-green-500">
+                <i
+                  class="fa-solid fa-circle" 
+                />
+                  Completed
+                </p>
+              </div>
+            </div>
+          </div>
+	      </template>
+        <div>
+          <slot />
+        </div>
+      </q-expansion-item>
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted } from 'vue'
+
+export default defineComponent({
+  props: {
+    title: {
+      type: String,
+      default: () => '',
+    },
+    flightNumber: {
+      type: String,
+      default: () => {}
+    },
+    isComplete: {
+      type: Boolean,
+      default: () => false,
+    }
+  },
+  setup (props) {
+    const expandible = ref<boolean>(false);
+    const flightNumber = computed((): string => props.flightNumber);
+    const isComplete = computed(() => props.isComplete);
+    onMounted(() => {
+      expandible.value = !props.isComplete;
+    })
+    return {
+      expandible, 
+      flightNumber, 
+      isComplete
+    }
+  }
+})
+</script>
+
+<style>
+.expandible-ramp-ctn .q-expansion-item {
+  @apply tw-border tw-border-gray-100 tw-rounded-t-md;
+}
+</style>
