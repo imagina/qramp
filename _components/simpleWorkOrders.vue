@@ -89,6 +89,7 @@ import {
   modelWorkOrder
 } from './model/constants.js';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
+import workOrderList from '../_store/actions/workOrderList.ts'
 
 
 export default {
@@ -336,8 +337,10 @@ export default {
             id: offlineId
           };
           cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", offlineWorkOrder);
+        }else{
+          console.log("GET WO")
+          await workOrderList().getWorkOrders(true, true)
         }
-        
         qRampStore().hideLoading();
         return response;
       } catch (error) {

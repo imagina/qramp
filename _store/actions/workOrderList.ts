@@ -21,6 +21,7 @@ import {
 } from './@Contracts/workOrderList.contract';
 import { buildServiceList } from './services';
 import factoryCustomerWithContracts from '../../_components/factories/factoryCustomerWithContracts.js'
+import cache from '@imagina/qsite/_plugins/cache.js';
 
 const state = reactive<State>({
     operationTypeList: [],
@@ -227,11 +228,12 @@ export default function workOrderList(): WorkOrderList {
      * objects or void.
      * @returns a Promise.
      */
-    async function getOperationType(): Promise<OperationType[] | void> {
+    async function getOperationType(refresh = false): Promise<OperationType[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -253,11 +255,12 @@ export default function workOrderList(): WorkOrderList {
      * or void.
      * @returns a Promise.
      */
-    async function getStation(): Promise<StationContract[] | void> {
+    async function getStation(refresh = false): Promise<StationContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -276,11 +279,12 @@ export default function workOrderList(): WorkOrderList {
         }
     }
     //"status":1,"companyId":26,"allTranslations":true
-    async function getAirlines() {
+    async function getAirlines(refresh = false) {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 params: {
                     filter: { status: 1, companyId, "allTranslations": true }
                 },
@@ -297,11 +301,12 @@ export default function workOrderList(): WorkOrderList {
      * Requests a list of customers from the server based on user type.
      * @returns A promise that will resolve with the array of CustomerContract objects or void if there's an error
      */
-    async function getCustomer(): Promise<CustomerContract[] | void> {
+    async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -326,11 +331,12 @@ export default function workOrderList(): WorkOrderList {
      * or void.
      * @returns The data is being returned as an array of objects.
      */
-    async function getContract(): Promise<any[] | void> {
+    async function getContract(refresh = false): Promise<any[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -353,11 +359,12 @@ export default function workOrderList(): WorkOrderList {
      * store.
      * @returns a promise.
      */
-    async function getFlightStatuses(): Promise<FlightStatusContract[] | void> {
+    async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -379,11 +386,12 @@ export default function workOrderList(): WorkOrderList {
      * the store.
      * @returns The data is being returned.
      */
-    async function getWorkOrderStatuses(): Promise<WorkOrderStatusesContract[] | void> {
+    async function getWorkOrderStatuses(refresh = false): Promise<WorkOrderStatusesContract[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -406,11 +414,12 @@ export default function workOrderList(): WorkOrderList {
      * "getGates() is an async function that returns a Promise of Gates[] or void"</code>
      * @returns The data is being returned as an array of objects.
      */
-    async function getGates(): Promise<Gates[] | void> {
+    async function getGates(refresh = false): Promise<Gates[] | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
@@ -433,7 +442,7 @@ export default function workOrderList(): WorkOrderList {
      * then sets the dataWorkOrderList to the response and returns the data.
      * @returns The data is being returned as an array of objects.
      */
-    async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
+    async function getWorkOrders(refresh = false, updateOfflineList = false): Promise<WorkOrders | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
@@ -461,21 +470,24 @@ export default function workOrderList(): WorkOrderList {
                 },
             }
             const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
-            console.log(response)
             const data = response;
             setDataWorkOrderList(data);
+            if (updateOfflineList) {
+                await cache.set('apiRoutes.qramp.workOrders::offline', data)
+            }
             return data;
         } catch (error) {
             console.log(error);
         }
     }
 
-    function getCustomerWithContract(): Promise<void> {
+    function getCustomerWithContract(refresh = false): Promise<void> {
         return new Promise(async (resolve) => {
             const allowContractName = Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name');
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const custemerParams = {
+                refresh,
                 params: {
                     filter: {
                         withoutContracts: true,
@@ -504,11 +516,12 @@ export default function workOrderList(): WorkOrderList {
         })
     }
 
-    async function getACTypes() {
+    async function getACTypes(refresh = false) {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 params: {
                     filter: {
                         "status": 1,
@@ -526,11 +539,12 @@ export default function workOrderList(): WorkOrderList {
         }
     }
 
-    async function getAirports() {
+    async function getAirports(refresh = false) {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
+                refresh,
                 params: {
                     filter: {
                         "status": 1,
@@ -552,21 +566,20 @@ export default function workOrderList(): WorkOrderList {
     /**
      * The function getAllList() returns a Promise that resolves to void.
      */
-    async function getAllList(): Promise<void> {
-        console.log("XDDDDDDDDDD")
+    async function getAllList(refresh = false): Promise<void> {
         Promise.all([
-            getWorkOrders(),
-            getStation(),
-            getOperationType(),
-            getCustomer(),
-            getContract(),
-            getFlightStatuses(),
-            getWorkOrderStatuses(),
-            getGates(),
-            buildServiceList(),
-            getAirlines(),
-            getACTypes(),
-            getAirports()
+            getWorkOrders(refresh),
+            getStation(refresh),
+            getOperationType(refresh),
+            getCustomer(refresh),
+            getContract(refresh),
+            getFlightStatuses(refresh),
+            getWorkOrderStatuses(refresh),
+            getGates(refresh),
+            getAirlines(refresh),
+            getACTypes(refresh),
+            getAirports(refresh),
+            buildServiceList()
         ]);
     }
 
