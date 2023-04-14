@@ -133,7 +133,7 @@
         <div>
           <collapse
             :title="$tr('isite.cms.label.outbound')"
-            :flightNumber="form.inboundFlightNumber"
+            :flightNumber="form.outboundFlightNumber"
             :isComplete="completedFormOutBound"
           > 
             <div
@@ -890,9 +890,7 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        console.log(updateForm.customerId);
         const customer = workOrderList().getCustomerWithContractLists().find(item => item.customerId == updateForm.customerId) || {};
-        console.log(customer, workOrderList().getCustomerWithContractLists());
         customer.label = updateForm.adHoc ? `${customer.label} (Ad Hoc)`: customer.label;
         this.selectCustomerComputed = customer;
         await this.setCustomerForm();
@@ -929,6 +927,8 @@ export default {
           if(this.form.inboundBlockIn && this.form.outboundBlockOut) {
             this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
           }
+          this.completeFormInbound = this.validateInbound('inboundLeft');
+          this.completedFormOutBound = this.validateInbound('outboundRight');
         },1000)
       }
     },
