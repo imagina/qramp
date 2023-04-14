@@ -98,59 +98,63 @@
         v-if="isbound[0]"
         class="col-12 col-md-6"
       >
-        <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
-            <div>{{$tr('isite.cms.label.inbound')}}</div>
-          </div>
-          <div
-            v-for="(field, keyField) in formFields.inboundLeft"
-            class="tw-px-4"
+        <div>
+          <collapse
+            :title="$tr('isite.cms.label.inbound')"
+            :flightNumber="form.inboundFlightNumber"
+            :isComplete="completeFormInbound"
           >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-              <dynamic-field
-                :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
-                :id="keyField"
-                :field="field"
-                :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                v-model="form[keyField]"
-                @enter="search(field)"
-                :ref="`${keyField}`"
-                @input="zanetizeData(keyField)"
-              />
-            </label>
-            <hr v-if="readonly" class="label-container"/>
-          </div>
+            <div
+              v-for="(field, keyField) in formFields.inboundLeft"
+              class="tw-px-4"
+            >
+              <div :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+                <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+                <dynamic-field
+                  :key="keyField"
+                  :class="`${readonly ? 'col-7': ''}`"
+                  :id="keyField"
+                  :field="field"
+                  :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
+                  v-model="form[keyField]"
+                  @enter="search(field)"
+                  :ref="`${keyField}`"
+                  @input="zanetizeData(keyField)"
+                />
+              </div>
+            </div>
+          </collapse>
         </div>
       </div>
       <div
         v-if="isbound[1]" 
         class="col-12 col-md-6"
       >
-        <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
-            <div>{{$tr('isite.cms.label.outbound')}}</div>
-          </div>
-          <div
-            v-for="(field, keyField) in formFields.outboundRight"
-            class="tw-px-4"
-          >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-              <dynamic-field
-                :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
-                :id="keyField"
-                :field="field"
-                :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                v-model="form[keyField]"
-                @enter="search(field)"
-                @input="zanetizeData(keyField)"
-              />
-            </label>
-            <hr v-if="readonly" class="label-container"/>
-          </div>
+        <div>
+          <collapse
+            :title="$tr('isite.cms.label.outbound')"
+            :flightNumber="form.outboundFlightNumber"
+            :isComplete="completedFormOutBound"
+          > 
+            <div
+              v-for="(field, keyField) in formFields.outboundRight"
+              class="tw-px-4"
+            >
+              <div :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+                <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+                <dynamic-field
+                  :key="keyField"
+                  :class="`${readonly ? 'col-7': ''}`"
+                  :id="keyField"
+                  :field="field"
+                  :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
+                  v-model="form[keyField]"
+                  @enter="search(field)"
+                  @input="zanetizeData(keyField)"
+                />
+              </div>
+            </div>
+          </collapse>
         </div>
       </div>
 
@@ -209,6 +213,7 @@ import {
   COMPANY_RAMP
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
+import collapse from './collapse.vue'
 import flightStore from './store';
 
 export default {
@@ -220,7 +225,7 @@ export default {
       default:()=>{}
     }
   },
-  components:{tableFlight},
+  components:{tableFlight, collapse},
   mixins:[responsive],
   created() {
     this.$nextTick(function () {
@@ -267,6 +272,8 @@ export default {
       newCustumerAdHoc: [],
       differenceHour: 0,
       responsibleList: [],
+      completeFormInbound: false,
+      completedFormOutBound: false,
     }
   },
   watch:{
@@ -378,12 +385,14 @@ export default {
       return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
     filterGates() {
-      return workOrderList().getGatesList().filter(item => item.stationId == this.form.stationId).map(item =>
-        ({
-          value: item.id,
-          label: item.name
-        })
-      );
+      return workOrderList()
+        .getGatesList()
+        .filter(item => item.stationId == this.form.stationId)
+        .map(item =>
+          ({
+            value: item.id,
+            label: item.name
+          }));
     },
     validateRulesBlock() {
       const rules = !this.isPassenger ? {
@@ -881,9 +890,7 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        console.log(updateForm.customerId);
         const customer = workOrderList().getCustomerWithContractLists().find(item => item.customerId == updateForm.customerId) || {};
-        console.log(customer, workOrderList().getCustomerWithContractLists());
         customer.label = updateForm.adHoc ? `${customer.label} (Ad Hoc)`: customer.label;
         this.selectCustomerComputed = customer;
         await this.setCustomerForm();
@@ -920,6 +927,8 @@ export default {
           if(this.form.inboundBlockIn && this.form.outboundBlockOut) {
             this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
           }
+          this.completeFormInbound = this.validateInbound('inboundLeft');
+          this.completedFormOutBound = this.validateInbound('outboundRight');
         },1000)
       }
     },
@@ -1263,11 +1272,23 @@ export default {
       return item ? [{id: String(item.id), label: item.fullName, value: item.id}]: [];
     },
     zanetizeData(key) {
+        this.completeFormInbound = this.validateInbound('inboundLeft');
+        this.completedFormOutBound = this.validateInbound('outboundRight');
         if(key === 'inboundFlightNumber' || key === 'outboundFlightNumber') {
           if(this.form[key]) {
             this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');
           }
         }
+    },
+    validateInbound(keyForm) {
+      const dataForm = [];
+      Object.keys(this.formFields[keyForm]).forEach(key => {
+        dataForm.push(this.checkIfDataArrives(this.form[key]));
+      });
+      if(!this.isPassenger) {
+        dataForm.pop();
+      }
+      return dataForm.every(item => item === true);
     },
   },
 }
