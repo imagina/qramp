@@ -214,6 +214,7 @@ import {
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
+import flightStore from './store';
 
 export default {
   props:{
@@ -308,6 +309,9 @@ export default {
     }
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     operationTypeList() {
       return workOrderList().getOperationTypeList()
     },
@@ -470,7 +474,7 @@ export default {
               color:"primary"
             },
             loadOptions: {
-              apiRoute: 'apiRoutes.qramp.setupStations',
+              apiRoute: 'apiRoutes.qsetupagione.setupStations',
               select: {label: 'fullName', id: 'id'},
               requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
@@ -538,7 +542,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airlines',
               select: {label: 'airlineName', id: 'id'},
-              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany, "allTranslations":true}}
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
@@ -597,6 +601,7 @@ export default {
               label: '*Responsible',
               clearable: true,
               color: "primary",
+              options: this.isAppOffline ? flightStore().getReponsible() : []
             },
             loadOptions: {
               apiRoute: "apiRoutes.quser.users",

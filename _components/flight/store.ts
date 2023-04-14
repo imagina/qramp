@@ -41,9 +41,11 @@ export interface FormContarct {
     customer?: any;
     customCustomerName?: string;
     contract?: any;
+    responsible?: any;
 }
 export interface StateContarct {
     form: FormContarct;
+    responsibles: any,
 }
 
 export interface FlightStoreContract {
@@ -51,6 +53,7 @@ export interface FlightStoreContract {
     setForm(flight: FormContarct): void,
     reset(): void,
     payload(): void,
+    getReponsible(): any;
 }
 
 const state = reactive<StateContarct>({
@@ -91,6 +94,9 @@ const state = reactive<StateContarct>({
         contractId: null,
         contractName: null,
     },
+    responsibles: {
+
+    }
 });
 /**
  * Creates a FlightStore object.
@@ -150,6 +156,7 @@ export default function flightStore(): FlightStoreContract {
         state.form.customerName = customerName || customCustomerName;
         state.form.contractId = flight.contractId ? flight.contractId : null;
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
+        state.responsibles = flight?.responsible ? [{value: flight.responsible.id, label: flight.responsible.fullName}] : [];
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;
             state.form.outboundGateDeparture = flight.outboundGateDeparture || null;
@@ -160,6 +167,10 @@ export default function flightStore(): FlightStoreContract {
     *
     * @returns {void}
     */
+    function getReponsible(){
+        console.log(state.responsibles)
+        return state.responsibles;
+    }
     function payload(): void {
 
     }
@@ -175,5 +186,6 @@ export default function flightStore(): FlightStoreContract {
         setForm,
         reset,
         payload,
+        getReponsible
     }
 }
