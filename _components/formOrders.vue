@@ -48,6 +48,7 @@ import iRemarks from './remarks/index.vue'
 import iSignature from '../_components/signature.vue';
 import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
+import workOrderList from '../_store/actions/workOrderList';
 
 export default {
   components: {
@@ -78,6 +79,9 @@ export default {
     }
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
@@ -187,6 +191,7 @@ export default {
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
             }, 1000);
+            if (!isAppOffline) await workOrderList().getWorkOrders(true, true);
             qRampStore().hideLoading();
           }
         },
@@ -204,6 +209,7 @@ export default {
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
             }, 1000);
+            if (!isAppOffline) await workOrderList().getWorkOrders(true, true);
             qRampStore().hideLoading();
           }
         },

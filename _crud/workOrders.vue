@@ -62,7 +62,8 @@ export default {
   },
   async created() {
     this.$nextTick(async () => {
-      await workOrderList().getAllList();
+      let updateOfflineList = await this.$cache.get.item('updateOfflineList') || false;
+      await workOrderList().getAllList(updateOfflineList);
       await workOrderList().getCustomerWithContract()
     })
   },
