@@ -317,12 +317,11 @@ export default {
     async saveRequestSimpleWorkOrder() {
       try {
         qRampStore().showLoading();
-        const params = {params: { titleOffline: qRampStore().getTitleOffline() }};
+        console.log("Aquí ?")
         const offlineId = 'work-order-' + this.$uid();
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
-            {...this.form, offlineId, companyId: this.filterCompany},
-            params
+            {...this.form, offlineId, titleOffline: qRampStore().getTitleOffline(), companyId: this.filterCompany},
         ).catch(error => {
           qRampStore().hideLoading();
         });
