@@ -191,7 +191,7 @@ export default {
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
             }, 1000);
-            if (!isAppOffline) await workOrderList().getWorkOrders(true, true);
+            if (!this.isAppOffline) await workOrderList().getWorkOrders(true, true);
             qRampStore().hideLoading();
           }
         },
@@ -209,7 +209,7 @@ export default {
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
             }, 1000);
-            if (!isAppOffline) await workOrderList().getWorkOrders(true, true);
+            if (!this.isAppOffline) await workOrderList().getWorkOrders(true, true);
             qRampStore().hideLoading();
           }
         },
