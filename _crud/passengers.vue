@@ -24,6 +24,7 @@ import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
+import workOrderList from '../_store/actions/workOrderList.ts'
 
 export default {
   name: 'RampCrud',
@@ -53,6 +54,13 @@ export default {
         this.areaId = this.$filter.values.areaId;
       }
     }
+  },
+  async created() {
+    this.$nextTick(async () => {
+      await qRampStore().setIsPassenger(true);
+      await workOrderList().getAllList();
+      await workOrderList().getCustomerWithContract()
+    })
   },
   beforeDestroy() {
     qRampStore().setFlightList([]);
@@ -115,7 +123,11 @@ export default {
               name: 'customer',
               label: this.$tr('isite.cms.label.customer'),
               field: item => item.customCustomerName || item.customer,
-              format: val => this.getCustomerName(val),
+              formatAsync: async item => {
+                const response = await workOrderList().getCustomerList()
+                  .find(customer => customer.id === item.customerId) || {};
+                return `${response.customerName || '-'}`;
+              },
               align: 'left'
             },
             {
@@ -139,11 +151,19 @@ export default {
               label: 'Flight Status',
               field: "flightStatus",
               align: "left",
-              format: item => item ? item.name  : "",
-              formatColumn: row => ({
-                bgTextColor: row.flightStatus ? `tw-bg-${row.flightStatus.color}` : ''
-              }),
-               action: (item) => this.getFlightMap(item),
+              formatColumn: row => {
+                const response = workOrderList().getFlightStatusesList()
+                  .find(flightStatus => flightStatus.id === row.flightStatusId) || {};
+                return {
+                  bgTextColor: response && response.color ? `tw-bg-${response.color}` : ''
+                }
+              },
+              formatAsync: async item => {
+                const response = await workOrderList().getFlightStatusesList()
+                  .find(flightStatus => flightStatus.id === item.flightStatusId) || {};
+                return `${response.name || '-'}`;
+              },
+              action: (item) => this.getFlightMap(item),
             },
             {
               name: "inboundFlightNumber",
@@ -186,21 +206,24 @@ export default {
               name: 'statusName',
               label: this.$tr('isite.cms.form.status'),
               field: 'workOrderStatus',
-              format: (val, item) => val ? val.statusName + (item.needToBePosted ? "(Posting)" : "") : '-',
-              align: 'left'
-            },
-            {
-              name: 'operationType',
-              label: 'Operation Type',
-              field: 'operationType',
-              format: val => val ? val.operationName : '-',
+              formatAsync: async item => {
+                const response = await workOrderList().getWorkOrderStatusesList()
+                  .find(status => status.id === item.statusId) || {};
+                const data = response ? response.statusName + (item.needToBePosted ? "(Posting)" : "") : '-'
+                return `${data}`;
+              },
               align: 'left'
             },
             {
               name: 'station',
               label: 'Station',
-              field: 'station',
-              format: val => val ? val.stationName : '-',
+              field: 'stationId',
+              formatAsync: async item => {
+                if (!item.stationId) return '-';
+                const response = await workOrderList().getStationList()
+                  .find(station => station.id === item.stationId) || {};
+                return `${response.fullName || '-'}`;
+              },
               align: 'left'
             },
             {
@@ -325,7 +348,7 @@ export default {
             include: 'responsible',
             filter: {
               withoutDefaultInclude: true,
-              companyId: COMPANY_PASSENGER,
+              businessUnitId: BUSINESS_UNIT_PASSENGER,
             },
           },
           actions: [
