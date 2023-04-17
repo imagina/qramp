@@ -1064,6 +1064,8 @@ export default {
         estimatedOn,
         gateDestination,
         gateOrigin,
+        actualIn,
+        actualOut,
       } = data;
       if(this.isbound[0]){
         const destinationAirportId = destinationAirport?.id || null;
@@ -1083,6 +1085,14 @@ export default {
           this.$set(this.form, "outboundTailNumber", registration);
         }
         if(this.isPassenger) this.$set(this.form, "outboundGateDeparture", gateOrigin);
+      }
+      if(this.isPassenger) {
+        this.$set(this.form, "inboundBlockIn", this.dateFormatterFull(actualIn))
+        this.$set(this.form, "outboundBlockOut", this.dateFormatterFull(actualOut))
+        this.changeDate({
+            name: 'outboundBlockOut'
+        });
+        
       }
       qRampStore().validateStatusSelectedFlight(data);
     },
