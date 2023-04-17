@@ -217,8 +217,13 @@ export default {
             {
               name: 'station',
               label: 'Station',
-              field: 'station',
-              format: val => val ? val.stationName : '-',
+              field: 'stationId',
+              formatAsync: async item => {
+                if (!item.stationId) return '-';
+                const response = await workOrderList().getStationList()
+                  .find(station => station.id === item.stationId) || {};
+                return `${response.fullName || '-'}`;
+              },
               align: 'left'
             },
             {

@@ -259,15 +259,16 @@ export default function workOrderList(): WorkOrderList {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const filterRamp = isPassenger ? {companyId} : {
+                "status": 1,
+                companyId,
+                "allTranslations": true
+            };
             const params = {
                 refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
-                    filter: {
-                        "status": 1,
-                        companyId,
-                        "allTranslations": true
-                    }
+                    filter: {...filterRamp}
                 },
             }
             const response = await baseService.index('apiRoutes.qsetupagione.setupStations', params);
@@ -393,15 +394,16 @@ export default function workOrderList(): WorkOrderList {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const filterRamp = isPassenger ? {companyId} : {
+                "status": 1,
+                companyId,
+                "allTranslations": true
+            }
             const params = {
                 refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
-                    filter: {
-                        "status": 1,
-                        companyId,
-                        "allTranslations": true
-                    }
+                    filter: {...filterRamp}
                 },
             }
             const response = await baseService.index('apiRoutes.qramp.workOrderStatuses', params);
