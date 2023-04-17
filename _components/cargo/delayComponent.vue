@@ -69,14 +69,7 @@ export default defineComponent({
       },
     });
 
-    const delayList = computed({
-      get() {
-        return cargoStore().getDelayList();
-      },
-      set(value) {
-        cargoStore().setDelayList(value);
-      },
-    });
+    const delayList = computed(() => cargoStore().getDelayList());
     const filterCompany = computed(() =>
       isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP
     );
