@@ -619,7 +619,7 @@ export default {
         },
         data: item,
       })
-
+      console.log(titleModal);
       qRampStore().setTitleOffline(titleModal);
     },
     showWorkOrder(data) {
