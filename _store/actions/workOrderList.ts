@@ -301,13 +301,16 @@ export default function workOrderList(): WorkOrderList {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const filterRamp = isPassenger ? {} : {
+                "withoutContracts": true,
+                "adHocWorkOrders": true,
+                "customerStatusId": 1,
+            }; 
             const params = {
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        "withoutContracts": true,
-                        "adHocWorkOrders": true,
-                        "customerStatusId": 1,
+                        ...filterRamp,
                         companyId,
                     }
                 },
