@@ -336,9 +336,9 @@ export default {
   },
   created() {
     this.$nextTick(async function () {
-      await workOrderList().getAllList();
       const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
-      qRampStore().setIsPassenger(currentRouteName !== -1);
+      await qRampStore().setIsPassenger(currentRouteName !== -1);
+      await workOrderList().getAllList();
     });
   },
   mounted() {
@@ -587,6 +587,7 @@ export default {
         await this.initUrlMutate();
         setTimeout(async () => {
           await this.setFilter();
+          if(this.isPassenger) this.scheduleTypeComputed = 'day-agenda';
         }, 100);
       } catch (error) {
         console.log(error);
@@ -596,7 +597,9 @@ export default {
       const obj = await this.$helper.convertStringToObject();
       const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
-        if (!this.stationId) {
+        const station = await workOrderList().getStationList()
+        .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
+        if (!this.stationId || !station) {
           await this.$refs.stationModal.showModal();
           return;
         }
