@@ -15,6 +15,16 @@ export default {
       isBlank() {
         return qRampStore().getIsblank();
       },
+      filterGates() {
+        return workOrderList()
+          .getGatesList()
+          .filter(item => item.stationId == this.form?.stationId || this.sessionStationId)
+          .map(item =>
+            ({
+              value: item.id,
+              label: item.name
+            }));
+      },
       fields() {
         return {
           form: {
@@ -63,12 +73,8 @@ export default {
                 ],
                 label: `*${this.$tr('ifly.cms.form.gate')}`,
                 clearable: true,
-                color:"primary"
-              },
-              loadOptions: {
-                apiRoute: 'apiRoutes.qsetupagione.gates',
-                select: {label: 'name', id: 'id'},
-                requestParams: {filter: {stationId: this.form?.stationId || this.sessionStationId}}
+                color:"primary",
+                options: this.filterGates
               },
               label: this.$tr('ifly.cms.form.gate'),
             },
