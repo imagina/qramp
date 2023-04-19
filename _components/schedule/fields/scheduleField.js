@@ -1,4 +1,5 @@
 import qRampStore from '../../../_store/qRampStore.js';
+import workOrderList from '../../../_store/actions/workOrderList';
 
 export default {
     data() {
@@ -13,6 +14,16 @@ export default {
       },
       isBlank() {
         return qRampStore().getIsblank();
+      },
+      filterGates() {
+        return workOrderList()
+          .getGatesList()
+          .filter(item => item.stationId == this.form?.stationId || this.sessionStationId)
+          .map(item =>
+            ({
+              value: item.id,
+              label: item.name
+            }));
       },
       fields() {
         return {
@@ -62,12 +73,8 @@ export default {
                 ],
                 label: `*${this.$tr('ifly.cms.form.gate')}`,
                 clearable: true,
-                color:"primary"
-              },
-              loadOptions: {
-                apiRoute: 'apiRoutes.qsetupagione.gates',
-                select: {label: 'name', id: 'id'},
-                requestParams: {filter: {stationId: this.form?.stationId || this.sessionStationId}}
+                color:"primary",
+                options: this.filterGates
               },
               label: this.$tr('ifly.cms.form.gate'),
             },
@@ -113,30 +120,22 @@ export default {
               type: 'select',
               props: {
                 label: this.$tr('ifly.cms.sidebar.aircraftType'),
+                options: workOrderList().getACTypesList().map(item => ({
+                  label: item.model,
+                  value: item.id
+                })),
               },
-              loadOptions: {
-                apiRoute: 'apiRoutes.qfly.aircraftTypes',
-                select: {
-                  label:'model',
-                  id: 'id'
-                },
-                refresh: true,
-              }
             },
             carrierId: {
               value: null,
               type: 'select',
               props: {
                 label: 'Carrier',
+                options: workOrderList().getAirlinesList().map(item => ({
+                  label: item.airlineName,
+                  value: item.id
+                })),
               },
-              loadOptions: {
-                apiRoute: 'apiRoutes.qfly.airlines',
-                select: {
-                  label:'airlineName',
-                  id: 'id'
-                },
-                refresh: true,
-              }
             },
           },
         };

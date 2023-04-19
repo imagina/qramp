@@ -41,7 +41,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue'
+import { 
+  defineComponent, 
+  ref, 
+  computed, 
+  onBeforeUnmount,
+  onMounted
+} from 'vue'
 
 export default defineComponent({
   props: {
@@ -56,14 +62,19 @@ export default defineComponent({
     isComplete: {
       type: Boolean,
       default: () => false,
-    }
+    },
   },
   setup (props) {
     const expandible = ref<boolean>(false);
     const flightNumber = computed((): string => props.flightNumber);
-    const isComplete = computed(() => props.isComplete);
+    const isComplete = computed(() => {
+      return props.isComplete;
+    });
     onMounted(() => {
-      expandible.value = !props.isComplete;
+      expandible.value = !props.isComplete
+    })
+    onBeforeUnmount(() => {
+      expandible.value = false;
     })
     return {
       expandible, 

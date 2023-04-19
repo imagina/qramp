@@ -98,7 +98,7 @@
         v-if="isbound[0]"
         class="col-12 col-md-6"
       >
-        <div>
+        <div v-if="isCollapse">
           <collapse
             :title="$tr('isite.cms.label.inbound')"
             :flightNumber="form.inboundFlightNumber"
@@ -130,7 +130,7 @@
         v-if="isbound[1]" 
         class="col-12 col-md-6"
       >
-        <div>
+        <div v-if="isCollapse">
           <collapse
             :title="$tr('isite.cms.label.outbound')"
             :flightNumber="form.outboundFlightNumber"
@@ -199,6 +199,7 @@
         </div>
       </div>
     </q-form>
+    <inner-loading :visible="!isCollapse"/>
   </div>
 </template>
 <script>
@@ -274,6 +275,7 @@ export default {
       responsibleList: [],
       completeFormInbound: false,
       completedFormOutBound: false,
+      isCollapse: false,
     }
   },
   watch:{
@@ -594,9 +596,6 @@ export default {
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
-              rules: this.isAppOffline ? [] : [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
               readonly: this.disabledReadonly,
               label: '*Responsible',
               clearable: true,
@@ -881,6 +880,7 @@ export default {
     },
     async updateData() {
       if(this.dataCompoment && Object.keys(this.dataCompoment).length > 0) {
+        this.isCollapse = false;
         this.update = true
         const updateForm = this.$clone(this.dataCompoment)
         this.form.statusId = updateForm.statusId
@@ -929,6 +929,7 @@ export default {
           }
           this.completeFormInbound = this.validateInbound('inboundLeft');
           this.completedFormOutBound = this.validateInbound('outboundRight');
+          this.isCollapse = true;
         },1000)
       }
     },
@@ -1283,7 +1284,7 @@ export default {
     },
     zanetizeData(key) {
         this.completeFormInbound = this.validateInbound('inboundLeft');
-        this.completedFormOutBound = this.validateInbound('outboundRight');
+        this.completedFormOutBound = this.validateInbound('outboundRight');  
         if(key === 'inboundFlightNumber' || key === 'outboundFlightNumber') {
           if(this.form[key]) {
             this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');

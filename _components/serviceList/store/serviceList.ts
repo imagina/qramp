@@ -150,7 +150,6 @@ export default function serviceListStore(): ServiceListStoreContract {
                 const dynamicField = await getListOfSelectedServices(service.dynamicField || []);
                 await data.push(...dynamicField);
             })
-            console.log(data);
             return data;
         } catch (error) {
             console.log(error);
