@@ -536,7 +536,7 @@ export default function workOrderList(): WorkOrderList {
                 },
             }
             const response = await baseService.index('apiRoutes.qfly.aircraftTypes', params);
-            const data = response;
+            const data = response.data;
             setACTypesList(data);
             return data;
         } catch (error) {
@@ -559,7 +559,7 @@ export default function workOrderList(): WorkOrderList {
                 },
             }
             const response = await baseService.index('apiRoutes.qfly.airports', params);
-            const data = response;
+            const data = response.data;
             setAirportsList(data);
             return data;
         } catch (error) {

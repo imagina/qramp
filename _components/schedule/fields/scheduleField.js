@@ -1,4 +1,5 @@
 import qRampStore from '../../../_store/qRampStore.js';
+import workOrderList from '../../../_store/actions/workOrderList';
 
 export default {
     data() {
@@ -113,30 +114,22 @@ export default {
               type: 'select',
               props: {
                 label: this.$tr('ifly.cms.sidebar.aircraftType'),
+                options: workOrderList().getACTypesList().map(item => ({
+                  label: item.model,
+                  value: item.id
+                })),
               },
-              loadOptions: {
-                apiRoute: 'apiRoutes.qfly.aircraftTypes',
-                select: {
-                  label:'model',
-                  id: 'id'
-                },
-                refresh: true,
-              }
             },
             carrierId: {
               value: null,
               type: 'select',
               props: {
                 label: 'Carrier',
+                options: workOrderList().getAirlinesList().map(item => ({
+                  label: item.airlineName,
+                  value: item.id
+                })),
               },
-              loadOptions: {
-                apiRoute: 'apiRoutes.qfly.airlines',
-                select: {
-                  label:'airlineName',
-                  id: 'id'
-                },
-                refresh: true,
-              }
             },
           },
         };

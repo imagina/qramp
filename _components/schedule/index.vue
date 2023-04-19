@@ -823,7 +823,7 @@ export default {
         return {
           date: {
             field: "inbound_scheduled_arrival",
-            type: "custom",
+            type: "customRange",
             from: lastStartM,
             to: lastEndM,
           },
