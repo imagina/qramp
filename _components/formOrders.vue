@@ -1,29 +1,13 @@
 <template>
-  <master-modal
-      id="formRampComponent"
-      v-model="show"
-      v-bind="modalProps"
-      :persistent="true"
-      :loading="loading"
-      @hide="clear"
-      :actions="actions"
-      :width="modalProps.width"
-      :maximized="$q.screen.lt.md"
-  >
-    <stepper-ramp-form
-        v-if="modalProps.update"
-        @sp="sp = $event"
-        @loading="setLoading"
-        ref="stepper"
-        :steps="steppers"
-        :data="modalProps"
-        @close-modal="close($event)"
-    />
-    <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder"/>
+  <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true" :loading="loading"
+    @hide="clear" :actions="actions" :width="modalProps.width" :maximized="$q.screen.lt.md">
+    <stepper-ramp-form v-if="modalProps.update" @sp="sp = $event" @loading="setLoading" ref="stepper" :steps="steppers"
+      :data="modalProps" @close-modal="close($event)" />
+    <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" />
   </master-modal>
 </template>
 <script>
-import {computed} from 'vue';
+import { computed } from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
 import services from '../_mixins/services.js';
@@ -191,8 +175,10 @@ export default {
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
             }, 1000);
-            if (!this.isAppOffline) await workOrderList().getWorkOrders(true, true);
-            qRampStore().hideLoading();
+            if (!this.isAppOffline) {
+              await workOrderList().getWorkOrders(true);
+            };
+            qRampStore().hideLoading()
           }
         },
         {
@@ -209,8 +195,10 @@ export default {
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
             }, 1000);
-            if (!this.isAppOffline) await workOrderList().getWorkOrders(true, true);
-            qRampStore().hideLoading();
+            if (!this.isAppOffline) {
+              await workOrderList().getWorkOrders(true);
+            }
+            qRampStore().hideLoading()
           }
         },
         {
@@ -227,7 +215,10 @@ export default {
             await qRampStore().setStatusId(data.form.statusId);
             await this.$refs.stepper.sendInfo();
             await qRampStore().setStatusId(null);
-            qRampStore().hideLoading();
+            if (!this.isAppOffline) {
+              await workOrderList().getWorkOrders(true);
+            }
+            qRampStore().hideLoading()
           }
         },
       ];

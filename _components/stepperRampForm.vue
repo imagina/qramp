@@ -60,6 +60,7 @@ import {
   HalfTurnOutBountPassengerModel
 } from './model/constants.js';
 import remarkStore from './remarks/store.ts';
+import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 
 
 export default {
@@ -96,6 +97,9 @@ export default {
     }
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
@@ -231,12 +235,18 @@ export default {
         this.disabled = false;
         qRampStore().hideLoading();
       })
-          .catch(err => {
+          .catch(async err => {
             qRampStore().hideLoading();
             this.disabled = false;
             this.$emit('loading', false)
-            this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
-            console.log('SEND INFO ERROR:', err)
+            if (!this.isAppOffline) {
+              this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
+              console.log('SEND INFO ERROR:', err)
+            }else{
+              formatData.offline = true;
+              await cacheOffline.updateRecord(route, formatData);
+              await this.$emit('close-modal', false)
+            }
           })
     },
     validateFulldate() {

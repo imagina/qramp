@@ -447,7 +447,7 @@ export default function workOrderList(): WorkOrderList {
      * then sets the dataWorkOrderList to the response and returns the data.
      * @returns The data is being returned as an array of objects.
      */
-    async function getWorkOrders(refresh = false, updateOfflineList = false): Promise<WorkOrders | void> {
+    async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
@@ -477,9 +477,6 @@ export default function workOrderList(): WorkOrderList {
             const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
             const data = response;
             setDataWorkOrderList(data);
-            if (updateOfflineList) {
-                await cache.set('apiRoutes.qramp.workOrders::offline', data)
-            }
             return data;
         } catch (error) {
             console.log(error);

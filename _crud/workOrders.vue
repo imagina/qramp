@@ -55,15 +55,15 @@ export default {
       deep: true,
       handler: async function (newValue) {
         if (!newValue) {
-          await workOrderList().getWorkOrders(true);
+          console.log("Hola?")
+          await workOrderList().getAllList(true);
         }
       }
     },
   },
   async created() {
     this.$nextTick(async () => {
-      let updateOfflineList = await this.$cache.get.item('updateOfflineList') || false;
-      await workOrderList().getAllList(updateOfflineList);
+      await workOrderList().getAllList(true);
       await workOrderList().getCustomerWithContract()
     })
   },
