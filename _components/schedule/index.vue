@@ -953,12 +953,14 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
+        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
         const companyId = this.filterCompany
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
           {
             ...form,
             companyId,
+            ...businessUnitId,
           }
         );
         return response;
@@ -997,8 +999,13 @@ export default {
       try {
         const scheduleTypeId = this.scheduleTypeOptions.find(item => item.value === this.scheduleType);
         const origin = window.location.href.split("?");
-        const dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
-        const dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
+        let dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
+        let dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
+        if(this.isPassenger) {
+           console.log('ingreso');
+           dateStart = this.$moment().format('YYYYMMDD');
+           dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
+        }
         const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
