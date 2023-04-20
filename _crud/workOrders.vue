@@ -56,7 +56,7 @@ export default {
       handler: async function (newValue) {
         if (!newValue) {
           console.log("Hola?")
-          await workOrderList().getAllList(true);
+          await workOrderList().getWorkOrders(true);
         }
       }
     },
