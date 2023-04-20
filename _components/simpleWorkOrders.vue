@@ -327,7 +327,7 @@ export default {
               offlineId, 
               titleOffline: qRampStore().getTitleOffline(), 
               companyId: this.filterCompany,
-              businessUnitId,
+              ...businessUnitId,
             },
         ).catch(error => {
           qRampStore().hideLoading();

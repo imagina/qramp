@@ -960,7 +960,7 @@ export default {
           {
             ...form,
             companyId,
-            businessUnitId,
+            ...businessUnitId,
           }
         );
         return response;
