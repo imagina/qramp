@@ -318,6 +318,7 @@ export default {
       try {
         qRampStore().showLoading();
         console.log("Aquí ?")
+        const businessUnitId = this.isPassenger ? this.filterBusinessUnit : {};
         const offlineId = 'work-order-' + this.$uid();
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
@@ -326,7 +327,7 @@ export default {
               offlineId, 
               titleOffline: qRampStore().getTitleOffline(), 
               companyId: this.filterCompany,
-              businessUnitId: this.filterBusinessUnit
+              businessUnitId,
             },
         ).catch(error => {
           qRampStore().hideLoading();
