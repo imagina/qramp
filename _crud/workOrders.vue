@@ -586,6 +586,16 @@ export default {
     }
   },
   methods: {
+    getOfflineTitleStatus(statusId, itemId) {
+      const statusObj = {
+        1: 'DRAFT',
+        2: 'POSTED',
+        3: 'SUBMITTED',
+        4: 'CLOSED',
+        5: 'SCHEDULE',
+      }
+      return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
+    },
     changeStatus(status, itemId) {
 
       const route = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -593,7 +603,7 @@ export default {
         id: itemId,
         statusId: status
       }
-      let customParams = { params: { titleOffline: this.crudData.entityName || '' } }
+      let customParams = { params: { titleOffline: this.getOfflineTitleStatus(status, itemId) || '' } }
 
       this.$emit('loading', true)
       const request = this.$crud.update(route, itemId, payload, customParams);
@@ -602,8 +612,10 @@ export default {
         this.$emit('loading', false)
       })
         .catch(err => {
-          this.$emit('loading', false)
-          this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
+          if (!this.isAppOffline) {
+            this.$emit('loading', false)
+            this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
+          }
 
         })
     },
