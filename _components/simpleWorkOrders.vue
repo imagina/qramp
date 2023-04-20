@@ -321,7 +321,13 @@ export default {
         const offlineId = 'work-order-' + this.$uid();
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",
-            {...this.form, offlineId, titleOffline: qRampStore().getTitleOffline(), companyId: this.filterCompany},
+            {
+              ...this.form, 
+              offlineId, 
+              titleOffline: qRampStore().getTitleOffline(), 
+              companyId: this.filterCompany,
+              businessUnitId: this.filterBusinessUnit
+            },
         ).catch(error => {
           qRampStore().hideLoading();
         });

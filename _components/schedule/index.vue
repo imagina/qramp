@@ -959,6 +959,7 @@ export default {
           {
             ...form,
             companyId,
+            businessUnitId: this.filterBusinessUnit
           }
         );
         return response;
