@@ -953,7 +953,7 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
-        const businessUnitId = this.isPassenger ? this.filterBusinessUnit : {};
+        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
         const companyId = this.filterCompany
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
