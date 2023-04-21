@@ -460,20 +460,17 @@ export default {
       return {
         name: this.$route.name,
         fields: {
-          customerId: {
+          carrierId: {
             value: null,
             type: "select",
             loadOptions: {
-              apiRoute: "apiRoutes.qramp.setupCustomers",
-              select: { label: "customerName", id: "id" },
+              apiRoute: "apiRoutes.qsetupagione.airlines",
+              select: { label: "airlineName", id: "id" },
               requestParams: {
-                  filter: {
-                    companyId: this.filterCompany,
-                  },
               },
             },
             props: {
-              label: "Customer",
+              label: "Carrier",
               clearable: true,
             },
           },
