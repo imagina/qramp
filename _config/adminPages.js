@@ -118,7 +118,7 @@ export default {
   },
   passengerFlightMap: {
     //permission: 'ramp.work-orders.manage',
-    activated: true,
+    activated: false,
     authenticated: true,
     path: '/passenger/flight-map/index',
     name: 'qramp.admin.passengerFlightMap',
