@@ -588,7 +588,11 @@ export default {
         qRampStore().setIsblank(this.isBlank)
         await this.initUrlMutate();
         setTimeout(async () => {
-          if(this.isPassenger) this.scheduleTypeComputed = 'day-agenda';
+          if(this.isPassenger) {
+            this.scheduleTypeComputed = 'day-agenda'
+          }else {
+            this.scheduleTypeComputed = 'month'
+          };
           await this.setFilter();
           
         }, 100);
