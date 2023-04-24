@@ -50,16 +50,7 @@ export default {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
           this.areaId = this.$filter.values.areaId;
       }
-    },
-    'isAppOffline': {
-      deep: true,
-      handler: async function (newValue) {
-        if (!newValue) {
-          console.log("Hola?")
-          await workOrderList().getWorkOrders(true);
-        }
-      }
-    },
+    }
   },
   async created() {
     this.$nextTick(async () => {
@@ -73,7 +64,9 @@ export default {
   },
   computed: {
     isAppOffline() {
-      return this.$store.state.qofflineMaster.isAppOffline;
+      const offline = this.$store.state.qofflineMaster.isAppOffline;
+
+      return offline;
     },
     permisionCommentsIndex() {
       return this.$auth.hasAccess('ramp.work-orders-comments.index');
@@ -272,6 +265,7 @@ export default {
           ],
           filters: {
             date: {
+
               props: {
                 label: "Block-in/out Date"
               },
@@ -282,6 +276,7 @@ export default {
             customerId: {
               value: null,
               type: 'select',
+
               quickFilter: true,
               loadOptions: {
                 apiRoute: 'apiRoutes.qramp.setupCustomers',
@@ -406,10 +401,9 @@ export default {
               icon: 'fal fa-check',
               label: this.$tr('isite.cms.label.closeFlight'),
               format: item => {
-                const isWorkOrderOffline = item.id.toString().includes('work-order');
                 return {
                   //must have the submit permission and the work order can't be submited or posted
-                  vIf: ![STATUS_POSTED, STATUS_SUBMITTED, STATUS_CLOSED].includes(item.statusId) && !isWorkOrderOffline
+                  vIf: ![STATUS_POSTED, STATUS_SUBMITTED, STATUS_CLOSED].includes(item.statusId)
                 }
               },
               action: (item) => {
@@ -421,10 +415,10 @@ export default {
               icon: 'fal fa-check-double',
               label: this.$tr('isite.cms.label.submit'),
               format: item => {
-                const isWorkOrderOffline = item.id.toString().includes('work-order');
+
                 return {
                   //must have the submit permission and the work order can't be submited or posted
-                  vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId) && !isWorkOrderOffline
+                  vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
                 }
               },
               action: (item) => {
@@ -586,6 +580,16 @@ export default {
     }
   },
   methods: {
+    getOfflineTitleStatus(statusId, itemId) {
+      const statusObj = {
+        1: 'DRAFT',
+        2: 'POSTED',
+        3: 'SUBMITTED',
+        4: 'CLOSED',
+        5: 'SCHEDULE',
+      }
+      return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
+    },
     changeStatus(status, itemId) {
 
       const route = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -593,7 +597,7 @@ export default {
         id: itemId,
         statusId: status
       }
-      let customParams = { params: { titleOffline: this.crudData.entityName || '' } }
+      let customParams = { params: { titleOffline: this.getOfflineTitleStatus(status, itemId) || '' } }
 
       this.$emit('loading', true)
       const request = this.$crud.update(route, itemId, payload, customParams);
@@ -602,8 +606,10 @@ export default {
         this.$emit('loading', false)
       })
         .catch(err => {
-          this.$emit('loading', false)
-          this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
+          if (!this.isAppOffline) {
+            this.$emit('loading', false)
+            this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
+          }
 
         })
     },

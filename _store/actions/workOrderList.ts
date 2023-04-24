@@ -450,10 +450,11 @@ export default function workOrderList(): WorkOrderList {
      */
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
         try {
+            console.warn("GET WO refresh",refresh)
             const isPassenger = qRampStore().getIsPassenger();
             const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
-                refresh,
+                refresh: refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     include: 'responsible',
@@ -478,10 +479,10 @@ export default function workOrderList(): WorkOrderList {
             const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
             const data = response;
             setDataWorkOrderList(data);
-            if (refresh) {
-                await cacheOffline.updateList('apiRoutes.qramp.workOrders', data);
-                console.warn(data)
-            }
+            // if (refresh) {
+            //     await cacheOffline.updateList('apiRoutes.qramp.workOrders', data);
+            //     console.warn(data)
+            // }
             return data;
         } catch (error) {
             console.log(error);
