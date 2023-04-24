@@ -102,7 +102,7 @@ export default {
     }
   },
   passenger: {
-    permission: 'ramp.work-orders.manage',
+    permission: 'ramp.passenger-work-orders.manage',
     activated: true,
     authenticated: true,
     path: '/passenger/work-orders/index',
@@ -117,7 +117,7 @@ export default {
     }
   },
   passengerFlightMap: {
-    //permission: 'ramp.work-orders.manage',
+    //permission: 'ramp.passenger-work-orders.manage',
     activated: false,
     authenticated: true,
     path: '/passenger/flight-map/index',
@@ -131,7 +131,7 @@ export default {
     }
   },
   passengerSchedule: {
-    permission: 'ramp.work-order-schedules.manage',
+    permission: 'ramp.passenger-work-order-schedules.manage',
     activated: true,
     authenticated: true,
     path: '/passenger/schedule/index',
