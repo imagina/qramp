@@ -12,7 +12,7 @@
             :field="field"
             v-model="event[keyField]"
             class="tw-w-full lg:tw-w-48"
-            :class="{ 'tw-hidden tw-w-0': keyField === 'stationId' }"
+            :class="{ 'tw-hidden tw-w-0': keyField === 'stationId' || (keyField === 'gateId' && isPassenger)}"
           />
         </div>
         <div class="tw-space-x-2 tw-my-1">

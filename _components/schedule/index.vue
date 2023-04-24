@@ -1005,8 +1005,10 @@ export default {
            console.log('ingreso');
            dateStart = this.$moment().format('YYYYMMDD');
            dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
+           console.log(dateStart);
         }
         const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        console.log(urlBase);
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
