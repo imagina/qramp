@@ -406,7 +406,12 @@ export default {
           value: "day-agenda",
           icon: "fas fa-calendar-day",
         },
-      ];
+      ].filter(item => {
+        if(this.isPassenger) {
+          return item.id !== 1;
+        }
+        return true;
+      });
     },
     filter() {
       this.filterData = this.$clone(this.$filter.values);
