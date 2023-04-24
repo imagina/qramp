@@ -82,7 +82,6 @@ export default defineComponent({
           props: {
             options: codeList.value,
             readonly: disabledReadonly.value,
-
             label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
             clearable: true,
             color: "primary",

@@ -24,7 +24,7 @@ import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
-import workOrderList from '../_store/actions/workOrderList.ts'
+import workOrderList from '../_store/actions/workOrderList.ts';
 
 export default {
   name: 'RampCrud',
