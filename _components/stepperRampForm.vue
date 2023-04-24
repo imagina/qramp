@@ -158,6 +158,7 @@ export default {
     },
     async sendInfo() {
       try {
+        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
         const remarks = remarkStore().getForm();
         const serviceList = await serviceListStore().getServiceListSelected();
         qRampStore().showLoading();
@@ -176,7 +177,8 @@ export default {
           workOrderItems: [
             ...serviceList
           ],
-          companyId: this.filterCompany
+          companyId: this.filterCompany,
+          ...businessUnitId,
         }
         if (this.data.update) {
           formatData.id = this.data.workOrderId;

@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-w-full">
+  <div class="tw-w-full tw-mb-12">
     <div class="tw-px-6 tw-mb-8">
       <q-toggle
         v-model="delay"
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import Vue, { defineComponent, computed, ref, onMounted } from "vue";
+import Vue, { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
 import cargoStore from "./store/cargo";
 import qRampStore from "../../_store/qRampStore.js";
 import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
@@ -82,7 +82,6 @@ export default defineComponent({
           props: {
             options: codeList.value,
             readonly: disabledReadonly.value,
-
             label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
             clearable: true,
             color: "primary",
@@ -150,6 +149,9 @@ export default defineComponent({
     onMounted(() => {
       getCodeList();
       delay.value = delayList.value.length > 0;
+    })
+    onBeforeUnmount(() => {
+      cargoStore().reset();
     })
     return {
       delayFields,

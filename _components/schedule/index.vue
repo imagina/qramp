@@ -406,7 +406,12 @@ export default {
           value: "day-agenda",
           icon: "fas fa-calendar-day",
         },
-      ];
+      ].filter(item => {
+        if(this.isPassenger) {
+          return item.id !== 1;
+        }
+        return true;
+      });
     },
     filter() {
       this.filterData = this.$clone(this.$filter.values);
@@ -815,8 +820,11 @@ export default {
           .startOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
         let lastEndM = this.$moment(lastEnd)
-          .endOf('day')
-          .format("YYYY-MM-DD HH:mm:ss");
+          .endOf('day');
+        if(this.scheduleType === 'day-agenda') {
+          lastEndM.add(-1, 'day');
+        }
+        lastEndM = lastEndM.format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
             field: "inbound_scheduled_arrival",
@@ -1002,8 +1010,10 @@ export default {
            console.log('ingreso');
            dateStart = this.$moment().format('YYYYMMDD');
            dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
+           console.log(dateStart);
         }
         const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        console.log(urlBase);
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);

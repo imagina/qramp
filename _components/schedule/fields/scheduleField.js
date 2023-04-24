@@ -9,6 +9,9 @@ export default {
       }
     },
     computed: {
+      isPassenger() {
+        return qRampStore().getIsPassenger();
+      },
       station() {
         return this.sessionStationId;
       },
@@ -67,6 +70,7 @@ export default {
               value: null,
               type: 'select',
               props: {
+                vIf: !this.isPassenger,
                 readonly: this.isBlank,
                 rules: [
                   val => this.validateSpecialCharacters(val)

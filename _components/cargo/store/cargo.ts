@@ -65,16 +65,20 @@ export default function cargoStore(): UseCargoStoreContract {
      * @returns the state.delayList.
      */
     function setDelayList(data: DelayListContract[]): void {
+        const modelData: any = [{
+            code: '',
+            hours: ''
+        }];
         const delay = data['delay'] || [];
         if (delay.length === 0) {
-            state.delayList = [...modelDelay];
+            state.delayList = [...modelData];
             return;
         }
         const validateDelay = delay.length > 0;
         setDelay(validateDelay);
         state.delayList = validateDelay
             ? delay
-            : [...modelDelay];
+            : [...modelData];
     }
     /**
      * The function `getDelay` returns a boolean value.
@@ -116,12 +120,13 @@ export default function cargoStore(): UseCargoStoreContract {
             cargoTotalKilosLoaded: '',
             cargoTotalKilosUnloaded: '',
         };
-        state.delayList = [
+        const delayModel = [
             {
                 code: '',
                 hours: ''
             },
-        ];
+        ]
+        state.delayList = [...delayModel];
         state.delay = false;
     }
     return {

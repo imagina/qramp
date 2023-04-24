@@ -33,6 +33,7 @@ import iSignature from '../_components/signature.vue';
 import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
+import delayComponent from '../_components/cargo/delayComponent';
 
 export default {
   components: {
@@ -70,7 +71,7 @@ export default {
       return qRampStore().getIsPassenger();
     },
     steppers() {
-      return [
+      let stepps = [
         {
           ref: 'flight',
           title: 'Flight',
@@ -103,6 +104,17 @@ export default {
           component: iSignature,
         }
       ].filter(item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
+      if(this.isPassenger) {
+        const delay = {
+          ref: "delay",
+          title: "Delay",
+          icon: 'fa-light fa-clock',
+          step: 8,
+          component: delayComponent,
+        };
+        stepps.splice(2, 0, delay);
+      }
+      return stepps;
     },
     nextLabel() {
       return this.sp === this.steppers.length ? 'Save to Draft' : this.$tr('isite.cms.label.next')

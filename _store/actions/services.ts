@@ -8,6 +8,7 @@ import {
     COMPANY_PASSENGER,
     COMPANY_RAMP,
 } from '../../_components/model/constants.js';
+import pluginsArray from '@imagina/qsite/_plugins/array.js';
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -51,7 +52,7 @@ export const getCategories = async (): Promise<any[]> => {
 export async function buildServiceList(): Promise<any[]> {
     try {
         const categories = await getCategories();
-        const categoryList = Vue.prototype.$array.tree(categories);
+        const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
         const build = categoryList.map((item) => {
             let dynamicField: any = {
                 dynamicField: getIfItIsTypeListOrDynamicField(item.products),
