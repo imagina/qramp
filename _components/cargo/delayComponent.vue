@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import Vue, { defineComponent, computed, ref, onMounted } from "vue";
+import Vue, { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
 import cargoStore from "./store/cargo";
 import qRampStore from "../../_store/qRampStore.js";
 import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
@@ -150,6 +150,9 @@ export default defineComponent({
     onMounted(() => {
       getCodeList();
       delay.value = delayList.value.length > 0;
+    })
+    onBeforeUnmount(() => {
+      this.delayList.value = [];
     })
     return {
       delayFields,
