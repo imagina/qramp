@@ -315,7 +315,7 @@ export default {
       fullscreen: false,
       loading: false,
       eventLoading: false,
-      selectedDate: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
+      selectedDate: this.$moment().format("YYYY-MM-DD"),
       selectedDateEnd: this.$moment().endOf("month").endOf("day").format("YYYY-MM-DD"),
       selectedDateStart: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
       scheduleType: 'month',
@@ -588,8 +588,9 @@ export default {
         qRampStore().setIsblank(this.isBlank)
         await this.initUrlMutate();
         setTimeout(async () => {
-          await this.setFilter();
           if(this.isPassenger) this.scheduleTypeComputed = 'day-agenda';
+          await this.setFilter();
+          
         }, 100);
       } catch (error) {
         console.log(error);
@@ -807,7 +808,10 @@ export default {
     async getCurrentFilterDate(lastStart, lastEnd) {
       try {
         const startDate = this.$moment(this.$refs.schedule.lastStart);
-        const endDate = this.$moment(this.$refs.schedule.lastEnd);
+        const endDate =  this.$moment(this.$refs.schedule.lastEnd);
+        if(this.scheduleType === 'day-agenda') {
+          endDate.add(-1, 'day');
+        }
         if(this.scheduleType === 'month' && startDate.format('MM') === this.$moment(lastEnd).format('MM')) {
           lastStart = startDate.startOf("month").format("YYYY-MM-DD");
           lastEnd = endDate.endOf("month").format("YYYY-MM-DD");
@@ -820,11 +824,7 @@ export default {
           .startOf('day')
           .format("YYYY-MM-DD HH:mm:ss");
         let lastEndM = this.$moment(lastEnd)
-          .endOf('day');
-        if(this.scheduleType === 'day-agenda') {
-          lastEndM.add(-1, 'day');
-        }
-        lastEndM = lastEndM.format("YYYY-MM-DD HH:mm:ss");
+          .endOf('day').format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
             field: "inbound_scheduled_arrival",
