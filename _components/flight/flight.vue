@@ -1176,6 +1176,7 @@ export default {
     },
     getCustomerList() {
       return new Promise(async(resolve) => {
+        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { companyId: this.filterCompany };
         const custemerParams = {
             params: {
               filter: {
@@ -1190,7 +1191,7 @@ export default {
             params: {
               filter: {
                 contractStatusId: 1,
-                companyId: this.filterCompany,
+                ...businessUnitId,
               }
             },
         }
