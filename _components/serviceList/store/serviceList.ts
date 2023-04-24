@@ -1,5 +1,4 @@
 import cargo from '../../cargo/index.vue';
-import delayComponent from '../../cargo/delayComponent.vue';
 import {reactive, nextTick} from 'vue';
 import {
     buildServiceList,
@@ -22,13 +21,6 @@ const dataModel: ServiceModelContract[] = [
         component: cargo,
     },
 ];
-const dataModelPassenger: ServiceModelContract[] = [
-    {
-        id: 2020,
-        title: 'Delays',
-        component: delayComponent,
-    },
-]
 const state = reactive<ReactiveStoreContract>({
     serviceList: [],
     loading: false,
@@ -57,8 +49,7 @@ export default function serviceListStore(): ServiceListStoreContract {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
-            const dataComponent = isPassenger ? dataModelPassenger : dataModel;
-            let serviceList = [...response, ...dataComponent].filter(item => {
+            let serviceList = [...response, ...dataModel].filter(item => {
                 if(qRampStore().getIsPassenger()) {
                     return item.id !== 4;
                 }
