@@ -396,6 +396,18 @@ export default function qRampStore() {
           console.log(error)
         }
     }
+    async function changeStatus(statusId, workOrderId) {
+        try {
+          const route = 'apiRoutes.qramp.workOrderChangeStatus';
+          const payload = {
+            id: workOrderId,
+            statusId,
+          }
+          await baseService.update(route, workOrderId, payload);
+        } catch (error) {
+          console.log('Error changeStatus Schedule',error);
+        }
+      }
     return {
         getTitleOffline,
         setTitleOffline,
@@ -455,5 +467,6 @@ export default function qRampStore() {
         getIsblank,
         setIsPassenger,
         getIsPassenger,
+        changeStatus,
     }
 }

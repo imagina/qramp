@@ -149,6 +149,20 @@
                 v-if="event.id && scheduleType === 'day-agenda'"
               >
                 <button
+                  v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger"
+                  class="
+                    tw-bg-green-500 
+                    tw-rounded-lg 
+                    tw-px-2  
+                    tw-text-white"
+                    @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)" 
+                  >
+                  <i class="fa-sharp fa-regular fa-bring-forward" />
+                  <q-tooltip>
+                    Start Work Order
+                  </q-tooltip>
+                </button>
+                <button
                   v-if="!isBlank && !events.some(item => item.isUpdate)"
                   class="
                     tw-bg-blue-800 
@@ -324,6 +338,7 @@ export default {
       filterData: null,
       cloneEvent: {},
       STATUS_SCHEDULE,
+      STATUS_DRAFT,
     };
   },
   watch: {
@@ -461,7 +476,7 @@ export default {
         },
       ];
     },
-    filsterAction() {
+    filterActions() {
       return {
         name: this.$route.name,
         fields: {
@@ -745,6 +760,10 @@ export default {
         await this.$refs.modalForm.setLoading(false);
       }
     },
+    async startWorkOrders(statusId, data) {
+      data.statusId = statusId;
+      await this.updateSchedule(data);
+    },
     async updateSchedule(data) {
       try {
         await this.$refs.modalForm.setLoading(true);
@@ -786,16 +805,7 @@ export default {
       }
     },
     async changeStatus(statusId, workOrderId) {
-      try {
-        const route = 'apiRoutes.qramp.workOrderChangeStatus';
-        const payload = {
-          id: workOrderId,
-          statusId,
-        }
-        await this.$crud.create(route, payload);
-      } catch (error) {
-        console.log('Error changeStatus Schedule',error);
-      }
+      await qRampStore().changeStatus(statusId, workOrderId);
     },
     deleteSchedule(scheduleId) {
       try {
@@ -912,7 +922,7 @@ export default {
     },
     async showWorkOrder(reponseSchedule, type = null) {
           let response = {data: reponseSchedule};
-          if (response.data.statusId !== STATUS_SCHEDULE) {
+          if (this.isPassenger || response.data.statusId !== STATUS_SCHEDULE) {
             response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
             refresh: true,
             include:
@@ -949,14 +959,16 @@ export default {
     },
     async getFilter() {
       this.events = [];
-      if (this.stationId) {
+      const station = await workOrderList().getStationList()
+        .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
+      if (this.stationId && station) {
         await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(true);
       }
     },
     setFilter() {
       return new Promise(async (resolve, reject) => {
-        this.$filter.setFilter(this.filsterAction);
+        this.$filter.setFilter(this.filterActions);
         resolve(true);
       });
     },

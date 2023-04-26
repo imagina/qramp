@@ -701,7 +701,7 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.inboundGateArrival,
-              label: 'Inbound Gate Arrival',
+              label: '*Inbound Gate Arrival',
               clearable: true,
               color:"primary"
             },
@@ -799,7 +799,7 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
-              label: 'Outbound Gate Departure',
+              label: '*Outbound Gate Departure',
               clearable: true,
               color:"primary"
             },
@@ -819,13 +819,13 @@ export default {
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
+              label: `${this.isPassenger ? 'Actual In': `*${this.$tr('ifly.cms.form.blockIn')}`}`,
               clearable: true,
               color:"primary",
               format24h: true,
               options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundBlockIn),
             },
-            label: this.$tr('ifly.cms.form.blockIn'),
+            label: `${this.isPassenger ? 'Actual In': `${this.$tr('ifly.cms.form.blockIn')}`}`,
           },
           outboundBlockOut: {
             name:'outboundBlockOut',
@@ -839,13 +839,13 @@ export default {
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
+              label: `${this.isPassenger ? 'Actual Out': `*${this.$tr('ifly.cms.form.blockOut')}`}`,
               clearable: true,
               color:"primary",
               format24h: true,
               options: this.validateDateOutboundBlockOut,
             },
-            label: this.$tr('ifly.cms.form.blockOut'),
+            label: `${this.isPassenger ? 'Actual Out': `${this.$tr('ifly.cms.form.blockOut')}`}`,
           },
         },
         customerField: {
