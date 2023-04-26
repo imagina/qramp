@@ -130,17 +130,18 @@ export default {
                 })),
               },
             },
-            carrierId: {
+            /*carrierId: {
               value: null,
               type: 'select',
               props: {
+                vIf: false,
                 label: 'Carrier',
                 options: workOrderList().getAirlinesList().map(item => ({
                   label: item.airlineName,
                   value: item.id
                 })),
               },
-            },
+            },*/
           },
         };
       },

@@ -53,9 +53,7 @@ export default defineComponent({
           rounded
           style="max-width: 100%"
           color="primary"
-          :placeholder="`${trans('ifly.cms.label.search', {
-          capitalize: true,
-        })}...`"
+          :placeholder="`What are you looking for?`"
           class="tw-mb-6 search tw-shadow-inner search-service-list"
           v-model="search"
       >

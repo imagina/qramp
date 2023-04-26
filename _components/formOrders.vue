@@ -1,10 +1,36 @@
 <template>
-  <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true" :loading="loading"
-    @hide="clear" :actions="actions" :width="modalProps.width" :maximized="$q.screen.lt.md">
-    <stepper-ramp-form v-if="modalProps.update" @sp="sp = $event" @loading="setLoading" ref="stepper" :steps="steppers"
-      :data="modalProps" @close-modal="close($event)" />
-    <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" />
+  <div>
+    <master-modal 
+      id="formRampComponent" 
+      v-model="show" 
+      v-bind="modalProps" 
+      :persistent="true" 
+      :loading="loading"
+      @hide="clear" 
+      :actions="actions" 
+      :width="modalProps.width" 
+      :maximized="$q.screen.lt.md"
+    >
+    <stepper-ramp-form 
+      v-if="modalProps.update" 
+      @sp="sp = $event" 
+      @loading="setLoading" 
+      ref="stepper" 
+      :steps="steppers"
+      :data="modalProps" 
+      @close-modal="close($event)" 
+    />
+    <simpleWorkOrders 
+      v-if="!modalProps.update" 
+      ref="simpleWorkOrder" 
+    />
   </master-modal>
+    <commentsModal
+        ref="commentsModal"
+        :commentableId="modalProps.workOrderId"
+        isCrud
+    />
+  </div>
 </template>
 <script>
 import { computed } from 'vue';
@@ -34,11 +60,13 @@ import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
+import commentsModal from "../_components/schedule/modals/commentsModal.vue";
 
 export default {
   components: {
     stepperRampForm,
     simpleWorkOrders,
+    commentsModal,
   },
   mixins: [responsive, services],
   data() {
@@ -150,6 +178,18 @@ export default {
     actionsStepperButtom() {
       const statusId = qRampStore().getStatusId();
       const actions = [
+        {
+          props: {
+            color: 'primary',
+            icon: 'fa-light fa-comment',
+            label: 'Comments',
+          },
+          action: () => {
+            if(this.$refs.commentsModal) {
+              this.$refs.commentsModal.showModal();
+            }
+          }
+        },
         {
           props: {
             vIf: this.sp > 1,

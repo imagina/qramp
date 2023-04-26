@@ -16,7 +16,7 @@
           />
         </div>
         <div class="tw-space-x-2 tw-my-1">
-          <button
+          <!--<button
             v-if="!isNaN(event.id) && event.isUpdate && !isBlank"
             class="tw-bg-green-500 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
             @click.prevent="save(STATUS_DRAFT)"
@@ -25,7 +25,7 @@
             <q-tooltip>
               Start Work Order
             </q-tooltip>
-          </button>
+          </button>-->
           <button
             v-if="event.isUpdate && !isBlank"
             class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
