@@ -476,7 +476,7 @@ export default {
         },
       ];
     },
-    filsterAction() {
+    filterActions() {
       return {
         name: this.$route.name,
         fields: {
@@ -959,14 +959,16 @@ export default {
     },
     async getFilter() {
       this.events = [];
-      if (this.stationId) {
+      const station = await workOrderList().getStationList()
+        .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
+      if (this.stationId && station) {
         await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(true);
       }
     },
     setFilter() {
       return new Promise(async (resolve, reject) => {
-        this.$filter.setFilter(this.filsterAction);
+        this.$filter.setFilter(this.filterActions);
         resolve(true);
       });
     },
