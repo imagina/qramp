@@ -701,7 +701,7 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.inboundGateArrival,
-              label: 'Inbound Gate Arrival',
+              label: '*Inbound Gate Arrival',
               clearable: true,
               color:"primary"
             },
@@ -799,7 +799,7 @@ export default {
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
-              label: 'Outbound Gate Departure',
+              label: '*Outbound Gate Departure',
               clearable: true,
               color:"primary"
             },
