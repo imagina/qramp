@@ -180,6 +180,7 @@ export default {
       const actions = [
         {
           props: {
+            vIf: !this.isAppOffline,
             color: 'primary',
             icon: 'fa-light fa-comment',
             label: 'Comments',
