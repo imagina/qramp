@@ -104,128 +104,161 @@
       </template>
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
         <template>
-          <template v-for="(event, index) in getEvents(timestamp.date)">
-            <div
-              :key="index"
-              v-if="event.time && !event.isUpdate"
+          <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
+            <div 
               class="
-                tw-text-lg
-                tw-my-1
-                tw-p-1
-                tw-mx-2
-                tw-rounded-md
-                tw-border-2
-                tw-border-grey-100
-                tw-flex
-              "
-              :class="classSchedule(event)"
-              :style="
-                badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
-              "
-              @click.stop.prevent="editSchedule(event)"
+               tw-border-b-2 
+               tw-border-gray-200 
+               tw-mb-3 
+               tw-py-2" 
             >
-              <div 
-                class="tw-font-semibold"
-                :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
-              >
-                <badgeComment 
-                  :event="event"
-                  mainClass="tw-mr-2" 
-                />
-                <i
+             <div 
+                class="
+                  tw-inline-flex 
+                  tw-items-center 
+                  tw-justify-center 
+                  tw-px-1 
+                  tw-py-1 
+                  tw-mr-2 
+                  tw-text-xs 
+                  tw-font-bold 
+                  tw-leading-none 
+                  tw-text-red-100 
+                  tw-bg-red-600 
+                  tw-rounded-full
+                  tw-shadow-lg"
+              > 
+                 <i 
                   class="
-                   fa-solid 
-                   fa-circle-check"
-                   :class="colorCheckSchedule(event)" 
-                  >
-                  <q-tooltip>
-                    {{ titleStatus(event.statusId) }}
-                  </q-tooltip>
-                </i>
-                {{ event.calendarTitle }}
+                   fa-sharp 
+                   fa-light 
+                   fa-clock 
+                   tw-px-1" />
+                    {{ hours }} h
               </div>
-              <div 
-                class="tw-text-right tw-w-1/2 tw-space-x-2"
-                v-if="event.id && scheduleType === 'day-agenda'"
-              >
-                <button
-                  v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger"
+              <div v-for="(event, index) in eventArr">
+                <div
+                  :key="index"
+                  v-if="event.time && !event.isUpdate"
                   class="
-                    tw-bg-green-500 
-                    tw-rounded-lg 
-                    tw-px-2  
-                    tw-text-white"
-                    @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)" 
+                    tw-text-lg
+                    tw-my-1
+                    tw-p-1
+                    tw-mx-2
+                    tw-rounded-md
+                    tw-border-2
+                    tw-border-grey-100
+                    tw-flex
+                  "
+                  :class="classSchedule(event)"
+                  :style="
+                    badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
+                  "
+                  @click.stop.prevent="editSchedule(event)"
+                >
+                  <div 
+                    class="tw-font-semibold"
+                    :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
                   >
-                  <i class="fa-sharp fa-regular fa-bring-forward" />
-                  <q-tooltip>
-                    Start Work Order
-                  </q-tooltip>
-                </button>
-                <button
-                  v-if="!isBlank && !events.some(item => item.isUpdate)"
-                  class="
-                    tw-bg-blue-800 
-                    tw-rounded-lg 
-                    tw-px-2  
-                    tw-text-white"
-                    @click.stop.prevent="duplicateSchedule(event)" 
-                  >
-                  <i class="fa-thin fa-clone tw-text-sm" />
-                  <q-tooltip>
-                    Duplicate
-                  </q-tooltip>
-                </button>
-                <button
-                  v-if="!events.some(item => item.isUpdate)"
-                  @click.stop.prevent="editSchedule(event, 'day')"
-                  class="
-                    tw-bg-blue-800 
-                    tw-rounded-lg 
-                    tw-px-2
-                    tw-text-white">
-                  <i 
-                    class="fa-light tw-text-sm"
-                    :class="{
-                      'fa-eye': isBlank,
-                      'fa-pen-to-square': !isBlank
-                    }"
+                    <badgeComment 
+                      :event="event"
+                      mainClass="tw-mr-2" 
                     />
-                  <q-tooltip>
-                    <div v-if="!isBlank">
-                      {{ $tr('isite.cms.label.edit') }}
-                    </div>
-                    <div v-else>
-                      {{ $tr('isite.cms.label.show') }}
-                    </div>
-                  </q-tooltip>
-                </button>
-                <button
-                  v-if="!isBlank && !events.some(item => item.isUpdate)"
-                  class="
-                    tw-bg-red-500 
-                    tw-rounded-lg 
-                    tw-px-2  
-                    tw-text-white"
-                    @click.stop.prevent="deleteSchedule(event.id)" 
+                    <i
+                      class="
+                      fa-solid 
+                      fa-circle-check"
+                      :class="colorCheckSchedule(event)" 
+                      >
+                      <q-tooltip>
+                        {{ titleStatus(event.statusId) }}
+                      </q-tooltip>
+                    </i>
+                    {{ event.calendarTitle }}
+                  </div>
+                  <div 
+                    class="tw-text-right tw-w-1/2 tw-space-x-2"
+                    v-if="event.id && scheduleType === 'day-agenda'"
                   >
-                  <i class="fa-light fa-trash-can tw-text-sm"/>
-                  <q-tooltip>
-                    {{ $tr('isite.cms.label.delete') }}
-                  </q-tooltip>
-                </button>
+                    <button
+                      v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger"
+                      class="
+                        tw-bg-green-500 
+                        tw-rounded-lg 
+                        tw-px-2  
+                        tw-text-white"
+                        @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)" 
+                      >
+                      <i class="fa-sharp fa-regular fa-bring-forward" />
+                      <q-tooltip>
+                        Start Work Order
+                      </q-tooltip>
+                    </button>
+                    <button
+                      v-if="!isBlank && !events.some(item => item.isUpdate)"
+                      class="
+                        tw-bg-blue-800 
+                        tw-rounded-lg 
+                        tw-px-2  
+                        tw-text-white"
+                        @click.stop.prevent="duplicateSchedule(event)" 
+                      >
+                      <i class="fa-thin fa-clone tw-text-sm" />
+                      <q-tooltip>
+                        Duplicate
+                      </q-tooltip>
+                    </button>
+                    <button
+                      v-if="!events.some(item => item.isUpdate)"
+                      @click.stop.prevent="editSchedule(event, 'day')"
+                      class="
+                        tw-bg-blue-800 
+                        tw-rounded-lg 
+                        tw-px-2
+                        tw-text-white">
+                      <i 
+                        class="fa-light tw-text-sm"
+                        :class="{
+                          'fa-eye': isBlank,
+                          'fa-pen-to-square': !isBlank
+                        }"
+                        />
+                      <q-tooltip>
+                        <div v-if="!isBlank">
+                          {{ $tr('isite.cms.label.edit') }}
+                        </div>
+                        <div v-else>
+                          {{ $tr('isite.cms.label.show') }}
+                        </div>
+                      </q-tooltip>
+                    </button>
+                    <button
+                      v-if="!isBlank && !events.some(item => item.isUpdate)"
+                      class="
+                        tw-bg-red-500 
+                        tw-rounded-lg 
+                        tw-px-2  
+                        tw-text-white"
+                        @click.stop.prevent="deleteSchedule(event.id)" 
+                      >
+                      <i class="fa-light fa-trash-can tw-text-sm"/>
+                      <q-tooltip>
+                        {{ $tr('isite.cms.label.delete') }}
+                      </q-tooltip>
+                    </button>
+                  </div>
+                 </div>
+                 <lineForm
+                    :key="index"
+                    v-if="event.isUpdate"
+                    :event="event"
+                    @dismissEvent="dismissEvent"
+                    @addSchedule="addSchedule"
+                    @updateSchedule="updateSchedule"
+                    @setEventComments="setEventComments"
+                 />
               </div>
             </div>
-            <lineForm
-              :key="index"
-              v-if="event.isUpdate"
-              :event="event"
-              @dismissEvent="dismissEvent"
-              @addSchedule="addSchedule"
-              @updateSchedule="updateSchedule"
-              @setEventComments="setEventComments"
-            />
-            
           </template>
         </template>
       </template>
@@ -700,6 +733,17 @@ export default {
           ["time"],
           ["asc"]
         );
+        if(this.scheduleTypeComputed !== 'month') {
+          let dataSchedule = order.sort(item => !item.isClone ? 1 : -1);
+          dataSchedule = dataSchedule.reduce((acc, item) => {
+            const hour = item.time.substring(0, 2); 
+
+            acc[hour] = acc[hour] ? [...acc[hour], item] : [item];
+
+            return acc;
+          }, {});
+          return dataSchedule
+        }
         return order.sort(item => !item.isClone ? 1 : -1);
       } catch (error) {
         console.log(error);
