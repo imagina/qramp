@@ -1226,7 +1226,8 @@ export default {
           destinationAirport: {
             id: this.form.inboundOriginAirportId,
           },
-          registration: this.form.outboundTailNumber || this.form.inboundTailNumber,
+          registration: this.form.inboundTailNumber,
+          outRegistration: this.form.outboundTailNumber,
           originAirport: {
             id: this.form.outboundDestinationAirportId,
           },

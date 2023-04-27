@@ -112,6 +112,7 @@ export default function qRampStore() {
     function validateStatusSelectedFlight(data) {
         state.flightBoundFormStatus.boundOriginAirportId = this.isData(data.destinationAirport.id);
         state.flightBoundFormStatus.boundTailNumber = this.isData(data.registration);
+        state.flightBoundFormStatus.outboundTailNumber = this.isData(data.registration || data.outRegistration);
         state.flightBoundFormStatus.boundDestinationAirport = this.isData(data.originAirport.id);
         state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOn);
         state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOff);
@@ -122,7 +123,7 @@ export default function qRampStore() {
         
     }
     function isData(data) {
-        return data ? true : false;
+        return (!data || data === '') ? false : true;
     }
     function resetFlightBoundFormStatus() {
         state.flightBoundFormStatus = { ...modelFlightBoundFormStatus };
@@ -141,6 +142,7 @@ export default function qRampStore() {
         state.flightBoundFormStatus = status;
     }
     function getFlightBoundFormStatus() {
+        console.log('hola', state.flightBoundFormStatus);
         return state.flightBoundFormStatus;
     }
     function validateFutureDateTime(dateTime, dateMin = null, currentDate) {
