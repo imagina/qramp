@@ -122,6 +122,13 @@ export default {
     init() {
       this.$emit('sp', this.sp)
     },
+    parseDateOfflineWO(dateWO){
+      if (!dateWO && !dateWO?.includes('T')) return dateWO;
+      const splitDate = dateWO.split(" ");
+      const [date, hour] = splitDate;
+      const newDate = new Date(date).toLocaleDateString('fr-CA');
+      return `${newDate}T${hour}`;
+    },
     async setData() {
       await this.saveFormData(this.sp);
     },
@@ -167,7 +174,7 @@ export default {
         const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
         const dataCargo = cargoStore().payload();
         data.form.statusId = qRampStore().getStatusId();
-        const formatData = {
+        let formatData = {
           ...data.form,
           ...dataCargo.cargo,
           ...remarks,
@@ -182,6 +189,28 @@ export default {
         }
         if (this.data.update) {
           formatData.id = this.data.workOrderId;
+        }
+        //Validate is the app is offline and chage the format dates
+        if (this.isAppOffline){
+          const inboundBlockIn = this.parseDateOfflineWO(formatData.inboundBlockIn);
+          const inboundScheduledArrival = this.parseDateOfflineWO(formatData.inboundScheduledArrival);
+          const outboundBlockOut = this.parseDateOfflineWO(formatData.outboundBlockOut);
+          const outboundScheduledDeparture = this.parseDateOfflineWO(formatData.outboundScheduledDeparture);
+          formatData = {
+            ...formatData,
+            inboundBlockIn,
+            inboundScheduledArrival,
+            outboundBlockOut,
+            outboundScheduledDeparture
+          };
+          formatData.workOrderItems = formatData.workOrderItems.map(itemWorkOrder => {
+            itemWorkOrder.work_order_item_attributes.forEach(itemAttribute => {
+              if (itemAttribute.type === 'fullDate'){
+                itemAttribute.value = this.parseDateOfflineWO(itemAttribute.value);
+              }
+            })
+            return itemWorkOrder;
+          });
         }
         this.sendWorkOrder(formatData);
       } catch (error) {
@@ -245,6 +274,7 @@ export default {
               this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
               console.log('SEND INFO ERROR:', err)
             }else{
+              console.warn(formatData);
               formatData.offline = true;
               await cacheOffline.updateRecord(route, formatData);
               await this.$emit('close-modal', false)
