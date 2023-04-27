@@ -190,28 +190,6 @@ export default {
         if (this.data.update) {
           formatData.id = this.data.workOrderId;
         }
-        //Validate is the app is offline and chage the format dates
-        if (this.isAppOffline){
-          const inboundBlockIn = this.parseDateOfflineWO(formatData.inboundBlockIn);
-          const inboundScheduledArrival = this.parseDateOfflineWO(formatData.inboundScheduledArrival);
-          const outboundBlockOut = this.parseDateOfflineWO(formatData.outboundBlockOut);
-          const outboundScheduledDeparture = this.parseDateOfflineWO(formatData.outboundScheduledDeparture);
-          formatData = {
-            ...formatData,
-            inboundBlockIn,
-            inboundScheduledArrival,
-            outboundBlockOut,
-            outboundScheduledDeparture
-          };
-          formatData.workOrderItems = formatData.workOrderItems.map(itemWorkOrder => {
-            itemWorkOrder.work_order_item_attributes.forEach(itemAttribute => {
-              if (itemAttribute.type === 'fullDate'){
-                itemAttribute.value = this.parseDateOfflineWO(itemAttribute.value);
-              }
-            })
-            return itemWorkOrder;
-          });
-        }
         this.sendWorkOrder(formatData);
       } catch (error) {
         qRampStore().hideLoading();
@@ -274,8 +252,20 @@ export default {
               this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
               console.log('SEND INFO ERROR:', err)
             }else{
-              console.warn(formatData);
               formatData.offline = true;
+              const inboundBlockIn = this.parseDateOfflineWO(formatData.inboundBlockIn);
+              const inboundScheduledArrival = this.parseDateOfflineWO(formatData.inboundScheduledArrival);
+              const outboundBlockOut = this.parseDateOfflineWO(formatData.outboundBlockOut);
+              const outboundScheduledDeparture = this.parseDateOfflineWO(formatData.outboundScheduledDeparture);
+              formatData = {
+                ...formatData,
+                inboundBlockIn,
+                inboundScheduledArrival,
+                outboundBlockOut,
+                outboundScheduledDeparture
+              };
+              const camelCaseFormatData = Object.values(this.$helper.snakeToCamelCaseKeys(formatData.workOrderItems));
+              formatData.workOrderItems = camelCaseFormatData;
               await cacheOffline.updateRecord(route, formatData);
               await this.$emit('close-modal', false)
             }

@@ -1,5 +1,6 @@
 <template>
   <master-modal
+    v-if="!isAppOffline"
     v-model="visible"
     :title="`Comments Work Order Id:${commentableId}`"
     :persistent="true"
@@ -40,6 +41,9 @@ export default {
     stationId: null,
   }),
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     permisionCommentsIndex() {
       return this.$auth.hasAccess('ramp.work-orders-comments.index');
     },

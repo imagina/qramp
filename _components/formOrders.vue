@@ -26,6 +26,7 @@
     />
   </master-modal>
     <commentsModal
+        v-if="!isAppOffline"
         ref="commentsModal"
         :commentableId="modalProps.workOrderId"
         isCrud
