@@ -263,7 +263,10 @@
         </template>
       </template>
       <template #day-header="{ timestamp }">
-        <div class="tw-mx-4 tw-py-4" v-if="scheduleType === 'day-agenda' && !isBlank">
+        <div 
+          class="tw-mx-4 tw-py-4" 
+          v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank"
+        >
           <button
             class="
               tw-bg-blue-800 
@@ -273,7 +276,10 @@
               @click="addNewDayToSchedule(timestamp)"
               :disabled="events.some(item => item.isUpdate)"
             >
-            <i class="fa-light fa-plus"></i> {{ $tr('isite.cms.label.new') }}
+            <i class="fa-light fa-plus"></i> <span v-if="scheduleType === 'day-agenda'">{{ $tr('isite.cms.label.new') }}</span>
+              <q-tooltip>
+                {{ $tr('isite.cms.label.new') }}
+              </q-tooltip>
           </button>
         </div>
       </template>
@@ -1123,6 +1129,9 @@ export default {
     },
     async addNewDayToSchedule(event) {
       try {
+        if(this.scheduleType === 'week-agenda') {
+          return;
+        }
         const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T23:59:59`;
         this.sessionStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         const data = {
