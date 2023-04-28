@@ -190,7 +190,7 @@ export default {
         if (this.data.update) {
           formatData.id = this.data.workOrderId;
         }
-        this.sendWorkOrder(formatData);
+        await this.sendWorkOrder(formatData);
       } catch (error) {
         qRampStore().hideLoading();
         console.log(error);
@@ -220,7 +220,7 @@ export default {
     previous() {
       this.$refs.stepper.previous()
     },
-    sendWorkOrder(formatData) {
+    async sendWorkOrder(formatData) {
       const route = 'apiRoutes.qramp.workOrders';
       const titleOffline = qRampStore().getTitleOffline();
       const params = {params: {titleOffline}};
@@ -234,7 +234,7 @@ export default {
       this.$emit('loading', true)
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData, params)
           : this.$crud.create(route, formatData, params);
-      request.then(res => {
+      await request.then(res => {
         this.clean()
         this.$emit('close-modal', false)
         const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}`
