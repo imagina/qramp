@@ -228,6 +228,9 @@ export default {
             await this.$refs.stepper.setData();
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
+              setTimeout(async() => {
+                  await this.getWorkOrders();
+              }, 1000);
             }, 1000);
             if (!this.isAppOffline) {
               await workOrderList().getWorkOrders(true);
@@ -248,6 +251,9 @@ export default {
             await this.$refs.stepper.setData();
             setTimeout(async () => {
               await this.$refs.stepper.sendInfo();
+              setTimeout(async() => {
+                  await this.getWorkOrders();
+              }, 1000);
             }, 1000);
             if (!this.isAppOffline) {
               await workOrderList().getWorkOrders(true);
@@ -365,6 +371,9 @@ export default {
     setLoading(value) {
       this.loading = value;
     },
+    async getWorkOrders() {
+      this.$emit('getWorkOrderFilter')
+    }
   },
 }
 </script>

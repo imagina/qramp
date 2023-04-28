@@ -891,8 +891,12 @@ export default {
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
         const customer = workOrderList().getCustomerWithContractLists().find(item => item.customerId == updateForm.customerId) || {};
-        customer.label = updateForm.adHoc ? `${customer.label} (Ad Hoc)`: customer.label;
-        this.selectCustomerComputed = customer;
+        if(customer) {
+          customer.label = updateForm.adHoc ? `${customer.label} (Ad Hoc)`: customer.label;
+          if(customer.label) {
+            this.selectCustomerComputed = customer;
+          }
+        }
         await this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gateId = updateForm.gateId

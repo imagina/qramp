@@ -277,7 +277,7 @@
               :disabled="events.some(item => item.isUpdate)"
             >
             <i class="fa-light fa-plus"></i> <span v-if="scheduleType === 'day-agenda'">{{ $tr('isite.cms.label.new') }}</span>
-              <q-tooltip>
+              <q-tooltip v-if="scheduleType === 'week-agenda'">
                 {{ $tr('isite.cms.label.new') }}
               </q-tooltip>
           </button>
@@ -317,7 +317,10 @@
       @deleteSchedule="deleteSchedule"
       @setEventComments="setEventComments"
     />
-    <form-orders ref="formOrders" />
+    <form-orders 
+      ref="formOrders"
+      @getWorkOrderFilter="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)"
+    />
     <stationModal
       ref="stationModal"
       @saveFilterStationId="saveFilterStationId"
@@ -393,6 +396,7 @@ export default {
       const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
       await qRampStore().setIsPassenger(currentRouteName !== -1);
       await workOrderList().getAllList();
+      await workOrderList().getCustomerWithContract();
     });
   },
   mounted() {
@@ -841,7 +845,6 @@ export default {
           } else {
             await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           }
-         
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
           this.$alert.info('The workOrders was updated correctly');
