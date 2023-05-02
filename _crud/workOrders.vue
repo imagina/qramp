@@ -22,6 +22,7 @@ import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
 import baseService from '@imagina/qcrud/_services/baseService.js';
 import workOrderList from '../_store/actions/workOrderList.ts'
+import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 
 export default {
   name: 'RampCrud',
@@ -613,12 +614,15 @@ export default {
         this.$root.$emit('crud.data.refresh')
         this.$emit('loading', false)
       })
-        .catch(err => {
+        .catch(async err => {
+          this.$emit('loading', false)
           if (!this.isAppOffline) {
-            this.$emit('loading', false)
             this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
+          }else{
+            payload.offline = true;
+            await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', payload);
+            this.$root.$emit('crud.data.refresh')
           }
-
         })
     },
     async openModal(item) {
