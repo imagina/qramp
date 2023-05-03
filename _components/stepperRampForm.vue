@@ -319,7 +319,7 @@ export default {
         }
         const validateDateService = await this.validateFulldate();
         const service = await serviceListStore().getServiceItems();
-        if (service.length === 0) {
+        if (!this.isPassenger && service.length === 0) {
           await this.setStep(STEP_SERVICE);
           this.error = true;
           qRampStore().hideLoading();
