@@ -394,6 +394,7 @@ export default {
   created() {
     this.$nextTick(async function () {
       const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
+      await workOrderList().setStationList([]);
       await qRampStore().setIsPassenger(currentRouteName !== -1);
       await workOrderList().getAllList();
       await workOrderList().getCustomerWithContract();
@@ -1014,7 +1015,9 @@ export default {
       this.events = [];
       const station = await workOrderList().getStationList()
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
+      console.log(station);
       if (this.stationId && station) {
+        console.log('ingreso');
         await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(true);
       }
