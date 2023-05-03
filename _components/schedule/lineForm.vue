@@ -3,8 +3,16 @@
     <q-form ref="lineForm">
       <div
         class="
-          tw-border tw-rounded-lg tw-py-3 tw-px-4 tw-mx-2 tw-my-1
-          lg:tw-flex lg:tw-space-x-2 lg:tw-flex-wrap md:tw-flex-wrap
+          tw-border 
+          tw-rounded-lg 
+          tw-py-3 
+          tw-px-4 
+          tw-mx-2 
+          tw-my-1
+          lg:tw-flex 
+          lg:tw-space-x-2 
+          lg:tw-flex-wrap 
+          md:tw-flex-wrap
         "
       >
         <div v-for="(field, keyField) in fields.form" :key="keyField">
@@ -16,19 +24,13 @@
           />
         </div>
         <div class="tw-space-x-2 tw-my-1">
-          <!--<button
-            v-if="!isNaN(event.id) && event.isUpdate && !isBlank"
-            class="tw-bg-green-500 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
-            @click.prevent="save(STATUS_DRAFT)"
-          >
-            <i class="fa-sharp fa-regular fa-bring-forward" />
-            <q-tooltip>
-              Start Work Order
-            </q-tooltip>
-          </button>-->
           <button
             v-if="event.isUpdate && !isBlank"
-            class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
+            class="
+             tw-bg-blue-800 
+             tw-rounded-lg 
+             tw-px-2 tw-py-1 
+             tw-text-white"
             @click.prevent="save"
           >
             <i class="fa-light fa-floppy-disk" />
@@ -38,7 +40,11 @@
           </button>
           <button
             v-if="!isNaN(event.id) && event.isUpdate && !isBlank && permisionComments"
-            class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
+            class="
+             tw-bg-blue-800 
+             tw-rounded-lg
+             tw-px-2 tw-py-1 
+             tw-text-white"
             @click.prevent="openCommentsModal"
           >
             <i class="fa-light fa-comment" />
@@ -49,7 +55,12 @@
           <button
             v-if="event.isUpdate"
             @click.prevent="$emit('dismissEvent', event)"
-            class="tw-bg-blue-800 tw-rounded-lg tw-px-2 tw-py-1 tw-text-white"
+            class="
+             tw-bg-blue-800 
+             tw-rounded-lg 
+             tw-px-2 
+             tw-py-1 
+             tw-text-white"
           >
             <i class="fa-light fa-xmark"></i>
             <q-tooltip> Discard </q-tooltip>

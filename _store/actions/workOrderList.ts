@@ -20,7 +20,7 @@ import {
     WorkOrderStatusesContract
 } from './@Contracts/workOrderList.contract';
 import { buildServiceList } from './services';
-import factoryCustomerWithContracts from '../../_components/factories/factoryCustomerWithContracts.js'
+import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
 import cache from '@imagina/qsite/_plugins/cache.js';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
 

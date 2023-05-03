@@ -205,7 +205,7 @@
 <script>
 import responsive from '../../_mixins/responsive.js'
 import tableFlight from '../modal/tableFlight.vue'
-import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
+import factoryCustomerWithContracts from '../../_store/actions/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
 import { 
   BUSINESS_UNIT_PASSENGER , 

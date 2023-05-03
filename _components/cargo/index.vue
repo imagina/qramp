@@ -185,8 +185,6 @@ export default {
       }
     },
   },
-  methods: {
-  },
 }
 </script>
 
