@@ -174,7 +174,7 @@
                         {{ titleStatus(event.statusId) }}
                       </q-tooltip>
                     </i>
-                    (Id: {{ event.id }}) {{ event.calendarTitle }}
+                     {{ event.calendarTitle }}
                   </div>
                   <div 
                     class="tw-text-right tw-w-1/2 tw-space-x-2"
