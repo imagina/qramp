@@ -174,7 +174,7 @@
                         {{ titleStatus(event.statusId) }}
                       </q-tooltip>
                     </i>
-                    (Work Order Id: {{ event.id }}) {{ event.calendarTitle }}
+                    (Id: {{ event.id }}) {{ event.calendarTitle }}
                   </div>
                   <div 
                     class="tw-text-right tw-w-1/2 tw-space-x-2"
@@ -287,6 +287,9 @@
                 :scheduleType="scheduleType"
                 :timestamp="timestamp"
               />
+           </div>
+           <div>
+
            </div>
         </div>
       </template>
