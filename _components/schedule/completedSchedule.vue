@@ -33,6 +33,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import _ from "lodash";
+import {STATUS_DRAFT, STATUS_SCHEDULE} from '../model/constants.js'
 
 export default defineComponent({
     props: {
@@ -55,7 +56,7 @@ export default defineComponent({
         function isEventListComplete(date: string): boolean {
             return _.every(Object.entries(props.getEvents(date)), (elemento) => {
                 return _.every(elemento[1], (objeto) => {
-                return objeto.statusId !== 1 && objeto.statusId !== 5;
+                return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE;
                 });
             });
         }
