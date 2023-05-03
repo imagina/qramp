@@ -1017,7 +1017,7 @@ export default {
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
       if (this.stationId && station) {
         await cache.set("stationId", this.filter.values.stationId || null);
-        await this.getWorkOrderFilter(true);
+        await this.getWorkOrderFilter(false);
       }
     },
     setFilter() {
