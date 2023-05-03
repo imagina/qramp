@@ -124,7 +124,7 @@
                   tw-font-bold 
                   tw-leading-none 
                   tw-text-red-100 
-                  tw-bg-red-600 
+                  tw-bg-blue-800 
                   tw-rounded-full
                   tw-shadow-lg"
               > 
