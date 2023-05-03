@@ -103,7 +103,7 @@
         </div>
       </template>
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
-        <template>
+        <template>  
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
             <div 
               class="
@@ -174,7 +174,7 @@
                         {{ titleStatus(event.statusId) }}
                       </q-tooltip>
                     </i>
-                    {{ event.calendarTitle }}
+                    (Work Order Id: {{ event.id }}) {{ event.calendarTitle }}
                   </div>
                   <div 
                     class="tw-text-right tw-w-1/2 tw-space-x-2"
@@ -281,6 +281,40 @@
                 {{ $tr('isite.cms.label.new') }}
               </q-tooltip>
           </button>
+           <div v-if="Object.entries(getEvents(timestamp.date)).length > 0">
+              <div>
+                  <div
+                    v-if="['day-agenda', 'week-agenda'].includes(scheduleType)" 
+                    class="
+                      tw-inline-flex 
+                      tw-items-center 
+                      tw-justify-center 
+                      tw-px-1 
+                      tw-py-1 
+                      tw-mr-2
+                      tw-mt-4 
+                      tw-text-base 
+                      tw-font-bold 
+                      tw-leading-none 
+                    tw-text-red-100 
+                    tw-bg-white 
+                      tw-rounded-full
+                      tw-shadow-lg"
+                    >
+                    <p 
+                      :class="{
+                        'tw-text-green-500': isEventListComplete(timestamp.date),
+                        'tw-text-red-500': !isEventListComplete(timestamp.date)
+                      }"
+                    >
+                      <i
+                        class="fa-solid fa-circle" 
+                      />
+                        {{  titleCompletedSchedule(timestamp.date)  }}
+                    </p>
+                </div>
+              </div>
+           </div>
         </div>
       </template>
     </q-calendar>
@@ -1184,6 +1218,17 @@ export default {
       } catch (error) {
        console.log(error)
       }
+    },
+    isEventListComplete(date) {
+      return _.every(Object.entries(this.getEvents(date)), (elemento) => {
+        return _.every(elemento[1], (objeto) => {
+          return objeto.statusId !== 1 && objeto.statusId !== 5;
+        });
+      });
+    },
+    titleCompletedSchedule(date) {
+        const completed = this.isEventListComplete(date);
+        return completed ? 'Completed' : 'In complete'
     },
   },
 };
