@@ -242,8 +242,9 @@ export default {
       await this.orderConfirmationMessage();
     },
     async orderConfirmationMessage() {
+      this.$emit('loading', true);
       const response = await this.saveRequestSimpleWorkOrder();
-      this.$alert.info({
+      await this.$alert.info({
         mode: "modal",
         title: '',
         message: 'What do you want to do?',
@@ -275,6 +276,7 @@ export default {
           },
         ],
       });
+      this.$emit('loading', false);
     },
     search({type}) {
       if(!this.isAppOffline) {

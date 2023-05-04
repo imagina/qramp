@@ -22,7 +22,8 @@
     />
     <simpleWorkOrders 
       v-if="!modalProps.update" 
-      ref="simpleWorkOrder" 
+      ref="simpleWorkOrder"
+      @loading="setLoading" 
     />
   </master-modal>
     <commentsModal
