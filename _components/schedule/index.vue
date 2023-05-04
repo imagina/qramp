@@ -522,6 +522,7 @@ export default {
         return this.scheduleType;
       },
       async set(value) {
+        this.filterTime = null;
         this.scheduleType = value;
         await this.$refs.schedule;
         await this.getListOfSelectedWorkOrders(value);
@@ -739,11 +740,13 @@ export default {
       this.selectedDate = this.$moment(this.selectedDate).startOf("month").startOf("day").add(1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.next();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
+      this.filterTime = null;
     },
     async schedulePrev() {
       this.selectedDate = this.$moment(this.selectedDate).startOf("month").startOf("day").add(-1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.prev();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
+      this.filterTime = null;
     },
     async getListOfSelectedWorkOrders(type = false, refresh = false) {
       try {
@@ -808,6 +811,7 @@ export default {
       }
     },
     eventSchedule(event, isDay = false) {
+      this.filterTime = null;
       if(isDay){
         this.scheduleTypeComputed = 'day-agenda';
         return;
