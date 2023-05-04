@@ -281,15 +281,28 @@
                 {{ $tr('isite.cms.label.new') }}
               </q-tooltip>
           </button>
-           <div v-if="Object.entries(getEvents(timestamp.date)).length > 0">
-              <completedSchedule 
-                :getEvents="getEvents"
-                :scheduleType="scheduleType"
-                :timestamp="timestamp"
-              />
-           </div>
+            <div v-if="!events.some(item => item.isUpdate)">
+                  <div 
+                    class="tw-w-full tw-grid"
+                    :class="{
+                      'tw-grid-cols-1' : scheduleType === 'week-agenda',
+                      'tw-grid-cols-2' : scheduleType === 'day-agenda',
+                    }"
+                  >
+                      <div>
+                        <completedSchedule 
+                        :getEvents="getEvents"
+                        :scheduleType="scheduleType"
+                        :timestamp="timestamp"
+                        v-if="Object.entries(getEvents(timestamp.date)).length > 0"
+                      />
+                      </div>
+                      <div v-if="scheduleType === 'day-agenda'">
+                        <dynamic-field v-model="filterTime" class="q-mb-md" :field="fields.time" />
+                      </div>
+                  </div>
+            </div>
            <div>
-
            </div>
         </div>
       </template>
@@ -361,6 +374,7 @@ import badgeComment from './badgeComment.vue';
 import cache from '@imagina/qsite/_plugins/cache';
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import completedSchedule from './completedSchedule.vue'
+import modelHoursFilter from './models/modelHoursFilter.js'
 
 export default {
   props:{
@@ -393,6 +407,18 @@ export default {
       cloneEvent: {},
       STATUS_SCHEDULE,
       STATUS_DRAFT,
+      filterTime: null,
+      fields: {
+        time: {
+          type: 'select',
+            props: {
+              label: 'Filter by time',
+                format24h: true,
+                clearable: true,
+                options: modelHoursFilter
+            }
+        },
+      }
     };
   },
   watch: {
@@ -732,7 +758,16 @@ export default {
     getEvents(timestamp) {
       try {
         let events = this.$clone(this.events || []);
-        const filters = events
+        const filterData = events.filter(item => {
+            if(this.filterTime && this.filterTime.length > 0) {
+              const time = this.filterTime.split('-');
+              const staTime = item.sta ? item.sta.split(":") : [];
+              const staHours = parseInt(staTime[0] || 0);
+              return staHours >= parseInt(time[0].split(":")) && staHours <= parseInt(time[1].split(":"));
+            }
+            return true;
+        });
+        const filters = filterData
           .filter((event) => {
             if (event.inboundScheduledArrival) {
               const momentDate = this.$moment(
