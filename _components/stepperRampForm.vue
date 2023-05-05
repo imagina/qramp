@@ -190,7 +190,26 @@ export default {
         if (this.data.update) {
           formatData.id = this.data.workOrderId;
         }
-        await this.sendWorkOrder(formatData);
+        const service = await serviceListStore().getServiceItems();
+        if (this.isPassenger && service.length === 0) {
+          this.$alert.warning({
+            mode: "modal",
+            message: 'Surely you want to save the work order without services',
+            actions: [
+              {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+              {
+                label: this.$tr("isite.cms.label.yes"),
+                color: "primary",
+                handler: async () => {
+                  await this.sendWorkOrder(formatData);
+                },
+              },
+            ],
+          });
+        } else {
+          await this.sendWorkOrder(formatData);
+        }
+        
       } catch (error) {
         qRampStore().hideLoading();
         console.log(error);
