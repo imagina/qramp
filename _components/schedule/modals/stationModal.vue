@@ -67,7 +67,9 @@ export default {
             select: { label: "fullName", id: "id" },
             requestParams: {
               filter: {
+                "status": 1,
                 companyId: this.filterCompany,
+                "allTranslations": true
               },
             },
           },
