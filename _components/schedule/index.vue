@@ -107,34 +107,38 @@
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
             <div 
               class="
-               tw-border-b-2 
-               tw-border-gray-200 
                tw-mb-3 
                tw-py-2" 
             >
-             <div 
-                class="
-                  tw-inline-flex 
-                  tw-items-center 
-                  tw-justify-center 
-                  tw-px-1 
-                  tw-py-1 
-                  tw-mr-2 
-                  tw-text-xs 
-                  tw-font-bold 
-                  tw-leading-none 
-                  tw-text-red-100 
-                  tw-bg-blue-800 
-                  tw-rounded-full
-                  tw-shadow-lg"
-              > 
-                 <i 
+            <div 
+              class="
+                tw-border-b-2
+                tw-border-gray-300 
+                tw-py-3-2 
+                tw-mb-8"
+            >
+              <div 
                   class="
-                   fa-sharp 
-                   fa-light 
-                   fa-clock 
-                   tw-px-1" />
-                    {{ hours }} h
+                    tw-inline-flex 
+                    tw-items-center 
+                    tw-justify-center 
+                    tw-px-1 
+                    tw-py-1 
+                    tw-mr-2 
+                    tw-text-xs 
+                    tw-font-bold 
+                    tw-leading-none 
+                    tw-absolute
+                    tw-bg-white"
+                > 
+                  <i 
+                    class="
+                    fa-sharp 
+                    fa-light 
+                    fa-clock 
+                    tw-px-1" />
+                      {{ hours }} h
+                </div>
               </div>
               <div v-for="(event, index) in eventArr">
                 <div
@@ -144,7 +148,7 @@
                     tw-text-lg
                     tw-my-1
                     tw-p-1
-                    tw-mx-2
+                    tw-mx-6
                     tw-rounded-md
                     tw-border-2
                     tw-border-grey-100
@@ -1002,7 +1006,7 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,carrier,acType,workOrderStatus",
+            include: "gate,acType",
             filter: {
               businessUnitId,
               ...filterClone,
@@ -1240,5 +1244,9 @@ export default {
 <style>
 .tooltipComments {
   @apply tw-bg-white tw-text-black tw-shadow-lg tw-border tw-w-52 tw-break-normal;
+}
+.tw-py-3-2 {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
 }
 </style>
