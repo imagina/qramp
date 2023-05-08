@@ -455,7 +455,7 @@ export default {
     },
     colorCheckSchedule() {
       return item => {
-        const statusColor = workOrderList().getWorkOrderStatusesList().find(status => status.id === item.statusId)?.color;
+        const statusColor = workOrderList().getWorkOrderStatusesList().find(status => status.id === Number(item.statusId))?.color;
         const color = statusColor ? `tw-text-${statusColor}` : 'tw-text-black';
         return color;
       }
@@ -475,7 +475,7 @@ export default {
     },
     classSchedule() {
       return event => {
-        const carrierColor = workOrderList().getAirlinesList().find(item => item.id === event.carrierId)?.color;
+        const carrierColor = workOrderList().getAirlinesList().find(item => item.id === Number(event.carrierId))?.color;
         const flightStatusesColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(event.flightStatusId))?.color;
         const color = carrierColor ? carrierColor : 'black';
         const statusColor = flightStatusesColor ? flightStatusesColor : 'grey-100';
