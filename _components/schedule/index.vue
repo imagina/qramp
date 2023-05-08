@@ -455,7 +455,8 @@ export default {
     },
     colorCheckSchedule() {
       return item => {
-        const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
+        const statusColor = workOrderList().getWorkOrderStatusesList().find(status => status.id === item.statusId)?.color;
+        const color = statusColor ? `tw-text-${statusColor}` : 'tw-text-black';
         return color;
       }
     },
@@ -474,12 +475,14 @@ export default {
     },
     classSchedule() {
       return event => {
-        const color = event.carrier ? event.carrier.color : 'black';
-        const statusColor = event.flightStatus ? event.flightStatus.color : 'grey-100';
+        const carrierColor = workOrderList().getAirlinesList().find(item => item.id === event.carrierId)?.color;
+        const flightStatusesColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(event.flightStatusId))?.color;
+        const color = carrierColor ? carrierColor : 'black';
+        const statusColor = flightStatusesColor ? flightStatusesColor : 'grey-100';
         return {
-          [`tw-text-${color} tw-font-semibold`] : event.carrier,
+          [`tw-text-${color} tw-font-semibold`] : carrierColor,
           'tw-cursor-pointer': this.scheduleType !== 'day-agenda',
-          'tw-text-black': !event.carrier,
+          'tw-text-black': !carrierColor,
           [`tw-border-${statusColor}`] : statusColor
         }
       }
