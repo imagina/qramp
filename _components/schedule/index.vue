@@ -860,7 +860,6 @@ export default {
           await this.addNewDayToSchedule({ date: this.selectedDate });
         }
         this.$alert.success('workOrders was added correctly');
-        //this.$router.go();
       } catch (error) {
         console.log(error);
         await this.$refs.modalForm.setLoading(false);
@@ -898,7 +897,6 @@ export default {
             await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
           }
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-          //await this.$router.go();
           this.$alert.info('The workOrders was updated correctly');
         }
         await this.$refs.modalForm.setLoading(false);
@@ -1018,7 +1016,6 @@ export default {
           params
         );
         this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
-        //this.events = eventModel;
         this.loading = false;
       } catch (error) {
         console.log(error);
@@ -1066,7 +1063,6 @@ export default {
       this.events = [];
       const station = await workOrderList().getStationList()
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
-      console.log(this.stationId, station);
       if (this.stationId && station) {
         await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(false);
@@ -1129,13 +1125,10 @@ export default {
         let dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         let dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
         if(this.isPassenger) {
-           console.log('ingreso');
            dateStart = this.$moment().format('YYYYMMDD');
            dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
-           console.log(dateStart);
         }
         const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
-        console.log(urlBase);
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
