@@ -410,6 +410,7 @@ export default {
       filterTime: null,
       fields: {
         time: {
+          value: null,
           type: 'select',
             props: {
               label: 'Filter by time',
@@ -811,7 +812,6 @@ export default {
       }
     },
     eventSchedule(event, isDay = false) {
-      this.filterTime = null;
       if(isDay){
         this.scheduleTypeComputed = 'day-agenda';
         return;
@@ -1066,6 +1066,7 @@ export default {
       this.events = [];
       const station = await workOrderList().getStationList()
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
+      console.log(this.stationId, station);
       if (this.stationId && station) {
         await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(false);
