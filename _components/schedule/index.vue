@@ -78,7 +78,8 @@
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
             >
-              <badgeComment 
+              <badgeComment
+                v-if="!isAppOffline"
                 :event="event" 
                 :sizeBadge="7"
                 iconClass="tw-text-sm"
@@ -164,7 +165,8 @@
                     class="tw-font-semibold"
                     :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
                   >
-                    <badgeComment 
+                    <badgeComment
+                      v-if="!isAppOffline"
                       :event="event"
                       mainClass="tw-mr-2" 
                     />
@@ -857,7 +859,6 @@ export default {
               color: flightStatusColor || 'gray-200',
             },  
           }));
-          await cache.set("scheduleList", this.events);
         }
         await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
