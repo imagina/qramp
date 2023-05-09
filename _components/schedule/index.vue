@@ -261,7 +261,8 @@ import {
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
   COMPANY_PASSENGER,
-  COMPANY_RAMP
+  COMPANY_RAMP,
+  modelWorkOrder
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
@@ -270,6 +271,7 @@ import cache from '@imagina/qsite/_plugins/cache';
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import completedSchedule from './completedSchedule.vue'
 import modelHoursFilter from './models/modelHoursFilter.js'
+import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
 
 export default {
   props: {
@@ -324,12 +326,12 @@ export default {
         this.$router.go();
       },
     },
-    isAppOffline: {
+    /*'isAppOffline': {
       deep: true,
-      handler: function () {
-        getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)
+      handler: async function () {
+        //await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
       }
-    }
+    }*/
   },
   created() {
     this.$nextTick(async function () {
@@ -352,6 +354,9 @@ export default {
   },
   computed: {
     isAppOffline() {
+      if(!this.$store.state.qofflineMaster.isAppOffline) {
+        this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+      }
       return this.$store.state.qofflineMaster.isAppOffline;
     },
     colorCheckSchedule() {
@@ -740,11 +745,12 @@ export default {
         await this.$refs.modalForm.setLoading(true);
         if (this.isAppOffline) {
           const flightStatusColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(data.flightStatusId))?.color;
-          this.events.push(this.$clone(
+          const cloneSchedule = this.$clone(
             {
+            ...modelWorkOrder,
             ...data, 
             id: this.$uid(), 
-            calendarTitle: `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
+            calendarTitle: `${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
             inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
             statusId: STATUS_SCHEDULE,
             workOrderStatus: {
@@ -753,12 +759,18 @@ export default {
             flightStatus: {
               color: flightStatusColor || 'gray-200',
             },  
-          }));
+          });
+          this.events.push(cloneSchedule);
+          await cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", cloneSchedule);
         }
         await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
-        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+        if(!this.isAppOffline) {
+          await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+          await workOrderList().getWorkOrders(true, true);
+        } 
+        
         if (this.scheduleTypeComputed === 'day-agenda' && !isClone) {
           await this.addNewDayToSchedule({ date: this.selectedDate });
         }
@@ -919,7 +931,6 @@ export default {
           params,
           this.isAppOffline
         );
-        console.warn(response);
         this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
         this.loading = false;
       } catch (error) {
@@ -969,7 +980,7 @@ export default {
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
       if (this.stationId && station) {
         await cache.set("stationId", this.filter.values.stationId || null);
-        await this.getWorkOrderFilter(false);
+        await this.getWorkOrderFilter(!this.isAppOffline);
       }
     },
     setFilter() {
@@ -1073,12 +1084,6 @@ export default {
       setTimeout(() => {
         this.setFilter();
       }, 1000);
-    },
-    emitFilterSchedule(filter) {
-      //Add Values
-      this.$filter.addValues(filter)
-      //Call back
-      if (this.filter && this.filter.callBack) this.filter.callBack(this.filter)
     },
     async addNewDayToSchedule(event) {
       try {
