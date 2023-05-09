@@ -1,119 +1,57 @@
 <template>
   <div class="schedule-ctn" :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }">
     <div class="box box-auto-height q-mb-md">
-      <page-actions
-        ref="pageActions"
-        :title="$t('ifly.cms.sidebar.schedule')"
-        multipleRefresh
-        :extra-actions="extraPageActions"
-        :excludeActions="fullscreen ? ['filter'] : []"
-        @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)"
-        class="q-mb-md"
-      />
+      <page-actions ref="pageActions" :title="$t('ifly.cms.sidebar.schedule')" multipleRefresh
+        :extra-actions="extraPageActions" :excludeActions="fullscreen ? ['filter'] : []"
+        @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" class="q-mb-md" />
     </div>
-    <q-btn-toggle
-      v-model="scheduleTypeComputed"
-      no-caps
-      unelevated
-      toggle-color="blue-grey"
-      color="white"
-      text-color="blue-grey"
-      :options="scheduleTypeOptions"
-      id="btnCalendarType"
-      size="14px"
-      padding="md sm"
-      spread
-    />
+    <q-btn-toggle v-model="scheduleTypeComputed" no-caps unelevated toggle-color="blue-grey" color="white"
+      text-color="blue-grey" :options="scheduleTypeOptions" id="btnCalendarType" size="14px" padding="md sm" spread />
     <div class="tw-flex tw-justify-center tw-items-center">
-      <q-btn
-        dense
-        flat
-        label="Prev"
-        @click="schedulePrev"
-        icon="fa-regular fa-chevron-left"
-        class="tw-w-1/2"
-      />
-      <q-btn
-        dense
-        flat
-        label="Next"
-        @click="scheduleNext"
-        icon-right="fa-regular fa-chevron-right"
-        class="tw-w-1/2"
-      />
+      <q-btn dense flat label="Prev" @click="schedulePrev" icon="fa-regular fa-chevron-left" class="tw-w-1/2" />
+      <q-btn dense flat label="Next" @click="scheduleNext" icon-right="fa-regular fa-chevron-right" class="tw-w-1/2" />
     </div>
-    <q-calendar
-      ref="schedule"
-      v-model="selectedDate"
-      :view="scheduleType"
-      locale="en-us"
-      class="tw-w-full"
-      animated
-      hour24Format
-      @click:day2="eventSchedule"
-      @click:date2="event => eventSchedule(event, true)"
-      @click:day:header2="eventSchedule"
-    >
+    <q-calendar ref="schedule" v-model="selectedDate" :view="scheduleType" locale="en-us" class="tw-w-full" animated
+      hour24Format @click:day2="eventSchedule" @click:date2="event => eventSchedule(event, true)"
+      @click:day:header2="eventSchedule">
       <template #day="{ timestamp }">
-        <div
-          v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')"
-          class="
+        <div v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')" class="
            tw-overflow-y-auto 
            tw-overflow-x-auto 
            tw-h-28 
-           tw-px-2"
-        >
-          <div
-            v-for="(event, index) in getEvents(timestamp.date)"
-            :key="event.id"
-          >
-            <q-badge
-              :key="index"
-              class="
+           tw-px-2">
+          <div v-for="(event, index) in getEvents(timestamp.date)" :key="event.id">
+            <q-badge :key="index" class="
                 tw-cursor-pointer 
                 tw-text-xs
                 tw-bg-white 
                 tw-border 
-                tw-border-grey-100"
-              :class="classSchedule(event)"
-              @click.stop.prevent="editSchedule(event)"
-            >
-              <badgeComment 
-                :event="event" 
-                :sizeBadge="7"
-                iconClass="tw-text-sm"
-                mainClass="tw-mr-1"
-              />
-              <i
-                class="
+                tw-border-grey-100" :class="classSchedule(event)" @click.stop.prevent="editSchedule(event)">
+              <badgeComment :event="event" :sizeBadge="7" iconClass="tw-text-sm" mainClass="tw-mr-1" />
+              <i class="
                  fa-solid 
                  fa-circle-check
-                 tw-px-1"
-                 :class="colorCheckSchedule(event)"
-                 >
-                 <q-tooltip>
-                    {{ titleStatus(event.statusId) }}
-                  </q-tooltip>
-                 </i>
-                  <span class="ellipsis">
-                    {{ event.calendarTitle }}
-                  </span>
+                 tw-px-1" :class="colorCheckSchedule(event)">
+                <q-tooltip>
+                  {{ titleStatus(event.statusId) }}
+                </q-tooltip>
+              </i>
+              <span class="ellipsis">
+                {{ event.calendarTitle }}
+              </span>
             </q-badge>
           </div>
         </div>
       </template>
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
-        <template>  
+        <template>
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
-            <div 
-              class="
+            <div class="
                tw-border-b-2 
                tw-border-gray-200 
                tw-mb-3 
-               tw-py-2" 
-            >
-             <div 
-                class="
+               tw-py-2">
+              <div class="
                   tw-inline-flex 
                   tw-items-center 
                   tw-justify-center 
@@ -126,21 +64,16 @@
                   tw-text-red-100 
                   tw-bg-blue-800 
                   tw-rounded-full
-                  tw-shadow-lg"
-              > 
-                 <i 
-                  class="
+                  tw-shadow-lg">
+                <i class="
                    fa-sharp 
                    fa-light 
                    fa-clock 
                    tw-px-1" />
-                    {{ hours }} h
+                {{ hours }} h
               </div>
               <div v-for="(event, index) in eventArr">
-                <div
-                  :key="index"
-                  v-if="event.time && !event.isUpdate"
-                  class="
+                <div :key="index" v-if="event.time && !event.isUpdate" class="
                     tw-text-lg
                     tw-my-1
                     tw-p-1
@@ -149,80 +82,50 @@
                     tw-border-2
                     tw-border-grey-100
                     tw-flex
-                  "
-                  :class="classSchedule(event)"
-                  :style="
-                    badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
-                  "
-                  @click.stop.prevent="editSchedule(event)"
-                >
-                  <div 
-                    class="tw-font-semibold"
-                    :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
-                  >
-                    <badgeComment 
-                      :event="event"
-                      mainClass="tw-mr-2" 
-                    />
-                    <i
-                      class="
+                  " :class="classSchedule(event)" :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
+                    " @click.stop.prevent="editSchedule(event)">
+                  <div class="tw-font-semibold" :class="{ 'tw-w-1/2': event.id && scheduleType === 'day-agenda' }">
+                    <badgeComment :event="event" mainClass="tw-mr-2" />
+                    <i class="
                       fa-solid 
-                      fa-circle-check"
-                      :class="colorCheckSchedule(event)" 
-                      >
+                      fa-circle-check" :class="colorCheckSchedule(event)">
                       <q-tooltip>
                         {{ titleStatus(event.statusId) }}
                       </q-tooltip>
                     </i>
-                     {{ event.calendarTitle }}
+                    {{ event.calendarTitle }}
                   </div>
-                  <div 
-                    class="tw-text-right tw-w-1/2 tw-space-x-2"
-                    v-if="event.id && scheduleType === 'day-agenda'"
-                  >
-                    <button
-                      v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger"
-                      class="
+                  <div class="tw-text-right tw-w-1/2 tw-space-x-2" v-if="event.id && scheduleType === 'day-agenda'">
+                    <button v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger" class="
                         tw-bg-green-500 
                         tw-rounded-lg 
                         tw-px-2  
-                        tw-text-white"
-                        @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)" 
-                      >
+                        tw-text-white" @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)">
                       <i class="fa-sharp fa-regular fa-bring-forward" />
                       <q-tooltip>
                         Start Work Order
                       </q-tooltip>
                     </button>
-                    <button
-                      v-if="!isBlank && !events.some(item => item.isUpdate)"
-                      class="
+                    <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
                         tw-bg-blue-800 
                         tw-rounded-lg 
                         tw-px-2  
-                        tw-text-white"
-                        @click.stop.prevent="duplicateSchedule(event)" 
-                      >
+                        tw-text-white" @click.stop.prevent="duplicateSchedule(event)">
                       <i class="fa-thin fa-clone tw-text-sm" />
                       <q-tooltip>
                         Duplicate
                       </q-tooltip>
                     </button>
-                    <button
-                      v-if="!events.some(item => item.isUpdate)"
-                      @click.stop.prevent="editSchedule(event, 'day')"
+                    <button v-if="!events.some(item => item.isUpdate)" @click.stop.prevent="editSchedule(event, 'day')"
                       class="
                         tw-bg-blue-800 
                         tw-rounded-lg 
                         tw-px-2
                         tw-text-white">
-                      <i 
-                        class="fa-light tw-text-sm"
-                        :class="{
-                          'fa-eye': isBlank,
-                          'fa-pen-to-square': !isBlank
-                        }"
-                        />
+                      <i class="fa-light tw-text-sm" :class="{
+                        'fa-eye': isBlank,
+                        'fa-pen-to-square': !isBlank
+                      }" />
                       <q-tooltip>
                         <div v-if="!isBlank">
                           {{ $tr('isite.cms.label.edit') }}
@@ -232,84 +135,58 @@
                         </div>
                       </q-tooltip>
                     </button>
-                    <button
-                      v-if="!isBlank && !events.some(item => item.isUpdate)"
-                      class="
+                    <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
                         tw-bg-red-500 
                         tw-rounded-lg 
                         tw-px-2  
-                        tw-text-white"
-                        @click.stop.prevent="deleteSchedule(event.id)" 
-                      >
-                      <i class="fa-light fa-trash-can tw-text-sm"/>
+                        tw-text-white" @click.stop.prevent="deleteSchedule(event.id)">
+                      <i class="fa-light fa-trash-can tw-text-sm" />
                       <q-tooltip>
                         {{ $tr('isite.cms.label.delete') }}
                       </q-tooltip>
                     </button>
                   </div>
-                 </div>
-                 <lineForm
-                    :key="index"
-                    v-if="event.isUpdate"
-                    :event="event"
-                    @dismissEvent="dismissEvent"
-                    @addSchedule="addSchedule"
-                    @updateSchedule="updateSchedule"
-                    @setEventComments="setEventComments"
-                 />
+                </div>
+                <lineForm :key="index" v-if="event.isUpdate" :event="event" @dismissEvent="dismissEvent"
+                  @addSchedule="addSchedule" @updateSchedule="updateSchedule" @setEventComments="setEventComments" />
               </div>
             </div>
           </template>
         </template>
       </template>
       <template #day-header="{ timestamp }">
-        <div 
-          class="tw-mx-4 tw-py-4" 
-          v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank"
-        >
-          <button
-            class="
+        <div class="tw-mx-4 tw-py-4" v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank">
+          <button class="
               tw-bg-blue-800 
               tw-text-white 
               tw-rounded-lg 
-              tw-px-4"
-              @click="addNewDayToSchedule(timestamp)"
-              :disabled="events.some(item => item.isUpdate)"
-            >
-            <i class="fa-light fa-plus"></i> <span v-if="scheduleType === 'day-agenda'">{{ $tr('isite.cms.label.new') }}</span>
-              <q-tooltip v-if="scheduleType === 'week-agenda'">
-                {{ $tr('isite.cms.label.new') }}
-              </q-tooltip>
+              tw-px-4" @click="addNewDayToSchedule(timestamp)" :disabled="events.some(item => item.isUpdate)">
+            <i class="fa-light fa-plus"></i> <span v-if="scheduleType === 'day-agenda'">{{ $tr('isite.cms.label.new')
+            }}</span>
+            <q-tooltip v-if="scheduleType === 'week-agenda'">
+              {{ $tr('isite.cms.label.new') }}
+            </q-tooltip>
           </button>
-            <div v-if="!events.some(item => item.isUpdate)">
-                  <div 
-                    class="tw-w-full tw-grid"
-                    :class="{
-                      'tw-grid-cols-1' : scheduleType === 'week-agenda',
-                      'tw-grid-cols-2' : scheduleType === 'day-agenda',
-                    }"
-                  >
-                      <div>
-                        <completedSchedule 
-                        :getEvents="getEvents"
-                        :scheduleType="scheduleType"
-                        :timestamp="timestamp"
-                        v-if="Object.entries(getEvents(timestamp.date)).length > 0"
-                      />
-                      </div>
-                      <div v-if="scheduleType === 'day-agenda'">
-                        <dynamic-field v-model="filterTime" class="q-mb-md" :field="fields.time" />
-                      </div>
-                  </div>
+          <div v-if="!events.some(item => item.isUpdate)">
+            <div class="tw-w-full tw-grid" :class="{
+              'tw-grid-cols-1': scheduleType === 'week-agenda',
+              'tw-grid-cols-2': scheduleType === 'day-agenda',
+            }">
+              <div>
+                <completedSchedule :getEvents="getEvents" :scheduleType="scheduleType" :timestamp="timestamp"
+                  v-if="Object.entries(getEvents(timestamp.date)).length > 0" />
+              </div>
+              <div v-if="scheduleType === 'day-agenda'">
+                <dynamic-field v-model="filterTime" class="q-mb-md" :field="fields.time" />
+              </div>
             </div>
-           <div>
-           </div>
+          </div>
+          <div>
+          </div>
         </div>
       </template>
     </q-calendar>
-    <div
-      v-if="loading"
-      class="
+    <div v-if="loading" class="
         tw-flex
         tw-justify-center
         tw-absolute
@@ -318,36 +195,22 @@
         tw-bg-white
         tw-bg-opacity-75
         tw-z-20
-      "
-    >
+      ">
       <div>
-        <i
-          class="
+        <i class="
             fa-duotone 
             fa-loader 
             fa-spin 
             fa-pulse
             tw-text-7xl 
             tw-text-blue-800
-          "
-        />
+          " />
       </div>
     </div>
-    <modalForm
-      ref="modalForm"
-      @addSchedule="addSchedule"
-      @updateSchedule="updateSchedule"
-      @deleteSchedule="deleteSchedule"
-      @setEventComments="setEventComments"
-    />
-    <form-orders 
-      ref="formOrders"
-      @getWorkOrderFilter="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)"
-    />
-    <stationModal
-      ref="stationModal"
-      @saveFilterStationId="saveFilterStationId"
-    />
+    <modalForm ref="modalForm" @addSchedule="addSchedule" @updateSchedule="updateSchedule"
+      @deleteSchedule="deleteSchedule" @setEventComments="setEventComments" />
+    <form-orders ref="formOrders" @getWorkOrderFilter="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" />
+    <stationModal ref="stationModal" @saveFilterStationId="saveFilterStationId" />
   </div>
 </template>
 <script>
@@ -377,7 +240,7 @@ import completedSchedule from './completedSchedule.vue'
 import modelHoursFilter from './models/modelHoursFilter.js'
 
 export default {
-  props:{
+  props: {
     isBlank: {
       type: Boolean,
       default: () => false,
@@ -411,12 +274,12 @@ export default {
       fields: {
         time: {
           type: 'select',
-            props: {
-              label: 'Filter by time',
-                format24h: true,
-                clearable: true,
-                options: modelHoursFilter
-            }
+          props: {
+            label: 'Filter by time',
+            format24h: true,
+            clearable: true,
+            options: modelHoursFilter
+          }
         },
       }
     };
@@ -428,6 +291,12 @@ export default {
         this.$router.go();
       },
     },
+    isAppOffline: {
+      deep: true,
+      handler: function () {
+        getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)
+      }
+    }
   },
   created() {
     this.$nextTick(async function () {
@@ -440,7 +309,7 @@ export default {
   },
   mounted() {
     this.$nextTick(async function () {
-        await this.init();
+      await this.init();
     });
   },
   beforeDestroy() {
@@ -476,10 +345,10 @@ export default {
         const color = event.carrier ? event.carrier.color : 'black';
         const statusColor = event.flightStatus ? event.flightStatus.color : 'grey-100';
         return {
-          [`tw-text-${color} tw-font-semibold`] : event.carrier,
+          [`tw-text-${color} tw-font-semibold`]: event.carrier,
           'tw-cursor-pointer': this.scheduleType !== 'day-agenda',
           'tw-text-black': !event.carrier,
-          [`tw-border-${statusColor}`] : statusColor
+          [`tw-border-${statusColor}`]: statusColor
         }
       }
     },
@@ -504,7 +373,7 @@ export default {
           icon: "fas fa-calendar-day",
         },
       ].filter(item => {
-        if(this.isPassenger) {
+        if (this.isPassenger) {
           return item.id !== 1;
         }
         return true;
@@ -584,9 +453,9 @@ export default {
               apiRoute: "apiRoutes.qsetupagione.setupStations",
               select: { label: "fullName", id: "id" },
               requestParams: {
-                  filter: {
-                    companyId: this.filterCompany,
-                  },
+                filter: {
+                  companyId: this.filterCompany,
+                },
               },
             },
             props: {
@@ -600,9 +469,9 @@ export default {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
               select: { 'label': 'statusName', 'id': 'id' },
               requestParams: {
-                  filter: {
-                    companyId: this.filterCompany,
-                  },
+                filter: {
+                  companyId: this.filterCompany,
+                },
               },
             },
             props: {
@@ -629,9 +498,9 @@ export default {
               apiRoute: "apiRoutes.qfly.flightStatuses",
               select: { label: "name", id: "id" },
               requestParams: {
-                  filter: {
-                    companyId: this.filterCompany,
-                  },
+                filter: {
+                  companyId: this.filterCompany,
+                },
               },
             },
             props: {
@@ -640,21 +509,21 @@ export default {
             },
           },
           areaId: {
-              value: null,
-              type: 'select',
-              loadOptions: {
-                apiRoute: 'apiRoutes.qsetupagione.areas',
-                select: { label: 'name', id: 'id' },
-                requestParams: {
-                  filter: {
-                    companyId: this.filterCompany,
-                  },
+            value: null,
+            type: 'select',
+            loadOptions: {
+              apiRoute: 'apiRoutes.qsetupagione.areas',
+              select: { label: 'name', id: 'id' },
+              requestParams: {
+                filter: {
+                  companyId: this.filterCompany,
                 },
               },
-              props: {
-                label: 'Areas',
-                'clearable': true
-              },
+            },
+            props: {
+              label: 'Areas',
+              'clearable': true
+            },
           },
           type: {
             value: null,
@@ -681,18 +550,18 @@ export default {
     },
   },
   methods: {
-   async init() {
+    async init() {
       try {
         qRampStore().setIsblank(this.isBlank)
         await this.initUrlMutate();
         setTimeout(async () => {
-          if(this.isPassenger) {
+          if (this.isPassenger) {
             this.scheduleTypeComputed = 'day-agenda'
-          }else {
+          } else {
             this.scheduleTypeComputed = 'month'
           };
           await this.setFilter();
-          
+
         }, 100);
       } catch (error) {
         console.log(error);
@@ -701,32 +570,32 @@ export default {
     async initUrlMutate() {
       const obj = await this.$helper.convertStringToObject();
       const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
-        this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
-        const station = await workOrderList().getStationList()
+      this.stationId = this.getStationAssigned() || (obj.stationId || null) || (localStationId || null);
+      const station = await workOrderList().getStationList()
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
-        if (!this.stationId || !station) {
-          await this.$refs.stationModal.showModal();
-          return;
-        }
-        if(obj.dateStart) {
-          this.selectedDate = this.$moment(obj.dateStart, 'YYYYMMDD').format('YYYY-MM-DD');
-        }
-        if(obj.dateEnd) {
-          this.selectedDateEnd = this.$moment(obj.dateEnd, 'YYYYMMDD').format('YYYY-MM-DD');
-        }
-        if (!obj.stationId) {
-          await this.mutateCurrentURL();
-        }
+      if (!this.stationId || !station) {
+        await this.$refs.stationModal.showModal();
+        return;
+      }
+      if (obj.dateStart) {
+        this.selectedDate = this.$moment(obj.dateStart, 'YYYYMMDD').format('YYYY-MM-DD');
+      }
+      if (obj.dateEnd) {
+        this.selectedDateEnd = this.$moment(obj.dateEnd, 'YYYYMMDD').format('YYYY-MM-DD');
+      }
+      if (!obj.stationId) {
+        await this.mutateCurrentURL();
+      }
     },
     getStationAssigned() {
       try {
         let stationsAssigned = null;
-        if(this.userData) {
-          if(this.userData.options) {
-            if(this.userData.options.stationsAssigned 
+        if (this.userData) {
+          if (this.userData.options) {
+            if (this.userData.options.stationsAssigned
               && Array.isArray(this.userData.options.stationsAssigned)
               && this.userData.options.stationsAssigned.length > 0) {
-                stationsAssigned = this.userData.options.stationsAssigned.shift();
+              stationsAssigned = this.userData.options.stationsAssigned.shift();
             }
           }
         }
@@ -734,8 +603,8 @@ export default {
       } catch (error) {
         console.log(error)
       }
-      
-    }, 
+
+    },
     async scheduleNext() {
       this.selectedDate = this.$moment(this.selectedDate).startOf("month").startOf("day").add(1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.next();
@@ -762,13 +631,13 @@ export default {
       try {
         let events = this.$clone(this.events || []);
         const filterData = events.filter(item => {
-            if(this.filterTime && this.filterTime.length > 0) {
-              const time = this.filterTime.split('-');
-              const staTime = item.sta ? item.sta.split(":") : [];
-              const staHours = parseInt(staTime[0] || 0);
-              return staHours >= parseInt(time[0].split(":")) && staHours <= parseInt(time[1].split(":"));
-            }
-            return true;
+          if (this.filterTime && this.filterTime.length > 0) {
+            const time = this.filterTime.split('-');
+            const staTime = item.sta ? item.sta.split(":") : [];
+            const staHours = parseInt(staTime[0] || 0);
+            return staHours >= parseInt(time[0].split(":")) && staHours <= parseInt(time[1].split(":"));
+          }
+          return true;
         });
         const filters = filterData
           .filter((event) => {
@@ -794,10 +663,10 @@ export default {
           ["time"],
           ["asc"]
         );
-        if(this.scheduleTypeComputed !== 'month') {
+        if (this.scheduleTypeComputed !== 'month') {
           let dataSchedule = order.sort(item => !item.isClone ? 1 : -1);
           dataSchedule = dataSchedule.reduce((acc, item) => {
-            const hour = item.time.substring(0, 2); 
+            const hour = item.time.substring(0, 2);
 
             acc[hour] = acc[hour] ? [...acc[hour], item] : [item];
 
@@ -812,12 +681,12 @@ export default {
     },
     eventSchedule(event, isDay = false) {
       this.filterTime = null;
-      if(isDay){
+      if (isDay) {
         this.scheduleTypeComputed = 'day-agenda';
         return;
       }
-      if(this.scheduleType !== 'day-agenda') {
-        if(!this.isBlank && !event.scope.outside) {
+      if (this.scheduleType !== 'day-agenda') {
+        if (!this.isBlank && !event.scope.outside) {
           this.selectedData = event.scope.timestamp;
           this.$refs.modalForm.openModal(
             `Create schedule date: ${event.scope.timestamp.date}`,
@@ -834,29 +703,29 @@ export default {
       try {
         const isClone = data.isClone || false;
         await this.$refs.modalForm.setLoading(true);
-        if(this.isAppOffline) {
+        if (this.isAppOffline) {
           const flightStatusColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(data.flightStatusId))?.color;
           this.events.push(this.$clone(
             {
-            ...data, 
-            id: this.$uid(), 
-            calendarTitle: `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
-            inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
-            statusId: STATUS_SCHEDULE,
-            workOrderStatus: {
-              color: 'pink-500',
-            },
-            flightStatus: {
-              color: flightStatusColor || 'gray-200',
-            },  
-          }));
+              ...data,
+              id: this.$uid(),
+              calendarTitle: `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
+              inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
+              statusId: STATUS_SCHEDULE,
+              workOrderStatus: {
+                color: 'pink-500',
+              },
+              flightStatus: {
+                color: flightStatusColor || 'gray-200',
+              },
+            }));
           await cache.set("scheduleList", this.events);
         }
         await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
         await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-        if(this.scheduleTypeComputed === 'day-agenda' && !isClone) {
+        if (this.scheduleTypeComputed === 'day-agenda' && !isClone) {
           await this.addNewDayToSchedule({ date: this.selectedDate });
         }
         this.$alert.success('workOrders was added correctly');
@@ -877,25 +746,25 @@ export default {
           (item) => item.id === data.id
         );
         if (event) {
-          
+
           const dataForm = {};
           dataForm.calendarTitle = `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
-          dataForm.id = data.id;
+            dataForm.id = data.id;
           dataForm.sta = data.sta;
           dataForm.std = data.std;
           dataForm.stationId = data.stationId;
           dataForm.preFlightNumber = data.preFlightNumber;
           dataForm.gateId = data.gateId;
-          dataForm.flightStatusId =  data.flightStatusId;
-          dataForm.acTypeId =  data.acTypeId;
+          dataForm.flightStatusId = data.flightStatusId;
+          dataForm.acTypeId = data.acTypeId;
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           dataForm.carrierId = data.carrierId;
           dataForm.statusId = data.statusId;
-          if(data.statusId === STATUS_DRAFT) {
+          if (data.statusId === STATUS_DRAFT) {
             await this.changeStatus(data.statusId, data.id);
             this.showWorkOrder(data);
           } else {
-            await this.$crud.update("apiRoutes.qramp.schedule", data.id ,dataForm);
+            await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm);
           }
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           //await this.$router.go();
@@ -927,15 +796,15 @@ export default {
     async getCurrentFilterDate(lastStart, lastEnd) {
       try {
         const startDate = this.$moment(this.$refs.schedule.lastStart);
-        const endDate =  this.$moment(this.$refs.schedule.lastEnd);
-        if(this.scheduleType === 'day-agenda') {
+        const endDate = this.$moment(this.$refs.schedule.lastEnd);
+        if (this.scheduleType === 'day-agenda') {
           endDate.add(-1, 'day');
         }
-        if(this.scheduleType === 'month' && startDate.format('MM') === this.$moment(lastEnd).format('MM')) {
+        if (this.scheduleType === 'month' && startDate.format('MM') === this.$moment(lastEnd).format('MM')) {
           lastStart = startDate.startOf("month").format("YYYY-MM-DD");
           lastEnd = endDate.endOf("month").format("YYYY-MM-DD");
         }
-        if(this.scheduleType !== 'month') {
+        if (this.scheduleType !== 'month') {
           lastStart = startDate.format("YYYY-MM-DD");
           lastEnd = endDate.format("YYYY-MM-DD");
         }
@@ -959,7 +828,7 @@ export default {
     async getWorkOrderFilter(
       refresh = false,
       dateStart = null,
-      dateEnd = null, 
+      dateEnd = null,
       type = false
     ) {
       try {
@@ -978,7 +847,7 @@ export default {
         thereAreFilters.type = String(scheduleTypeId.id) || '1';
         thereAreFilters.dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         thereAreFilters.dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        if(type) this.mutateCurrentURLBrowser(thereAreFilters);
+        if (type) this.mutateCurrentURLBrowser(thereAreFilters);
         this.scheduleType = type ? type : scheduleTypeOption.value;
         const filterCurrent = {
           ...thereAreFilters,
@@ -1015,8 +884,10 @@ export default {
         };
         const response = await this.$crud.index(
           "apiRoutes.qramp.workOrders",
-          params
+          params,
+          this.isAppOffline
         );
+        console.warn(response);
         this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
         //this.events = eventModel;
         this.loading = false;
@@ -1026,41 +897,40 @@ export default {
       }
     },
     async showWorkOrder(reponseSchedule, type = null) {
-          let response = {data: reponseSchedule};
-          if (this.isPassenger || response.data.statusId !== STATUS_SCHEDULE) {
-            response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
-            refresh: true,
-            include:
-              "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
-            })
-            await this.$refs.formOrders.loadform({
-              modalProps: {
-                title: `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${
-                  response.data.id
-                }`,
-                update: true,
-                workOrderId: response.data.id,
-                width: "90vw",
-              },
-              data: response.data,
-            });
-            return;
-          }
-          response.data.sta = this.$moment(response.data.sta, 'HH:mm:ss').format('HH:mm');
-          response.data.std = this.$moment(response.data.std, 'HH:mm:ss').format('HH:mm');
-          if(type === 'day' && this.scheduleType === 'day-agenda') {
-            const index = this.events.indexOf(item => item.id == reponseSchedule.id);
-              this.events[index] = response.data;
-              this.cloneEvent = await this.$clone(this.events);
-              const eventFind = this.events.find(item => item.id === reponseSchedule.id);
-              if(eventFind) {
-                eventFind.isUpdate = true;
-              }
-              return;
-          }
-          if(this.scheduleType !== 'day-agenda') {
-            await this.$refs.modalForm.openModal("Edit schedule",  response.data, response.data.inboundScheduledArrival);
-          }
+      let response = { data: reponseSchedule };
+      if (this.isPassenger || response.data.statusId !== STATUS_SCHEDULE) {
+        response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
+          refresh: true,
+          include:
+            "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
+        })
+        await this.$refs.formOrders.loadform({
+          modalProps: {
+            title: `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${response.data.id
+              }`,
+            update: true,
+            workOrderId: response.data.id,
+            width: "90vw",
+          },
+          data: response.data,
+        });
+        return;
+      }
+      response.data.sta = this.$moment(response.data.sta, 'HH:mm:ss').format('HH:mm');
+      response.data.std = this.$moment(response.data.std, 'HH:mm:ss').format('HH:mm');
+      if (type === 'day' && this.scheduleType === 'day-agenda') {
+        const index = this.events.indexOf(item => item.id == reponseSchedule.id);
+        this.events[index] = response.data;
+        this.cloneEvent = await this.$clone(this.events);
+        const eventFind = this.events.find(item => item.id === reponseSchedule.id);
+        if (eventFind) {
+          eventFind.isUpdate = true;
+        }
+        return;
+      }
+      if (this.scheduleType !== 'day-agenda') {
+        await this.$refs.modalForm.openModal("Edit schedule", response.data, response.data.inboundScheduledArrival);
+      }
     },
     async getFilter() {
       this.events = [];
@@ -1079,7 +949,7 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        const businessUnitId = this.isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
         const companyId = this.filterCompany
         const response = await this.$crud.create(
           "apiRoutes.qramp.simpleWorkOrders",
@@ -1127,13 +997,13 @@ export default {
         const origin = window.location.href.split("?");
         let dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         let dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        if(this.isPassenger) {
-           console.log('ingreso');
-           dateStart = this.$moment().format('YYYYMMDD');
-           dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
-           console.log(dateStart);
+        if (this.isPassenger) {
+          console.log('ingreso');
+          dateStart = this.$moment().format('YYYYMMDD');
+          dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
+          console.log(dateStart);
         }
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         console.log(urlBase);
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
@@ -1144,8 +1014,8 @@ export default {
       try {
         let paramsUrl = '';
         Object.keys(data).forEach((item, index) => {
-          if(this.$filter.fields.hasOwnProperty(item)) {
-            if(index === 0) {
+          if (this.$filter.fields.hasOwnProperty(item)) {
+            if (index === 0) {
               paramsUrl += this.validateObjectFilter('?', item, data);
             } else {
               paramsUrl += this.validateObjectFilter('&', item, data);
@@ -1161,10 +1031,10 @@ export default {
     },
     // validate Object Filter
     validateObjectFilter(operator = '?', item, data) {
-      if(data[item]) {
-        if(typeof data[item] === 'object' 
+      if (data[item]) {
+        if (typeof data[item] === 'object'
           || Array.isArray(data[item])) {
-          return  `${operator}${item}=${JSON.stringify(data[item])}`;
+          return `${operator}${item}=${JSON.stringify(data[item])}`;
         }
         return `${operator}${item}=${data[item]}`;
       }
@@ -1184,7 +1054,7 @@ export default {
     },
     async addNewDayToSchedule(event) {
       try {
-        if(this.scheduleType === 'week-agenda') {
+        if (this.scheduleType === 'week-agenda') {
           return;
         }
         const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T23:59:59`;
@@ -1201,22 +1071,22 @@ export default {
           inboundScheduledArrival: date,
           isUpdate: true,
         }
-        this.events.push({...data});
+        this.events.push({ ...data });
       } catch (error) {
         console.log(error);
-      } 
+      }
     },
     duplicateSchedule(event) {
       try {
-        this.events.push(this.$clone({...event, id: this.$uid(), isUpdate: true, isClone: true, showCommentTooltip: false }));
+        this.events.push(this.$clone({ ...event, id: this.$uid(), isUpdate: true, isClone: true, showCommentTooltip: false }));
       } catch (error) {
         console.log('duplicate', error);
       }
     },
     dismissEvent(event) {
-      if(typeof event.id === "number") {
+      if (typeof event.id === "number") {
         const eventFind = this.events.find(item => item.id === event.id);
-        if(eventFind) {
+        if (eventFind) {
           eventFind.isUpdate = false;
         }
         this.setEventComments(event.id);
@@ -1227,13 +1097,14 @@ export default {
     async setEventComments(workOrderId) {
       try {
         const event = this.events.find(item => item.id === workOrderId);
-        if(event) {
+        if (event) {
           const response = await this.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
-              refresh: true})
+            refresh: true
+          })
           event.comments = response.data.comments;
         }
       } catch (error) {
-       console.log(error)
+        console.log(error)
       }
     },
   },
