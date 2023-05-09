@@ -46,38 +46,47 @@
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
         <template>
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
-            <div class="
-               tw-border-b-2 
-               tw-border-gray-200 
+            <div 
+              class="
                tw-mb-3 
-               tw-py-2">
-              <div class="
-                  tw-inline-flex 
-                  tw-items-center 
-                  tw-justify-center 
-                  tw-px-1 
-                  tw-py-1 
-                  tw-mr-2 
-                  tw-text-xs 
-                  tw-font-bold 
-                  tw-leading-none 
-                  tw-text-red-100 
-                  tw-bg-blue-800 
-                  tw-rounded-full
-                  tw-shadow-lg">
-                <i class="
-                   fa-sharp 
-                   fa-light 
-                   fa-clock 
-                   tw-px-1" />
-                {{ hours }} h
+               tw-py-2" 
+            >
+            <div 
+              class="
+                tw-border-b-2
+                tw-border-gray-300 
+                tw-py-3-2 
+                tw-mb-8"
+            >
+              <div 
+                  class="
+                    tw-inline-flex 
+                    tw-items-center 
+                    tw-justify-center 
+                    tw-px-1 
+                    tw-py-1 
+                    tw-mr-2 
+                    tw-text-xs 
+                    tw-font-bold 
+                    tw-leading-none 
+                    tw-absolute
+                    tw-bg-white"
+                > 
+                  <i 
+                    class="
+                    fa-sharp 
+                    fa-light 
+                    fa-clock 
+                    tw-px-1" />
+                      {{ hours }} h
+                </div>
               </div>
               <div v-for="(event, index) in eventArr">
                 <div :key="index" v-if="event.time && !event.isUpdate" class="
                     tw-text-lg
                     tw-my-1
                     tw-p-1
-                    tw-mx-2
+                    tw-mx-6
                     tw-rounded-md
                     tw-border-2
                     tw-border-grey-100
@@ -273,6 +282,7 @@ export default {
       filterTime: null,
       fields: {
         time: {
+          value: null,
           type: 'select',
           props: {
             label: 'Filter by time',
@@ -323,7 +333,8 @@ export default {
     },
     colorCheckSchedule() {
       return item => {
-        const color = item.workOrderStatus ? `tw-text-${item.workOrderStatus.color}` : 'tw-text-black';
+        const statusColor = workOrderList().getWorkOrderStatusesList().find(status => status.id === Number(item.statusId))?.color;
+        const color = statusColor ? `tw-text-${statusColor}` : 'tw-text-black';
         return color;
       }
     },
@@ -342,13 +353,15 @@ export default {
     },
     classSchedule() {
       return event => {
-        const color = event.carrier ? event.carrier.color : 'black';
-        const statusColor = event.flightStatus ? event.flightStatus.color : 'grey-100';
+        const carrierColor = workOrderList().getAirlinesList().find(item => item.id === Number(event.carrierId))?.color;
+        const flightStatusesColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(event.flightStatusId))?.color;
+        const color = carrierColor ? carrierColor : 'black';
+        const statusColor = flightStatusesColor ? flightStatusesColor : 'grey-100';
         return {
-          [`tw-text-${color} tw-font-semibold`]: event.carrier,
+          [`tw-text-${color} tw-font-semibold`] : carrierColor,
           'tw-cursor-pointer': this.scheduleType !== 'day-agenda',
-          'tw-text-black': !event.carrier,
-          [`tw-border-${statusColor}`]: statusColor
+          'tw-text-black': !carrierColor,
+          [`tw-border-${statusColor}`] : statusColor
         }
       }
     },
@@ -680,8 +693,7 @@ export default {
       }
     },
     eventSchedule(event, isDay = false) {
-      this.filterTime = null;
-      if (isDay) {
+      if(isDay){
         this.scheduleTypeComputed = 'day-agenda';
         return;
       }
@@ -729,7 +741,6 @@ export default {
           await this.addNewDayToSchedule({ date: this.selectedDate });
         }
         this.$alert.success('workOrders was added correctly');
-        //this.$router.go();
       } catch (error) {
         console.log(error);
         await this.$refs.modalForm.setLoading(false);
@@ -767,7 +778,6 @@ export default {
             await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm);
           }
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-          //await this.$router.go();
           this.$alert.info('The workOrders was updated correctly');
         }
         await this.$refs.modalForm.setLoading(false);
@@ -870,7 +880,7 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "flightStatus,gate,carrier,acType,workOrderStatus",
+            include: "gate,acType",
             filter: {
               businessUnitId,
               ...filterClone,
@@ -889,7 +899,6 @@ export default {
         );
         console.warn(response);
         this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
-        //this.events = eventModel;
         this.loading = false;
       } catch (error) {
         console.log(error);
@@ -997,14 +1006,11 @@ export default {
         const origin = window.location.href.split("?");
         let dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         let dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        if (this.isPassenger) {
-          console.log('ingreso');
-          dateStart = this.$moment().format('YYYYMMDD');
-          dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
-          console.log(dateStart);
+        if(this.isPassenger) {
+           dateStart = this.$moment().format('YYYYMMDD');
+           dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
         }
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
-        console.log(urlBase);
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
@@ -1114,5 +1120,9 @@ export default {
 <style>
 .tooltipComments {
   @apply tw-bg-white tw-text-black tw-shadow-lg tw-border tw-w-52 tw-break-normal;
+}
+.tw-py-3-2 {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
 }
 </style>
