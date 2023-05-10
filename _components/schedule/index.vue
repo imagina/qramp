@@ -316,7 +316,8 @@ export default {
             options: modelHoursFilter
           }
         },
-      }
+      },
+      componentLoaded: false,
     };
   },
   watch: {
@@ -326,13 +327,6 @@ export default {
         this.$router.go();
       },
     },
-    'isAppOffline': {
-      deep: true,
-      handler: async function (newValue) {
-        console.log(newValue);
-        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-      }
-    }
   },
   created() {
     this.$nextTick(async function () {
@@ -355,9 +349,6 @@ export default {
   },
   computed: {
     isAppOffline() {
-      /*if(!this.$store.state.qofflineMaster.isAppOffline) {
-        this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-      }*/
       return this.$store.state.qofflineMaster.isAppOffline;
     },
     colorCheckSchedule() {
@@ -436,7 +427,9 @@ export default {
         this.filterTime = null;
         this.scheduleType = value;
         await this.$refs.schedule;
-        await this.getListOfSelectedWorkOrders(value);
+        if(this.componentLoaded) {
+          await this.getListOfSelectedWorkOrders(value);
+        }
       },
     },
     extraPageActions() {
@@ -603,7 +596,7 @@ export default {
             this.scheduleTypeComputed = 'month'
           };
           await this.setFilter();
-
+          this.componentLoaded = true;
         }, 100);
       } catch (error) {
         console.log(error);
@@ -877,6 +870,7 @@ export default {
       type = false
     ) {
       try {
+        console.log('hola');
         this.selectedDateStart = this.$moment(this.selectedDate).format("YYYY-MM-DD HH:mm:ss");
         if (dateStart && dateEnd) {
           this.selectedDateStart = dateStart;
@@ -979,16 +973,14 @@ export default {
       this.events = [];
       const station = await workOrderList().getStationList()
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
-      if (this.stationId && station) {
+      console.log(this.componentLoaded);
+      if (this.stationId && station && this.componentLoaded) {
         await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(!this.isAppOffline);
       }
     },
-    setFilter() {
-      return new Promise(async (resolve, reject) => {
-        this.$filter.setFilter(this.filterActions);
-        resolve(true);
-      });
+    async setFilter() {
+      this.$filter.setFilter(this.filterActions);
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
