@@ -46,20 +46,15 @@
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
         <template>
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
-            <div 
-              class="
+            <div class="
                tw-mb-3 
-               tw-py-2" 
-            >
-            <div 
-              class="
+               tw-py-2">
+              <div class="
                 tw-border-b-2
                 tw-border-gray-300 
                 tw-py-3-2 
-                tw-mb-8"
-            >
-              <div 
-                  class="
+                tw-mb-8">
+                <div class="
                     tw-inline-flex 
                     tw-items-center 
                     tw-justify-center 
@@ -70,15 +65,13 @@
                     tw-font-bold 
                     tw-leading-none 
                     tw-absolute
-                    tw-bg-white"
-                > 
-                  <i 
-                    class="
+                    tw-bg-white">
+                  <i class="
                     fa-sharp 
                     fa-light 
                     fa-clock 
                     tw-px-1" />
-                      {{ hours }} h
+                  {{ hours }} h
                 </div>
               </div>
               <div v-for="(event, index) in eventArr">
@@ -247,6 +240,7 @@ import cache from '@imagina/qsite/_plugins/cache';
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import completedSchedule from './completedSchedule.vue'
 import modelHoursFilter from './models/modelHoursFilter.js'
+import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 
 export default {
   props: {
@@ -358,10 +352,10 @@ export default {
         const color = carrierColor ? carrierColor : 'black';
         const statusColor = flightStatusesColor ? flightStatusesColor : 'grey-100';
         return {
-          [`tw-text-${color} tw-font-semibold`] : carrierColor,
+          [`tw-text-${color} tw-font-semibold`]: carrierColor,
           'tw-cursor-pointer': this.scheduleType !== 'day-agenda',
           'tw-text-black': !carrierColor,
-          [`tw-border-${statusColor}`] : statusColor
+          [`tw-border-${statusColor}`]: statusColor
         }
       }
     },
@@ -693,7 +687,7 @@ export default {
       }
     },
     eventSchedule(event, isDay = false) {
-      if(isDay){
+      if (isDay) {
         this.scheduleTypeComputed = 'day-agenda';
         return;
       }
@@ -714,6 +708,7 @@ export default {
     async addSchedule(data) {
       try {
         const isClone = data.isClone || false;
+        console.warn("Aquí");
         await this.$refs.modalForm.setLoading(true);
         if (this.isAppOffline) {
           const flightStatusColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(data.flightStatusId))?.color;
@@ -776,6 +771,7 @@ export default {
             this.showWorkOrder(data);
           } else {
             await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm);
+            console.log(dataForm)
           }
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           this.$alert.info('The workOrders was updated correctly');
@@ -897,7 +893,6 @@ export default {
           params,
           this.isAppOffline
         );
-        console.warn(response);
         this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
         this.loading = false;
       } catch (error) {
@@ -906,13 +901,19 @@ export default {
       }
     },
     async showWorkOrder(reponseSchedule, type = null) {
+      console.log(reponseSchedule.id)
       let response = { data: reponseSchedule };
       if (this.isPassenger || response.data.statusId !== STATUS_SCHEDULE) {
-        response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
-          refresh: true,
-          include:
-            "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
-        })
+        if (this.isAppOffline) {
+          const workOrderOffline = await cacheOffline.getItemById(reponseSchedule.id);
+          response = {data: workOrderOffline};
+        } else {
+          response = await this.$crud.show("apiRoutes.qramp.workOrders", reponseSchedule.id, {
+            refresh: true,
+            include:
+              "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
+          })
+        }
         await this.$refs.formOrders.loadform({
           modalProps: {
             title: `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${response.data.id
@@ -1006,11 +1007,11 @@ export default {
         const origin = window.location.href.split("?");
         let dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
         let dateEnd = this.$moment(this.selectedDateEnd).format('YYYYMMDD');
-        if(this.isPassenger) {
-           dateStart = this.$moment().format('YYYYMMDD');
-           dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
+        if (this.isPassenger) {
+          dateStart = this.$moment().format('YYYYMMDD');
+          dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
         }
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1 }&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
@@ -1121,8 +1122,9 @@ export default {
 .tooltipComments {
   @apply tw-bg-white tw-text-black tw-shadow-lg tw-border tw-w-52 tw-break-normal;
 }
+
 .tw-py-3-2 {
-    padding-top: 0.6rem;
-    padding-bottom: 0.6rem;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
 }
 </style>
