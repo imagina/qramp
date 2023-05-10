@@ -326,12 +326,13 @@ export default {
         this.$router.go();
       },
     },
-    /*'isAppOffline': {
+    'isAppOffline': {
       deep: true,
-      handler: async function () {
-        //await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+      handler: async function (newValue) {
+        console.log(newValue);
+        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
       }
-    }*/
+    }
   },
   created() {
     this.$nextTick(async function () {
@@ -354,9 +355,9 @@ export default {
   },
   computed: {
     isAppOffline() {
-      if(!this.$store.state.qofflineMaster.isAppOffline) {
+      /*if(!this.$store.state.qofflineMaster.isAppOffline) {
         this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-      }
+      }*/
       return this.$store.state.qofflineMaster.isAppOffline;
     },
     colorCheckSchedule() {
