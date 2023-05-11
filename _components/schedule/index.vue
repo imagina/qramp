@@ -727,7 +727,8 @@ export default {
     async addSchedule(data) {
       try {
         const isClone = data.isClone || false;
-        console.warn("Aquí");
+        const offlineId = 'work-order-' + this.$uid();
+        data.offlineId = offlineId;
         await this.$refs.modalForm.setLoading(true);
         if (this.isAppOffline) {
           const flightStatusColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(data.flightStatusId))?.color;
@@ -735,7 +736,7 @@ export default {
             {
             ...modelWorkOrder,
             ...data, 
-            id: this.$uid(), 
+            id: offlineId, 
             calendarTitle: `${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
             inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
             statusId: STATUS_SCHEDULE,
@@ -770,7 +771,6 @@ export default {
       await this.updateSchedule(data);
     },
     async updateSchedule(data) {
-      console.log("Holaaaaaaaaaaaaaaaaaaaaaa");
       try {
         await this.$refs.modalForm.setLoading(true);
         const event = this.events.find(
