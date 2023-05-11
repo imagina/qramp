@@ -26,9 +26,19 @@
                 tw-text-xs
                 tw-bg-white 
                 tw-border 
-                tw-border-grey-100" :class="classSchedule(event)" @click.stop.prevent="editSchedule(event)">
-              <badgeComment :event="event" :sizeBadge="7" iconClass="tw-text-sm" mainClass="tw-mr-1" />
-              <i class="
+                tw-border-grey-100"
+              :class="classSchedule(event)"
+              @click.stop.prevent="editSchedule(event)"
+            >
+              <badgeComment
+                v-if="!isAppOffline"
+                :event="event" 
+                :sizeBadge="7"
+                iconClass="tw-text-sm"
+                mainClass="tw-mr-1"
+              />
+              <i
+                class="
                  fa-solid 
                  fa-circle-check
                  tw-px-1" :class="colorCheckSchedule(event)">
@@ -84,11 +94,24 @@
                     tw-border-2
                     tw-border-grey-100
                     tw-flex
-                  " :class="classSchedule(event)" :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
-                    " @click.stop.prevent="editSchedule(event)">
-                  <div class="tw-font-semibold" :class="{ 'tw-w-1/2': event.id && scheduleType === 'day-agenda' }">
-                    <badgeComment :event="event" mainClass="tw-mr-2" />
-                    <i class="
+                  "
+                  :class="classSchedule(event)"
+                  :style="
+                    badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
+                  "
+                  @click.stop.prevent="editSchedule(event)"
+                >
+                  <div 
+                    class="tw-font-semibold"
+                    :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
+                  >
+                    <badgeComment
+                      v-if="!isAppOffline"
+                      :event="event"
+                      mainClass="tw-mr-2" 
+                    />
+                    <i
+                      class="
                       fa-solid 
                       fa-circle-check" :class="colorCheckSchedule(event)">
                       <q-tooltip>
@@ -231,7 +254,8 @@ import {
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
   COMPANY_PASSENGER,
-  COMPANY_RAMP
+  COMPANY_RAMP,
+  modelWorkOrder
 } from "../model/constants";
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
@@ -285,7 +309,8 @@ export default {
             options: modelHoursFilter
           }
         },
-      }
+      },
+      componentLoaded: false,
     };
   },
   watch: {
@@ -295,12 +320,6 @@ export default {
         this.$router.go();
       },
     },
-    isAppOffline: {
-      deep: true,
-      handler: function () {
-        getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)
-      }
-    }
   },
   created() {
     this.$nextTick(async function () {
@@ -401,7 +420,9 @@ export default {
         this.filterTime = null;
         this.scheduleType = value;
         await this.$refs.schedule;
-        await this.getListOfSelectedWorkOrders(value);
+        if(this.componentLoaded) {
+          await this.getListOfSelectedWorkOrders(value);
+        }
       },
     },
     extraPageActions() {
@@ -568,7 +589,7 @@ export default {
             this.scheduleTypeComputed = 'month'
           };
           await this.setFilter();
-
+          this.componentLoaded = true;
         }, 100);
       } catch (error) {
         console.log(error);
@@ -712,26 +733,32 @@ export default {
         await this.$refs.modalForm.setLoading(true);
         if (this.isAppOffline) {
           const flightStatusColor = workOrderList().getFlightStatusesList().find(item => item.id === Number(data.flightStatusId))?.color;
-          this.events.push(this.$clone(
+          const cloneSchedule = this.$clone(
             {
-              ...data,
-              id: this.$uid(),
-              calendarTitle: `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
-              inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
-              statusId: STATUS_SCHEDULE,
-              workOrderStatus: {
-                color: 'pink-500',
-              },
-              flightStatus: {
-                color: flightStatusColor || 'gray-200',
-              },
-            }));
-          await cache.set("scheduleList", this.events);
+            ...modelWorkOrder,
+            ...data, 
+            id: this.$uid(), 
+            calendarTitle: `${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
+            inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
+            statusId: STATUS_SCHEDULE,
+            workOrderStatus: {
+              color: 'pink-500',
+            },
+            flightStatus: {
+              color: flightStatusColor || 'gray-200',
+            },  
+          });
+          this.events.push(cloneSchedule);
+          await cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", cloneSchedule);
         }
         await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
-        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+        if(!this.isAppOffline) {
+          await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+          await workOrderList().getWorkOrders(true, true);
+        } 
+        
         if (this.scheduleTypeComputed === 'day-agenda' && !isClone) {
           await this.addNewDayToSchedule({ date: this.selectedDate });
         }
@@ -746,6 +773,7 @@ export default {
       await this.updateSchedule(data);
     },
     async updateSchedule(data) {
+      console.log("Holaaaaaaaaaaaaaaaaaaaaaa");
       try {
         await this.$refs.modalForm.setLoading(true);
         const event = this.events.find(
@@ -793,7 +821,7 @@ export default {
           (item) => item.id !== scheduleId
         );
         this.events = events;
-        this.$crud.delete("apiRoutes.qramp.workOrders", scheduleId);
+        this.$crud.delete("apiRoutes.qramp.workOrders", scheduleId, {params: {titleOffline: `Delete Work Order - Id: ${scheduleId}`}});
         this.$alert.info('workOrders was deleted correctly');
       } catch (error) {
         console.log(error);
@@ -838,6 +866,7 @@ export default {
       type = false
     ) {
       try {
+        console.log('hola');
         this.selectedDateStart = this.$moment(this.selectedDate).format("YYYY-MM-DD HH:mm:ss");
         if (dateStart && dateEnd) {
           this.selectedDateStart = dateStart;
@@ -901,8 +930,9 @@ export default {
       }
     },
     async showWorkOrder(reponseSchedule, type = null) {
-      console.log(reponseSchedule.id)
+      const title = `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${reponseSchedule.id}`;
       let response = { data: reponseSchedule };
+      await qRampStore().setTitleOffline(title);
       if (this.isPassenger || response.data.statusId !== STATUS_SCHEDULE) {
         if (this.isAppOffline) {
           const workOrderOffline = await cacheOffline.getItemById(reponseSchedule.id);
@@ -916,8 +946,7 @@ export default {
         }
         await this.$refs.formOrders.loadform({
           modalProps: {
-            title: `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${response.data.id
-              }`,
+            title,
             update: true,
             workOrderId: response.data.id,
             width: "90vw",
@@ -946,16 +975,14 @@ export default {
       this.events = [];
       const station = await workOrderList().getStationList()
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
-      if (this.stationId && station) {
+      console.log(this.componentLoaded);
+      if (this.stationId && station && this.componentLoaded) {
         await cache.set("stationId", this.filter.values.stationId || null);
-        await this.getWorkOrderFilter(false);
+        await this.getWorkOrderFilter(!this.isAppOffline);
       }
     },
-    setFilter() {
-      return new Promise(async (resolve, reject) => {
-        this.$filter.setFilter(this.filterActions);
-        resolve(true);
-      });
+    async setFilter() {
+      this.$filter.setFilter(this.filterActions);
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
@@ -965,6 +992,7 @@ export default {
           "apiRoutes.qramp.simpleWorkOrders",
           {
             ...form,
+            titleOffline: this.$tr('ifly.cms.form.newWorkOrder'),
             companyId,
             ...businessUnitId,
           }
@@ -1052,12 +1080,6 @@ export default {
       setTimeout(() => {
         this.setFilter();
       }, 1000);
-    },
-    emitFilterSchedule(filter) {
-      //Add Values
-      this.$filter.addValues(filter)
-      //Call back
-      if (this.filter && this.filter.callBack) this.filter.callBack(this.filter)
     },
     async addNewDayToSchedule(event) {
       try {

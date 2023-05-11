@@ -479,10 +479,6 @@ export default function workOrderList(): WorkOrderList {
             const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
             const data = response;
             setDataWorkOrderList(data);
-            // if (refresh) {
-            //     await cacheOffline.updateList('apiRoutes.qramp.workOrders', data);
-            //     console.warn(data)
-            // }
             return data;
         } catch (error) {
             console.log(error);

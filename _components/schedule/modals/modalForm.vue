@@ -27,7 +27,7 @@
         </div>
         <div>
           <comments 
-            v-if="form.id && permisionComments"
+            v-if="form.id && permisionComments && !isAppOffline"
             apiRoute="apiRoutes.qramp.comments"
             :commentableId="Number(form.id)"
             commentableType="Modules\Ramp\Entities\WorkOrder"
@@ -68,6 +68,9 @@ export default {
     })
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     isBlank() {
       return qRampStore().getIsblank();
     },
