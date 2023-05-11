@@ -93,16 +93,6 @@ export default {
           props: {
             vIf: !this.isBlank,
             color: "primary",
-            label: this.$tr("isite.cms.label.close"),
-          },
-          action: () => {
-            this.hideModal();
-          },
-        },
-        {
-          props: {
-            vIf: !this.isBlank,
-            color: "primary",
             label: this.isEdit
               ? this.$tr("isite.cms.label.update")
               : this.$tr("isite.cms.label.save"),
