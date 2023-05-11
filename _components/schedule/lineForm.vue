@@ -106,6 +106,9 @@ export default {
     });
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     tranformaDate() {
       const inboundScheduledArrival = `${this.$moment(
         this.event.inboundScheduledArrival
@@ -140,7 +143,10 @@ export default {
           if (success) {
             if (this.event.isUpdate && typeof this.event.id === "string") {
               this.event.isUpdate = false;
-              this.$emit("addSchedule", this.tranformaDate);
+              await this.$emit("addSchedule", this.tranformaDate);
+              if(this.isAppOffline) {
+                await this.$emit('dismissEvent', this.event);
+              }
             } else {
               this.event.isUpdate = false;
               if(statusId) {

@@ -420,9 +420,7 @@ export default {
         this.filterTime = null;
         this.scheduleType = value;
         await this.$refs.schedule;
-        if(this.componentLoaded) {
-          await this.getListOfSelectedWorkOrders(value);
-        }
+        await this.getListOfSelectedWorkOrders(value);
       },
     },
     extraPageActions() {
@@ -757,8 +755,7 @@ export default {
         if(!this.isAppOffline) {
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           await workOrderList().getWorkOrders(true, true);
-        } 
-        
+        }
         if (this.scheduleTypeComputed === 'day-agenda' && !isClone) {
           await this.addNewDayToSchedule({ date: this.selectedDate });
         }
@@ -866,7 +863,6 @@ export default {
       type = false
     ) {
       try {
-        console.log('hola');
         this.selectedDateStart = this.$moment(this.selectedDate).format("YYYY-MM-DD HH:mm:ss");
         if (dateStart && dateEnd) {
           this.selectedDateStart = dateStart;
