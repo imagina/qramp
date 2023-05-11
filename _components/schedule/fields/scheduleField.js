@@ -1,5 +1,9 @@
 import qRampStore from '../../../_store/qRampStore.js';
 import workOrderList from '../../../_store/actions/workOrderList';
+import {
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
+} from '../../model/constants.js';
 
 export default {
     data() {
@@ -9,6 +13,9 @@ export default {
       }
     },
     computed: {
+      companyId(){
+        return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      },
       isPassenger() {
         return qRampStore().getIsPassenger();
       },
@@ -62,7 +69,11 @@ export default {
               loadOptions: {
                 apiRoute: 'apiRoutes.qsetupagione.setupStations',
                 select: {label: 'stationName', id: 'id'},
-                requestParams: {filter: {status: 1}}
+                requestParams: {filter: {
+                  "status": 1,
+                  companyId: this.companyId,
+                  "allTranslations": true
+                }}
               },
             },
             gateId: {
@@ -154,7 +165,14 @@ export default {
         return !!val || this.$tr('isite.cms.message.fieldRequired');
       },
       async getFlightStatusList() {
-        const response = await this.$crud.index('apiRoutes.qfly.flightStatuses');
+        const params = {
+            params: {
+                filter: {
+                    companyId: this.companyId,
+                }
+            },
+        }
+        const response = await this.$crud.index('apiRoutes.qfly.flightStatuses', params);
         this.flightStatusList = response.data.map((item) =>({
           label: item.name,
           id: item.id,
