@@ -979,7 +979,6 @@ export default {
       this.events = [];
       const station = await workOrderList().getStationList()
         .find(item => item.id == this.stationId && item.companyId === this.filterCompany);
-      console.log(this.componentLoaded);
       if (this.stationId && station && this.componentLoaded) {
         await cache.set("stationId", this.filter.values.stationId || null);
         await this.getWorkOrderFilter(!this.isAppOffline);

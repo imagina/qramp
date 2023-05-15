@@ -167,8 +167,7 @@ export default function flightStore(): FlightStoreContract {
     *
     * @returns {void}
     */
-    function getReponsible(){
-        console.log(state.responsibles)
+    function getReponsible() {
         return state.responsibles;
     }
     function payload(): void {

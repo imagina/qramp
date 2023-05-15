@@ -142,7 +142,6 @@ export default function qRampStore() {
         state.flightBoundFormStatus = status;
     }
     function getFlightBoundFormStatus() {
-        console.log('hola', state.flightBoundFormStatus);
         return state.flightBoundFormStatus;
     }
     function validateFutureDateTime(dateTime, dateMin = null, currentDate) {

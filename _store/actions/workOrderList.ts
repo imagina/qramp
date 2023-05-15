@@ -449,7 +449,6 @@ export default function workOrderList(): WorkOrderList {
      */
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
         try {
-            console.warn("GET WO refresh",refresh)
             const isPassenger = qRampStore().getIsPassenger();
             const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
