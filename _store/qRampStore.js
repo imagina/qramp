@@ -405,7 +405,10 @@ export default function qRampStore() {
             id: workOrderId,
             statusId,
           }
-          await baseService.update(route, workOrderId, payload);
+          const params = {params: {
+            titleOffline: getTitleOffline()
+          }};
+          await baseService.update(route, workOrderId, payload, params);
         } catch (error) {
           console.log('Error changeStatus Schedule',error);
         }

@@ -370,7 +370,6 @@ export default function workOrderList(): WorkOrderList {
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
                 refresh,
-                cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
                         companyId,
