@@ -209,7 +209,7 @@ export default {
         } else {
           await this.sendWorkOrder(formatData);
         }
-        
+        return formatData;
       } catch (error) {
         qRampStore().hideLoading();
         console.log(error);
