@@ -777,10 +777,9 @@ export default {
           (item) => item.id === data.id
         );
         if (event) {
-
           const dataForm = {};
-          dataForm.calendarTitle = `schedule not saved ${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
-            dataForm.id = data.id;
+          dataForm.calendarTitle = `${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
+          dataForm.id = data.id;
           dataForm.sta = data.sta;
           dataForm.std = data.std;
           dataForm.stationId = data.stationId;
@@ -791,14 +790,21 @@ export default {
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           dataForm.carrierId = data.carrierId;
           dataForm.statusId = data.statusId;
+          if(this.isAppOffline) {
+            Object.keys(dataForm).forEach((key) => {
+              if (key !== 'inboundScheduledArrival') {
+                event[key] = dataForm[key];
+              }
+            });
+          }
           if (data.statusId === STATUS_DRAFT) {
             await this.changeStatus(data.statusId, data.id);
             this.showWorkOrder(data);
           } else {
+            
             await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm);
-            console.log(dataForm)
           }
-          await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+          //await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           this.$alert.info('The workOrders was updated correctly');
         }
         await this.$refs.modalForm.setLoading(false);
