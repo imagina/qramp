@@ -228,8 +228,8 @@ export default {
             qRampStore().setStatusId(STATUS_DRAFT);
             await this.$refs.stepper.setData();
             setTimeout(async () => {
-              await this.$refs.stepper.sendInfo();
-              await this.getWorkOrders();
+              const formData = await this.$refs.stepper.sendInfo();
+              await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
               await workOrderList().getWorkOrders(true);
@@ -249,8 +249,8 @@ export default {
             await qRampStore().setStatusId(STATUS_CLOSED);
             await this.$refs.stepper.setData();
             setTimeout(async () => {
-              await this.$refs.stepper.sendInfo();
-              await this.getWorkOrders();
+              const formData = await this.$refs.stepper.sendInfo();
+              await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
               await workOrderList().getWorkOrders(true);
@@ -368,8 +368,8 @@ export default {
     setLoading(value) {
       this.loading = value;
     },
-    async getWorkOrders() {
-      this.$emit('getWorkOrderFilter')
+    async getWorkOrders(data = null) {
+      this.$emit('getWorkOrderFilter', data)
     }
   },
 }

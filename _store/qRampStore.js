@@ -409,7 +409,14 @@ export default function qRampStore() {
         } catch (error) {
           console.log('Error changeStatus Schedule',error);
         }
-      }
+    }
+    function parseDateOfflineWO(dateWO){
+        if (!dateWO && !dateWO?.includes('T')) return dateWO;
+        const splitDate = dateWO.split(" ");
+        const [date, hour] = splitDate;
+        const newDate = new Date(date).toLocaleDateString('fr-CA');
+        return `${newDate}T${hour}`;
+    }
     return {
         getTitleOffline,
         setTitleOffline,
@@ -470,5 +477,6 @@ export default function qRampStore() {
         setIsPassenger,
         getIsPassenger,
         changeStatus,
+        parseDateOfflineWO,
     }
 }

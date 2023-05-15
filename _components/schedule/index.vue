@@ -234,7 +234,7 @@
     </div>
     <modalForm ref="modalForm" @addSchedule="addSchedule" @updateSchedule="updateSchedule"
       @deleteSchedule="deleteSchedule" @setEventComments="setEventComments" />
-    <form-orders ref="formOrders" @getWorkOrderFilter="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" />
+    <form-orders ref="formOrders" @getWorkOrderFilter="getWoCache" />
     <stationModal ref="stationModal" @saveFilterStationId="saveFilterStationId" />
   </div>
 </template>
@@ -1130,6 +1130,34 @@ export default {
         }
       } catch (error) {
         console.log(error)
+      }
+    },
+    async getWoCache(data) {
+      if(!this.isAppOffline){
+        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+      } else {
+        let event = this.events.find(item => item.id == data.id) || {};
+        const calendarTitle = `${event.preFlightNumber} STA ${event.sta} STD ${event.std}`;
+        const inboundBlockIn =  qRampStore().parseDateOfflineWO(data.inboundBlockIn);
+        const inboundScheduledArrival = qRampStore().parseDateOfflineWO(data.inboundScheduledArrival);
+        const outboundBlockOut = qRampStore().parseDateOfflineWO(data.outboundBlockOut);
+        const outboundScheduledDeparture = qRampStore().parseDateOfflineWO(data.outboundScheduledDeparture);
+        const eventParset = {
+          ...event, 
+          calendarTitle, 
+          ...data,
+          inboundBlockIn,
+          inboundScheduledArrival,
+          outboundBlockOut,
+          outboundScheduledDeparture,
+          workOrderItems: Object.values(this.$helper.snakeToCamelCaseKeys(data.workOrderItems)),
+        };
+        
+        this.events = this.$clone(this.events.map(item => {
+          return item.id == data.id ? { ...eventParset } : { ...item };
+        }));
+        
+        await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', eventParset);
       }
     },
   },
