@@ -795,7 +795,10 @@ export default {
             await this.changeStatus(data.statusId, data.id);
             this.showWorkOrder(data);
           } else {
-            await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm);
+            const params = {params: {
+              titleOffline: qRampStore().getTitleOffline()
+            }};
+            await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm, params);
             console.log(dataForm)
           }
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
