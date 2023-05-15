@@ -91,7 +91,7 @@ export default {
         crudId: this.crudId,
         entityName: config("main.qfly.entityNames.workOrder"),
         apiRoute: 'apiRoutes.qramp.workOrders',
-        permission: 'ramp.work-orders',
+        permission: 'ramp.passenger-work-orders',
         create: {
           method: async () => {
             await qRampStore().setIsPassenger(true);
