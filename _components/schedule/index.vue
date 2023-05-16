@@ -766,6 +766,7 @@ export default {
     },
     async startWorkOrders(statusId, data) {
       data.statusId = statusId;
+      await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', data);
       await this.updateSchedule(data);
     },
     async updateSchedule(data) {
@@ -803,6 +804,7 @@ export default {
               titleOffline: qRampStore().getTitleOffline()
             }};
             await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm, params);
+            await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', dataForm);
           }
           if(!this.isAppOffline) {
             await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
