@@ -92,7 +92,7 @@
               </div>
               <div v-for="(event, index) in eventArr">
                 <div :key="index" v-if="event.time && !event.isUpdate" class="
-                    tw-text-sm lg:tw-text-lg
+                    tw-text-sm
                     tw-mb-3
                     tw-p-1
                     tw-mx-2
@@ -1202,7 +1202,7 @@ export default {
   }
 }
 .q-calendar-daily__head-weekday, .q-calendar-weekly__head-weekday {
-  @apply tw-py-1 tw-bg-gray-50 tw-justify-center;
+  @apply tw-py-1 tw-bg-gray-50 tw-justify-center tw-text-xs lg:tw-text-base;
 }
 .q-calendar-daily__head-weekday, .q-calendar-agenda__head-weekday {
   @apply tw-mb-2;
@@ -1228,4 +1228,15 @@ export default {
       width: 300%;
   }
 }
+.q-calendar .tw-text-sm {
+    font-size: 0.575rem;
+    line-height: .7rem;
+}
+@media (min-width: 1024px) {
+  .q-calendar .tw-text-sm {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+
 </style>
