@@ -455,7 +455,7 @@ export default function workOrderList(): WorkOrderList {
                 refresh: refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
-                    include: 'responsible',
+                    include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
                     filter: {
                         businessUnitId,
                         date: {

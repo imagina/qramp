@@ -583,9 +583,7 @@ export default {
         setTimeout(async () => {
           if (this.isPassenger) {
             this.scheduleTypeComputed = 'day-agenda'
-          } else {
-            this.scheduleTypeComputed = 'month'
-          };
+          }
           await this.setFilter();
           this.componentLoaded = true;
         }, 100);
