@@ -13,7 +13,7 @@
     </div>
     <q-calendar bordered ref="schedule" v-model="selectedDate" :view="scheduleType" locale="en-us"
       hour24Format @click:day2="eventSchedule" @click:date2="event => eventSchedule(event, true)"
-      @click:day:header2="eventSchedule" class="tw-w-full">
+      @click:day:header2="eventSchedule" :class="scheduleType">
       <template #day="{ timestamp }">
         <div v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')" class="
            tw-overflow-y-auto 
@@ -27,6 +27,7 @@
                 tw-bg-white 
                 tw-border 
                 tw-w-full
+                tw-mb-1
                 tw-border-grey-100"
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
@@ -1178,5 +1179,14 @@ export default {
 }
 .tw-btn-nav .q-btn .q-icon {
   font-size: 10px;
+}
+.q-calendar.month, .q-calendar.week-agenda {
+  width: 100%;  
+  overflow-x: scroll;
+}
+@media (max-width: 640px) {
+  .q-calendar-weekly, .q-calendar.week-agenda .q-calendar-agenda {
+      width: 150%;
+  }
 }
 </style>
