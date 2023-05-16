@@ -4,18 +4,16 @@
             v-if="['day-agenda', 'week-agenda'].includes(scheduleType)" 
             class="
               tw-inline-flex 
-              tw-items-center 
-              tw-justify-center 
+              tw-items-center
+              tw-w-full
               tw-px-2 
               tw-py-1 
-              tw-mr-2
               tw-mt-4 
-              tw-text-base 
+              tw-text-xs lg:tw-text-base 
               tw-font-bold 
               tw-leading-none 
-            tw-bg-white 
-              tw-rounded-full
-              tw-shadow-lg"
+              tw-bg-white
+              tw-rounded-lg"
             >
             <p 
               :class="{
@@ -24,7 +22,7 @@
               }"
             >
                 <i class="fa-solid fa-circle" />
-                {{ titleCompletedSchedule(timestamp.date) }}
+                {{ titleCompletedSchedule(timestamp.date) }} 
             </p>
         </div>
     </div>

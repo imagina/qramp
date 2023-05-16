@@ -5,15 +5,15 @@
         :extra-actions="extraPageActions" :excludeActions="fullscreen ? ['filter'] : []"
         @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" class="q-mb-md" />
     </div>
-    <q-btn-toggle v-model="scheduleTypeComputed" no-caps unelevated toggle-color="blue-grey" color="white"
-      text-color="blue-grey" :options="scheduleTypeOptions" id="btnCalendarType" size="14px" padding="md sm" spread />
-    <div class="tw-flex tw-justify-center tw-items-center">
-      <q-btn dense flat label="Prev" @click="schedulePrev" icon="fa-regular fa-chevron-left" class="tw-w-1/2" />
-      <q-btn dense flat label="Next" @click="scheduleNext" icon-right="fa-regular fa-chevron-right" class="tw-w-1/2" />
+    <q-btn-toggle v-model="scheduleTypeComputed" rounded no-caps unelevated toggle-color="blue-grey" color="grey-2"
+      text-color="blue-grey"  :options="scheduleTypeOptions" id="btnCalendarType" size="14px" padding="md sm" spread />
+    <div class="tw-btn-nav tw-flex tw-my-2 tw-justify-center tw-items-center">
+      <q-btn dense rounded unelevated color="grey-1" text-color="blue-grey" label="Prev" @click="schedulePrev" icon="fa-regular fa-chevron-left" class="tw-w-1/2 tw-mr-1" />
+      <q-btn dense rounded unelevated color="grey-1" text-color="blue-grey" label="Next" @click="scheduleNext" icon-right="fa-regular fa-chevron-right" class="tw-w-1/2 tw-ml-1" />
     </div>
-    <q-calendar ref="schedule" v-model="selectedDate" :view="scheduleType" locale="en-us" class="tw-w-full" animated
+    <q-calendar bordered ref="schedule" v-model="selectedDate" :view="scheduleType" locale="en-us"
       hour24Format @click:day2="eventSchedule" @click:date2="event => eventSchedule(event, true)"
-      @click:day:header2="eventSchedule">
+      @click:day:header2="eventSchedule" :class="scheduleType">
       <template #day="{ timestamp }">
         <div v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')" class="
            tw-overflow-y-auto 
@@ -26,6 +26,8 @@
                 tw-text-xs
                 tw-bg-white 
                 tw-border 
+                tw-w-full
+                tw-mb-1
                 tw-border-grey-100"
               :class="classSchedule(event)"
               @click.stop.prevent="editSchedule(event)"
@@ -56,15 +58,19 @@
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
         <template>
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
-            <div class="
-               tw-mb-3 
-               tw-py-2">
-              <div class="
+            <div 
+              class="
+               tw-mb-0" 
+            >
+            <div 
+              class="
                 tw-border-b-2
                 tw-border-gray-300 
                 tw-py-3-2 
-                tw-mb-8">
-                <div class="
+                tw-mb-6"
+            >
+              <div 
+                  class="
                     tw-inline-flex 
                     tw-items-center 
                     tw-justify-center 
@@ -79,21 +85,24 @@
                   <i class="
                     fa-sharp 
                     fa-light 
-                    fa-clock 
+                    fa-clock
                     tw-px-1" />
                   {{ hours }} h
                 </div>
               </div>
               <div v-for="(event, index) in eventArr">
                 <div :key="index" v-if="event.time && !event.isUpdate" class="
-                    tw-text-lg
-                    tw-my-1
+                    tw-text-sm lg:tw-text-lg
+                    tw-mb-3
                     tw-p-1
-                    tw-mx-6
+                    tw-mx-2
                     tw-rounded-md
                     tw-border-2
                     tw-border-grey-100
                     tw-flex
+                    tw-whitespace-normal
+                    tw-break-all
+                    tw-cursor-pointer
                   "
                   :class="classSchedule(event)"
                   :style="
@@ -180,13 +189,17 @@
         </template>
       </template>
       <template #day-header="{ timestamp }">
-        <div class="tw-mx-4 tw-py-4" v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank">
+        <div class="tw-mx-3 tw-py-4 tw-block tw-text-center" v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank">
           <button class="
-              tw-bg-blue-800 
-              tw-text-white 
+              tw-w-full
+              tw-bg-gray-100
+              hover:tw-bg-gray-200
               tw-rounded-lg 
-              tw-px-4" @click="addNewDayToSchedule(timestamp)" :disabled="events.some(item => item.isUpdate)">
-            <i class="fa-light fa-plus"></i> <span v-if="scheduleType === 'day-agenda'">{{ $tr('isite.cms.label.new')
+              tw-p-1" 
+              @click="addNewDayToSchedule(timestamp)" 
+              :disabled="events.some(item => item.isUpdate)">
+            <i class="fa-light fa-plus"></i> 
+            <span v-if="scheduleType === 'day-agenda'"> {{ $tr('isite.cms.label.new')
             }}</span>
             <q-tooltip v-if="scheduleType === 'week-agenda'">
               {{ $tr('isite.cms.label.new') }}
@@ -202,7 +215,7 @@
                   v-if="Object.entries(getEvents(timestamp.date)).length > 0" />
               </div>
               <div v-if="scheduleType === 'day-agenda'">
-                <dynamic-field v-model="filterTime" class="q-mb-md" :field="fields.time" />
+                <dynamic-field v-model="filterTime" class="q-mt-md q-mb-md" :field="fields.time" />
               </div>
             </div>
           </div>
@@ -1181,5 +1194,33 @@ export default {
 .tw-py-3-2 {
   padding-top: 0.6rem;
   padding-bottom: 0.6rem;
+}
+
+@media (max-width: 640px) { 
+  #btnCalendarType > button i {
+    @apply tw-block tw-w-full tw-mx-0 tw-mb-2;
+  }
+}
+.q-calendar-daily__head-weekday, .q-calendar-weekly__head-weekday {
+  @apply tw-py-1 tw-bg-gray-50 tw-justify-center;
+}
+.q-calendar-daily__head-weekday, .q-calendar-agenda__head-weekday {
+  @apply tw-mb-2;
+}
+.q-btn--dense.q-btn--round .q-btn__wrapper {
+  min-height: 2.1em;
+  min-width: 2.1em;
+}
+.tw-btn-nav .q-btn .q-icon {
+  font-size: 10px;
+}
+.q-calendar.month, .q-calendar.week-agenda {
+  width: 100%;  
+  overflow-x: scroll;
+}
+@media (max-width: 640px) {
+  .q-calendar-weekly, .q-calendar.week-agenda .q-calendar-agenda {
+      width: 150%;
+  }
 }
 </style>
