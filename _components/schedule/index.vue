@@ -303,7 +303,7 @@ export default {
       selectedDate: this.$moment().format("YYYY-MM-DD"),
       selectedDateEnd: this.$moment().endOf("month").endOf("day").format("YYYY-MM-DD"),
       selectedDateStart: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
-      scheduleType: 'month',
+      scheduleType: null,
       events: [],
       stationId: null,
       filterData: null,
@@ -341,6 +341,7 @@ export default {
       await qRampStore().setIsPassenger(currentRouteName !== -1);
       await workOrderList().getAllList();
       await workOrderList().getCustomerWithContract();
+      
     });
   },
   mounted() {
@@ -596,6 +597,8 @@ export default {
         setTimeout(async () => {
           if (this.isPassenger) {
             this.scheduleTypeComputed = 'day-agenda'
+          } else {
+            this.scheduleTypeComputed =  'month';
           }
           await this.setFilter();
           this.componentLoaded = true;
@@ -941,6 +944,7 @@ export default {
           params,
           this.isAppOffline
         );
+        console.log(response)
         this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
         this.loading = false;
       } catch (error) {
