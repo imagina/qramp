@@ -1224,7 +1224,12 @@ export default {
 }
 @media (max-width: 640px) {
   .q-calendar-weekly, .q-calendar.week-agenda .q-calendar-agenda {
-      width: 150%;
+      width: 200%;
+  }
+}
+@media (max-width: 420px) {
+  .q-calendar-weekly, .q-calendar.week-agenda .q-calendar-agenda {
+      width: 300%;
   }
 }
 </style>
