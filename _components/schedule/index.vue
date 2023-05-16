@@ -102,7 +102,7 @@
                     tw-flex
                     tw-whitespace-normal
                     tw-break-all
-                    tw-cursor-point
+                    tw-cursor-pointer
                   "
                   :class="classSchedule(event)"
                   :style="
