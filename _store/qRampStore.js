@@ -142,7 +142,6 @@ export default function qRampStore() {
         state.flightBoundFormStatus = status;
     }
     function getFlightBoundFormStatus() {
-        console.log('hola', state.flightBoundFormStatus);
         return state.flightBoundFormStatus;
     }
     function validateFutureDateTime(dateTime, dateMin = null, currentDate) {
@@ -405,11 +404,21 @@ export default function qRampStore() {
             id: workOrderId,
             statusId,
           }
-          await baseService.update(route, workOrderId, payload);
+          const params = {params: {
+            titleOffline: getTitleOffline()
+          }};
+          await baseService.update(route, workOrderId, payload, params);
         } catch (error) {
           console.log('Error changeStatus Schedule',error);
         }
-      }
+    }
+    function parseDateOfflineWO(dateWO){
+        if (!dateWO && !dateWO?.includes('T')) return dateWO;
+        const splitDate = dateWO.split(" ");
+        const [date, hour] = splitDate;
+        const newDate = new Date(date).toLocaleDateString('fr-CA');
+        return `${newDate}T${hour}`;
+    }
     return {
         getTitleOffline,
         setTitleOffline,
@@ -470,5 +479,6 @@ export default function qRampStore() {
         setIsPassenger,
         getIsPassenger,
         changeStatus,
+        parseDateOfflineWO,
     }
 }

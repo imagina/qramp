@@ -370,7 +370,6 @@ export default function workOrderList(): WorkOrderList {
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const params = {
                 refresh,
-                cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
                         companyId,
@@ -450,14 +449,13 @@ export default function workOrderList(): WorkOrderList {
      */
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
         try {
-            console.warn("GET WO refresh",refresh)
             const isPassenger = qRampStore().getIsPassenger();
             const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
             const params = {
                 refresh: refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
-                    include: 'responsible',
+                    include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
                     filter: {
                         businessUnitId,
                         date: {
