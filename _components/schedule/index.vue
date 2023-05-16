@@ -60,8 +60,7 @@
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
             <div 
               class="
-               tw-mb-0 
-               tw-py-2" 
+               tw-mb-0" 
             >
             <div 
               class="
@@ -105,6 +104,7 @@
                     tw-flex
                     tw-whitespace-normal
                     tw-break-all
+                    tw-cursor-point
                   "
                   :class="classSchedule(event)"
                   :style="
