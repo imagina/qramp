@@ -804,7 +804,9 @@ export default {
             }};
             await this.$crud.update("apiRoutes.qramp.schedule", data.id, dataForm, params);
           }
-          await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+          if(!this.isAppOffline) {
+            await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+          }
           this.$alert.info('The workOrders was updated correctly');
         }
         await this.$refs.modalForm.setLoading(false);
