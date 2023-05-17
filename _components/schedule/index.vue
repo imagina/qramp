@@ -946,7 +946,6 @@ export default {
           params,
           this.isAppOffline
         );
-        console.log(response)
         this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
         this.loading = false;
       } catch (error) {
