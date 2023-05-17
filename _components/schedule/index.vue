@@ -434,7 +434,7 @@ export default {
         this.filterTime = null;
         this.scheduleType = value;
         await this.$refs.schedule;
-        if(value) {
+        if(value && this.stationId) {
           await this.getListOfSelectedWorkOrders(value);
         }
       },
