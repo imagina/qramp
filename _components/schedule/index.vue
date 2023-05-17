@@ -6,7 +6,7 @@
         @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" class="q-mb-md" />
     </div>
     <q-btn-toggle v-model="scheduleTypeComputed" rounded no-caps unelevated toggle-color="blue-grey" color="grey-2"
-      text-color="blue-grey"  :options="scheduleTypeOptions" id="btnCalendarType" size="14px" padding="md sm" spread />
+      text-color="blue-grey" :options="scheduleTypeOptions" id="btnCalendarType" size="14px" padding="md sm" spread />
     <div class="tw-btn-nav tw-flex tw-my-2 tw-justify-center tw-items-center">
       <q-btn dense rounded unelevated color="grey-1" text-color="blue-grey" label="Prev" @click="schedulePrev" icon="fa-regular fa-chevron-left" class="tw-w-1/2 tw-mr-1" />
       <q-btn dense rounded unelevated color="grey-1" text-color="blue-grey" label="Next" @click="scheduleNext" icon-right="fa-regular fa-chevron-right" class="tw-w-1/2 tw-ml-1" />
@@ -74,8 +74,7 @@
                     tw-inline-flex 
                     tw-items-center 
                     tw-justify-center 
-                    tw-px-1 
-                    tw-py-1 
+                    tw-p-1
                     tw-mr-2 
                     tw-text-xs 
                     tw-font-bold 
@@ -99,7 +98,7 @@
                     tw-rounded-md
                     tw-border-2
                     tw-border-grey-100
-                    tw-flex
+                    sm:tw-flex
                     tw-whitespace-normal
                     tw-break-all
                     tw-cursor-pointer
@@ -112,7 +111,7 @@
                 >
                   <div 
                     class="tw-font-semibold"
-                    :class="{'tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
+                    :class="{'tw-mb-2 sm:tw-mb-0 sm:tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
                   >
                     <badgeComment
                       v-if="!isAppOffline"
@@ -129,11 +128,11 @@
                     </i>
                     {{ event.calendarTitle }}
                   </div>
-                  <div class="tw-text-right tw-w-1/2 tw-space-x-2" v-if="event.id && scheduleType === 'day-agenda'">
+                  <div class="tw-text-right sm:tw-w-1/2 tw-space-x-2" v-if="event.id && scheduleType === 'day-agenda'">
                     <button v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger" class="
                         tw-bg-green-500 
                         tw-rounded-lg 
-                        tw-px-2  
+                        tw-px-2 tw-py-1 lg:tw-py-0  
                         tw-text-white" @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)">
                       <i class="fa-sharp fa-regular fa-bring-forward" />
                       <q-tooltip>
@@ -143,7 +142,7 @@
                     <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
                         tw-bg-blue-800 
                         tw-rounded-lg 
-                        tw-px-2  
+                        tw-px-2 tw-py-1 lg:tw-py-0  
                         tw-text-white" @click.stop.prevent="duplicateSchedule(event)">
                       <i class="fa-thin fa-clone tw-text-sm" />
                       <q-tooltip>
@@ -154,7 +153,7 @@
                       class="
                         tw-bg-blue-800 
                         tw-rounded-lg 
-                        tw-px-2
+                        tw-px-2 tw-py-1 lg:tw-py-0
                         tw-text-white">
                       <i class="fa-light tw-text-sm" :class="{
                         'fa-eye': isBlank,
@@ -172,7 +171,7 @@
                     <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
                         tw-bg-red-500 
                         tw-rounded-lg 
-                        tw-px-2  
+                        tw-px-2 tw-py-1 lg:tw-py-0  
                         tw-text-white" @click.stop.prevent="deleteSchedule(event.id)">
                       <i class="fa-light fa-trash-can tw-text-sm" />
                       <q-tooltip>
@@ -206,7 +205,7 @@
             </q-tooltip>
           </button>
           <div v-if="!events.some(item => item.isUpdate)">
-            <div class="tw-w-full tw-grid" :class="{
+            <div class="tw-w-full tw-grid tw-items-center" :class="{
               'tw-grid-cols-1': scheduleType === 'week-agenda',
               'tw-grid-cols-2': scheduleType === 'day-agenda',
             }">
@@ -215,7 +214,7 @@
                   v-if="Object.entries(getEvents(timestamp.date)).length > 0" />
               </div>
               <div v-if="scheduleType === 'day-agenda'">
-                <dynamic-field v-model="filterTime" class="q-mt-md q-mb-md" :field="fields.time" />
+                <dynamic-field v-model="filterTime" :field="fields.time" />
               </div>
             </div>
           </div>
@@ -1198,7 +1197,22 @@ export default {
 
 @media (max-width: 640px) { 
   #btnCalendarType > button i {
-    @apply tw-block tw-w-full tw-mx-0 tw-mb-2;
+    @apply tw-block tw-w-full tw-mx-0 tw-mb-0;
+  }
+}
+@media (max-width: 420px) {
+  #btnCalendarType > button {
+    height: 50px;
+  }
+  #btnCalendarType > button .q-btn__wrapper{
+    padding: 8px !important;
+  }
+  #btnCalendarType > button .q-btn__content i {
+    font-size: 1rem;
+  }
+  #btnCalendarType > button .q-btn__content span {
+    font-size: 0.575rem;
+    line-height: .7rem;
   }
 }
 .q-calendar-daily__head-weekday, .q-calendar-weekly__head-weekday {
@@ -1217,6 +1231,9 @@ export default {
 .q-calendar.month, .q-calendar.week-agenda {
   width: 100%;  
   overflow-x: scroll;
+}
+.q-calendar.day-agenda .tw-label-not {
+  @apply tw-mb-4;
 }
 @media (max-width: 640px) {
   .q-calendar-weekly, .q-calendar.week-agenda .q-calendar-agenda {
@@ -1239,4 +1256,8 @@ export default {
   }
 }
 
+
+#dynamicFieldComponent .q-field--with-bottom {
+    padding: 20px 0;
+}
 </style>
