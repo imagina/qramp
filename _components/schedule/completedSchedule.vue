@@ -9,7 +9,7 @@
               tw-px-2 
               tw-py-1 
               tw-mt-4 
-              tw-text-xs lg:tw-text-base 
+              tw-text-sm lg:tw-text-base 
               tw-font-bold 
               tw-leading-none 
               tw-bg-white
