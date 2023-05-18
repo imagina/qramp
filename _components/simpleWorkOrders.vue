@@ -351,7 +351,7 @@ export default {
         }
         qRampStore().hideLoading();
         
-        return this.isAppOffline ? {data: {...dataForm, id: offlineId } } : response;
+        return this.isAppOffline ? {data: {...modelWorkOrder, ...dataForm, id: offlineId } } : response;
       } catch (error) {
         qRampStore().hideLoading();
         console.error(error);
