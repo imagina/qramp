@@ -459,7 +459,7 @@ export default function workOrderList(): WorkOrderList {
                     filter: {
                         businessUnitId,
                         date: {
-                            field: "inbound_scheduled_arrival",
+                            field: "created_at",
                             type: "15DaysAroundToday",
                             from: null,
                             to: null
