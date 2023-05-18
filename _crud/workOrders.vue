@@ -642,7 +642,6 @@ export default {
     },
     showWorkOrder(data) {
       if (this.isAppOffline) {
-        console.log(data);
         this.openModal(data);
         return;
       }
