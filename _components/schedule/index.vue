@@ -277,7 +277,12 @@
               'tw-grid-cols-2': scheduleType === 'day-agenda',
             }">
               <div>
-                <completedSchedule :getEvents="getEvents" :scheduleType="scheduleType" :timestamp="timestamp" />
+                <completedSchedule 
+                  :getEvents="getEvents" 
+                  :scheduleType="scheduleType" 
+                  :timestamp="timestamp"
+                  v-if="Object.entries(getEvents(timestamp.date, false)).length > 0" 
+                />
               </div>
               <div v-if="scheduleType === 'day-agenda'">
                 <dynamic-field v-model="filterTime" :field="fields.time" />
@@ -1113,9 +1118,14 @@ export default {
     },
     async saveFilterStationId(stationId) {
       this.stationId = stationId;
+      console.log(stationId);
       await this.mutateCurrentURL();
       await this.emitFilter();
-      await this.$router.go();
+      if (this.isAppOffline) {
+        this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd)
+      }else{
+        await this.$router.go();
+      }
     },
     async mutateCurrentURL() {
       try {
