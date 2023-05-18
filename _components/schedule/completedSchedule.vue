@@ -53,7 +53,7 @@ export default defineComponent({
         const timestamp = computed(() => props.timestamp);
         const scheduleType = computed(() => props.scheduleType);
         function isEventListComplete(date: string): boolean {
-            return _.every(Object.entries(props.getEvents(date)), (elemento) => {
+            return _.every(Object.entries(props.getEvents(date, false)), (elemento) => {
                 return _.every(elemento[1], (objeto) => {
                 return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE;
                 });

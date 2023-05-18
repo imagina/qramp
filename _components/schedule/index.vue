@@ -277,8 +277,7 @@
               'tw-grid-cols-2': scheduleType === 'day-agenda',
             }">
               <div>
-                <completedSchedule :getEvents="getEvents" :scheduleType="scheduleType" :timestamp="timestamp"
-                  v-if="Object.entries(getEvents(timestamp.date)).length > 0" />
+                <completedSchedule :getEvents="getEvents" :scheduleType="scheduleType" :timestamp="timestamp" />
               </div>
               <div v-if="scheduleType === 'day-agenda'">
                 <dynamic-field v-model="filterTime" :field="fields.time" />
@@ -735,11 +734,11 @@ export default {
         console.log(error);
       }
     },
-    getEvents(timestamp) {
+    getEvents(timestamp, filter = true) {
       try {
         let events = this.$clone(this.events || []);
         const filterData = events.filter(item => {
-          if (this.filterTime && this.filterTime.length > 0) {
+          if (this.filterTime && this.filterTime.length > 0 && filter) {
             const time = this.filterTime.split('-');
             const staTime = item.sta ? item.sta.split(":") : [];
             const staHours = parseInt(staTime[0] || 0);
