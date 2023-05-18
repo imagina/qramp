@@ -1113,9 +1113,14 @@ export default {
     },
     async saveFilterStationId(stationId) {
       this.stationId = stationId;
+      console.log(stationId);
       await this.mutateCurrentURL();
       await this.emitFilter();
-      await this.$router.go();
+      if (this.isAppOffline) {
+        this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd)
+      }else{
+        await this.$router.go();
+      }
     },
     async mutateCurrentURL() {
       try {

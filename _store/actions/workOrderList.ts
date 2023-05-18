@@ -308,16 +308,12 @@ export default function workOrderList(): WorkOrderList {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             const filterRamp = isPassenger ? {} : {
-                "withoutContracts": true,
-                "adHocWorkOrders": true,
-                "customerStatusId": 1,
             }; 
             const params = {
                 refresh,
                 cacheTime: cacheTimeForThirtyDays,
                 params: {
                     filter: {
-                        ...filterRamp,
                         companyId,
                     }
                 },
@@ -574,6 +570,7 @@ export default function workOrderList(): WorkOrderList {
             getWorkOrders(refresh),
             getStation(refresh),
             getOperationType(refresh),
+            getCustomerWithContract(refresh),
             getCustomer(refresh),
             getContract(refresh),
             getFlightStatuses(refresh),
