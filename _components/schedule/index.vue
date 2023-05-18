@@ -1,19 +1,68 @@
 <template>
-  <div class="schedule-ctn" :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }">
+  <div 
+    class="schedule-ctn" 
+    :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }"
+  >
     <div class="box box-auto-height q-mb-md">
-      <page-actions ref="pageActions" :title="$t('ifly.cms.sidebar.schedule')" multipleRefresh
-        :extra-actions="extraPageActions" :excludeActions="fullscreen ? ['filter'] : []"
-        @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" class="q-mb-md" />
+      <page-actions 
+        ref="pageActions" 
+        :title="$t('ifly.cms.sidebar.schedule')" 
+        multipleRefresh
+        :extra-actions="extraPageActions" 
+        :excludeActions="fullscreen ? ['filter'] : []"
+        @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" 
+        class="q-mb-md" 
+      />
     </div>
-    <q-btn-toggle v-model="scheduleTypeComputed" rounded no-caps unelevated toggle-color="blue-grey" color="grey-2"
+    <q-btn-toggle 
+      v-model="scheduleTypeComputed" 
+      rounded 
+      no-caps 
+      unelevated 
+      toggle-color="blue-grey" color="grey-2"
       text-color="blue-grey" :options="scheduleTypeOptions" id="btnCalendarType" size="14px" padding="md sm" spread />
-    <div class="tw-btn-nav tw-flex tw-my-2 tw-justify-center tw-items-center">
-      <q-btn dense rounded unelevated color="grey-1" text-color="blue-grey" label="Prev" @click="schedulePrev" icon="fa-regular fa-chevron-left" class="tw-w-1/2 tw-mr-1" />
-      <q-btn dense rounded unelevated color="grey-1" text-color="blue-grey" label="Next" @click="scheduleNext" icon-right="fa-regular fa-chevron-right" class="tw-w-1/2 tw-ml-1" />
+    <div 
+      class="
+       tw-btn-nav 
+       tw-flex 
+       tw-my-2 
+       tw-justify-center 
+       tw-items-center"
+      >
+      <q-btn 
+        dense 
+        rounded 
+        unelevated 
+        color="grey-1" 
+        text-color="blue-grey" 
+        label="Prev" 
+        @click="schedulePrev" 
+        icon="fa-regular fa-chevron-left" 
+        class="tw-w-1/2 tw-mr-1" 
+       />
+      <q-btn 
+        dense 
+        rounded 
+        unelevated 
+        color="grey-1" 
+        text-color="blue-grey" 
+        label="Next" 
+        @click="scheduleNext" 
+        icon-right="fa-regular fa-chevron-right" 
+        class="tw-w-1/2 tw-ml-1" 
+      />
     </div>
-    <q-calendar bordered ref="schedule" v-model="selectedDate" :view="scheduleType" locale="en-us"
-      hour24Format @click:day2="eventSchedule" @click:date2="event => eventSchedule(event, true)"
-      @click:day:header2="eventSchedule" :class="scheduleType">
+    <q-calendar 
+      bordered 
+      ref="schedule" 
+      v-model="selectedDate" 
+      :view="scheduleType" 
+      locale="en-us"
+      hour24Format 
+      @click:day2="eventSchedule" 
+      @click:date2="event => eventSchedule(event, true)"
+      @click:day:header2="eventSchedule" :class="scheduleType"
+    >
       <template #day="{ timestamp }">
         <div v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')" class="
            tw-overflow-y-auto 
@@ -130,20 +179,31 @@
                   </div>
                   <div class="tw-text-right sm:tw-w-1/2 tw-space-x-2" v-if="event.id && scheduleType === 'day-agenda'">
                     <button v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger" class="
-                        tw-bg-green-500 
-                        tw-rounded-lg 
+                        tw-rounded-lg
+                        tw-text-gray-400 
                         tw-px-2 tw-py-1 lg:tw-py-0  
-                        tw-text-white" @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)">
+                        tw-border 
+                        tw-border-gray-200 
+                        hover:tw-text-white 
+                        hover:tw-bg-green-500 
+                        hover:tw-opacity-75" 
+                        @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)"
+                      >
                       <i class="fa-sharp fa-regular fa-bring-forward" />
                       <q-tooltip>
                         Start Work Order
                       </q-tooltip>
                     </button>
                     <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
-                        tw-bg-blue-800 
-                        tw-rounded-lg 
+                        tw-rounded-lg
+                        tw-text-gray-400 
                         tw-px-2 tw-py-1 lg:tw-py-0  
-                        tw-text-white" @click.stop.prevent="duplicateSchedule(event)">
+                        tw-border tw-border-gray-200 
+                        hover:tw-text-white 
+                        hover:tw-bg-blue-500 
+                        hover:tw-opacity-75" 
+                        @click.stop.prevent="duplicateSchedule(event)"
+                    >
                       <i class="fa-thin fa-clone tw-text-sm" />
                       <q-tooltip>
                         Duplicate
@@ -151,10 +211,10 @@
                     </button>
                     <button v-if="!events.some(item => item.isUpdate)" @click.stop.prevent="editSchedule(event, 'day')"
                       class="
-                        tw-bg-blue-800 
-                        tw-rounded-lg 
+                        tw-rounded-lg
+                        tw-text-gray-400 
                         tw-px-2 tw-py-1 lg:tw-py-0
-                        tw-text-white">
+                        tw-border tw-border-gray-200 hover:tw-text-white hover:tw-bg-blue-500 hover:tw-opacity-75">
                       <i class="fa-light tw-text-sm" :class="{
                         'fa-eye': isBlank,
                         'fa-pen-to-square': !isBlank
@@ -169,10 +229,14 @@
                       </q-tooltip>
                     </button>
                     <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
-                        tw-bg-red-500 
-                        tw-rounded-lg 
+                        tw-rounded-lg
+                        tw-text-gray-400 
                         tw-px-2 tw-py-1 lg:tw-py-0  
-                        tw-text-white" @click.stop.prevent="deleteSchedule(event.id)">
+                        tw-border tw-border-gray-200 hover:tw-text-white 
+                        hover:tw-bg-red-500 
+                        hover:tw-opacity-75" 
+                        @click.stop.prevent="deleteSchedule(event.id)"
+                      >
                       <i class="fa-light fa-trash-can tw-text-sm" />
                       <q-tooltip>
                         {{ $tr('isite.cms.label.delete') }}
@@ -188,7 +252,10 @@
         </template>
       </template>
       <template #day-header="{ timestamp }">
-        <div class="tw-mx-3 tw-py-4 tw-block tw-text-center" v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank">
+        <div 
+          class="tw-mx-3 tw-py-4 tw-block tw-text-center" 
+          v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank"
+        >
           <button class="
               tw-w-full
               tw-bg-gray-100
