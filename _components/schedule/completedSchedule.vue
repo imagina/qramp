@@ -13,7 +13,8 @@
               tw-font-bold 
               tw-leading-none 
               tw-bg-white
-              tw-rounded-lg"
+              tw-rounded-lg
+              tw-label-not"
             >
             <p 
               :class="{
