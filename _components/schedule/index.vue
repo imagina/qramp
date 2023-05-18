@@ -474,7 +474,7 @@ export default {
         },
         {
           id: 3,
-          label: this.$tr("isite.cms.label.day"),
+          label: `${this.$tr("isite.cms.label.day")} ${ this.isPassenger ? `(${this.$moment(this.selectedDate).format('MMMM')})`: ''}`,
           value: "day-agenda",
           icon: "fas fa-calendar-day",
         },
