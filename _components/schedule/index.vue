@@ -277,7 +277,12 @@
               'tw-grid-cols-2': scheduleType === 'day-agenda',
             }">
               <div>
-                <completedSchedule :getEvents="getEvents" :scheduleType="scheduleType" :timestamp="timestamp" />
+                <completedSchedule 
+                  :getEvents="getEvents" 
+                  :scheduleType="scheduleType" 
+                  :timestamp="timestamp"
+                  v-if="Object.entries(getEvents(timestamp.date, false)).length > 0" 
+                />
               </div>
               <div v-if="scheduleType === 'day-agenda'">
                 <dynamic-field v-model="filterTime" :field="fields.time" />
