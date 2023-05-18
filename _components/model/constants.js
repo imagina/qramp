@@ -315,7 +315,7 @@ export const FlightformFieldModel = [
     "isReportable": true,
     "transactions": null,
     "flightStatusColor": null,
-    "id": '1332112355',
+    "id": null,
     "createdAt": moment().format('YYYY-MM-DDTHH:mm:ss'),
     "updatedAt": null,
     "deletedAt": null,

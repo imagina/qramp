@@ -243,7 +243,7 @@ export default {
     },
     async orderConfirmationMessage() {
       this.$emit('loading', true);
-      const response = await this.saveRequestSimpleWorkOrder();
+      let response = await this.saveRequestSimpleWorkOrder();
       await this.$alert.info({
         mode: "modal",
         title: '',
@@ -322,15 +322,15 @@ export default {
         console.log("Aquí ?")
         const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
         const offlineId = 'work-order-' + this.$uid();
-        const response = await this.$crud.create(
-            "apiRoutes.qramp.simpleWorkOrders",
-            {
+        const dataForm = {
               ...this.form, 
               offlineId, 
               titleOffline: qRampStore().getTitleOffline(), 
               companyId: this.filterCompany,
               ...businessUnitId,
-            },
+        };
+        const response = await this.$crud.create(
+            "apiRoutes.qramp.simpleWorkOrders",dataForm,
         ).catch(error => {
           qRampStore().hideLoading();
         });
@@ -350,7 +350,8 @@ export default {
           await workOrderList().getWorkOrders(true, true)
         }
         qRampStore().hideLoading();
-        return response;
+        
+        return this.isAppOffline ? {data: {...dataForm, id: offlineId } } : response;
       } catch (error) {
         qRampStore().hideLoading();
         console.error(error);
