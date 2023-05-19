@@ -194,7 +194,7 @@ export default {
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
-              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
+              field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
               align: "left",
               format: item => item ? item : '',
             },
