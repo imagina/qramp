@@ -18,6 +18,7 @@ export const BUSINESS_UNIT_PASSENGER = 8;
 export const BUSINESS_UNIT_RAMP = { operator: '!=', value: 8};
 export const COMPANY_PASSENGER = 30;
 export const COMPANY_RAMP = 26;
+export const ModuleRamp = 'Modules\\Ramp\\Entities\\WorkOrder';
 
 export const modelDataBound = {
     destinationAirport: {

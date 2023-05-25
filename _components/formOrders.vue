@@ -10,6 +10,9 @@
       :actions="actions" 
       :width="modalProps.width" 
       :maximized="$q.screen.lt.md"
+      :revisionsBtn="modalProps.update"
+      :revisionableId="modalProps.workOrderId"
+      :revisionableType="ModuleRamp"
     >
     <stepper-ramp-form 
       v-if="modalProps.update" 
@@ -48,7 +51,8 @@ import {
   STEP_FLIGHT,
   STEP_SERVICE,
   STEP_REMARKS,
-  STEP_SIGNATURE
+  STEP_SIGNATURE,
+  ModuleRamp
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
@@ -84,7 +88,8 @@ export default {
       needToBePosted: false,
       STATUS_DRAFT,
       STATUS_POSTED,
-      STATUS_SUBMITTED
+      STATUS_SUBMITTED,
+      ModuleRamp
     }
   },
   provide() {
@@ -280,7 +285,7 @@ export default {
         },
       ];
       return actions;
-    }
+    },
   },
   methods: {
     /**

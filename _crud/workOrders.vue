@@ -1,5 +1,6 @@
 <template>
   <div>
+    <revisions ref="revisions"/>
     <form-orders ref="formOrders" />
     <flightDetail />
     <commentsModal ref="commentsModal" :commentableId="commentableId" isCrud />
@@ -14,7 +15,8 @@ import {
   STATUS_DRAFT,
   STATUS_SCHEDULE,
   BUSINESS_UNIT_RAMP,
-  COMPANY_RAMP
+  COMPANY_RAMP,
+  ModuleRamp,
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -23,6 +25,7 @@ import htmlComment from '../_components//model/htmlComment.js';
 import baseService from '@imagina/qcrud/_services/baseService.js';
 import workOrderList from '../_store/actions/workOrderList.ts'
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+
 
 export default {
   name: 'RampCrud',
@@ -393,6 +396,14 @@ export default {
             },
           },
           actions: [
+            {
+              name: 'revisions',
+              icon: 'fa-light fa-user-magnifying-glass',
+              label: 'Revisions',
+              action: async (item) => {
+                await this.$refs.revisions.openModal(ModuleRamp, item.id);
+              }
+            },
             {
               name: 'edit',
               icon: 'fal fa-pen',
