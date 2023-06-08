@@ -22,12 +22,17 @@
             </p>
             <div>
               <p>Flight Number: {{ flightNumber }}</p>
-              <div v-if="isComplete" >
-                <p class="tw-text-green-500">
+              <div>
+                <p
+                  :class="{
+                    'tw-text-green-500': isComplete,
+                    'tw-text-orange-500': !isComplete
+                  }"
+                >
                 <i
                   class="fa-solid fa-circle" 
                 />
-                  Completed
+                  {{ titleCompleted }}
                 </p>
               </div>
             </div>
@@ -70,6 +75,7 @@ export default defineComponent({
     const isComplete = computed(() => {
       return props.isComplete;
     });
+    const titleCompleted = computed((): string  => isComplete.value ? 'Completed' : 'Not completed');
     onMounted(() => {
       expandible.value = !props.isComplete
     })
@@ -79,7 +85,8 @@ export default defineComponent({
     return {
       expandible, 
       flightNumber, 
-      isComplete
+      isComplete,
+      titleCompleted
     }
   }
 })

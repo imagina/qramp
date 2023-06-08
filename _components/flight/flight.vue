@@ -375,7 +375,7 @@ export default {
       return this.$auth.hasAccess('ramp.work-orders.see-contract-name');
     },
     manageResponsiblePermissions() {
-      return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
+      return this.$auth.hasAccess('ramp.work-orders.manage-responsible') && !this.isPassenger;
     },
     isPassenger() {
      return qRampStore().getIsPassenger();
@@ -637,7 +637,7 @@ export default {
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
               outlined: !this.readonly,
@@ -659,7 +659,7 @@ export default {
             type: this.readonly ? 'inputStandard':'input',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.boundTailNumber,
               outlined: !this.readonly,
@@ -676,7 +676,7 @@ export default {
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
@@ -697,9 +697,6 @@ export default {
             type: 'input',
             props: {
               vIf: this.isPassenger,
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.inboundGateArrival,
               label: '*Inbound Gate Arrival',
               clearable: true,
@@ -715,7 +712,7 @@ export default {
             type: this.readonly ? 'inputStandard':'search',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Enter the fight number and press enter or press the search icon',
               loading: this.loadingState,
@@ -735,7 +732,7 @@ export default {
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly: this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport,
               outlined: !this.readonly,
@@ -757,7 +754,7 @@ export default {
             type: this.readonly ? 'inputStandard':'input',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly: this.disabledReadonly || this.flightBoundFormStatus.outboundTailNumber,
               outlined: !this.readonly,
@@ -774,7 +771,7 @@ export default {
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
@@ -795,9 +792,6 @@ export default {
             type: 'input',
             props: {
               vIf: this.isPassenger,
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
               label: '*Outbound Gate Departure',
               clearable: true,
@@ -890,7 +884,7 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        const customer = workOrderList().getCustomerWithContractLists().find(item => item.customerId == updateForm.customerId) || {};
+        const customer = workOrderList().getCustomerWithContractLists().find(item => item.id == updateForm.customerId);
         if(customer) {
           customer.label = updateForm.adHoc ? `${customer.label} (Ad Hoc)`: customer.label;
           if(customer.label) {
