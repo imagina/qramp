@@ -23,6 +23,7 @@ export default {
   workOrderTransactions: `${urlBase}/workday-transactions`,
   contractRules: `${urlBase}/contract-rules`,
   setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
+  setupBusinessUnits: `${setupUrlBase}/business-units`,
   simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
   flightPosition: `${urlBase}/work-orders/flight-position`,
   scheduleStatuses: `${urlBase}/schedule-statuses`,
