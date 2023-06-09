@@ -59,9 +59,24 @@ export default defineComponent({
                 });
             });
         }
+        function countIncompleteEvents(date: string): number {
+            let count = 0;
+            const events = props.getEvents(date, false);
+            
+            Object.entries(events).forEach((entry: any) => {
+                entry[1].forEach((objeto) => {
+                if (objeto.statusId === STATUS_DRAFT || objeto.statusId === STATUS_SCHEDULE) {
+                    count++;
+                }
+                });
+            });
+            
+            return count;
+        }
         function titleCompletedSchedule(date: string): string {
             const completed = isEventListComplete(date);
-            return completed ? 'Completed' : 'Not completed'
+            const count = countIncompleteEvents(date);
+            return completed ? 'Completed' : `${count} Not completed`
         }
 
         return {
