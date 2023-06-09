@@ -100,6 +100,9 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
+    permisionCommentsIndex() {
+      return this.$auth.hasAccess('ramp.work-orders-comments.index');
+    },
     steppers() {
       let stepps = [
         {
@@ -182,7 +185,7 @@ export default {
       const actions = [
         {
           props: {
-            vIf: !this.isAppOffline,
+            vIf: !this.isAppOffline && this.permisionCommentsIndex,
             color: 'primary',
             icon: 'fa-light fa-comment',
             label: 'Comments',
