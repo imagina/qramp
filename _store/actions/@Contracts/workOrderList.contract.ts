@@ -437,7 +437,7 @@ export interface WorkOrderList {
     getDataWorkOrderList: () => WorkOrders;
     setDataWorkOrderList: (data: WorkOrders) => void;
     getWorkOrders: () => Promise<WorkOrders | void>;
-    getCustomerWithContract: () =>  Promise<void>;
+    getCustomerWithContract: () =>  Promise<any[] | void>;
     setCustomerWithContractLists: (data: any) => void;
     getCustomerWithContractLists: () => any;
     setAirlinesList: (data: any) => void;

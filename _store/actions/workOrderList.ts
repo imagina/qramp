@@ -230,24 +230,26 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getOperationType(refresh = false): Promise<OperationType[] | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const params = {
-                refresh,
-                cacheTime: cacheTimeForThirtyDays,
-                params: {
-                    filter: {
-                        companyId,
-                    }
-                },
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.operation-types.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    cacheTime: cacheTimeForThirtyDays,
+                    params: {
+                        filter: {
+                            companyId,
+                        }
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qramp.operationTypes', params);
+                const data = response.data.map(item => ({label: item.operationName, ...item, value: item.id}))
+                setOperationTypeList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qramp.operationTypes', params);
-            const data = response.data.map(item => ({ label: item.operationName, ...item, value: item.id }))
-            setOperationTypeList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -257,46 +259,50 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getStation(refresh = false): Promise<StationContract[] | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const filterRamp = isPassenger ? {companyId} : {
-                "status": 1,
-                companyId,
-                "allTranslations": true
-            };
-            const params = {
-                refresh,
-                cacheTime: cacheTimeForThirtyDays,
-                params: {
-                    filter: {...filterRamp}
-                },
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.stations.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const filterRamp = isPassenger ? {companyId} : {
+                    "status": 1,
+                    companyId,
+                    "allTranslations": true
+                };
+                const params = {
+                    refresh,
+                    cacheTime: cacheTimeForThirtyDays,
+                    params: {
+                        filter: {...filterRamp}
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qsetupagione.setupStations', params);
+                const data = response.data;
+                setStationList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qsetupagione.setupStations', params);
-            const data = response.data;
-            setStationList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
     //"status":1,"companyId":26,"allTranslations":true
     async function getAirlines(refresh = false) {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const params = {
-                refresh,
-                params: {
-                    filter: { status: 1, companyId, "allTranslations": true }
-                },
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airline.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    params: {
+                        filter: {status: 1, companyId, "allTranslations": true}
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qfly.airlines', params);
+                const data = response.data;
+                setAirlinesList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qfly.airlines', params);
-            const data = response.data;
-            setAirlinesList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
     /**
@@ -304,26 +310,27 @@ export default function workOrderList(): WorkOrderList {
      * @returns A promise that will resolve with the array of CustomerContract objects or void if there's an error
      */
     async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const filterRamp = isPassenger ? {} : {
-            }; 
-            const params = {
-                refresh,
-                cacheTime: cacheTimeForThirtyDays,
-                params: {
-                    filter: {
-                        companyId,
-                    }
-                },
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.customers.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const filterRamp = isPassenger ? {} : {};
+                const params = {
+                    refresh,
+                    cacheTime: cacheTimeForThirtyDays,
+                    params: {
+                        filter: {
+                            companyId,
+                        }
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qramp.setupCustomers', params);
+                const data = response.data;
+                setCustomerList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qramp.setupCustomers', params);
-            const data = response.data;
-            setCustomerList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -333,25 +340,27 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getContract(refresh = false): Promise<any[] | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const params = {
-                refresh,
-                cacheTime: cacheTimeForThirtyDays,
-                params: {
-                    filter: {
-                        "contractStatusId": 1,
-                        companyId,
-                    }
-                },
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.operation-types.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    cacheTime: cacheTimeForThirtyDays,
+                    params: {
+                        filter: {
+                            "contractStatusId": 1,
+                            companyId,
+                        }
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qramp.setupContracts', params);
+                const data = response.data;
+                setContractList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qramp.setupContracts', params);
-            const data = response.data;
-            setContractList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -361,23 +370,25 @@ export default function workOrderList(): WorkOrderList {
      * @returns a promise.
      */
     async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const params = {
-                refresh,
-                params: {
-                    filter: {
-                        companyId,
-                    }
-                },
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.flight-statuses.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    params: {
+                        filter: {
+                            companyId,
+                        }
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qfly.flightStatuses', params);
+                const data = response.data;
+                setFlightStatusesList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qfly.flightStatuses', params);
-            const data = response.data;
-            setFlightStatusesList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -387,27 +398,29 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned.
      */
     async function getWorkOrderStatuses(refresh = false): Promise<WorkOrderStatusesContract[] | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const filterRamp = isPassenger ? {companyId} : {
-                "status": 1,
-                companyId,
-                "allTranslations": true
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.work-order-statuses.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const filterRamp = isPassenger ? {companyId} : {
+                    "status": 1,
+                    companyId,
+                    "allTranslations": true
+                }
+                const params = {
+                    refresh,
+                    cacheTime: cacheTimeForThirtyDays,
+                    params: {
+                        filter: {...filterRamp}
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qramp.workOrderStatuses', params);
+                const data = response.data;
+                setWorkOrderStatusesList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const params = {
-                refresh,
-                cacheTime: cacheTimeForThirtyDays,
-                params: {
-                    filter: {...filterRamp}
-                },
-            }
-            const response = await baseService.index('apiRoutes.qramp.workOrderStatuses', params);
-            const data = response.data;
-            setWorkOrderStatusesList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -416,24 +429,26 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getGates(refresh = false): Promise<Gates[] | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const params = {
-                refresh,
-                cacheTime: cacheTimeForThirtyDays,
-                params: {
-                    filter: {
-                        companyId,
-                    }
-                },
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.gates.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    cacheTime: cacheTimeForThirtyDays,
+                    params: {
+                        filter: {
+                            companyId,
+                        }
+                    },
+                }
+                const response = await baseService.index('apiRoutes.qsetupagione.gates', params);
+                const data = response.data;
+                setGatesList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qsetupagione.gates', params);
-            const data = response.data;
-            setGatesList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -444,120 +459,133 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-            const params = {
-                refresh: refresh,
-                cacheTime: cacheTimeForThirtyDays,
-                params: {
-                    include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
-                    filter: {
-                        businessUnitId,
-                        date: {
-                            field: "created_at",
-                            type: "15DaysAroundToday",
-                            from: null,
-                            to: null
+        if (Vue.prototype.$auth && (Vue.prototype.$auth.hasAccess('ramp.work-orders.index') || Vue.prototype.$auth.hasAccess('ramp.passenger-work-orders.index'))){
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+                const params = {
+                    refresh: refresh,
+                    cacheTime: cacheTimeForThirtyDays,
+                    params: {
+                        include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
+                        filter: {
+                            businessUnitId,
+                            date: {
+                                field: "created_at",
+                                type: "15DaysAroundToday",
+                                from: null,
+                                to: null
+                            },
+                            order: {
+                                field: "id",
+                                way: "desc"
+                            },
+                            withoutDefaultInclude: true,
                         },
-                        order: {
-                            field: "id",
-                            way: "desc"
-                        },
-                        withoutDefaultInclude: true,
+                        take: 200,
+                        page: 1
                     },
-                    take: 200,
-                    page: 1
-                },
+                }
+                const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
+                const data = response;
+                setDataWorkOrderList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
-            const data = response;
-            setDataWorkOrderList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
-    function getCustomerWithContract(refresh = false): Promise<void> {
-        return new Promise(async (resolve) => {
-            const allowContractName = Vue.prototype.$auth ? Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const businessUnitId = isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { companyId };
-            const custemerParams = {
-                refresh,
-                params: {
-                    filter: {
-                        withoutContracts: true,
-                        adHocWorkOrders: true,
-                        customerStatusId: 1,
-                        companyId,
-                    }
-                },
-            }
-            const contractParams = {
-                params: {
-                    filter: {
-                        contractStatusId: 1,
-                        ...businessUnitId,
-                    }
-                },
-            }
-            const customersData = await Promise.all([
-                baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
-                baseService.index('apiRoutes.qramp.setupContracts', contractParams)
-            ]);
+    function getCustomerWithContract(refresh = false): Promise<any[] | void> {
 
-            const customerList = factoryCustomerWithContracts(customersData, allowContractName);
-            setCustomerWithContractLists(customerList);
-            return resolve(customerList);
-        })
+            return new Promise(async (resolve) => {
+                if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.contracts.index') && Vue.prototype.$auth.hasAccess('setup.customers.index')) {
+
+                const allowContractName = Vue.prototype.$auth ? Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {companyId};
+                const custemerParams = {
+                    refresh,
+                    params: {
+                        filter: {
+                            withoutContracts: true,
+                            adHocWorkOrders: true,
+                            customerStatusId: 1,
+                            companyId,
+                        }
+                    },
+                }
+                const contractParams = {
+                    params: {
+                        filter: {
+                            contractStatusId: 1,
+                            ...businessUnitId,
+                        }
+                    },
+                }
+                const customersData = await Promise.all([
+                    baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
+                    baseService.index('apiRoutes.qramp.setupContracts', contractParams)
+                ]);
+
+                const customerList = factoryCustomerWithContracts(customersData, allowContractName);
+                setCustomerWithContractLists(customerList);
+                return resolve(customerList);
+                }else{
+                    resolve();
+                }
+            })
+
     }
 
     async function getACTypes(refresh = false) {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const params = {
-                refresh,
-                params: {
-                    filter: {
-                        "status": 1,
-                        companyId,
-                        "allTranslations": true
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.aircrafttype.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    params: {
+                        filter: {
+                            "status": 1,
+                            companyId,
+                            "allTranslations": true
+                        },
                     },
-                },
+                }
+                const response = await baseService.index('apiRoutes.qfly.aircraftTypes', params);
+                const data = response.data;
+                setACTypesList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qfly.aircraftTypes', params);
-            const data = response.data;
-            setACTypesList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
     async function getAirports(refresh = false) {
-        try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-            const params = {
-                refresh,
-                params: {
-                    filter: {
-                        "status": 1,
-                        companyId,
-                        "allTranslations": true
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airport.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    params: {
+                        filter: {
+                            "status": 1,
+                            companyId,
+                            "allTranslations": true
+                        },
                     },
-                },
+                }
+                const response = await baseService.index('apiRoutes.qfly.airports', params);
+                const data = response.data;
+                setAirportsList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
             }
-            const response = await baseService.index('apiRoutes.qfly.airports', params);
-            const data = response.data;
-            setAirportsList(data);
-            return data;
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -572,7 +600,6 @@ export default function workOrderList(): WorkOrderList {
             getOperationType(refresh),
             getCustomerWithContract(refresh),
             getCustomer(refresh),
-            getContract(refresh),
             getFlightStatuses(refresh),
             getWorkOrderStatuses(refresh),
             getGates(refresh),
