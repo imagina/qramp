@@ -83,10 +83,7 @@ export default {
               props: {
                 vIf: !this.isPassenger,
                 readonly: this.isBlank,
-                rules: [
-                  val => this.validateSpecialCharacters(val)
-                ],
-                label: `*${this.$tr('ifly.cms.form.gate')}`,
+                label: `${this.$tr('ifly.cms.form.gate')}`,
                 clearable: true,
                 color:"primary",
                 options: this.filterGates
@@ -98,9 +95,6 @@ export default {
               type: 'hour',
               props: {
                 readonly: this.isBlank,
-                rules: [
-                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
-                ],
                 label: 'STA',
                 format24h: true,
               },
@@ -110,9 +104,6 @@ export default {
               type: 'hour',
               props: {
                 readonly: this.isBlank,
-                rules: [
-                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
-                ],
                 label: 'STD',
                 format24h: true,
               },
