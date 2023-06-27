@@ -1338,7 +1338,7 @@ export default {
 }
 
 
-#dynamicFieldComponent .q-field--with-bottom {
+.schedule-ctn #dynamicFieldComponent .q-field--with-bottom {
     padding: 20px 0;
 }
 </style>
