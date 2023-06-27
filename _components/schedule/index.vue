@@ -254,7 +254,7 @@
       <template #day-header="{ timestamp }">
         <div 
           class="tw-mx-3 tw-py-4 tw-block tw-text-center" 
-          v-if="['day-agenda', 'week-agenda'].includes(scheduleType) && !isBlank"
+          v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
         >
           <button class="
               tw-w-full
@@ -265,7 +265,7 @@
               @click="addNewDayToSchedule(timestamp)" 
               :disabled="events.some(item => item.isUpdate)">
             <i class="fa-light fa-plus"></i> 
-            <span v-if="scheduleType === 'day-agenda'"> {{ $tr('isite.cms.label.new')
+            <span v-if="scheduleType === 'day-agenda' && !isBlank"> {{ $tr('isite.cms.label.new')
             }}</span>
             <q-tooltip v-if="scheduleType === 'week-agenda'">
               {{ $tr('isite.cms.label.new') }}
@@ -417,6 +417,9 @@ export default {
   mounted() {
     this.$nextTick(async function () {
       await this.init();
+      if(this.isBlank) {
+        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+      }
     });
   },
   beforeDestroy() {
@@ -667,11 +670,6 @@ export default {
         qRampStore().setIsblank(this.isBlank)
         await this.initUrlMutate();
         setTimeout(async () => {
-          if (this.isPassenger) {
-            this.scheduleTypeComputed = 'day-agenda'
-          } else {
-            this.scheduleTypeComputed =  'month';
-          }
           await this.setFilter();
           this.componentLoaded = true;
         }, 100);
@@ -1137,7 +1135,7 @@ export default {
           dateStart = this.$moment().format('YYYYMMDD');
           dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
         }
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 1}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : this.isPassenger ? 3 : 1}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);

@@ -16,15 +16,26 @@
               tw-rounded-lg
               tw-label-not"
             >
-            <p 
+            <div 
               :class="{
                 'tw-text-green-500': isEventListComplete(timestamp.date),
                 'tw-text-orange-500': !isEventListComplete(timestamp.date)
               }"
             >
                 <i class="fa-solid fa-circle" />
-                {{ titleCompletedSchedule(timestamp.date) }} 
-            </p>
+                <span v-html="titleCompletedSchedule(timestamp.date)" />
+                <div 
+                   class="
+                    tw-text-green-500 
+                    tw-text-left 
+                    tw-py-1"
+                    v-if="countIncompleteEvents(timestamp.date)[0] > 0 
+                    && !isEventListComplete(timestamp.date)"
+                >
+                    <i class="fa-solid fa-circle" />
+                    {{ totalCompleted(timestamp.date) }}
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -59,24 +70,32 @@ export default defineComponent({
                 });
             });
         }
-        function countIncompleteEvents(date: string): number {
-            let count = 0;
+        function countIncompleteEvents(date: string): number[] {
+            let incomplete = 0;
+            let completed = 0;
             const events = props.getEvents(date, false);
             
             Object.entries(events).forEach((entry: any) => {
                 entry[1].forEach((objeto) => {
                 if (objeto.statusId === STATUS_DRAFT || objeto.statusId === STATUS_SCHEDULE) {
-                    count++;
+                    incomplete++;
+                } else {
+                    completed++;
                 }
                 });
             });
             
-            return count;
+            return [completed, incomplete];
         }
         function titleCompletedSchedule(date: string): string {
             const completed = isEventListComplete(date);
-            const count = countIncompleteEvents(date);
-            return completed ? 'Completed' : `${count} Not completed`
+            const event = countIncompleteEvents(date);
+            return completed ? 'Completed' : `${event[1]} Not completed`
+        }
+
+        function totalCompleted(date: string): string {
+            const complete = countIncompleteEvents(date);
+            return `${complete[0]} Completed`;
         }
 
         return {
@@ -84,6 +103,8 @@ export default defineComponent({
             titleCompletedSchedule,
             timestamp,
             scheduleType,
+            totalCompleted,
+            countIncompleteEvents,
         }
     }
 })
