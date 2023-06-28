@@ -140,7 +140,7 @@
               </div>
               <div v-for="(event, index) in eventArr">
                 <div :key="index" v-if="event.time && !event.isUpdate" class="
-                    tw-text-xs
+                    tw-text-sm
                     tw-mb-3
                     tw-p-1
                     tw-mx-2
