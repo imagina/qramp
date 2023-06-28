@@ -873,6 +873,8 @@ export default {
           dataForm.inboundScheduledArrival = data.inboundScheduledArrival;
           dataForm.carrierId = data.carrierId;
           dataForm.statusId = data.statusId;
+          dataForm.outboundScheduledDeparture =  data.outboundScheduledDeparture;
+          dataForm.operationTypeId = data.operationTypeId;
           if(this.isAppOffline) {
             Object.keys(dataForm).forEach((key) => {
               if (key !== 'inboundScheduledArrival') {
@@ -995,7 +997,7 @@ export default {
         const params = {
           refresh,
           params: {
-            include: "gate,acType",
+            include: "gate,acType,operationType",
             filter: {
               businessUnitId,
               ...filterClone,
@@ -1193,6 +1195,7 @@ export default {
           scheduleStatusId: null,
           inboundScheduledArrival: date,
           isUpdate: true,
+          operationTypeId: null,
         }
         this.events.push({ ...data });
       } catch (error) {

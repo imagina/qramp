@@ -25,6 +25,9 @@ export default {
       isBlank() {
         return qRampStore().getIsblank();
       },
+      operationTypeList() {
+        return workOrderList().getOperationTypeList()
+      },
       filterGates() {
         return workOrderList()
           .getGatesList()
@@ -90,6 +93,22 @@ export default {
               },
               label: this.$tr('ifly.cms.form.gate'),
             },
+            operationTypeId: {
+              name:'operationTypeId',
+              value: '',
+              type: 'select',
+              props: {
+                rules: [
+                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                ],
+                label: `*${this.$tr('ifly.cms.form.operation')}`,
+                clearable: true,
+                color:"primary",
+                'hide-bottom-space': false,
+                options: this.operationTypeList
+              },
+              label: this.$tr('ifly.cms.form.operation'),
+            },
             sta: {
               value: null,
               type: 'hour',
@@ -99,10 +118,12 @@ export default {
                 format24h: true,
               },
             },
-            std: {
+            outboundScheduledDeparture: {
               value: null,
-              type: 'hour',
+              type: 'fullDate',
               props: {
+                mask:'MM/DD/YYYY HH:mm',
+                hint:'Format: MM/DD/YYYY HH:mm',
                 readonly: this.isBlank,
                 label: 'STD',
                 format24h: true,

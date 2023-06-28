@@ -17,21 +17,36 @@
       >
         <div v-for="(field, keyField) in fields.form" :key="keyField">
           <dynamic-field
+            v-if="keyField !== 'sta' && keyField !== 'outboundScheduledDeparture'"
             :field="field"
-            v-model="event[keyField]"
+            v-model="form[keyField]"
             class="tw-w-full lg:tw-w-48"
             :class="{ 'tw-hidden tw-w-0': keyField === 'stationId' || (keyField === 'gateId' && isPassenger)}"
           />
+          <div v-if="isbound[0] && keyField === 'sta'">
+            <dynamic-field
+              :field="field"
+              v-model="form[keyField]"
+              :class="{ 'tw-hidden': keyField === 'stationId' }"
+            />
+          </div>
+          <div v-if="isbound[1] && keyField === 'outboundScheduledDeparture'">
+            <dynamic-field
+              :field="field"
+              v-model="form[keyField]"
+              :class="{ 'tw-hidden': keyField === 'stationId' }"
+            />
+          </div>
         </div>
         <div class="tw-space-x-2 tw-my-1">
           <button
-            v-if="event.isUpdate && !isBlank"
+            v-if="form.isUpdate && !isBlank"
             class="
              tw-bg-blue-800 
              tw-rounded-lg 
              tw-px-2 tw-py-1 
              tw-text-white"
-            @click.prevent="save"
+            @click.prevent="save()"
           >
             <i class="fa-light fa-floppy-disk" />
             <q-tooltip>
@@ -39,7 +54,7 @@
             </q-tooltip>
           </button>
           <button
-            v-if="!isNaN(event.id) && event.isUpdate && !isBlank && permisionComments"
+            v-if="!isNaN(form.id) && form.isUpdate && !isBlank && permisionComments"
             class="
              tw-bg-blue-800 
              tw-rounded-lg
@@ -53,8 +68,8 @@
             </q-tooltip>
           </button>
           <button
-            v-if="event.isUpdate"
-            @click.prevent="$emit('dismissEvent', event)"
+            v-if="form.isUpdate"
+            @click.prevent="$emit('dismissEvent', form)"
             class="
              tw-bg-blue-800 
              tw-rounded-lg 
@@ -69,10 +84,10 @@
       </div>
     </q-form>
     <commentsModal
-      v-if="!isNaN(event.id)"
-      :key="event.id"
+      v-if="!isNaN(form.id)"
+      :key="form.id"
       ref="commentsModal"
-      :commentableId="event.id"
+      :commentableId="form.id"
     />
   </div>
 </template>
@@ -94,6 +109,7 @@ export default {
   data() {
     return {
       STATUS_DRAFT,
+      form: {},
     }
   },
   created() {
@@ -105,28 +121,57 @@ export default {
       await this.getFlightStatusList();
     });
   },
+  mounted() {
+    this.form = this.event;
+    this.form.outboundScheduledDeparture = this.$moment(this.form.outboundScheduledDeparture).format('MM/DD/YYYY HH:mm');
+    console.log(this.form);
+  },
   computed: {
     isAppOffline() {
       return this.$store.state.qofflineMaster.isAppOffline;
     },
+    isbound() {
+      if(this.form.operationTypeId) {
+        const operationType = this.operationTypeList
+          .find(item => item.id === Number(this.form.operationTypeId));
+        const type = operationType?.options?.type;
+        if(type) {
+          if(type === 'full'){
+            return [true, true];
+          }
+          if(type === 'inbound') {
+            this.form.std = null;
+            this.form.outboundScheduledDeparture = null;
+            return [true, false]
+          }
+          if(type === 'outbound') {
+            this.form.sta = null;
+            return [false, true];
+          }
+        }
+      }
+      return [false, false];
+    },
     tranformaDate() {
       const inboundScheduledArrival = `${this.$moment(
-        this.event.inboundScheduledArrival
-      ).format("MM/DD/YYYY")} ${this.event.sta}`;
-      this.event.sta = this.$moment(this.event.sta, "HH:mm:ss").format("HH:mm");
-      this.event.std = this.$moment(this.event.std, "HH:mm:ss").format("HH:mm");
+        this.form.inboundScheduledArrival
+      ).format("MM/DD/YYYY")} ${this.form.sta}`;
+      this.form.sta = this.$moment(this.form.sta, "HH:mm:ss").format("HH:mm");
+      this.form.std = this.form.outboundScheduledDeparture ? this.$moment(this.form.outboundScheduledDeparture).format('HH:mm'): null;
       return {
-        isClone: this.event.isClone || false,
-        sta: this.event.sta,
-        std: this.event.std,
-        stationId: this.event.stationId,
-        preFlightNumber: this.event.preFlightNumber,
-        gateId: this.event.gateId,
-        flightStatusId: this.event.flightStatusId,
-        acTypeId: this.event.acTypeId,
+        isClone: this.form.isClone || false,
+        sta: this.form.sta,
+        std: this.form.std,
+        stationId: this.form.stationId,
+        preFlightNumber: this.form.preFlightNumber,
+        gateId: this.form.gateId,
+        flightStatusId: this.form.flightStatusId,
+        acTypeId: this.form.acTypeId,
         inboundScheduledArrival: inboundScheduledArrival,
-        carrierId: this.event.carrierId,
-        statusId: this.event.statusId,
+        carrierId: this.form.carrierId,
+        statusId: this.form.statusId,
+        outboundScheduledDeparture:  this.form.outboundScheduledDeparture,
+        operationTypeId: this.form.operationTypeId,
       };
     },
     isBlank() {
@@ -141,20 +186,20 @@ export default {
       try {
         this.$refs.lineForm.validate().then(async (success) => {
           if (success) {
-            if (this.event.isUpdate && typeof this.event.id === "string") {
-              this.event.isUpdate = false;
+            if (this.form.isUpdate && typeof this.form.id === "string") {
+              this.form.isUpdate = false;
               await this.$emit("addSchedule", this.tranformaDate);
               if(this.isAppOffline) {
-                await this.$emit('dismissEvent', this.event);
+                await this.$emit('dismissEvent', this.form);
               }
             } else {
-              this.event.isUpdate = false;
+              this.form.isUpdate = false;
               if(statusId) {
-                this.event.statusId = statusId;
+                this.form.statusId = statusId;
               }
               this.$emit("updateSchedule", {
                 ...this.tranformaDate,
-                id: this.event.id,
+                id: this.form.id,
               });
             }
           }

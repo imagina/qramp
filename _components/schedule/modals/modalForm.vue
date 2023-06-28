@@ -17,12 +17,29 @@
       >
           <div>
             <div v-for="(field, keyField) in fields.form" :key="keyField">
-            <dynamic-field
-              :field="field"
-              v-model="form[keyField]"
-              @input="zanetizeData(keyField)"
-              :class="{ 'tw-hidden': keyField === 'stationId' }"
-            />
+              <dynamic-field
+                v-if="keyField !== 'sta' && keyField !== 'outboundScheduledDeparture'"
+                :field="field"
+                v-model="form[keyField]"
+                @input="zanetizeData(keyField)"
+                :class="{ 'tw-hidden': keyField === 'stationId' }"
+              />
+              <div v-if="isbound[0] && keyField === 'sta'">
+                <dynamic-field
+                  :field="field"
+                  v-model="form[keyField]"
+                  @input="zanetizeData(keyField)"
+                  :class="{ 'tw-hidden': keyField === 'stationId' }"
+                />
+              </div>
+              <div v-if="isbound[1] && keyField === 'outboundScheduledDeparture'">
+                <dynamic-field
+                    :field="field"
+                    v-model="form[keyField]"
+                    @input="zanetizeData(keyField)"
+                    :class="{ 'tw-hidden': keyField === 'stationId' }"
+                  />
+              </div>
           </div>
         </div>
         <div>
@@ -76,7 +93,29 @@ export default {
     },
     permisionComments() {
       return this.$auth.hasAccess(`ramp.work-orders-comments.index`)
-    },  
+    },
+    isbound() {
+      if(this.form.operationTypeId) {
+        const operationType = this.operationTypeList
+          .find(item => item.id === Number(this.form.operationTypeId));
+        const type = operationType?.options?.type;
+        if(type) {
+          if(type === 'full'){
+            return [true, true];
+          }
+          if(type === 'inbound') {
+            this.form.std = null;
+            this.form.outboundScheduledDeparture = null;
+            return [true, false]
+          }
+          if(type === 'outbound') {
+            this.form.sta = null;
+            return [false, true];
+          }
+        }
+      }
+      return [false, false];
+    },
     actions() {
       return [
         {
@@ -133,7 +172,10 @@ export default {
         this.show = true;
         this.isEdit = !!data;
         this.form.inboundScheduledArrival = currentDate;
-        if (data) this.form = data;
+        if (data) {
+          this.form = data;
+          this.form.outboundScheduledDeparture = this.$moment(this.form.outboundScheduledDeparture).format('MM/DD/YYYY HH:mm');
+        };
         setTimeout(() => {
           this.dataLoad = false;
         }, 300);
@@ -162,6 +204,8 @@ export default {
     },
     tranformData() {
       this.form.inboundScheduledArrival = `${this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY')} ${this.form.sta}`;
+      this.form.outboundScheduledDeparture = this.form.outboundScheduledDeparture;
+      this.form.std = this.form.outboundScheduledDeparture ? this.$moment(this.form.outboundScheduledDeparture).format('HH:mm'): null;
     },
     zanetizeData(key) {
       if(this.dataLoad) return;
