@@ -154,8 +154,8 @@ export default {
     tranformaDate() {
       const inboundScheduledArrival = `${this.$moment(
         this.form.inboundScheduledArrival
-      ).format("MM/DD/YYYY")} ${this.form.sta}`;
-      this.form.sta = this.$moment(this.form.sta, "HH:mm:ss").format("HH:mm");
+      ).format("MM/DD/YYYY")} ${this.form.sta || '00:00'}`;
+      this.form.sta = this.form.sta ? this.$moment(this.form.sta, "HH:mm:ss").format("HH:mm") : null;
       this.form.std = this.form.outboundScheduledDeparture ? this.$moment(this.form.outboundScheduledDeparture).format('HH:mm'): null;
       return {
         isClone: this.form.isClone || false,
