@@ -140,7 +140,7 @@
               </div>
               <div v-for="(event, index) in eventArr">
                 <div :key="index" v-if="event.time && !event.isUpdate" class="
-                    tw-text-sm
+                    tw-text-xs
                     tw-mb-3
                     tw-p-1
                     tw-mx-2
@@ -253,7 +253,7 @@
       </template>
       <template #day-header="{ timestamp }">
         <div 
-          class="tw-mx-3 tw-py-4 tw-block tw-text-center" 
+          class="tw-mx-3 tw-py-2 tw-block" 
           v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
         >
           <button class="

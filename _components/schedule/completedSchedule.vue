@@ -8,8 +8,9 @@
               tw-w-full
               tw-px-2 
               tw-py-1 
-              tw-mt-4 
-              tw-text-sm lg:tw-text-base 
+              tw-mt-1
+              tw-text-xs 
+              lg:tw-text-base 
               tw-font-bold 
               tw-leading-none 
               tw-bg-white
@@ -90,7 +91,7 @@ export default defineComponent({
         function titleCompletedSchedule(date: string): string {
             const completed = isEventListComplete(date);
             const event = countIncompleteEvents(date);
-            return completed ? 'Completed' : `${event[1]} Not completed`
+            return completed ? 'Completed' : ` ${event[1]} Not completed`
         }
 
         function totalCompleted(date: string): string {
