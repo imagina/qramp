@@ -203,7 +203,7 @@ export default {
       }
     },
     tranformData() {
-      this.form.inboundScheduledArrival = `${this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY')} ${this.form.sta}`;
+      this.form.inboundScheduledArrival = `${this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY')} ${this.form.sta || '00:00'}`;
       this.form.outboundScheduledDeparture = this.form.outboundScheduledDeparture;
       this.form.std = this.form.outboundScheduledDeparture ? this.$moment(this.form.outboundScheduledDeparture).format('HH:mm'): null;
     },
