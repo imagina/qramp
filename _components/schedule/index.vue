@@ -417,9 +417,7 @@ export default {
   mounted() {
     this.$nextTick(async function () {
       await this.init();
-      if(this.isBlank) {
-        await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
-      }
+      await this.getWorkOrderFilter(false, this.selectedDateStart, this.selectedDateEnd);
     });
   },
   beforeDestroy() {
