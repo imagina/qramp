@@ -38,7 +38,7 @@
             />
           </div>
         </div>
-        <div class="tw-space-x-2 tw-my-1">
+        <div class="tw-space-x-2 tw-my-7">
           <button
             v-if="form.isUpdate && !isBlank"
             class="
