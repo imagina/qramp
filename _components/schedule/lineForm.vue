@@ -123,7 +123,10 @@ export default {
   },
   mounted() {
     this.form = this.event;
-    this.form.outboundScheduledDeparture = this.$moment(this.form.outboundScheduledDeparture).format('MM/DD/YYYY HH:mm');
+    console.log(this.form.id);
+    this.form.outboundScheduledDeparture = typeof this.form.id !== 'string'  
+    ? this.$moment(this.form.outboundScheduledDeparture).format(`MM/DD/YYYY HH:mm`)
+    : this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY 00:00');
   },
   computed: {
     isAppOffline() {
