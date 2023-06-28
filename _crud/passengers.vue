@@ -460,7 +460,7 @@ export default {
               }
             },
             {
-              apiRoute: "/ramp/v1/work-orders/bulk-export-csv",
+              apiRoute: "/ramp/v1/work-orders/passenger-bulk-export-csv",
               permission: "ramp.work-orders.bulk-export-csv",
               criteria: "id",
               props: {
