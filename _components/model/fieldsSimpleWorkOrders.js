@@ -116,7 +116,7 @@ export default {
   methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { companyId: this.filterCompany };
+        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { businessUnitId: BUSINESS_UNIT_RAMP };
         const custemerParams = {
           params: {
             filter: {

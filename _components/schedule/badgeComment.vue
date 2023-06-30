@@ -80,7 +80,6 @@ import {
 export default defineComponent({
   props: {
     event: {
-      type: Object,
       default: () => {}
     },
     sizeBadge: {

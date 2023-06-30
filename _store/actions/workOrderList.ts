@@ -504,7 +504,7 @@ export default function workOrderList(): WorkOrderList {
                 const allowContractName = Vue.prototype.$auth ? Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {companyId};
+                const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
                 const custemerParams = {
                     refresh,
                     params: {
