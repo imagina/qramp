@@ -104,12 +104,9 @@ export default {
             return [true, true];
           }
           if(type === 'inbound') {
-            this.form.std = null;
-            this.form.outboundScheduledDeparture = null;
             return [true, false]
           }
           if(type === 'outbound') {
-            this.form.sta = null;
             return [false, true];
           }
         }
@@ -207,6 +204,15 @@ export default {
       this.form.inboundScheduledArrival = `${this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY')} ${this.form.sta || '00:00'}`;
       this.form.outboundScheduledDeparture = this.form.outboundScheduledDeparture;
       this.form.std = this.form.outboundScheduledDeparture ? this.$moment(this.form.outboundScheduledDeparture).format('HH:mm'): null;
+      if(this.isbound[0] && this.isbound[1]) return;
+      if(this.isbound[0] && !this.isbound[1]) {
+        this.form.std = null;
+        this.form.outboundScheduledDeparture = null;
+      }
+      if(!this.isbound[0] && this.isbound[1]) {
+        this.form.std = null;
+        this.form.inboundScheduledArrival = null;
+      }
     },
     zanetizeData(key) {
       if(this.dataLoad) return;

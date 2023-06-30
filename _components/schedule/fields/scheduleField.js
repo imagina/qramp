@@ -113,6 +113,9 @@ export default {
               value: null,
               type: 'hour',
               props: {
+                rules: [
+                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                ],
                 readonly: this.isBlank,
                 label: 'STA',
                 format24h: true,
@@ -122,6 +125,9 @@ export default {
               value: null,
               type: 'fullDate',
               props: {
+                rules: [
+                  val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                ],
                 mask:'MM/DD/YYYY HH:mm',
                 hint:'Format: MM/DD/YYYY HH:mm',
                 readonly: this.isBlank,
