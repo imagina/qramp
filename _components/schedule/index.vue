@@ -1116,7 +1116,6 @@ export default {
     },
     async saveFilterStationId(stationId) {
       this.stationId = stationId;
-      console.log(stationId);
       await this.mutateCurrentURL();
       await this.emitFilter();
       if (this.isAppOffline) {
