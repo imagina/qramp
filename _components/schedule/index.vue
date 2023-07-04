@@ -969,7 +969,7 @@ export default {
         const filter =
           Object.keys(objUrl).length === 0 ? this.$filter.values : objUrl;
         const thereAreFilters = Object.keys(filter).length > 0 ? filter : {};
-        const scheduleTypeOption = this.scheduleTypeOptions.find(item => item.id === Number(thereAreFilters.type)) || 'month';
+        const scheduleTypeOption = this.scheduleTypeOptions.find(item => item.id === Number(thereAreFilters.type)) || 'day-agenda';
         const scheduleTypeId = this.scheduleTypeOptions.find(item => item.value === this.scheduleType) || {};
         thereAreFilters.type = String(scheduleTypeId.id) || '1';
         thereAreFilters.dateStart = this.$moment(this.selectedDateStart).format('YYYYMMDD');
@@ -1135,7 +1135,7 @@ export default {
           dateStart = this.$moment().format('YYYYMMDD');
           dateEnd = this.$moment().add(1, 'day').format('YYYYMMDD');
         }
-        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : this.isPassenger ? 3 : 1}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
+        const urlBase = `${origin[0]}?stationId=${this.stationId}&type=${scheduleTypeId ? scheduleTypeId.id : 3}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
         window.history.replaceState({}, "", urlBase);
       } catch (error) {
         console.log(error);
