@@ -210,7 +210,7 @@ export default {
         this.form.outboundScheduledDeparture = null;
       }
       if(!this.isbound[0] && this.isbound[1]) {
-        this.form.std = null;
+        this.form.sta = null;
         this.form.inboundScheduledArrival = null;
       }
     },

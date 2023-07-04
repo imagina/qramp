@@ -123,7 +123,6 @@ export default {
   },
   mounted() {
     this.form = this.event;
-    console.log(this.form.id);
     this.form.outboundScheduledDeparture = typeof this.form.id !== 'string'  
     ? this.$moment(this.form.outboundScheduledDeparture).format(`MM/DD/YYYY HH:mm`)
     : this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY 00:00');
@@ -165,7 +164,7 @@ export default {
         this.form.outboundScheduledDeparture = null;
       }
       if(!this.isbound[0] && this.isbound[1]) {
-        this.form.std = null;
+        this.form.sta = null;
         this.form.inboundScheduledArrival = null;
       }
       return {
