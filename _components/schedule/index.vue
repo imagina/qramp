@@ -52,7 +52,8 @@
         class="tw-w-1/2 tw-ml-1" 
       />
     </div>
-    <q-calendar 
+    <q-calendar
+      v-show="scheduleTypeComputed"
       bordered 
       ref="schedule" 
       v-model="selectedDate" 
@@ -63,47 +64,6 @@
       @click:date2="event => eventSchedule(event, true)"
       @click:day:header2="eventSchedule" :class="scheduleType"
     >
-      <template #day="{ timestamp }">
-        <div v-if="$moment(selectedDate).format('MM') === $moment(timestamp.date).format('MM')" class="
-           tw-overflow-y-auto 
-           tw-overflow-x-auto 
-           tw-h-28 
-           tw-px-2">
-          <div v-for="(event, index) in getEvents(timestamp.date)" :key="event.id">
-            <q-badge :key="index" class="
-                tw-cursor-pointer 
-                tw-text-xs
-                tw-bg-white 
-                tw-border 
-                tw-w-full
-                tw-mb-1
-                tw-border-grey-100"
-              :class="classSchedule(event)"
-              @click.stop.prevent="editSchedule(event)"
-            >
-              <badgeComment
-                v-if="!isAppOffline"
-                :event="event" 
-                :sizeBadge="7"
-                iconClass="tw-text-sm"
-                mainClass="tw-mr-1"
-              />
-              <i
-                class="
-                 fa-solid 
-                 fa-circle-check
-                 tw-px-1" :class="colorCheckSchedule(event)">
-                <q-tooltip>
-                  {{ titleStatus(event.statusId) }}
-                </q-tooltip>
-              </i>
-              <span class="ellipsis">
-                {{ event.calendarTitle }}
-              </span>
-            </q-badge>
-          </div>
-        </div>
-      </template>
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
         <template>
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
@@ -371,8 +331,8 @@ export default {
       loading: false,
       eventLoading: false,
       selectedDate: this.$moment().format("YYYY-MM-DD"),
-      selectedDateEnd: this.$moment().endOf("month").endOf("day").format("YYYY-MM-DD"),
-      selectedDateStart: this.$moment().startOf("month").startOf("day").format("YYYY-MM-DD"),
+      selectedDateEnd: this.$moment().endOf("day").format("YYYY-MM-DD"),
+      selectedDateStart: this.$moment().startOf("day").format("YYYY-MM-DD"),
       scheduleType: null,
       events: [],
       stationId: null,
@@ -466,12 +426,6 @@ export default {
     scheduleTypeOptions() {
       return [
         {
-          id: 1,
-          label: `${this.$tr("isite.cms.label.month")} (${this.$moment(this.selectedDate).format('MMMM')})`,
-          value: "month",
-          icon: "fas fa-calendar-alt",
-        },
-        {
           id: 2,
           label: this.$tr("isite.cms.label.week"),
           value: "week-agenda",
@@ -479,16 +433,11 @@ export default {
         },
         {
           id: 3,
-          label: `${this.$tr("isite.cms.label.day")} ${ this.isPassenger ? `(${this.$moment(this.selectedDate).format('MMMM')})`: ''}`,
+          label: `${this.$tr("isite.cms.label.day")}  (${this.$moment(this.selectedDate).format('MMMM')})`,
           value: "day-agenda",
           icon: "fas fa-calendar-day",
         },
-      ].filter(item => {
-        if (this.isPassenger) {
-          return item.id !== 1;
-        }
-        return true;
-      });
+      ];
     },
     filter() {
       this.filterData = this.$clone(this.$filter.values);
@@ -714,13 +663,13 @@ export default {
 
     },
     async scheduleNext() {
-      this.selectedDate = this.$moment(this.selectedDate).startOf("month").startOf("day").add(1, 'M').format("YYYY-MM-DD");
+      this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.next();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
       this.filterTime = null;
     },
     async schedulePrev() {
-      this.selectedDate = this.$moment(this.selectedDate).startOf("month").startOf("day").add(-1, 'M').format("YYYY-MM-DD");
+      this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(-1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.prev();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
       this.filterTime = null;
@@ -942,7 +891,7 @@ export default {
           .endOf('day').format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
-            field: "inbound_scheduled_arrival",
+            field: "arrivalOrDeparture",
             type: "customRange",
             from: lastStartM,
             to: lastEndM,
