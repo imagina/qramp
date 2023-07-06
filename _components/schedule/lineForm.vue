@@ -141,12 +141,9 @@ export default {
             return [true, true];
           }
           if(type === 'inbound') {
-            this.form.std = null;
-            this.form.outboundScheduledDeparture = null;
             return [true, false]
           }
           if(type === 'outbound') {
-            this.form.sta = null;
             return [false, true];
           }
         }
@@ -181,6 +178,7 @@ export default {
         statusId: this.form.statusId,
         outboundScheduledDeparture:  this.form.outboundScheduledDeparture,
         operationTypeId: this.form.operationTypeId,
+        scheduleDate: this.form.scheduleDate,
       };
     },
     isBlank() {

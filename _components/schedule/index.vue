@@ -698,9 +698,9 @@ export default {
         });
         const filters = filterData
           .filter((event) => {
-            if (event.inboundScheduledArrival) {
+            if (event.scheduleDate) {
               const momentDate = this.$moment(
-                event.inboundScheduledArrival,
+                event.scheduleDate,
                 "YYYY-MM-DD"
               ).toDate();
 
@@ -770,6 +770,7 @@ export default {
             id: offlineId, 
             calendarTitle: `${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
             inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
+            scheduleDate: `${this.$moment(data.scheduleDate).format('YYYY-MM-DD')}T23:59:59`,
             statusId: STATUS_SCHEDULE,
             workOrderStatus: {
               color: 'pink-500',
@@ -1026,6 +1027,7 @@ export default {
     },
     async saveRequestSimpleWorkOrder(form) {
       try {
+        delete form.scheduleDate;
         const businessUnitId = this.isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
         const companyId = this.filterCompany
         const response = await this.$crud.create(
@@ -1142,6 +1144,7 @@ export default {
           gateId: null,
           scheduleStatusId: null,
           inboundScheduledArrival: date,
+          scheduleDate: date,
           isUpdate: true,
           operationTypeId: null,
         }
@@ -1189,6 +1192,7 @@ export default {
         const calendarTitle = `${event.preFlightNumber} STA ${event.sta} STD ${event.std}`;
         const inboundBlockIn =  qRampStore().parseDateOfflineWO(data.inboundBlockIn);
         const inboundScheduledArrival = qRampStore().parseDateOfflineWO(data.inboundScheduledArrival);
+        const scheduleDate = qRampStore().parseDateOfflineWO(data.scheduleDate);
         const outboundBlockOut = qRampStore().parseDateOfflineWO(data.outboundBlockOut);
         const outboundScheduledDeparture = qRampStore().parseDateOfflineWO(data.outboundScheduledDeparture);
         const eventParset = {
@@ -1199,6 +1203,7 @@ export default {
           inboundScheduledArrival,
           outboundBlockOut,
           outboundScheduledDeparture,
+          scheduleDate,
           workOrderItems: Object.values(this.$helper.snakeToCamelCaseKeys(data.workOrderItems)),
         };
         

@@ -169,6 +169,7 @@ export default {
         this.show = true;
         this.isEdit = !!data;
         this.form.inboundScheduledArrival = currentDate;
+        this.form.scheduleDate = currentDate;
         this.form.outboundScheduledDeparture = `${currentDate} 00:00`;
         if (data) {
           this.form = data;
