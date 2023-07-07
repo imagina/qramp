@@ -936,13 +936,68 @@ export default {
         this.loading = false;
       }
     },
+    generateCustomDatesArray(startDate, endDate) {
+      let startDateM = this.$moment(startDate);
+      let endDateM = this.$moment(endDate);
+      const customDatesArray = [];
+      while (startDateM.isSameOrBefore(endDateM, 'day')) {
+        const startDateTime = startDateM.startOf('day').format('YYYY-MM-DD HH:mm:ss');
+        const endDateTime = startDateM.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+        const customDateObject = {
+          field: 'arrivalOrDeparture',
+          type: 'customRange',
+          from: startDateTime,
+          to: endDateTime
+        };
+
+        customDatesArray.push(customDateObject);
+        startDateM.add(1, 'days');
+      }
+
+      return customDatesArray;
+    },
     async getWorkOrders(refresh = false, filter) {
       try {
         const businessUnitId = this.filterBusinessUnit;
+        const weekDates = this.generateCustomDatesArray(filter.dateStart, filter.dateEnd);
         const filterClone = this.$clone(filter);
         delete filterClone.type;
         delete filterClone.dateStart;
         delete filterClone.dateEnd;
+        if(this.scheduleTypeComputed === 'week-agenda') {
+            delete filterClone.date;
+            
+            weekDates.forEach(async item => {
+              this.loading = true;
+              this.events = [];
+              const params = {
+              refresh,
+              params: {
+                include: "gate,acType,operationType",
+                filter: {
+                  businessUnitId,
+                  ...filterClone,
+                  date: item,
+                  withoutDefaultInclude: true,
+                  order: {
+                    field: "id",
+                    way: "desc",
+                  },
+                },
+              },
+            };
+              const response = await this.$crud.index(
+                "apiRoutes.qramp.workOrders",
+                params,
+                this.isAppOffline
+              );
+              const responseData = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
+              this.events.push(...responseData);
+              this.loading = false;
+            });
+            
+            return;
+        }
         this.loading = true;
         const params = {
           refresh,
