@@ -66,7 +66,13 @@
     >
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
         <template>
-          <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date)).sort()">
+          <dynamic-field
+            v-model="multiFilterDate[timestamp.date]" 
+            :field="fields.time"
+            @input="getWorkOrderDateTime($event, timestamp.date)"
+            class="tw-px-2"
+          />
+          <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date).data).sort()">
             <div 
               class="
                tw-mb-0" 
@@ -241,12 +247,12 @@
                   :getEvents="getEvents" 
                   :scheduleType="scheduleType" 
                   :timestamp="timestamp"
-                  v-if="Object.entries(getEvents(timestamp.date, false)).length > 0" 
+                  v-if="Object.entries(getEvents(timestamp.date, false).data).length > 0" 
                 />
               </div>
-              <div v-if="scheduleType === 'day-agenda'">
+              <!--<div v-if="scheduleType === 'day-agenda'">
                 <dynamic-field v-model="filterTime" :field="fields.time" />
-              </div>
+              </div>-->
             </div>
           </div>
           <div>
@@ -341,6 +347,7 @@ export default {
       STATUS_SCHEDULE,
       STATUS_DRAFT,
       filterTime: null,
+      multiFilterDate: {},
       fields: {
         time: {
           value: null,
@@ -348,7 +355,6 @@ export default {
           props: {
             label: 'Filter by time',
             format24h: true,
-            clearable: true,
             options: modelHoursFilter
           }
         },
@@ -367,6 +373,11 @@ export default {
   created() {
     this.$nextTick(async function () {
       const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
+      const currentHour = this.$moment().hour();
+      this.filterTime = modelHoursFilter.find(range => {
+        const [start, end] = range.value.split('-').map(Number);
+          return currentHour >= start && currentHour <= end;
+      }).value || null;
       await workOrderList().setStationList([]);
       await qRampStore().setIsPassenger(currentRouteName !== -1);
       await workOrderList().getAllList();
@@ -451,7 +462,6 @@ export default {
         return this.scheduleType;
       },
       async set(value) {
-        this.filterTime = null;
         this.scheduleType = value;
         await this.$refs.schedule;
         if(value && this.stationId) {
@@ -636,9 +646,11 @@ export default {
       }
       if (obj.dateStart) {
         this.selectedDate = this.$moment(obj.dateStart, 'YYYYMMDD').format('YYYY-MM-DD');
+        
       }
       if (obj.dateEnd) {
         this.selectedDateEnd = this.$moment(obj.dateEnd, 'YYYYMMDD').format('YYYY-MM-DD');
+        this.getMultiDate(this.selectedDate, this.selectedDateEnd);
       }
       if (!obj.stationId) {
         await this.mutateCurrentURL();
@@ -666,13 +678,11 @@ export default {
       this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.next();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
-      this.filterTime = null;
     },
     async schedulePrev() {
       this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(-1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.prev();
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
-      this.filterTime = null;
     },
     async getListOfSelectedWorkOrders(type = false, refresh = false) {
       try {
@@ -687,15 +697,7 @@ export default {
     getEvents(timestamp, filter = true) {
       try {
         let events = this.$clone(this.events || []);
-        const filterData = events.filter(item => {
-          if (this.filterTime && this.filterTime.length > 0 && filter) {
-            const time = this.filterTime.split('-');
-            const staTime = item.sta ? item.sta.split(":") : [];
-            const staHours = parseInt(staTime[0] || 0);
-            return staHours >= parseInt(time[0].split(":")) && staHours <= parseInt(time[1].split(":"));
-          }
-          return true;
-        });
+        const filterData = events;
         const filters = filterData
           .filter((event) => {
             if (event.scheduleDate) {
@@ -713,7 +715,7 @@ export default {
             ...item,
             sta: this.$moment(item.sta, 'HH:mm:ss').format('HH:mm'),
             std: this.$moment(item.std, 'HH:mm:ss').format('HH:mm'),
-            time: item.sta || '00:00',
+            time: this.$moment(item.scheduleDate).format('HH:mm') || '00:00',
           }));
         const order = _.orderBy(
           filters,
@@ -729,7 +731,7 @@ export default {
 
             return acc;
           }, {});
-          return dataSchedule
+          return { data:{...dataSchedule}};
         }
         return order.sort(item => !item.isClone ? 1 : -1);
       } catch (error) {
@@ -785,13 +787,15 @@ export default {
         await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
+        
         if(!this.isAppOffline) {
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+          if (this.scheduleTypeComputed === 'day-agenda' && !isClone) {
+            await this.addNewDayToSchedule({ date: this.selectedDate });
+          }
           await workOrderList().getWorkOrders(true, true);
         }
-        if (this.scheduleTypeComputed === 'day-agenda' && !isClone) {
-          await this.addNewDayToSchedule({ date: this.selectedDate });
-        }
+        
         this.$alert.success('workOrders was added correctly');
       } catch (error) {
         console.log(error);
@@ -892,7 +896,7 @@ export default {
           .endOf('day').format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
-            field: "arrivalOrDeparture",
+            field: "schedule_date",
             type: "customRange",
             from: lastStartM,
             to: lastEndM,
@@ -906,7 +910,7 @@ export default {
       refresh = false,
       dateStart = null,
       dateEnd = null,
-      type = false
+      type = false,
     ) {
       try {
         this.selectedDateStart = this.$moment(this.selectedDate).format("YYYY-MM-DD HH:mm:ss");
@@ -940,36 +944,62 @@ export default {
       let startDateM = this.$moment(startDate);
       let endDateM = this.$moment(endDate);
       const customDatesArray = [];
+
       while (startDateM.isSameOrBefore(endDateM, 'day')) {
-        const startDateTime = startDateM.startOf('day').format('YYYY-MM-DD HH:mm:ss');
-        const endDateTime = startDateM.endOf('day').format('YYYY-MM-DD HH:mm:ss');
+        const time = this.filterTime.split('-') || [0,0];
+        const startDateTime = startDateM.startOf('day').set({ hour: time[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss');
+        const endDateTime = startDateM.endOf('day').set({ hour: time[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss');
         const customDateObject = {
-          field: 'arrivalOrDeparture',
+          field: 'schedule_date',
           type: 'customRange',
           from: startDateTime,
           to: endDateTime
         };
-
         customDatesArray.push(customDateObject);
         startDateM.add(1, 'days');
       }
-
+      
       return customDatesArray;
+    },
+    getMultiDate(startDate, endDate) {
+      const currentHour = this.$moment().hour();
+      let startDateM = this.$moment(startDate);
+      let endDateM = this.$moment(endDate);
+      const filterTime = modelHoursFilter.find(range => {
+             const [start, end] = range.value.split('-').map(Number);
+          return currentHour >= start && currentHour <= end;
+          }).value || null;
+      while (startDateM.isSameOrBefore(endDateM, 'day')) {
+        this.multiFilterDate[startDateM.format('YYYY-MM-DD')] = filterTime;
+        startDateM.add(1, 'days');
+      } 
     },
     async getWorkOrders(refresh = false, filter) {
       try {
         const businessUnitId = this.filterBusinessUnit;
-        const weekDates = this.generateCustomDatesArray(filter.dateStart, filter.dateEnd);
+        const weekDates = this.generateCustomDatesArray(filter.dateStart, filter.dateEnd)
+        .filter(item => {
+          return this.selectedFilterDate 
+           ? this.$moment(item.from)
+            .startOf('day')
+            .format('YYYY-MM-DD HH:mm:ss') === this.$moment(this.selectedFilterDate)
+            .startOf('day')
+            .format('YYYY-MM-DD HH:mm:ss') 
+           : true
+        });
         const filterClone = this.$clone(filter);
         delete filterClone.type;
         delete filterClone.dateStart;
         delete filterClone.dateEnd;
-        if(this.scheduleTypeComputed === 'week-agenda') {
             delete filterClone.date;
-            
             weekDates.forEach(async item => {
               this.loading = true;
-              this.events = [];
+              if(!this.selectedFilterDate) {
+                this.events = [];
+              } else {
+                this.events = this.events.filter(item => this.$moment(item.scheduleDate).format('YYYY-MM-DD') !== this.selectedFilterDate);
+              }
+  
               const params = {
               refresh,
               params: {
@@ -991,36 +1021,14 @@ export default {
                 params,
                 this.isAppOffline
               );
-              const responseData = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
+              const responseData = response.data.map((item) => ({ 
+                ...item, 
+                isUpdate: false, 
+                isClone: false,
+              }));
               this.events.push(...responseData);
               this.loading = false;
             });
-            
-            return;
-        }
-        this.loading = true;
-        const params = {
-          refresh,
-          params: {
-            include: "gate,acType,operationType",
-            filter: {
-              businessUnitId,
-              ...filterClone,
-              withoutDefaultInclude: true,
-              order: {
-                field: "id",
-                way: "desc",
-              },
-            },
-          },
-        };
-        const response = await this.$crud.index(
-          "apiRoutes.qramp.workOrders",
-          params,
-          this.isAppOffline
-        );
-        this.events = response.data.map((item) => ({ ...item, isUpdate: false, isClone: false }));
-        this.loading = false;
       } catch (error) {
         console.log(error);
         this.loading = false;
@@ -1187,7 +1195,7 @@ export default {
         if (this.scheduleType === 'week-agenda') {
           return;
         }
-        const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T23:59:59`;
+        const date = `${this.$moment(event.date).format('YYYY-MM-DD')}T00:00:00`;
         this.sessionStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
         const data = {
           calendarTitle: null,
@@ -1268,6 +1276,11 @@ export default {
         
         await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', eventParset);
       }
+    },
+    async getWorkOrderDateTime(hour, date) {
+      this.selectedFilterDate = date;
+      this.filterTime = hour;
+      await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
     },
   },
 };
