@@ -373,11 +373,7 @@ export default {
   created() {
     this.$nextTick(async function () {
       const currentRouteName = this.$router.currentRoute.path.indexOf('passenger');
-      const currentHour = this.$moment().hour();
-      this.filterTime = modelHoursFilter.find(range => {
-        const [start, end] = range.value.split('-').map(Number);
-          return currentHour >= start && currentHour <= end;
-      }).value || null;
+      this.getFilterTimeCurrent();
       await workOrderList().setStationList([]);
       await qRampStore().setIsPassenger(currentRouteName !== -1);
       await workOrderList().getAllList();
@@ -634,6 +630,13 @@ export default {
         console.log(error);
       }
     },
+    getFilterTimeCurrent() {
+      const currentHour = this.$moment().hour();
+      this.filterTime = modelHoursFilter.find(range => {
+        const [start, end] = range.value.split('-').map(Number);
+          return currentHour >= start && currentHour <= end;
+      }).value || null;
+    },
     async initUrlMutate() {
       const obj = await this.$helper.convertStringToObject();
       const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
@@ -675,12 +678,16 @@ export default {
 
     },
     async scheduleNext() {
+      this.getFilterTimeCurrent();
+      this.selectedFilterDate = null;
       this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.next();
       await this.getMultiDate(this.selectedDate, this.selectedDateEnd);
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
     async schedulePrev() {
+      this.getFilterTimeCurrent();
+      this.selectedFilterDate = null;
       this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(-1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.prev();
       await this.getMultiDate(this.selectedDate, this.selectedDateEnd);
@@ -688,6 +695,7 @@ export default {
     },
     async getListOfSelectedWorkOrders(type = false, refresh = false) {
       try {
+        this.selectedFilterDate = null;
         this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
@@ -996,15 +1004,15 @@ export default {
         delete filterClone.dateStart;
         delete filterClone.dateEnd;
             delete filterClone.date;
-            weekDates.forEach(async item => {
-              this.loading = true;
-              if(!this.selectedFilterDate) {
-                this.events = [];
-              } else {
-                this.events = this.events.filter(item => this.$moment(item.scheduleDate).format('YYYY-MM-DD') !== this.selectedFilterDate);
-              }
-  
-              const params = {
+        this.loading = true;
+        await weekDates.reduce(async (previousPromise, item) => {
+            if (!this.selectedFilterDate) {
+              this.events = [];
+            } else {
+              this.events = this.events.filter(item => this.$moment(item.scheduleDate).format('YYYY-MM-DD') !== this.selectedFilterDate);
+            }
+
+            const params = {
               refresh,
               params: {
                 include: "gate,acType,operationType",
@@ -1020,19 +1028,20 @@ export default {
                 },
               },
             };
-              const response = await this.$crud.index(
-                "apiRoutes.qramp.workOrders",
-                params,
-                this.isAppOffline
-              );
-              const responseData = response.data.map((item) => ({ 
-                ...item, 
-                isUpdate: false, 
-                isClone: false,
-              }));
-              this.events.push(...responseData);
-              this.loading = false;
-            });
+            const response = await this.$crud.index(
+              "apiRoutes.qramp.workOrders",
+              params,
+              this.isAppOffline
+            );
+            const responseData = response.data.map((item) => ({ 
+              ...item, 
+              isUpdate: false, 
+              isClone: false,
+            }));
+            this.events.push(...responseData);
+            
+          }, Promise.resolve());
+          this.loading = false;
       } catch (error) {
         console.log(error);
         this.loading = false;
