@@ -650,11 +650,11 @@ export default {
       }
       if (obj.dateEnd) {
         this.selectedDateEnd = this.$moment(obj.dateEnd, 'YYYYMMDD').format('YYYY-MM-DD');
-        this.getMultiDate(this.selectedDate, this.selectedDateEnd);
       }
       if (!obj.stationId) {
         await this.mutateCurrentURL();
       }
+      await this.getMultiDate(this.selectedDate, this.selectedDateEnd);
     },
     getStationAssigned() {
       try {
