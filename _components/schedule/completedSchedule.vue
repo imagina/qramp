@@ -91,7 +91,7 @@ export default defineComponent({
         function titleCompletedSchedule(date: string): string {
             const completed = isEventListComplete(date);
             const event = countIncompleteEvents(date);
-            return completed ? 'Completed' : ` ${event[1]} Not completed`
+            return completed ? ' Completed' : ` ${event[1]} Not completed`
         }
 
         function totalCompleted(date: string): string {
