@@ -75,7 +75,7 @@
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date).data).sort()">
             <div 
               class="
-               tw-mb-0" 
+               tw-mb-0"
             >
             <div 
               class="
@@ -677,11 +677,13 @@ export default {
     async scheduleNext() {
       this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.next();
+      await this.getMultiDate(this.selectedDate, this.selectedDateEnd);
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
     async schedulePrev() {
       this.selectedDate = this.$moment(this.selectedDate).startOf("day").add(-1, 'M').format("YYYY-MM-DD");
       await this.$refs.schedule.prev();
+      await this.getMultiDate(this.selectedDate, this.selectedDateEnd);
       await this.getListOfSelectedWorkOrders(this.scheduleTypeComputed);
     },
     async getListOfSelectedWorkOrders(type = false, refresh = false) {
@@ -962,6 +964,7 @@ export default {
       return customDatesArray;
     },
     getMultiDate(startDate, endDate) {
+      this.multiFilterDate = {};
       const currentHour = this.$moment().hour();
       let startDateM = this.$moment(startDate);
       let endDateM = this.$moment(endDate);
