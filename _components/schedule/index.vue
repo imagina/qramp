@@ -691,6 +691,7 @@ export default {
         this.events = [];
         const lastStart = this.$refs.schedule.lastStart;
         const lastEnd = this.$refs.schedule.lastEnd;
+        await this.getMultiDate(lastStart, lastEnd);
         await this.getWorkOrderFilter(refresh, lastStart, lastEnd, type);
       } catch (error) {
         console.log(error);
