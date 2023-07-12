@@ -66,12 +66,30 @@
     >
       <template #day-body="{ timestamp, timeStartPos, timeDurationHeight }">
         <template>
-          <dynamic-field
-            v-model="multiFilterDate[timestamp.date]" 
-            :field="fields.time"
-            @input="getWorkOrderDateTime($event, timestamp.date)"
-            class="tw-px-2"
-          />
+          <div class="tw-container">
+            <div class="tw-inline-block tw-w-4/5">
+              <dynamic-field
+                v-model="multiFilterDate[timestamp.date]" 
+                :field="fields.time"
+                @input="getWorkOrderDateTime($event, timestamp.date)"
+                class="tw-px-2"
+              />
+            </div>
+            <div class="tw-inline-block tw-w-1/5">
+              <q-btn
+                flat
+                round
+                icon="fa-duotone fa-rotate-right"
+                size="10px"
+                @click="getWorkOrderDateTime(multiFilterDate[timestamp.date], timestamp.date)"
+                class="tw--mt-3"
+            >
+              <q-tooltip> 
+                  {{ $trp('isite.cms.label.refresh') }} 
+              </q-tooltip>
+            </q-btn>
+            </div>
+          </div>
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date).data).sort()">
             <div 
               class="
@@ -1295,10 +1313,11 @@ export default {
       this.filterTime = hour;
       await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
     },
-    refreshWorkOrder() {
-      this.getFilterTimeCurrent();
+    async refreshWorkOrder() {
+      await this.getFilterTimeCurrent();
       this.selectedFilterDate = null;
-      this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd)
+      await this.getMultiDate(this.selectedDate, this.selectedDateEnd);
+      await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd)
     }
   },
 };
