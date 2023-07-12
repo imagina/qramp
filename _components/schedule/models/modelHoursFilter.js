@@ -1,5 +1,9 @@
 export default [
     {
+        label: 'All Day',
+        value: '0-23'
+    },
+    {
         label: '00 - 02:59 H',
         value: '0-2'
     },

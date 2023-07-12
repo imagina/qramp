@@ -10,7 +10,7 @@
         multipleRefresh
         :extra-actions="extraPageActions" 
         :excludeActions="fullscreen ? ['filter'] : []"
-        @refresh="getWorkOrderFilter(true, selectedDateStart, selectedDateEnd)" 
+        @refresh="refreshWorkOrder" 
         class="q-mb-md" 
       />
     </div>
@@ -632,7 +632,7 @@ export default {
     },
     getFilterTimeCurrent() {
       const currentHour = this.$moment().hour();
-      this.filterTime = modelHoursFilter.find(range => {
+      this.filterTime = modelHoursFilter.filter(item => item.value !== '0-23').find(range => {
         const [start, end] = range.value.split('-').map(Number);
           return currentHour >= start && currentHour <= end;
       }).value || null;
@@ -977,7 +977,7 @@ export default {
       const currentHour = this.$moment().hour();
       let startDateM = this.$moment(startDate);
       let endDateM = this.$moment(endDate);
-      const filterTime = modelHoursFilter.find(range => {
+      const filterTime = modelHoursFilter.filter(item => item.value !== '0-23').find(range => {
              const [start, end] = range.value.split('-').map(Number);
           return currentHour >= start && currentHour <= end;
           }).value || null;
@@ -1295,6 +1295,11 @@ export default {
       this.filterTime = hour;
       await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
     },
+    refreshWorkOrder() {
+      this.getFilterTimeCurrent();
+      this.selectedFilterDate = null;
+      this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd)
+    }
   },
 };
 </script>
