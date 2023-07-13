@@ -173,6 +173,7 @@ export default {
         this.form.outboundScheduledDeparture = `${currentDate} 00:00`;
         if (data) {
           this.form = data;
+          this.form.sta = this.form.inboundScheduledArrival ? this.$moment(this.form.inboundScheduledArrival).format('HH:mm'): null;
           this.form.outboundScheduledDeparture = this.$moment(this.form.outboundScheduledDeparture).format('MM/DD/YYYY HH:mm');
         };
         setTimeout(() => {

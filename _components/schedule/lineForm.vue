@@ -123,6 +123,7 @@ export default {
   },
   mounted() {
     this.form = this.event;
+    this.form.sta = this.form.inboundScheduledArrival ? this.$moment(this.form.inboundScheduledArrival).format('HH:mm'): null;
     this.form.outboundScheduledDeparture = typeof this.form.id !== 'string'  
     ? this.$moment(this.form.outboundScheduledDeparture).format(`MM/DD/YYYY HH:mm`)
     : this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY 00:00');
