@@ -484,7 +484,7 @@ export default {
       },
     },
     extraPageActions() {
-      return [
+      let extraActions = [
         {
           label: "Copy Tiny URL",
           props: {
@@ -513,6 +513,26 @@ export default {
           },
         },
       ];
+
+      if(!this.isPassenger){
+        extraActions.push({
+          label: "Scheduler",
+          props: {
+            label: "Scheduler",
+            icon: "fa-duotone fa-calendar-plus",
+          },
+          action: () => {
+            const routeName = this.isPassenger ? 'passenger' : 'ramp';
+            let hrefSplit = window.location.href.split("?");
+            let tinyUrl =
+                this.$store.state.qsiteApp.originURL +
+                `/#/${routeName}/schedule/public/index`;
+            if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
+            this.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
+          },
+        })
+      }
+      return extraActions;
     },
     filterActions() {
       return {
