@@ -124,7 +124,7 @@
               </div>
               <div v-for="(event, index) in eventArr">
                 <div :key="index" v-if="event.time && !event.isUpdate" class="
-                    tw-text-sm
+                    tw-text-base
                     tw-mb-3
                     tw-p-1
                     tw-mx-2
@@ -188,7 +188,7 @@
                         hover:tw-opacity-75" 
                         @click.stop.prevent="duplicateSchedule(event)"
                     >
-                      <i class="fa-thin fa-clone tw-text-sm" />
+                      <i class="fa-thin fa-clone" />
                       <q-tooltip>
                         Duplicate
                       </q-tooltip>
@@ -199,7 +199,7 @@
                         tw-text-gray-400 
                         tw-px-2 tw-py-1 lg:tw-py-0
                         tw-border tw-border-gray-200 hover:tw-text-white hover:tw-bg-blue-500 hover:tw-opacity-75">
-                      <i class="fa-light tw-text-sm" :class="{
+                      <i class="fa-light" :class="{
                         'fa-eye': isBlank,
                         'fa-pen-to-square': !isBlank
                       }" />
@@ -221,7 +221,7 @@
                         hover:tw-opacity-75" 
                         @click.stop.prevent="deleteSchedule(event.id)"
                       >
-                      <i class="fa-light fa-trash-can tw-text-sm" />
+                      <i class="fa-light fa-trash-can" />
                       <q-tooltip>
                         {{ $tr('isite.cms.label.delete') }}
                       </q-tooltip>
