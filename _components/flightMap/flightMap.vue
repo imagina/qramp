@@ -180,7 +180,7 @@ export default {
     },
     icon() {
       return color => new divIcon({
-        html: `<i class="fak fa-plane-right-thin-icon tw-text-4xl ${ color ? `text-${color}`: 'tw-text-blue-500'}"  />`,
+        html: `<i class="fak fa-plane-right-thin-icon tw-text-4xl ${ color ? `tw-text-${color}`: 'tw-text-blue-500'}"  />`,
         iconSize: this.dynamicSize, // size of the icon
         iconAnchor: this.dynamicAnchor,
         className: "iconMapPane",

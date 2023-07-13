@@ -55,118 +55,54 @@
         </div>
       </div>
     </div>
-    <div class="tw-px-6 tw-mb-8">
-      <q-toggle
-        v-model="delay"
-        color="primary"
-        label="Delay"
-        @input="resetDelayList"
-      />
-      <q-btn v-if="delay" class="q-ml-sm" flat round icon="add" color="primary" @click="addDelay()"/>
-    </div>
-    <div v-if="delay" class="tw-px-6">
-      <div flat class="row">
-        <template v-for="(field,keyField) in delayFields">
-          <dynamic-field
-            class="col-12 col-md-5 q-pr-sm"
-            :key="keyField"
-            :field="field"
-            v-model="delayList[keyField.includes('code') ? keyField.split('code')[1] : keyField.split('hours')[1]][keyField.includes('code') ? 'code' : 'hours']"
-          />
-          <q-btn 
-            v-if="field.type !== 'select'" 
-            style="width: 40px; height:38px"
-            class="col-12 btn-stick col-md-1" 
-            round icon="delete" flat
-            size="12px"
-            color="primary" 
-            @click="delDelay(keyField)"
-          />
-        </template>
-      </div>
-    </div>
+    <delayComponent />
   </div>
 </template>
 
 <script>
-import responsive from '../_mixins/responsive.js'
-import qRampStore from '../_store/qRampStore.js'
+import responsive from '../../_mixins/responsive.js'
+import qRampStore from '../../_store/qRampStore.js'
+import cargoStore from './store/cargo.ts';
+import {
+  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_RAMP,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
+} from '../model/constants.js'
+import delayComponent from './delayComponent.vue'
 
 export default {
+  components: {
+    delayComponent,
+  },
   props:{
     readonly: true,
-    toolbar:{},
-    cargoData:{}
   },
-  inject: ['disabledReadonly'],
   mixins:[responsive],
   data(){
     return{
-      form:{},
-      delay:false,
-      delayList:[
-        {
-          code:"",
-          hours:""
-        },
-      ],
       codeList: [],
     }
   },
-  mounted() {
-     this.$nextTick(function () {
-      this.init()
-    })
-  },
   computed:{
-    formComputed: {
-      get() {
-        return this.form;
-      },
-      set(value) {
-        this.form = value;
-      }
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterBusinessUnit() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
+    disabledReadonly() {
+      return qRampStore().disabledReadonly();
+    },
+    form() {
+      return cargoStore().getForm();
     },
     showKilosFiels() {
       const contractsWithKilosFiels = this.$store.getters['qsiteApp/getSettingValueByName']('setup::contractsWithKilosFiels');
       return contractsWithKilosFiels.some((item) => item === qRampStore().getContractId());
-    },
-    delayFields(){
-      const obj = {}
-      this.delayList.forEach((delay,index) => {
-          obj['code'+index] = {
-            value: delay.code,
-            type: this.readonly ? 'inputStandard':'select',
-            props: {
-              options: this.codeList,
-              readonly: this.readonly || this.disabledReadonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('icommerce.cms.sidebar.code'),
-              clearable: true,
-              color:"primary",
-              'hide-bottom-space': false
-            },
-            label: this.$tr('icommerce.cms.sidebar.code'),
-          }    
-          obj['hours'+index] = {
-            value: delay.hours,
-            type: 'inputStandard',
-            props: {
-              hint:'Enter the Time in minutes',
-              mask:'###################',
-              readonly: this.readonly || this.disabledReadonly,
-              outlined: !this.readonly,
-              borderless: this.readonly,
-              label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
-              clearable: true,
-              color:"primary",
-              'hide-bottom-space': false
-            },
-            label: this.readonly ? '' : this.$tr('isite.cms.label.time'),
-          }    
-      })
-      return obj
     },
     formFields() {
       return {
@@ -247,61 +183,6 @@ export default {
           },
         }
       }
-    },
-  },
-  methods: {
-    init() {
-      if(Object.keys(this.cargoData).length > 0) {
-        const data = {};
-        data.inboundCargoTotalUldsUnloaded = this.cargoData.inboundCargoTotalUldsUnloaded
-        data.inboundCargoBulkUnloaded = this.cargoData.inboundCargoBulkUnloaded
-        data.outboundCargoTotalUldsLoaded = this.cargoData.outboundCargoTotalUldsLoaded
-        data.outboundCargoBulkLoaded = this.cargoData.outboundCargoBulkLoaded
-        data.cargoTotalKilosUnloaded = this.cargoData.cargoTotalKilosUnloaded
-        data.cargoTotalKilosLoaded = this.cargoData.cargoTotalKilosLoaded
-        this.formComputed = data;
-        this.delay = this.cargoData.delayList.length > 0
-        if(this.cargoData.delayList.length > 0) {
-          this.delayList = this.cargoData.delayList
-        }
-      }
-      this.getCodeList();
-    },
-    addDelay() {
-      this.delayList.push({
-        code: '',
-        hours: ''
-      })
-    },
-    saveInfo() {
-      this.$store.commit('qrampApp/SET_FORM_DELAY', this.delayList.filter(items => {
-          return items.code && items.hours
-      }))
-      this.$store.commit('qrampApp/SET_FORM_CARGO', this.form)
-    },
-    delDelay(index) {
-      const i = parseInt(index.slice(-1))
-      this.delayList.splice(i,1)
-    },
-    resetDelayList() {
-      if(!this.delay) {
-        this.delayList = [];
-        this.addDelay();
-      }
-    },
-    getCodeList() {
-      this.$crud.index('apiRoutes.qramp.workOrderDelays', { refresh: true }).then(res => {
-        const data = res.data || [];
-        this.codeList = data.map((item) => ({
-          id: item.id,
-          label: item.name,
-          value: item.name,
-        }))
-      })
-      .catch(err => {
-        this.codeList = [];
-        console.log('ERROR WHILE OBTAINING THE LIST OF CODES:', err)
-      })
     },
   },
 }

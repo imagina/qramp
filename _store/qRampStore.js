@@ -1,16 +1,19 @@
-//import { reactive } from 'vue';
 import {
     STATUS_DRAFT,
     STATUS_POSTED,
     STATUS_SUBMITTED,
-    modelFlightBoundFormStatus
+    modelFlightBoundFormStatus,
+    BUSINESS_UNIT_PASSENGER,
+    BUSINESS_UNIT_RAMP,
+    COMPANY_PASSENGER,
+    COMPANY_RAMP
 } from '../_components/model/constants.js'
-import * as moment from 'moment';
-import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts';
+import moment from 'moment';
 import baseService from '@imagina/qcrud/_services/baseService.js'
 import Vue, { reactive } from "vue";
 
 const state = reactive({
+    titleOffline: '',
     statusId: STATUS_DRAFT,
     needToBePosted: false,
     flightNumberField: null,
@@ -31,9 +34,22 @@ const state = reactive({
     flightList: [],
     flightId: 0,
     isblank: false,
+    isPassenger: false,
 });
 
 export default function qRampStore() {
+    function setIsPassenger(value) {
+        state.isPassenger = value;
+    }
+    function getIsPassenger() {
+        return state.isPassenger;
+    }
+    function getTitleOffline() {
+        return state.titleOffline;
+    }
+    function setTitleOffline(value) {
+        state.titleOffline = value;
+    }
     function setStatusId(value) {
         state.statusId = value;
     }
@@ -96,12 +112,18 @@ export default function qRampStore() {
     function validateStatusSelectedFlight(data) {
         state.flightBoundFormStatus.boundOriginAirportId = this.isData(data.destinationAirport.id);
         state.flightBoundFormStatus.boundTailNumber = this.isData(data.registration);
+        state.flightBoundFormStatus.outboundTailNumber = this.isData(data.registration || data.outRegistration);
         state.flightBoundFormStatus.boundDestinationAirport = this.isData(data.originAirport.id);
         state.flightBoundFormStatus.boundScheduled = this.isData(data.estimatedOn);
         state.flightBoundFormStatus.boundScheduledDeparture = this.isData(data.estimatedOff);
+        if(state.isPassenger) {
+            state.flightBoundFormStatus.inboundGateArrival = this.isData(data.gateDestination);
+            state.flightBoundFormStatus.outboundGateDeparture = this.isData(data.gateOrigin);
+        }
+        
     }
     function isData(data) {
-        return data ? true : false;
+        return (!data || data === '') ? false : true;
     }
     function resetFlightBoundFormStatus() {
         state.flightBoundFormStatus = { ...modelFlightBoundFormStatus };
@@ -112,6 +134,10 @@ export default function qRampStore() {
             boundTailNumber: false,
             boundScheduled: false,
             boundScheduledDeparture: false,
+        }
+        if(state.isPassenger) {
+            status.inboundGateArrival = false;
+            status.outboundGateDeparture = false;
         }
         state.flightBoundFormStatus = status;
     }
@@ -223,6 +249,11 @@ export default function qRampStore() {
             outbound: `${outboundTime} - ${airportName}`,
             aircraftType: items.aircraftType,
             faFlightId: items.faFlightId,
+            cancelled: items.cancelled,
+          }
+          if(state.isPassenger) {
+            flight.gateDestination = items.gateDestination || '';
+            flight.gateOrigin = items.gateOrigin || '';
           }
           dataTable.push(flight)
         })
@@ -346,11 +377,18 @@ export default function qRampStore() {
     }
     async function getFlights() {
         try {
+          const isPassenger = getIsPassenger();
+          const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
           const workOrderId = state.flightId;
-          const params = {refresh: true}
-          if(workOrderId) {
-              params.params = {filter:{ id: workOrderId }}
-          }
+          const params = {
+            refresh: true, 
+            params: {
+                filter: {
+                    companyId,
+                }
+            }
+          };
+          if(workOrderId) params.params.filter.id = workOrderId;
           const response = await baseService.index("apiRoutes.qramp.flightPosition", params);
           const data = workOrderId ? [response.data] : response.data;
           setFlightList(data);
@@ -358,8 +396,32 @@ export default function qRampStore() {
         } catch (error) {
           console.log(error)
         }
-      }
+    }
+    async function changeStatus(statusId, workOrderId) {
+        try {
+          const route = 'apiRoutes.qramp.workOrderChangeStatus';
+          const payload = {
+            id: workOrderId,
+            statusId,
+          }
+          const params = {params: {
+            titleOffline: getTitleOffline()
+          }};
+          await baseService.update(route, workOrderId, payload, params);
+        } catch (error) {
+          console.log('Error changeStatus Schedule',error);
+        }
+    }
+    function parseDateOfflineWO(dateWO){
+        if (!dateWO && !dateWO?.includes('T')) return dateWO;
+        const splitDate = dateWO.split(" ");
+        const [date, hour] = splitDate;
+        const newDate = new Date(date).toLocaleDateString('fr-CA');
+        return `${newDate}T${hour}`;
+    }
     return {
+        getTitleOffline,
+        setTitleOffline,
         disabledReadonly,
         setStatusId,
         getStatusId,
@@ -414,5 +476,9 @@ export default function qRampStore() {
         getFlights,
         setIsblank,
         getIsblank,
+        setIsPassenger,
+        getIsPassenger,
+        changeStatus,
+        parseDateOfflineWO,
     }
 }

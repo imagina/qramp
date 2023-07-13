@@ -8,29 +8,22 @@
 </template>
 
 <script>
-import responsive from '../_mixins/responsive.js'
+import responsive from '../../_mixins/responsive.js';
+import remarkStore from './store.ts';
 export default {
   props:{
     readonly: true,
     toolbar:{},
-    remarksData:{}
   },
   inject: ['disabledReadonly'],
   mixins:[responsive],
-  data(){
-    return{
-      form:{},
-    }
-  },
-  mounted() {
-     this.$nextTick(function () {
-      this.init()
-    })
-  },
   computed:{
+    form() {
+      return remarkStore().getForm();
+    },
     formFields(){
       return{
-        remark : {
+        remark: {
           value: '',
           type: this.readonly ? 'inputStandard':'input',
           props: {
@@ -56,16 +49,6 @@ export default {
         },
       }
     }
-  },
-  methods: {
-    init(){
-      if(Object.keys(this.remarksData).length > 0) {
-        this.form = this.remarksData
-      }
-    },
-    saveInfo() {
-      this.$store.commit('qrampApp/SET_FORM_REMARK', this.form )
-    },
   },
 }
 </script>

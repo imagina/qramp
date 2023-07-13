@@ -16,6 +16,10 @@
 </template>
 
 <script>
+import qRampStore from '../../../_store/qRampStore.js';
+import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js';
+import cache from '@imagina/qsite/_plugins/cache';
+
 export default {
   data: () => ({
     visible: false,
@@ -23,6 +27,15 @@ export default {
     stationId: null,
   }),
   computed: {
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterBusinessUnit() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     actions() {
       return [
         {
@@ -51,7 +64,14 @@ export default {
           type: "select",
           loadOptions: {
             apiRoute: "apiRoutes.qsetupagione.setupStations",
-            select: { label: "stationName", id: "id" },
+            select: { label: "fullName", id: "id" },
+            requestParams: {
+              filter: {
+                "status": 1,
+                companyId: this.filterCompany,
+                "allTranslations": true
+              },
+            },
           },
           props: {
             label: "Station",
@@ -75,7 +95,7 @@ export default {
       try {
         this.$refs.formStation.validate().then(async (success) => {
           if (success) {
-            sessionStorage.setItem("stationId", this.stationId);
+            cache.set("stationId", this.stationId);
             this.$emit("saveFilterStationId", this.stationId);
             this.hideModal();
           }

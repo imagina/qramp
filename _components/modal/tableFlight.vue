@@ -26,6 +26,30 @@
               </template>
             </q-input>
           </template>
+          <template v-slot:body="props">
+            <q-tr 
+              :props="props"
+              :class="{
+                'tw-bg-red-500': props.row.cancelled
+              }"
+            >
+              <q-td auto-width>
+                <q-checkbox 
+                  dense 
+                  v-model="props.selected" 
+                  :label="props.row.name"
+                  :disabled="props.row.cancelled"
+                />
+              </q-td>
+              <q-td
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+              >
+                {{ col.value }}
+              </q-td>
+            </q-tr>
+          </template>
         </q-table>
       </q-card-section>
       <q-card-actions align="right" class="q-mr-sm">

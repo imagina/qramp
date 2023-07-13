@@ -1,6 +1,17 @@
-import factoryCustomerWithContracts from '../factories/factoryCustomerWithContracts.js';
+import factoryCustomerWithContracts from '../../_store/actions/factoryCustomerWithContracts.js';
+import qRampStore from '../../_store/qRampStore.js';
+import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP } from '../model/constants.js';
 export default {
   computed: {
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
+    filterBusinessUnit() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
     allowContractName() {
       return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
     },
@@ -75,9 +86,9 @@ export default {
               color: "primary",
             },
             loadOptions: {
-              apiRoute: "apiRoutes.qramp.setupStations",
-              select: { label: "stationName", id: "id" },
-              requestParams: { filter: { status: 1 } },
+              apiRoute: "apiRoutes.qsetupagione.setupStations",
+              select: { label: "fullName", id: "id" },
+              requestParams: { filter: { status: 1, companyId: this.filterCompany, "allTranslations": true } },
             },
           },
           responsibleId: {
@@ -102,15 +113,17 @@ export default {
       };
     },
   },
-  methods:{
+  methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
+        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { businessUnitId: BUSINESS_UNIT_RAMP };
         const custemerParams = {
           params: {
             filter: {
               withoutContracts: true,
               adHocWorkOrders: true,
               customerStatusId: 1,
+              companyId: this.filterCompany,
             },
           },
           refresh: false,
@@ -119,6 +132,7 @@ export default {
           params: {
             filter: {
               contractStatusId: 1,
+              ...businessUnitId,
             },
           },
           refresh: false,
@@ -134,6 +148,6 @@ export default {
 
         return resolve(customerList);
       });
-  }
+    }
   }
 };

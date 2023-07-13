@@ -9,9 +9,8 @@
         @validateBound="validateBound(flightNumberField)"
       />
       <div class="col-12 col-md-6">
-        <div v-for="(field, keyField) in formFields.flyFormLeft" :style="`${readonly ? 'height: 50px' : ''}`">
+        <div v-for="(field, keyField) in formFields.flyFormLeft">
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
-            <span v-if="readonly" class="col-5 text-right span q-pr-sm text-primary">{{field.label}}:</span>
             <dynamic-field
               v-if="bannerMessage"
               class="q-mb-md" 
@@ -62,7 +61,9 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-      <div class="col-12 col-md-6">
+      <div 
+        class="col-12 col-md-6"
+      >
         <div 
           v-for="(field, keyField) in formFields.flyFormRight" 
           :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`"
@@ -87,65 +88,73 @@
               :field="field"
               :class="`${readonly ? 'col-7': ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
-              v-model="selectResponsible"
-              @input="setSelectResponsible"
+              v-model="form[keyField]"
             />
           </div>
         <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-
-      <div v-if="isInbound" class="col-12 col-md-6">
-        <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
-            <div>{{$tr('isite.cms.label.inbound')}}</div>
-          </div>
-          <div
-            v-for="(field, keyField) in formFields.inboundLeft"
-            class="tw-px-4"
+      <div
+        v-if="isbound[0]"
+        class="col-12 col-md-6"
+      >
+        <div v-if="isCollapse">
+          <collapse
+            :title="$tr('isite.cms.label.inbound')"
+            :flightNumber="form.inboundFlightNumber"
+            :isComplete="completeFormInbound"
           >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-              <dynamic-field
-                :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
-                :id="keyField"
-                :field="field"
-                :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                v-model="form[keyField]"
-                @enter="search(field)"
-                :ref="`${keyField}`"
-                @input="zanetizeData(keyField)"
-              />
-            </label>
-            <hr v-if="readonly" class="label-container"/>
-          </div>
+            <div
+              v-for="(field, keyField) in formFields.inboundLeft"
+              class="tw-px-4"
+            >
+              <div :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+                <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+                <dynamic-field
+                  :key="keyField"
+                  :class="`${readonly ? 'col-7': ''}`"
+                  :id="keyField"
+                  :field="field"
+                  :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
+                  v-model="form[keyField]"
+                  @enter="search(field)"
+                  :ref="`${keyField}`"
+                  @input="zanetizeData(keyField)"
+                />
+              </div>
+            </div>
+          </collapse>
         </div>
       </div>
-      <div v-if="isOutbound" class="col-12 col-md-6">
-        <div :class="`${readonly? '' :'card-bound'}`">
-          <div class="text-primary tw-rounded-t-md tw-text-base boundColor tw-p-2 text-center text-weight-bold tw-mb-4">
-            <div>{{$tr('isite.cms.label.outbound')}}</div>
-          </div>
-          <div
-            v-for="(field, keyField) in formFields.outboundRight"
-            class="tw-px-4"
-          >
-            <label :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
-              <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
-              <dynamic-field
-                :key="keyField"
-                :class="`${readonly ? 'col-7': ''}`"
-                :id="keyField"
-                :field="field"
-                :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                v-model="form[keyField]"
-                @enter="search(field)"
-                @input="zanetizeData(keyField)"
-              />
-            </label>
-            <hr v-if="readonly" class="label-container"/>
-          </div>
+      <div
+        v-if="isbound[1]" 
+        class="col-12 col-md-6"
+      >
+        <div v-if="isCollapse">
+          <collapse
+            :title="$tr('isite.cms.label.outbound')"
+            :flightNumber="form.outboundFlightNumber"
+            :isComplete="completedFormOutBound"
+          > 
+            <div
+              v-for="(field, keyField) in formFields.outboundRight"
+              class="tw-px-4"
+            >
+              <div :class="`${readonly ?`${responsive ? 'no-wrap' : 'justify-end'} row items-center` : ''}`">
+                <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{field.label}}:</span>
+                <dynamic-field
+                  :key="keyField"
+                  :class="`${readonly ? 'col-7': ''}`"
+                  :id="keyField"
+                  :field="field"
+                  :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
+                  v-model="form[keyField]"
+                  @enter="search(field)"
+                  @input="zanetizeData(keyField)"
+                />
+              </div>
+            </div>
+          </collapse>
         </div>
       </div>
 
@@ -190,25 +199,40 @@
         </div>
       </div>
     </q-form>
+    <inner-loading :visible="!isCollapse"/>
   </div>
 </template>
 <script>
-import responsive from '../_mixins/responsive.js'
-import tableFlight from '../_components/modal/tableFlight.vue'
-import factoryCustomerWithContracts from '../_components/factories/factoryCustomerWithContracts.js';
-import qRampStore from '../_store/qRampStore.js';
+import responsive from '../../_mixins/responsive.js'
+import tableFlight from '../modal/tableFlight.vue'
+import factoryCustomerWithContracts from '../../_store/actions/factoryCustomerWithContracts.js';
+import qRampStore from '../../_store/qRampStore.js';
+import { 
+  BUSINESS_UNIT_PASSENGER , 
+  BUSINESS_UNIT_RAMP,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
+} from '../model/constants.js'
+import workOrderList from '../../_store/actions/workOrderList.ts';
+import collapse from './collapse.vue'
+import flightStore from './store';
+
 export default {
   props:{
     readonly: true,
     toolbar:{},
-    flightData:{
+    dataCompoment:{
       type:Object,
       default:()=>{}
     }
   },
-  inject: ['disabledReadonly'],
-  components:{tableFlight},
+  components:{tableFlight, collapse},
   mixins:[responsive],
+  created() {
+    this.$nextTick(function () {
+      workOrderList().getOperationType();
+    })
+  },
   mounted() {
      this.$nextTick(function () {
       document.querySelector('.master-dialog__body')
@@ -235,26 +259,23 @@ export default {
       },
       refresh: 1,
       selected:[],
-      newOutbound:true,
-      newInbound:true,
-      thereInFlight:true,
-      thereOutFlight:true,
       loadingState:false,
       openAlert:false,
       update:false,
       dialog:false,
       inOutBound:null,
       timeoutID: '',
-      type:'',
       dataTable:[],
       mainData:[],
       selectCustomers: '',
-      selectResponsible: '',
       bannerMessage: null,
       customerName: '',
       newCustumerAdHoc: [],
       differenceHour: 0,
       responsibleList: [],
+      completeFormInbound: false,
+      completedFormOutBound: false,
+      isCollapse: false,
     }
   },
   watch:{
@@ -290,6 +311,15 @@ export default {
     }
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
+    operationTypeList() {
+      return workOrderList().getOperationTypeList()
+    },
+    disabledReadonly() {
+      return qRampStore().disabledReadonly();
+    },
     isDesktop() {
       return window.innerWidth >= '900';
     },
@@ -310,14 +340,6 @@ export default {
         this.selectCustomers = value;
       }
     },
-    selecteResponsibleComputed: {
-      get() {
-        return this.selectResponsible;
-      },
-      set(value) {
-        this.selectResponsible = value;
-      }
-    },
     showLabel(){
       if(this.readonly && !this.responsive ){
         return true
@@ -327,19 +349,24 @@ export default {
       }
       return false
     },
-    isOutbound() {
+    isbound() {
       if(this.form.operationTypeId) {
-        const validator = this.form.operationTypeId == 4 || this.form.operationTypeId != 3;
-        return validator;
+        const operationType = this.operationTypeList
+          .find(item => item.id === Number(this.form.operationTypeId));
+        const type = operationType?.options?.type;
+        if(type) {
+          if(type === 'full'){
+            return [true, true];
+          }
+          if(type === 'inbound') {
+            return [true, false]
+          }
+          if(type === 'outbound') {
+            return [false, true];
+          }
+        }
       }
-      return false
-    },
-    isInbound() {
-      if(this.form.operationTypeId) {
-        const validator = this.form.operationTypeId == 3 || this.form.operationTypeId != 4;
-        return validator
-      }
-      return false
+      return [false, false];
     },
     readStatus(){
       return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly || this.disabledReadonly
@@ -348,10 +375,37 @@ export default {
       return this.$auth.hasAccess('ramp.work-orders.see-contract-name');
     },
     manageResponsiblePermissions() {
-      return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
+      return this.$auth.hasAccess('ramp.work-orders.manage-responsible') && !this.isPassenger;
     },
-    formFields(){
-      return{
+    isPassenger() {
+     return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+    },
+    filterGates() {
+      return workOrderList()
+        .getGatesList()
+        .filter(item => item.stationId == this.form.stationId)
+        .map(item =>
+          ({
+            value: item.id,
+            label: item.name
+          }));
+    },
+    validateRulesBlock() {
+      const rules = !this.isPassenger ? {
+        rules: [
+            val => !!val || this.$tr('isite.cms.message.fieldRequired')
+        ]
+      } : {};
+      return rules;
+    },
+    formFields() {
+      return {
         banner: {
           type: 'banner',
           props: {
@@ -422,9 +476,9 @@ export default {
               color:"primary"
             },
             loadOptions: {
-              apiRoute: 'apiRoutes.qramp.setupStations',
-              select: {label: 'stationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              apiRoute: 'apiRoutes.qsetupagione.setupStations',
+              select: {label: 'fullName', id: 'id'},
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
           },
           acTypeId: {
@@ -446,7 +500,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.aircraftTypes',
               select: {label: 'model', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.acType'),
           },
@@ -464,12 +518,8 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
               clearable: true,
               color:"primary",
-              'hide-bottom-space': false
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qramp.operationTypes',
-              select: {label: 'operationName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              'hide-bottom-space': false,
+              options: this.operationTypeList
             },
             label: this.$tr('ifly.cms.form.operation'),
           },
@@ -494,7 +544,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airlines',
               select: {label: 'airlineName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany, "allTranslations":true}}
             },
             label: this.$tr('ifly.cms.form.carrier'),
           },
@@ -503,6 +553,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
+              vIf: !this.isPassenger,
               rules: [
                 val => this.validateSpecialCharacters(val)
               ],
@@ -511,12 +562,8 @@ export default {
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.gate')}`,
               clearable: true,
-              color:"primary"
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qsetupagione.gates',
-              select: {label: 'name', id: 'id'},
-              requestParams: {filter: {stationId: this.form.stationId}}
+              color:"primary",
+              options: this.filterGates,
             },
             label: this.$tr('ifly.cms.form.gate'),
           },
@@ -539,7 +586,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.workOrderStatuses',
               select: {label: 'statusName', id: 'id'},
-              requestParams: {filter: {status: 1}}
+              requestParams: {filter: {status: 1, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.status'),
           },
@@ -549,20 +596,17 @@ export default {
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
-              rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
-              ],
               readonly: this.disabledReadonly,
               label: '*Responsible',
               clearable: true,
               color: "primary",
-              emitValue: false,
-              options: this.responsibleList,
+              options: this.isAppOffline ? flightStore().getReponsible() : []
             },
             loadOptions: {
               apiRoute: "apiRoutes.quser.users",
-              select: { label: "fullName", id: "id", value:"fullName" },
-              filterByQuery: true
+              select: { label: "fullName", id: "id"},
+              filterByQuery: true,
+              requestParams: {filter: {companyId: this.filterCompany}}
             },
           },
         },
@@ -593,7 +637,7 @@ export default {
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
               outlined: !this.readonly,
@@ -605,7 +649,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh}}
+              requestParams: {filter: {status: this.refresh, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.origin'),
           },
@@ -615,7 +659,7 @@ export default {
             type: this.readonly ? 'inputStandard':'input',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.boundTailNumber,
               outlined: !this.readonly,
@@ -632,7 +676,7 @@ export default {
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
@@ -647,6 +691,19 @@ export default {
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
+          inboundGateArrival: {
+            name:'inboundGateArrival',
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.isPassenger,
+              readonly:  this.disabledReadonly || this.flightBoundFormStatus.inboundGateArrival,
+              label: '*Inbound Gate Arrival',
+              clearable: true,
+              color:"primary"
+            },
+            label: 'Inbound Gate Arrival',
+          }
         },
         outboundRight:{
           outboundFlightNumber: {
@@ -655,7 +712,7 @@ export default {
             type: this.readonly ? 'inputStandard':'search',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Enter the fight number and press enter or press the search icon',
               loading: this.loadingState,
@@ -675,7 +732,7 @@ export default {
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               readonly: this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport,
               outlined: !this.readonly,
@@ -687,7 +744,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {status: this.refresh}}
+              requestParams: {filter: {status: this.refresh, companyId: this.filterCompany}}
             },
             label: this.$tr('ifly.cms.form.destination'),
           },
@@ -697,9 +754,9 @@ export default {
             type: this.readonly ? 'inputStandard':'input',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundTailNumber,
+              readonly: this.disabledReadonly || this.flightBoundFormStatus.outboundTailNumber,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
@@ -714,7 +771,7 @@ export default {
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => this.isPassenger ? true : !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
@@ -729,6 +786,19 @@ export default {
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
+          outboundGateDeparture: {
+            name:'outboundGateDeparture',
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.isPassenger,
+              readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
+              label: '*Outbound Gate Departure',
+              clearable: true,
+              color:"primary"
+            },
+            label: 'Outbound Gate Departure',
+          },
         },
         dateBound: {
           inboundBlockIn: {
@@ -736,44 +806,40 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
+              ...this.validateRulesBlock,
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockIn')}`,
+              label: `${this.isPassenger ? 'Actual In': `*${this.$tr('ifly.cms.form.blockIn')}`}`,
               clearable: true,
               color:"primary",
               format24h: true,
               options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundBlockIn),
             },
-            label: this.$tr('ifly.cms.form.blockIn'),
+            label: `${this.isPassenger ? 'Actual In': `${this.$tr('ifly.cms.form.blockIn')}`}`,
           },
           outboundBlockOut: {
             name:'outboundBlockOut',
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
+              ...this.validateRulesBlock,
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.blockOut')}`,
+              label: `${this.isPassenger ? 'Actual Out': `*${this.$tr('ifly.cms.form.blockOut')}`}`,
               clearable: true,
               color:"primary",
               format24h: true,
               options: this.validateDateOutboundBlockOut,
             },
-            label: this.$tr('ifly.cms.form.blockOut'),
+            label: `${this.isPassenger ? 'Actual Out': `${this.$tr('ifly.cms.form.blockOut')}`}`,
           },
         },
         customerField: {
@@ -806,10 +872,11 @@ export default {
       this.currentDate()
       this.updateData()
     },
-    updateData() {
-      if(Object.keys(this.flightData).length > 0) {
+    async updateData() {
+      if(this.dataCompoment && Object.keys(this.dataCompoment).length > 0) {
+        this.isCollapse = false;
         this.update = true
-        const updateForm = this.$clone(this.flightData)
+        const updateForm = this.$clone(this.dataCompoment)
         this.form.statusId = updateForm.statusId
         this.form.stationId = updateForm.stationId
         this.form.acTypeId = updateForm.acTypeId
@@ -817,41 +884,37 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        const label = (this.allowContractName && updateForm.contractId) ? `${updateForm.customerName} (${updateForm.contractName})` : updateForm.customerName;
-        this.selectCustomerComputed = {
-          id: updateForm.customerId,
-          value: updateForm.customerName,
-          label: updateForm.adHoc ? `${label} (Ad Hoc)`: label,
-          contractId: updateForm.contractId,
-          contractName: updateForm.contractName,
+        const customer = workOrderList().getCustomerWithContractLists().find(item => item.id == updateForm.customerId);
+        if(customer) {
+          customer.label = updateForm.adHoc ? `${customer.label} (Ad Hoc)`: customer.label;
+          if(customer.label) {
+            this.selectCustomerComputed = customer;
+          }
         }
-        this.setCustomerForm();
+        await this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gateId = updateForm.gateId
         this.form.operationTypeId = updateForm.operationTypeId
         setTimeout(() => {
           this.form.date = this.dateFormatterFull(updateForm.date)
           this.update = false
-          
           this.form.responsibleId = updateForm.responsibleId;
-          const responsible = qRampStore().getResponsible();
-          this.responsibleList = this.optionResponsible(responsible);
-          if(responsible) {
-            this.selecteResponsibleComputed = {
-              id: responsible.id,
-              value: responsible.fullName,
-              label: responsible.fullName,
-            }
-          }
           this.form.inboundFlightNumber = updateForm.inboundFlightNumber 
           this.form.outboundFlightNumber = updateForm.outboundFlightNumber 
           this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
           this.form.inboundTailNumber = updateForm.inboundTailNumber;
           this.flightBoundFormStatus.boundTailNumber = this.checkIfDataArrives(updateForm.inboundTailNumber);
+          this.flightBoundFormStatus.outboundTailNumber = this.checkIfDataArrives(updateForm.outboundTailNumber);
           this.flightBoundFormStatus.boundScheduled = this.checkIfDataArrives(updateForm.inboundScheduledArrival);
           this.flightBoundFormStatus.boundScheduledDeparture = this.checkIfDataArrives(updateForm.outboundScheduledDeparture);
           this.flightBoundFormStatus.boundOriginAirportId = this.checkIfDataArrives(updateForm.inboundOriginAirportId);
           this.flightBoundFormStatus.boundDestinationAirport = this.checkIfDataArrives(updateForm.outboundDestinationAirportId);
+          if(this.isPassenger) {
+            this.form.inboundGateArrival = updateForm.inboundGateArrival;
+            this.form.outboundGateDeparture = updateForm.outboundGateDeparture;
+            this.flightBoundFormStatus.inboundGateArrival = this.checkIfDataArrives(updateForm.inboundGateArrival);
+            this.flightBoundFormStatus.outboundGateDeparture = this.checkIfDataArrives(updateForm.outboundGateDeparture);
+          }
           this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
           this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)
           this.form.outboundDestinationAirportId = updateForm.outboundDestinationAirportId
@@ -862,6 +925,9 @@ export default {
           if(this.form.inboundBlockIn && this.form.outboundBlockOut) {
             this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
           }
+          this.completeFormInbound = this.validateInbound('inboundLeft');
+          this.completedFormOutBound = this.validateInbound('outboundRight');
+          this.isCollapse = true;
         },1000)
       }
     },
@@ -988,21 +1054,44 @@ export default {
     },
     setForm(data) {
       this.refresh = 0
-      if(this.name.includes('outboundFlightNumber')){
-        const destinationAirportId = data.destinationAirport ? data.destinationAirport.id : null;
-        this.$set(this.form, "outboundFlightNumber",  data.ident)
-        this.$set(this.form, "outboundDestinationAirportId",  destinationAirportId)
-        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(data.estimatedOff))
-        this.$set(this.form, "outboundTailNumber",  data.registration)
-      } else {
-        this.$set(this.form, "inboundFlightNumber", data.ident)
-        const originAirportId = data.originAirport ? data.originAirport.id : null;
+      const {
+        ident,
+        destinationAirport,
+        estimatedOff,
+        registration,
+        originAirport,
+        estimatedOn,
+        gateDestination,
+        gateOrigin,
+        actualIn,
+        actualOut,
+      } = data;
+      if(this.isbound[0]){
+        const destinationAirportId = destinationAirport?.id || null;
+        this.$set(this.form, "outboundFlightNumber", ident)
+        this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
+        this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
+        this.$set(this.form, "outboundTailNumber", registration)
+        if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
+      }
+      if(this.isbound[1]) {
+        this.$set(this.form, "inboundFlightNumber", ident)
+        const originAirportId = originAirport?.id || null;
         this.$set(this.form, "inboundOriginAirportId", originAirportId)
-        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(data.estimatedOn))
-        this.$set(this.form, "inboundTailNumber", data.registration)
+        this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(estimatedOn))
+        this.$set(this.form, "inboundTailNumber", registration)
         if(this.form.outboundTailNumber) {
-          this.$set(this.form, "outboundTailNumber",  data.registration);
+          this.$set(this.form, "outboundTailNumber", registration);
         }
+        if(this.isPassenger) this.$set(this.form, "outboundGateDeparture", gateOrigin);
+      }
+      if(this.isPassenger) {
+        this.$set(this.form, "inboundBlockIn", this.dateFormatterFull(actualIn))
+        this.$set(this.form, "outboundBlockOut", this.dateFormatterFull(actualOut))
+        this.changeDate({
+            name: 'outboundBlockOut'
+        });
+        
       }
       qRampStore().validateStatusSelectedFlight(data);
     },
@@ -1041,7 +1130,9 @@ export default {
       return !!val || this.$tr('isite.cms.message.fieldRequired');
     },
     setCustomerForm() {
-      const selectCustomers = this.selectCustomers === '' ? {} : this.selectCustomers;
+      const selectCustomers = this.selectCustomers === null || 
+      this.selectCustomers === undefined || 
+      this.selectCustomers === '' ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
@@ -1083,19 +1174,22 @@ export default {
     },
     getCustomerList() {
       return new Promise(async(resolve) => {
+        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { businessUnitId: BUSINESS_UNIT_RAMP };
         const custemerParams = {
             params: {
               filter: {
                 withoutContracts: true,
                 adHocWorkOrders: true,
-                customerStatusId: 1
+                customerStatusId: 1,
+                companyId: this.filterCompany,
               }
             },
         }
         const contractParams = {
             params: {
               filter: {
-                contractStatusId: 1
+                contractStatusId: 1,
+                ...businessUnitId,
               }
             },
         }
@@ -1130,7 +1224,8 @@ export default {
           destinationAirport: {
             id: this.form.inboundOriginAirportId,
           },
-          registration: this.form.outboundTailNumber || this.form.inboundTailNumber,
+          registration: this.form.inboundTailNumber,
+          outRegistration: this.form.outboundTailNumber,
           originAirport: {
             id: this.form.outboundDestinationAirportId,
           },
@@ -1187,17 +1282,24 @@ export default {
     optionResponsible(item) {
       return item ? [{id: String(item.id), label: item.fullName, value: item.id}]: [];
     },
-    setSelectResponsible() {
-      const responsibleId = this.selecteResponsibleComputed.id || null;
-      this.form.responsibleId = responsibleId;
-      console.log(this.form.responsibleId);
-    },
     zanetizeData(key) {
+        this.completeFormInbound = this.validateInbound('inboundLeft');
+        this.completedFormOutBound = this.validateInbound('outboundRight');  
         if(key === 'inboundFlightNumber' || key === 'outboundFlightNumber') {
           if(this.form[key]) {
             this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');
           }
         }
+    },
+    validateInbound(keyForm) {
+      const dataForm = [];
+      Object.keys(this.formFields[keyForm]).forEach(key => {
+        dataForm.push(this.checkIfDataArrives(this.form[key]));
+      });
+      if(!this.isPassenger) {
+        dataForm.pop();
+      }
+      return dataForm.every(item => item === true);
     },
   },
 }

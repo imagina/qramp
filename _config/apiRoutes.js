@@ -23,6 +23,7 @@ export default {
   workOrderTransactions: `${urlBase}/workday-transactions`,
   contractRules: `${urlBase}/contract-rules`,
   setupBusinessUnitTypes: `${setupUrlBase}/business-unit-types`,
+  setupBusinessUnits: `${setupUrlBase}/business-units`,
   simpleWorkOrders: `${urlBase}/work-orders/simple-work-orders`,
   flightPosition: `${urlBase}/work-orders/flight-position`,
   scheduleStatuses: `${urlBase}/schedule-statuses`,
@@ -30,4 +31,6 @@ export default {
   workOrdersByStatus: `${urlBase}/dashboard/work-orders-by-status`,
   percentageWorkOrdersPosted: `${urlBase}/dashboard/percentage-work-orders-posted`,
   workOrdersByStatusLines: `${urlBase}/dashboard/work-orders-by-status-lines`,
+  comments: `${urlBase}/comments`,
+  categories: `${urlBase}/categories`
 }

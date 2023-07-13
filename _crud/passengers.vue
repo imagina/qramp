@@ -2,7 +2,11 @@
   <div>
     <form-orders ref="formOrders" />
     <flightDetail />
-    <commentsModal ref="commentsModal" :commentableId="commentableId" isCrud />
+    <commentsModal
+      ref="commentsModal"
+      :commentableId="commentableId"
+      isCrud
+    />
   </div>
 </template>
 <script>
@@ -11,18 +15,16 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_CLOSED,
-  STATUS_DRAFT,
+  STATUS_DRAFT, 
   STATUS_SCHEDULE,
-  BUSINESS_UNIT_RAMP,
-  COMPANY_RAMP
+  BUSINESS_UNIT_PASSENGER,
+  COMPANY_PASSENGER
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
-import baseService from '@imagina/qcrud/_services/baseService.js';
-import workOrderList from '../_store/actions/workOrderList.ts'
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import workOrderList from '../_store/actions/workOrderList.ts';
 
 export default {
   name: 'RampCrud',
@@ -49,21 +51,14 @@ export default {
       deep: true,
       handler: function (newValue, oldValue) {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
-          this.areaId = this.$filter.values.areaId;
-      }
-    },
-    'isAppOffline': {
-      deep: true,
-      handler: async function (newValue) {
-        if (!newValue) {
-          await workOrderList().getWorkOrders(true);
-        }
+        this.areaId = this.$filter.values.areaId;
       }
     }
   },
   async created() {
     this.$nextTick(async () => {
-      await workOrderList().getAllList(true);
+      await qRampStore().setIsPassenger(true);
+      await workOrderList().getAllList();
       await workOrderList().getCustomerWithContract()
     })
   },
@@ -72,11 +67,6 @@ export default {
     qRampStore().setFlightId(null);
   },
   computed: {
-    isAppOffline() {
-      const offline = this.$store.state.qofflineMaster.isAppOffline;
-
-      return offline;
-    },
     permisionCommentsIndex() {
       return this.$auth.hasAccess('ramp.work-orders-comments.index');
     },
@@ -94,18 +84,17 @@ export default {
         || statusId == STATUS_POSTED
         || statusId == STATUS_SCHEDULE
         || (statusId == STATUS_SUBMITTED
-          && this.editPermissionseSubmitted)
+        && this.editPermissionseSubmitted)
     },
     crudData() {
       return {
         crudId: this.crudId,
-        entityName: config("main.qramp.entityNames.workOrders"),
+        entityName: config("main.qfly.entityNames.workOrder"),
         apiRoute: 'apiRoutes.qramp.workOrders',
-        permission: 'ramp.work-orders',
+        permission: 'ramp.passenger-work-orders',
         create: {
           method: async () => {
-            await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
-            await qRampStore().setIsPassenger(false);
+            await qRampStore().setIsPassenger(true);
             this.$refs.formOrders.loadform({
               modalProps: {
                 title: this.$tr('ifly.cms.form.newWorkOrder'),
@@ -146,13 +135,13 @@ export default {
               label: 'Comments',
               field: "comments",
               align: "left",
-              format: item => !this.$store.state.qofflineMaster.isAppOffline && item && item > 0 ? htmlComment(item) : '',
+              format: item => item && item > 0 ? htmlComment(item) : '',
               formatColumn: row => ({
                 textColor: row.comments ? `red-5` : ''
               }),
               action: (item) => {
                 this.commentableId = item.id || null;
-                if (this.$refs.commentsModal) {
+                if(this.$refs.commentsModal) {
                   this.$refs.commentsModal.showModal();
                 }
               },
@@ -179,7 +168,7 @@ export default {
             {
               name: "inboundFlightNumber",
               label: 'Inbound Flight Number',
-              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
+              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
               align: "left",
               format: item => item ? item : '',
             },
@@ -189,12 +178,12 @@ export default {
               field: "inboundScheduledArrival",
               align: "left",
               format: (val) => (val ? this.$trdT(val) : "-"),
-              sortable: true
+             sortable: true
             },
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
-              field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
+              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
               align: "left",
               format: item => item ? item : '',
             },
@@ -222,17 +211,6 @@ export default {
                   .find(status => status.id === item.statusId) || {};
                 const data = response ? response.statusName + (item.needToBePosted ? "(Posting)" : "") : '-'
                 return `${data}`;
-              },
-              align: 'left'
-            },
-            {
-              name: 'operationType',
-              label: 'Operation Type',
-              field: 'operationTypeId',
-              formatAsync: async item => {
-                const response = await workOrderList().getOperationTypeList()
-                  .find(operation => operation.id === item.operationTypeId) || {};
-                return `${response.operationName || '-'}`;
               },
               align: 'left'
             },
@@ -274,25 +252,23 @@ export default {
           ],
           filters: {
             date: {
-
-              props: {
+              props:{
                 label: "Block-in/out Date"
               },
               name: "blockInBlockOut",
-              field: { value: 'blockInBlockOut' },
+              field: {value: 'blockInBlockOut'},
               quickFilter: true
             },
             customerId: {
               value: null,
               type: 'select',
-
               quickFilter: true,
               loadOptions: {
                 apiRoute: 'apiRoutes.qramp.setupCustomers',
                 select: { 'label': 'customerName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    companyId: COMPANY_RAMP,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },
@@ -310,7 +286,7 @@ export default {
                 select: { 'label': 'statusName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    companyId: COMPANY_RAMP,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },
@@ -327,7 +303,7 @@ export default {
                 select: { 'label': 'fullName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    companyId: COMPANY_RAMP,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },
@@ -343,10 +319,10 @@ export default {
               props: {
                 label: 'Ad Hoc',
                 clearable: true,
-                options: [
-                  { label: this.$tr('isite.cms.label.yes'), value: true, },
-                  { label: this.$tr('isite.cms.label.no'), value: false, },
-                ],
+                options:[
+                {label: this.$tr('isite.cms.label.yes'), value: true,},
+                {label: this.$tr('isite.cms.label.no'), value: false,},
+              ],
               },
             },
             flightStatusId: {
@@ -355,10 +331,10 @@ export default {
               quickFilter: true,
               loadOptions: {
                 apiRoute: 'apiRoutes.qfly.flightStatuses',
-                select: { 'label': 'name', 'id': 'id' },
+                select: {'label': 'name', 'id': 'id'},
                 requestParams: {
                   filter: {
-                    companyId: COMPANY_RAMP,
+                    companyId: COMPANY_PASSENGER,
                   },
                 },
               },
@@ -367,29 +343,12 @@ export default {
                 'clearable': true
               },
             },
-            areaId: {
-              value: null,
-              type: 'select',
-              loadOptions: {
-                apiRoute: 'apiRoutes.qsetupagione.areas',
-                select: { 'label': 'name', 'id': 'id' },
-                requestParams: {
-                  filter: {
-                    companyId: COMPANY_RAMP,
-                  },
-                },
-              },
-              props: {
-                label: 'Areas',
-                'clearable': true
-              },
-            },
           },
           requestParams: {
             include: 'responsible',
             filter: {
               withoutDefaultInclude: true,
-              businessUnitId: BUSINESS_UNIT_RAMP,
+              businessUnitId: BUSINESS_UNIT_PASSENGER,
             },
           },
           actions: [
@@ -409,12 +368,10 @@ export default {
               name: 'close',
               icon: 'fal fa-check',
               label: this.$tr('isite.cms.label.closeFlight'),
-              format: item => {
-                return {
-                  //must have the submit permission and the work order can't be submited or posted
-                  vIf: ![STATUS_POSTED, STATUS_SUBMITTED, STATUS_CLOSED].includes(item.statusId)
-                }
-              },
+              format: item => ({
+                //must have the submit permission and the work order can't be submited or posted
+                vIf: ![STATUS_POSTED, STATUS_SUBMITTED,STATUS_CLOSED].includes(item.statusId)
+              }),
               action: (item) => {
                 this.changeStatus(STATUS_CLOSED, item.id)
               },
@@ -423,13 +380,10 @@ export default {
               name: 'submit',
               icon: 'fal fa-check-double',
               label: this.$tr('isite.cms.label.submit'),
-              format: item => {
-
-                return {
-                  //must have the submit permission and the work order can't be submited or posted
-                  vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
-                }
-              },
+              format: item => ({
+                //must have the submit permission and the work order can't be submited or posted
+                vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
+              }),
               action: (item) => {
                 this.changeStatus(STATUS_SUBMITTED, item.id)
               },
@@ -443,7 +397,7 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted && ![STATUS_POSTED].includes(item.statusId),
+                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted  && ![STATUS_POSTED].includes(item.statusId),
                   label: this.$tr('isite.cms.label.post')
 
                 }),
@@ -467,14 +421,13 @@ export default {
               label: 'Comments',
               action: (item) => {
                 this.commentableId = item.id || null;
-                if (this.$refs.commentsModal) {
-                  this.$refs.commentsModal.showModal();
+                if(this.$refs.commentsModal) {
+                    this.$refs.commentsModal.showModal();
                 }
               },
               format: item => (
                 {
                   vIf: this.permisionCommentsIndex
-                    && !this.$store.state.qofflineMaster.isAppOffline
                 }),
             },
           ],
@@ -507,7 +460,7 @@ export default {
               }
             },
             {
-              apiRoute: "/ramp/v1/work-orders/bulk-export-csv",
+              apiRoute: "/ramp/v1/work-orders/passenger-bulk-export-csv",
               permission: "ramp.work-orders.bulk-export-csv",
               criteria: "id",
               props: {
@@ -589,16 +542,6 @@ export default {
     }
   },
   methods: {
-    getOfflineTitleStatus(statusId, itemId) {
-      const statusObj = {
-        1: 'DRAFT',
-        2: 'POSTED',
-        3: 'SUBMITTED',
-        4: 'CLOSED',
-        5: 'SCHEDULE',
-      }
-      return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
-    },
     changeStatus(status, itemId) {
 
       const route = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -606,71 +549,54 @@ export default {
         id: itemId,
         statusId: status
       }
-      let customParams = { params: { titleOffline: this.getOfflineTitleStatus(status, itemId) || '' } }
-
       this.$emit('loading', true)
-      const request = this.$crud.update(route, itemId, payload, customParams);
+      const request = this.$crud.create(route, payload);
       request.then(res => {
         this.$root.$emit('crud.data.refresh')
         this.$emit('loading', false)
       })
-        .catch(async err => {
+        .catch(err => {
           this.$emit('loading', false)
-          if (!this.isAppOffline) {
-            this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
-          }else{
-            payload.offline = true;
-            await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', payload);
-            this.$root.$emit('crud.data.refresh')
-          }
+          this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
+
         })
     },
-    async openModal(item) {
-      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
-      await qRampStore().setIsPassenger(false);
-      await this.$refs.formOrders.loadform({
-        modalProps: {
-          title: titleModal,
-          update: true,
-          workOrderId: item.id,
-          width: '90vw'
-        },
-        data: item,
-      })
-      console.log(titleModal);
-      qRampStore().setTitleOffline(titleModal);
-    },
     showWorkOrder(data) {
-      if (this.isAppOffline) {
-        this.openModal(data);
-        return;
-      }
       this.$crud.show('apiRoutes.qramp.workOrders', data.id,
         {
           refresh: true,
           params: {
-            include: "customer,workOrderStatus,operationType,station,contract,responsible"
+            include: "customer,workOrderStatus,operationType,station,contract,responsible",
           }
         }).then(async (item) => {
-          this.openModal(item.data);
+          await qRampStore().setIsPassenger(true);
+          this.$refs.formOrders.loadform({
+            modalProps: {
+              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
+              update: true,
+              workOrderId: data.id,
+              width: '90vw',
+            },
+            data: item.data,
+          })
         }).catch((err) => {
           console.log(err);
         });
     },
     async getFlightMap(workOrder) {
-      try {
-        qRampStore().setFlightId(workOrder.id);
-        const response = await qRampStore().getFlights();
-        if (response.status === 204 || !response.data.flightPosition) {
-          this.$alert.warning({ message: this.$tr('ifly.cms.message.flightDetails') })
-          return;
-        }
-        qRampStore().showVisibleMapModal();
-        qRampStore().setLoadingModalMap(true);
-
-        setTimeout(() => {
-          qRampStore().setLoadingModalMap(false);
-        }, 1000);
+      try{
+          qRampStore().setFlightId(workOrder.id);
+          const response = await qRampStore().getFlights();
+          if(response.status === 204 || !response.data.flightPosition) {
+            this.$alert.warning({message: this.$tr('ifly.cms.message.flightDetails')})
+            return; 
+          }
+          qRampStore().showVisibleMapModal();
+          qRampStore().setLoadingModalMap(true);
+          
+          setTimeout(() => {
+            qRampStore().setLoadingModalMap(false);
+          }, 1000);
       } catch (error) {
         qRampStore().setFlightMap(null);
         qRampStore().setFlightId(null);
