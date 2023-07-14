@@ -71,7 +71,7 @@
               <dynamic-field
                 v-model="multiFilterDate[timestamp.date]" 
                 :field="fields.time"
-                @input="getWorkOrderDateTime($event, timestamp.date)"
+                @input="getWorkOrderDateTime($event, timestamp.date, false)"
                 class="tw-px-2"
               />
             </div>
@@ -975,6 +975,7 @@ export default {
       const customDatesArray = [];
 
       while (startDateM.isSameOrBefore(endDateM, 'day')) {
+        if (this.scheduleType === 'day-agenda' && customDatesArray.length > 0) break;
         const time = this.filterTime.split('-') || [0,0];
         const startDateTime = startDateM.startOf('day').set({ hour: time[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss');
         const endDateTime = startDateM.endOf('day').set({ hour: time[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss');
@@ -1308,10 +1309,10 @@ export default {
         await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', eventParset);
       }
     },
-    async getWorkOrderDateTime(hour, date) {
+    async getWorkOrderDateTime(hour, date, refresh = true) {
       this.selectedFilterDate = date;
       this.filterTime = hour;
-      await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+      await this.getWorkOrderFilter(refresh, this.selectedDateStart, this.selectedDateEnd);
     },
     async refreshWorkOrder() {
       await this.getFilterTimeCurrent();
