@@ -1,0 +1,104 @@
+<template>
+  <div class="columnCtn q-col">
+    <div class="tw-py-4 tw-px-2">
+      <div class="tw-border-b-2 tw-border-gray-200 tw-pb-1">
+        <div class="tw-flex tw-space-x-2">
+          <div>
+            <p class="q-mb-md tw-text-lg tw-font-semibold">
+              {{ date.format("dddd") }}
+            </p>
+          </div>
+          <div class="tw--my-1">
+            <q-btn
+              flat
+              round
+              size="md"
+              :class="{
+                'tw-bg-blue-800 tw-text-white':
+                  selectedDate === date.format('YYYY/MM/DD'),
+              }"
+              @click="selectedDate = date.format('YYYY/MM/DD')"
+            >
+             <span class="tw-font-semibold">
+                {{ date.format("D") }}
+              </span> 
+            </q-btn>
+          </div>
+        </div>
+      </div>
+
+      <draggable
+        :list="cards"
+        :group="groupOptions"
+        :force-fallback="true"
+        group="data"
+        ghost-class="ghostCard"
+        drag-class="dragCard"
+        filter=".ignoreItem"
+        class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 h-200"
+      >
+        <kanban-card
+          v-for="(card, index) in cards"
+          :key="card.id"
+          :card="card"
+          class="tw-border-2 tw-border-gray-100"
+        />
+      </draggable>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ref, defineComponent, computed } from "vue";
+import draggable from "vuedraggable";
+import kanbanCard from "./kanbanCard.vue";
+import storeKanban from "../store/kanban";
+
+export default defineComponent({
+  components: {
+    draggable,
+    kanbanCard,
+  },
+  props: {
+    date: {
+      type: Object,
+      required: true,
+    },
+    cards: {
+      type: Array,
+      required: true,
+    },
+    groupOptions: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props, { emit }) {
+    const selectedDate = computed({
+      get: () => storeKanban.selectedDate,
+      set: (value) => (storeKanban.selectedDate = value),
+    });
+    return {
+      selectedDate,
+    };
+  },
+});
+</script>
+
+<style>
+.columnCtn {
+  @apply tw-w-52;
+}
+
+.dragCard {
+  @apply tw-bg-white tw-opacity-100;
+  cursor: grabbing;
+}
+
+.ghostCard {
+  @apply tw-opacity-50 tw-bg-gray-100;
+}
+.columnCtn .h-200 {
+  height: 700px;
+}
+</style>

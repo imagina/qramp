@@ -158,6 +158,20 @@ export default {
       refresh: true,
     }
   },
+  kanbansSchedule: {
+    //permission: 'ramp.work-orders.manage',
+    activated: true,
+    authenticated: false,
+    path: '/kanban/schedule/index',
+    name: 'qramp.admin.kanbansSchedule',
+    page: () => import('../_components/scheduleKanban/index.vue'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.schedule',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,
