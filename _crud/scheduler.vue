@@ -12,7 +12,7 @@ export default {
       return {
         crudId: this.crudId,
         //entityName: config("main.qfly.entityNames.workOrder"),
-        //apiRoute: 'apiRoutes.qramp.scheduleStatuses',
+        apiRoute: 'apiRoutes.qramp.schedulers',
         //permission: 'ramp.schedule-statuses',
         create: {
           title: 'Create Recurring Schedule'
