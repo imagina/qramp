@@ -71,7 +71,7 @@
               <dynamic-field
                 v-model="multiFilterDate[timestamp.date]" 
                 :field="fields.time"
-                @input="getWorkOrderDateTime($event, timestamp.date)"
+                @input="getWorkOrderDateTime($event, timestamp.date, false)"
                 class="tw-px-2"
               />
             </div>
@@ -124,7 +124,7 @@
               </div>
               <div v-for="(event, index) in eventArr">
                 <div :key="index" v-if="event.time && !event.isUpdate" class="
-                    tw-text-sm
+                    tw-text-base
                     tw-mb-3
                     tw-p-1
                     tw-mx-2
@@ -188,7 +188,7 @@
                         hover:tw-opacity-75" 
                         @click.stop.prevent="duplicateSchedule(event)"
                     >
-                      <i class="fa-thin fa-clone tw-text-sm" />
+                      <i class="fa-thin fa-clone" />
                       <q-tooltip>
                         Duplicate
                       </q-tooltip>
@@ -199,7 +199,7 @@
                         tw-text-gray-400 
                         tw-px-2 tw-py-1 lg:tw-py-0
                         tw-border tw-border-gray-200 hover:tw-text-white hover:tw-bg-blue-500 hover:tw-opacity-75">
-                      <i class="fa-light tw-text-sm" :class="{
+                      <i class="fa-light" :class="{
                         'fa-eye': isBlank,
                         'fa-pen-to-square': !isBlank
                       }" />
@@ -221,7 +221,7 @@
                         hover:tw-opacity-75" 
                         @click.stop.prevent="deleteSchedule(event.id)"
                       >
-                      <i class="fa-light fa-trash-can tw-text-sm" />
+                      <i class="fa-light fa-trash-can" />
                       <q-tooltip>
                         {{ $tr('isite.cms.label.delete') }}
                       </q-tooltip>
@@ -995,6 +995,7 @@ export default {
       const customDatesArray = [];
 
       while (startDateM.isSameOrBefore(endDateM, 'day')) {
+        if (this.scheduleType === 'day-agenda' && customDatesArray.length > 0) break;
         const time = this.filterTime.split('-') || [0,0];
         const startDateTime = startDateM.startOf('day').set({ hour: time[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss');
         const endDateTime = startDateM.endOf('day').set({ hour: time[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss');
@@ -1328,10 +1329,10 @@ export default {
         await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', eventParset);
       }
     },
-    async getWorkOrderDateTime(hour, date) {
+    async getWorkOrderDateTime(hour, date, refresh = true) {
       this.selectedFilterDate = date;
       this.filterTime = hour;
-      await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
+      await this.getWorkOrderFilter(refresh, this.selectedDateStart, this.selectedDateEnd);
     },
     async refreshWorkOrder() {
       await this.getFilterTimeCurrent();

@@ -1066,7 +1066,7 @@ export default {
         actualIn,
         actualOut,
       } = data;
-      if(this.isbound[0]){
+      if(this.isbound[0] && this.name.includes('outboundFlightNumber')){
         const destinationAirportId = destinationAirport?.id || null;
         this.$set(this.form, "outboundFlightNumber", ident)
         this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
@@ -1074,7 +1074,7 @@ export default {
         this.$set(this.form, "outboundTailNumber", registration)
         if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
       }
-      if(this.isbound[1]) {
+      if(this.isbound[1] && this.name.includes('inboundFlightNumber')) {
         this.$set(this.form, "inboundFlightNumber", ident)
         const originAirportId = originAirport?.id || null;
         this.$set(this.form, "inboundOriginAirportId", originAirportId)
