@@ -1,5 +1,5 @@
 import { computed, WritableComputedRef } from 'vue';
-import store from '../store/index';
+import store from '../store/index.store';
 export default function useSchedulerModal() {
     const showModal: WritableComputedRef<boolean> = computed({
         get: () => store.showModal,

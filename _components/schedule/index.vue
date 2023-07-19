@@ -334,7 +334,7 @@ import completedSchedule from './completedSchedule.vue'
 import modelHoursFilter from './models/modelHoursFilter.js'
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 import scheduler from '../scheduler/index.vue';
-import storeScheduler from '../scheduler/store/index.ts';
+import storeScheduler from '../scheduler/store/index.store.ts';
 export default {
   props: {
     isBlank: {
