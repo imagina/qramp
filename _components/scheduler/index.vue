@@ -6,9 +6,7 @@
       custom-position
     >
       <div class="tw-px-4">
-        <crud 
-          :crudData="import('../../_crud/scheduler.vue')" 
-        />
+        <main />
       </div>
     </master-modal>
   </div>
@@ -17,8 +15,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import useSchedulerModal from "./uses/useSchedulerModal";
+import main from './components/main.vue'
 
 export default defineComponent({
+  components:{
+    main
+  },
   setup() {
     return { ...useSchedulerModal() };
   },
