@@ -376,7 +376,8 @@ export default {
           props: {
             label: 'Filter by time',
             format24h: true,
-            options: modelHoursFilter
+            options: modelHoursFilter,
+            alphabeticalSort: false,
           }
         },
       },

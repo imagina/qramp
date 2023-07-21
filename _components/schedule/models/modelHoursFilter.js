@@ -4,35 +4,35 @@ export default [
         value: '0-23'
     },
     {
-        label: '1) 00:00 am - 03:00 am',
+        label: '00:00 am - 03:00 am',
         value: '0-2'
     },
     {
-        label: '2) 03:00 am - 07:00 am',
+        label: '03:00 am - 07:00 am',
         value: '3-6'
     },
     {
-        label: '3) 07:00 am - 10:00 am',
+        label: '07:00 am - 10:00 am',
         value: '7-9'
     },
     {
-        label: '4) 10:00 am - 01:00 pm',
+        label: '10:00 am - 01:00 pm',
         value: '10-12'
     },
     {
-        label: '5) 01:00pm - 04:00 pm',
+        label: '01:00pm - 04:00 pm',
         value: '13-15'
     },
     {
-        label: '6) 04:00 pm - 07:00 pm',
+        label: '04:00 pm - 07:00 pm',
         value: '16-18'
     },
     {
-        label: '7) 07:00 pm - 10:00 pm',
+        label: '07:00 pm - 10:00 pm',
         value: '19-21'
     },
     {
-        label: '8) 10:00 pm - 12:00 am',
+        label: '10:00 pm - 12:00 am',
         value: '22-23'
     },
 ]
