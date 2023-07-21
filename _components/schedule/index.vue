@@ -374,7 +374,7 @@ export default {
             label: 'Filter by time',
             format24h: true,
             options: modelHoursFilter,
-            disableAlphaSort: true,
+            alphabeticalSort: false,
           }
         },
       },
