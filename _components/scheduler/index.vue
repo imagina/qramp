@@ -6,7 +6,7 @@
       custom-position
     >
       <div class="tw-px-4">
-        <main />
+        <mainComponent />
       </div>
     </master-modal>
   </div>
@@ -15,11 +15,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import useSchedulerModal from "./uses/useSchedulerModal";
-import main from './components/main.vue'
+import mainComponent from './components/main.vue'
 
 export default defineComponent({
   components:{
-    main
+    mainComponent
   },
   setup() {
     return { ...useSchedulerModal() };

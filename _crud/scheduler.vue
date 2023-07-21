@@ -1,11 +1,18 @@
 <template></template>
 <script>
+import workOrderList from '../_store/actions/workOrderList.ts'
+import { COMPANY_RAMP } from '../_components/model/constants.js'
 export default {
   name: 'scheduler',
   data() {
     return {
       crudId: this.$uid(),
     }
+  },
+  created() {
+    this.$nextTick(async () => {
+      await workOrderList().getAllList();
+    })
   },
   computed: {
     crudData() {
@@ -26,103 +33,106 @@ export default {
               style: 'width: 50px',
               action: (item) => false
             },
+
+            {
+              name: 'flightNumber',
+              label: 'FlightNumber',
+              field: 'flightNumber',
+              format: (val) => (val ? val : "-"),
+              align: 'left',
+            },
             {
               name: 'carrier',
               label: 'Carrier',
-              field: 'carrier',
-              format: (val) => (val ? val.fullName : ""),
+              field: 'carrierId',
+              formatAsync: async item => {
+                if (!item.carrierId) return '-';
+                const response = await workOrderList().getAirlinesList()
+                  .find(carrier => carrier.id === item.carrierId) || {};
+                return `${response.airlineName || '-'}`;
+              },
               align: 'left',
             },
             {
-              name: "customerStatus",
-              label: "Customer Status",
-              field: "customerStatus",
-              format: (val) => (val ? val.statusName : ""),
-              align: "left",
-            },
-            {
-              name: 'creation',
-              label: 'Creation',
-              field: 'creation',
-              align: 'left',
+              name: 'operationType',
+              label: 'Operation Type',
+              field: 'operationTypeId',
+              formatAsync: async item => {
+                const response = await workOrderList().getOperationTypeList()
+                  .find(operation => operation.id === item.operationTypeId) || {};
+                return `${response.operationName || '-'}`;
+              },
+              align: 'left'
             },
             {
               name: 'station',
               label: 'Station',
-              field: 'station',
-              align: 'left',
+              field: 'stationId',
+              formatAsync: async item => {
+                if (!item.stationId) return '-';
+                const response = await workOrderList().getStationList()
+                  .find(station => station.id === item.stationId) || {};
+                return `${response.fullName || '-'}`;
+              },
+              align: 'left'
             },
             {
-              name: 'description',
-              label: 'Description',
-              field: 'description',
-              align: 'left',
+              name: 'acTypeId',
+              label: 'acType',
+              field: 'acTypeId',
+              formatAsync: async item => {
+                if (!item.acTypeId) return '-';
+                const response = await workOrderList().getACTypesList()
+                  .find(act => act.id === item.acTypeId) || {};
+                return `${response.fullName || '-'}`;
+              },
+              align: 'left'
             },
             {
-              name: 'iata Code',
-              label: 'Iata Code',
-              field: 'iata_code',
-              align: 'left',
+              name: "fromDate",
+              label: 'From Date',
+              field: "fromDate",
+              align: "left",
+              format: (val) => (val ? this.$trdT(val) : "-"),
+              sortable: true
             },
             {
-              name: 'carrier_code',
-              label: 'Carrier Code',
-              field: 'carrier_code',
-              align: 'left',
+              name: "untilDate",
+              label: 'Until Date',
+              field: "untilDate",
+              align: "left",
+              format: (val) => (val ? this.$trdT(val) : "-"),
+              sortable: true
             },
             {
-              name: 'Carrier Description',
-              label: 'Carrier Description',
-              field: 'carrier_description',
-              align: 'left',
+              name: "inboundScheduledArrival",
+              label: 'Arrival',
+              field: "inboundScheduleArrival",
+              align: "left",
+              format: (val) => (val ? this.$trdT(val) : "-"),
+              sortable: true
             },
             {
-              name: 'Schedule freq',
-              label: 'Schedule Freq',
-              field: 'schedule_freq',
-              align: 'left',
+              name: "outboundScheduleDeparture",
+              label: 'Departure',
+              field: "outboundScheduleDeparture",
+              align: "left",
+              format: (val) => (val ? this.$trdT(val) : "-"),
+              sortable: true
             },
             {
-              name: 'Account number',
-              label: 'Account Number',
-              field: 'account_number',
-              align: 'left',
+              name: "outboundFlightNumber",
+              label: 'Outbound Flight Number',
+              field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}`,
+              align: "left",
+              format: item => item ? item : '',
             },
             {
-              name: 'Order number',
-              label: 'Order Number',
-              field: 'order_number',
-              align: 'left',
-            },
-            {
-              name: 'Airline flag',
-              label: 'Airline Flag',
-              field: 'airline_flag',
-              align: 'left',
-            },
-            {
-              name: 'Active Flag',
-              label: 'Active Flag',
-              field: 'active_flag',
-              align: 'left',
-            },
-            {
-              name: 'Grace Period',
-              label: 'Grace Period',
-              field: 'grace_period',
-              align: 'left',
-            },
-            {
-              name: 'Rate based on',
-              label: 'Rate Based On',
-              field: 'rate_based_on',
-              align: 'left',
-            },
-            {
-              name: 'Grace period begin',
-              label: 'Grace Period Begin',
-              field: 'grace_period_begin',
-              align: 'left',
+              name: "daysOfWeek",
+              label: 'Days Of Week',
+              field: 'daysOfWeek',
+              align: "left",
+              format: item => item ? this.convertNumbersToDays(item) : '',
             },
             {
               name: "created_at",
@@ -141,159 +151,72 @@ export default {
             { name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left' },
           ],
           filters: {},
+          requestParams: {
+            //include: 'carrier',
+          },
         },
         update: {
           title: 'Update OAG Stations'
         },
         delete: true,
         formLeft: {
-          id: {value: ""},
-          type: {
-            value: "",
-            type: "select",
+          id: { value: "" },
+          carrierId: {
+            value: null,
+            type: 'treeSelect',
             props: {
-              label: 'Type',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-              options: [
-                {label: 'Creation', value: 'Creation'},
-                {label: 'Update', value: 'Update'},
-                {label: 'Required', value: 'Required'},
-                {label: 'Default', value: 'Default'},
-              ],
+              label: this.$tr('ifly.cms.sidebar.airline'),
             },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qfly.airlines',
+              select: {
+                label: 'airlineName',
+                id: 'id'
+              },
+              refresh: true,
+            }
           },
-          creation: {
-            value: "",
-            type: "select",
+          operationTypeId: {
+            value: '',
+            type: 'select',
             props: {
-              label: 'Creation',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-              options: [
-                {label: 'Creation', value: 'Creation'},
-                {label: 'Update', value: 'Update'},
-                {label: 'Required', value: 'Required'},
-                {label: 'Default', value: 'Default'},
-              ],
+              label: `*${this.$tr('ifly.cms.form.operation')}`,
+              clearable: true,
+              color: "primary",
+              options: workOrderList().getOperationTypeList()
             },
+            label: this.$tr('ifly.cms.form.operation'),
           },
-          station: {
-            value: "",
-            type: "input",
+          stationId: {
+            value: null,
+            type: 'select',
+            loadOptions: {
+              apiRoute: 'apiRoutes.qsetupagione.setupStations',
+              select: { 'label': 'fullName', 'id': 'id' },
+              requestParams: {
+                filter: {
+                  companyId: COMPANY_RAMP,
+                },
+              },
+            },
             props: {
               label: 'Station',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
+              'clearable': true
             },
           },
-          description: {
-            value: "",
-            type: "input",
+          acTypeId: {
+            value: null,
+            type: 'select',
             props: {
-              label: 'Description',
+              label: this.$tr('ifly.cms.sidebar.aircraftType'),
+              options: workOrderList().getACTypesList().map(item => ({
+                label: item.model,
+                value: item.id
+              })),
             },
-          },
-          iataCode: {
-            value: "",
-            type: "input",
-            props: {
-              label: 'Iata code',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-          carrierCode: {
-            value: "",
-            type: "input",
-            props: {
-              label: 'Carrier code',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-          carrierDescription: {
-            value: "",
-            type: "input",
-            props: {
-              label: 'Carrier description',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-          scheduleFreq: {
-            value: "",
-            type: "select",
-            props: {
-              label: 'Schedule freq',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-              options: [
-                {label: 'Daily', value: 'Daily'},
-                {label: 'Monthly', value: 'Monthly'},
-              ],
-            },
-          },
+          }
         },
-        formRight: {
-          accountNumber: {
-            value: "",
-            type: "input",
-            props: {
-              label: 'Account number',
-            },
-          },
-          orderNumber: {
-            value: "",
-            type: "input",
-            props: {
-              label: 'Order Number',
-            },
-          },
-          airlineFlag: {
-            value: "",
-            type: "select",
-            props: {
-              label: 'Airline flag',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-              options: [
-                {label: 'Yes', value: 'Yes'},
-                {label: 'No', value: 'No'},
-              ],
-            },
-          },
-          activeFlag: {
-            value: "",
-            type: "select",
-            props: {
-              label: 'Active Flag',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-              options: [
-                {label: 'Yes', value: 'Yes'},
-                {label: 'No', value: 'No'},
-              ],
-            },
-          },
-          gracePeriod: {
-            value: "0",
-            type: "input",
-            props: {
-              type: 'number',
-              label: 'Grace Period',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-          rateBasedOn: {
-            value: "",
-            type: "select",
-            props: {
-              label: 'Rate based on',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-          gracePeriodBegin: {
-            value: "0",
-            type: "input",
-            props: {
-              type: 'number',
-              label: 'Grace Period Begin',
-              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
-            },
-          },
-        }
+        formRight: {}
       }
     },
     //Crud info
@@ -301,7 +224,23 @@ export default {
       return this.$store.state.qcrudComponent.component[this.crudId] || {}
     }
   },
-  methods: {}
+  methods: {
+    convertNumbersToDays(numbersDays) {
+      const daysOfWeek = {
+        1: "Monday",
+        2: "Tuesday",
+        3: "Wednesday",
+        4: "Thursday",
+        5: "Friday",
+        6: "Saturday",
+        7: "Sunday"
+      };
+
+      const namesOfDays = numbersDays.map(number => daysOfWeek[number]);
+
+      return namesOfDays.join(', ');
+    },
+  }
 }
 </script>
 <style lang="stylus">
