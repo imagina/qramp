@@ -151,9 +151,6 @@ export default {
             { name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left' },
           ],
           filters: {},
-          requestParams: {
-            //include: 'carrier',
-          },
         },
         update: {
           title: 'Update OAG Stations'
