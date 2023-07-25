@@ -6,6 +6,7 @@ import {
 
 const state = reactive<State>({
     showModal: false,
+    form: {},
 })
 
 
@@ -15,7 +16,17 @@ const store: Store = computed(() => ({
     },
     set showModal(value) {
         state.showModal = value;
-    }
+    },
+    get form() {
+        return state.form;
+    },
+    set form(value) {
+        state.form = value;
+    },
+    reset() {
+        state.form = {};
+        state.showModal = false;
+    },
 })).value
 
 

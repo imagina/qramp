@@ -6,7 +6,7 @@
       custom-position
     >
       <div class="tw-px-4">
-        <mainComponent />
+        <formFields />
       </div>
     </master-modal>
   </div>
@@ -15,11 +15,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import useSchedulerModal from "./uses/useSchedulerModal";
-import mainComponent from './components/main.vue'
+import formFields from './components/formFields.vue';
 
 export default defineComponent({
   components:{
-    mainComponent
+    formFields
   },
   setup() {
     return { ...useSchedulerModal() };
