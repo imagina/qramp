@@ -82,6 +82,24 @@ const fields = computed(() => ({
           color: "primary",
         },
         label: Vue.prototype.$tr("ifly.cms.form.flight"),
+    },
+    inboundScheduledArrival: {
+        name:'inboundScheduledArrival',
+        value: '',
+        type: 'fullDate',
+        props: {
+          rules: [
+            val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+          ],
+          hint:'Format: MM/DD/YYYY HH:mm',
+          mask:'MM/DD/YYYY HH:mm',
+          'place-holder': 'MM/DD/YYYY HH:mm',
+          label: `*${Vue.prototype.$tr('ifly.cms.form.scheduledArrival')}`,
+          clearable: true,
+          color:"primary",
+          format24h: true,
+        },
+        label:Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
       }
 }))
 
