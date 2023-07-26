@@ -530,7 +530,7 @@ export default {
             let hrefSplit = window.location.href.split("?");
             let tinyUrl =
               this.$store.state.qsiteApp.originURL +
-              `/#/${routeName}/schedule/public/index`;
+              `/#/${routeName}/schedule/index`;
             if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
             localStorage.setItem('urlSchedule', tinyUrl);
             this.$router.push({name: 'qramp.admin.scheduler'})
