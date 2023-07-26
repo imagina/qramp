@@ -3,8 +3,8 @@ import save from '../actions/save'
 import update from '../actions/update'
 import store from '../store/index.store'
 
-export default function modelActionsModal(refFormFields: any) {
-    const rootInstance = (getCurrentInstance() as any).proxy.$root;
+export default function modelActionsModal() {
+    const proxy = (getCurrentInstance() as any).proxy;
     const actions = computed(() => ([
         {
             props: {
@@ -14,7 +14,7 @@ export default function modelActionsModal(refFormFields: any) {
                 label: Vue.prototype.$tr('isite.cms.label.save'),
             },
             action: () => {
-                const refFormScheduler = refFormFields.value.$refs.refFormScheduler;
+                const refFormScheduler = proxy.$refs.refFormFields.$refs.refFormScheduler;
                 if (refFormScheduler) {
                     refFormScheduler
                      .validate()
@@ -26,7 +26,7 @@ export default function modelActionsModal(refFormFields: any) {
                                 await save()
                             }
                             await store.reset();
-                            rootInstance.$emit('crud.data.refresh');
+                            proxy.$root.$emit('crud.data.refresh');
                         }
                     })
                 }

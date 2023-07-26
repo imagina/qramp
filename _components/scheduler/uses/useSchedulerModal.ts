@@ -12,7 +12,7 @@ export default function useSchedulerModal() {
     function clear() {
         store.reset();
     }
-    const { actions } = modelActionsModal(refFormFields);
+    const { actions } = modelActionsModal();
     return {
         showModal,
         actions,
