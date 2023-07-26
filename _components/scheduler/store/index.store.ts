@@ -53,6 +53,9 @@ const store: Store = computed(() => ({
         return state.form;
     },
     set form(data) {
+        if(data.id) {
+            state.form.id = data.id
+        }
         state.form.carrierId = data.carrierId
         state.form.stationId = data.stationId
         state.form.acTypeId = data.acTypeId

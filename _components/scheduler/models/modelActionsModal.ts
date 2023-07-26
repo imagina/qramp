@@ -1,5 +1,6 @@
 import Vue, { computed, getCurrentInstance } from 'vue';
 import save from '../actions/save'
+import update from '../actions/update'
 import store from '../store/index.store'
 
 export default function modelActionsModal(refFormFields: any) {
@@ -19,7 +20,11 @@ export default function modelActionsModal(refFormFields: any) {
                      .validate()
                      .then(async (success) => {
                         if (success) {
-                            await save()
+                            if(store.form.id) {
+                                await update();
+                            } else {
+                                await save()
+                            }
                             await store.reset();
                             rootInstance.$emit('crud.data.refresh');
                         }
