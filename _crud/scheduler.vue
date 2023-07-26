@@ -1,5 +1,12 @@
 <template>
   <div>
+    <q-btn 
+      color="primary"
+      label="back to schedule" 
+      icon="fa-duotone fa-calendar-plus"
+      class="tw-my-4"
+      @click="getUrlSchedule"
+    />
     <schedulerModal />
   </div>
 </template>
@@ -204,6 +211,10 @@ export default {
       const namesOfDays = numbersDays.map(number => daysOfWeek[number]);
      
       return namesOfDays.join(', ');
+    },
+    getUrlSchedule() {
+      const url = localStorage.getItem('urlSchedule');
+      window.location.href = url;
     },
   }
 }
