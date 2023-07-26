@@ -7,6 +7,7 @@ export default function modelActionsModal(refFormFields: any) {
     const actions = computed(() => ([
         {
             props: {
+                loading: store.loading,
                 color: 'primary',
                 'icon-right': 'fa-thin fa-floppy-disk',
                 label: Vue.prototype.$tr('isite.cms.label.save'),

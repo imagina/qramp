@@ -7,7 +7,7 @@ export default function useForm() {
     const refFormScheduler = ref(null);
     const form = computed(() => store.form);
     const { formFields } = modelFormFields();
-    function isbound() {
+    const isbound = computed(() => {
         if(form.value.operationTypeId) {
           const operationType = workOrderList().getOperationTypeList()
             .find(item => item.id === Number(form.value.operationTypeId));
@@ -25,7 +25,7 @@ export default function useForm() {
           }
         }
         return [false, false];
-    }
+    })
     return {
         formFields,
         form,

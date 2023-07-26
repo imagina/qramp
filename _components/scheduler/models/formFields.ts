@@ -6,178 +6,184 @@ import { modelWeek } from './constants'
 
 export default function modelFields() {
     const formFields = computed(() => ({
-        carrierId: {
-            value: null,
-            type: 'select',
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                label: Vue.prototype.$tr('ifly.cms.sidebar.airline'),
-            },
-            loadOptions: {
-                apiRoute: 'apiRoutes.qfly.airlines',
-                select: {
-                    label: 'airlineName',
-                    id: 'id'
+        mainForm: {
+            carrierId: {
+                value: null,
+                type: 'select',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    label: Vue.prototype.$tr('ifly.cms.sidebar.airline'),
                 },
-                refresh: true,
-            }
-        },
-        stationId: {
-            value: null,
-            type: 'select',
-            loadOptions: {
-                apiRoute: 'apiRoutes.qsetupagione.setupStations',
-                select: { 'label': 'fullName', 'id': 'id' },
-                requestParams: {
-                    filter: {
-                        companyId: COMPANY_RAMP,
+                loadOptions: {
+                    apiRoute: 'apiRoutes.qfly.airlines',
+                    select: {
+                        label: 'airlineName',
+                        id: 'id'
+                    },
+                    refresh: true,
+                }
+            },
+            stationId: {
+                value: null,
+                type: 'select',
+                loadOptions: {
+                    apiRoute: 'apiRoutes.qsetupagione.setupStations',
+                    select: { 'label': 'fullName', 'id': 'id' },
+                    requestParams: {
+                        filter: {
+                            companyId: COMPANY_RAMP,
+                        },
                     },
                 },
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    label: 'Station',
+                    'clearable': true
+                },
             },
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                label: 'Station',
-                'clearable': true
+            acTypeId: {
+                value: null,
+                type: 'select',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
+                    options: workOrderList().getACTypesList().map(item => ({
+                        label: item.model,
+                        value: item.id
+                    })),
+                },
+            },
+            fromDate: {
+                value: '',
+                type: 'fullDate',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    hint: 'Format: MM/DD/YYYY HH:mm',
+                    mask: 'MM/DD/YYYY HH:mm',
+                    'place-holder': 'MM/DD/YYYY HH:mm',
+                    label: `* fromDate`,
+                    clearable: true,
+                    color: "primary",
+                    format24h: true,
+                },
+                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
+            },
+            untilDate: {
+                value: '',
+                type: 'fullDate',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    hint: 'Format: MM/DD/YYYY HH:mm',
+                    mask: 'MM/DD/YYYY HH:mm',
+                    'place-holder': 'MM/DD/YYYY HH:mm',
+                    label: `* untilDate`,
+                    clearable: true,
+                    color: "primary",
+                    format24h: true,
+                },
+                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
+            },
+            daysOfWeek: {
+                value: null,
+                type: 'select',
+                props: {
+                    multiple: true,
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    label: 'daysOfWeek',
+                    options: modelWeek,
+                },
+            },
+            operationTypeId: {
+                value: null,
+                type: 'select',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    label: `*${Vue.prototype.$tr('ifly.cms.form.operation')}`,
+                    clearable: true,
+                    color: "primary",
+                    options: workOrderList().getOperationTypeList()
+                },
+                label: Vue.prototype.$tr('ifly.cms.form.operation'),
             },
         },
-        acTypeId: {
-            value: null,
-            type: 'select',
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
-                options: workOrderList().getACTypesList().map(item => ({
-                    label: item.model,
-                    value: item.id
-                })),
+        inbound: {
+            flightNumber: {
+                value: null,
+                type: "input",
+                props: {
+                    rules: [
+                        (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
+                    ],
+                    label: `*${Vue.prototype.$tr("ifly.cms.form.flight")}`,
+                    clearable: true,
+                    maxlength: 7,
+                    color: "primary",
+                },
+                label: Vue.prototype.$tr("ifly.cms.form.flight"),
+            },
+            inboundScheduledArrival: {
+                value: '',
+                type: 'fullDate',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    hint: 'Format: MM/DD/YYYY HH:mm',
+                    mask: 'MM/DD/YYYY HH:mm',
+                    'place-holder': 'MM/DD/YYYY HH:mm',
+                    label: `*${Vue.prototype.$tr('ifly.cms.form.scheduledArrival')}`,
+                    clearable: true,
+                    color: "primary",
+                    format24h: true,
+                },
+                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
             },
         },
-        fromDate: {
-            value: '',
-            type: 'fullDate',
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                hint: 'Format: MM/DD/YYYY HH:mm',
-                mask: 'MM/DD/YYYY HH:mm',
-                'place-holder': 'MM/DD/YYYY HH:mm',
-                label: `* fromDate`,
-                clearable: true,
-                color: "primary",
-                format24h: true,
+        outbound: {
+            outboundFlightNumber: {
+                value: null,
+                type: "input",
+                props: {
+                    rules: [
+                        (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
+                    ],
+                    label: `* outboundFlightNumber`,
+                    clearable: true,
+                    maxlength: 7,
+                    color: "primary",
+                },
+                label: Vue.prototype.$tr("ifly.cms.form.flight"),
             },
-            label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
-        },
-        untilDate: {
-            value: '',
-            type: 'fullDate',
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                hint: 'Format: MM/DD/YYYY HH:mm',
-                mask: 'MM/DD/YYYY HH:mm',
-                'place-holder': 'MM/DD/YYYY HH:mm',
-                label: `* untilDate`,
-                clearable: true,
-                color: "primary",
-                format24h: true,
-            },
-            label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
-        },
-        operationTypeId: {
-            value: null,
-            type: 'select',
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                label: `*${Vue.prototype.$tr('ifly.cms.form.operation')}`,
-                clearable: true,
-                color: "primary",
-                options: workOrderList().getOperationTypeList()
-            },
-            label: Vue.prototype.$tr('ifly.cms.form.operation'),
-        },
-        flightNumber: {
-            value: null,
-            type: "input",
-            props: {
-                rules: [
-                    (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
-                ],
-                label: `*${Vue.prototype.$tr("ifly.cms.form.flight")}`,
-                clearable: true,
-                maxlength: 7,
-                color: "primary",
-            },
-            label: Vue.prototype.$tr("ifly.cms.form.flight"),
-        },
-        inboundScheduledArrival: {
-            value: '',
-            type: 'fullDate',
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                hint: 'Format: MM/DD/YYYY HH:mm',
-                mask: 'MM/DD/YYYY HH:mm',
-                'place-holder': 'MM/DD/YYYY HH:mm',
-                label: `*${Vue.prototype.$tr('ifly.cms.form.scheduledArrival')}`,
-                clearable: true,
-                color: "primary",
-                format24h: true,
-            },
-            label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
-        },
-        outboundScheduleDeparture: {
-            value: '',
-            type: 'fullDate',
-            props: {
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                hint: 'Format: MM/DD/YYYY HH:mm',
-                mask: 'MM/DD/YYYY HH:mm',
-                'place-holder': 'MM/DD/YYYY HH:mm',
-                label: `* outbound Schedule Departure `,
-                clearable: true,
-                color: "primary",
-                format24h: true,
-            },
-            label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
-        },
-        outboundFlightNumber: {
-            value: null,
-            type: "input",
-            props: {
-                rules: [
-                    (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
-                ],
-                label: `* outboundFlightNumber`,
-                clearable: true,
-                maxlength: 7,
-                color: "primary",
-            },
-            label: Vue.prototype.$tr("ifly.cms.form.flight"),
-        },
-        daysOfWeek: {
-            value: null,
-            type: 'select',
-            props: {
-                multiple: true,
-                rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                ],
-                label: 'daysOfWeek',
-                options: modelWeek,
+            outboundScheduleDeparture: {
+                value: '',
+                type: 'fullDate',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    hint: 'Format: MM/DD/YYYY HH:mm',
+                    mask: 'MM/DD/YYYY HH:mm',
+                    'place-holder': 'MM/DD/YYYY HH:mm',
+                    label: `* outbound Schedule Departure `,
+                    clearable: true,
+                    color: "primary",
+                    format24h: true,
+                },
+                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
             },
         },
     }))
