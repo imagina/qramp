@@ -1,11 +1,16 @@
 <template>
   <div>
-    <div 
-      v-for="(field, keyField) in formFields" 
-      :key="keyField"
+    <q-form
+        ref="refFormScheduler"
     >
-      <dynamic-field v-model="form[keyField]" :field="field" />
-    </div>
+      <div 
+        v-for="(field, keyField) in formFields" 
+        :key="keyField"
+      >
+        <dynamic-field v-model="form[keyField]" :field="field" />
+        
+      </div>
+    </q-form>
   </div>
 </template>
 

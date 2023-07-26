@@ -1,9 +1,19 @@
-<template></template>
+<template>
+  <div>
+    <schedulerModal />
+  </div>
+</template>
 <script>
 import workOrderList from '../_store/actions/workOrderList.ts'
 import { COMPANY_RAMP } from '../_components/model/constants.js'
+import schedulerStore from '../_components/scheduler/store/index.store.ts'
+import schedulerModal from '../_components/scheduler/index.vue';
+import show from '../_components/scheduler/actions/show.ts'
+
 export default {
-  name: 'scheduler',
+  components: {
+    schedulerModal,
+  },
   data() {
     return {
       crudId: this.$uid(),
@@ -22,7 +32,10 @@ export default {
         apiRoute: 'apiRoutes.qramp.schedulers',
         //permission: 'ramp.schedule-statuses',
         create: {
-          title: 'Create Recurring Schedule'
+          method: async () => {
+            schedulerStore.titleModal = 'New Scheduler'
+            schedulerStore.showModal = true;
+          }
         },
         read: {
           columns: [
@@ -151,68 +164,20 @@ export default {
             { name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left' },
           ],
           filters: {},
+          actions: [
+            {
+              name: 'edit',
+              icon: 'fal fa-pen',
+              label: this.$tr('isite.cms.label.edit'),
+              action: async (item) => {
+                await show(item.id);
+              }
+            },
+          ]
         },
-        update: {
-          title: 'Update OAG Stations'
-        },
+        update: false,
         delete: true,
-        formLeft: {
-          id: { value: "" },
-          carrierId: {
-            value: null,
-            type: 'treeSelect',
-            props: {
-              label: this.$tr('ifly.cms.sidebar.airline'),
-            },
-            loadOptions: {
-              apiRoute: 'apiRoutes.qfly.airlines',
-              select: {
-                label: 'airlineName',
-                id: 'id'
-              },
-              refresh: true,
-            }
-          },
-          operationTypeId: {
-            value: '',
-            type: 'select',
-            props: {
-              label: `*${this.$tr('ifly.cms.form.operation')}`,
-              clearable: true,
-              color: "primary",
-              options: workOrderList().getOperationTypeList()
-            },
-            label: this.$tr('ifly.cms.form.operation'),
-          },
-          stationId: {
-            value: null,
-            type: 'select',
-            loadOptions: {
-              apiRoute: 'apiRoutes.qsetupagione.setupStations',
-              select: { 'label': 'fullName', 'id': 'id' },
-              requestParams: {
-                filter: {
-                  companyId: COMPANY_RAMP,
-                },
-              },
-            },
-            props: {
-              label: 'Station',
-              'clearable': true
-            },
-          },
-          acTypeId: {
-            value: null,
-            type: 'select',
-            props: {
-              label: this.$tr('ifly.cms.sidebar.aircraftType'),
-              options: workOrderList().getACTypesList().map(item => ({
-                label: item.model,
-                value: item.id
-              })),
-            },
-          }
-        },
+        formLeft: {},
         formRight: {}
       }
     },
@@ -223,6 +188,9 @@ export default {
   },
   methods: {
     convertNumbersToDays(numbersDays) {
+      if (!Array.isArray(numbersDays)) {
+        return '';
+      }
       const daysOfWeek = {
         1: "Monday",
         2: "Tuesday",
@@ -234,7 +202,7 @@ export default {
       };
 
       const namesOfDays = numbersDays.map(number => daysOfWeek[number]);
-
+     
       return namesOfDays.join(', ');
     },
   }

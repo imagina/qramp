@@ -3,12 +3,32 @@ import {
     State,
     Store,
 } from '../contracts/store.contract'
+import moment from 'moment';
 
 const state = reactive<State>({
     showModal: false,
-    form: {},
+    titleModal: '',
+    form: {
+        carrierId: null,
+        stationId: null,
+        acTypeId: null,
+        fromDate: null,
+        untilDate: null,
+        operationTypeId: null,
+        flightNumber: null,
+        inboundScheduledArrival: null,
+        outboundScheduleDeparture: null,
+        outboundFlightNumber: null,
+        daysOfWeek: []
+    },
+    loading: false,
 })
-
+function dateFormatterFull(date: string): string {
+    if (!date) return '';
+  
+    const formattedDate = moment(date).format('MM/DD/YYYY HH:mm');
+    return formattedDate;
+}
 
 const store: Store = computed(() => ({
     get showModal() {
@@ -17,16 +37,51 @@ const store: Store = computed(() => ({
     set showModal(value) {
         state.showModal = value;
     },
+    get titleModal() {
+        return state.titleModal;
+    },
+    set titleModal(value) {
+        state.titleModal = value;
+    },
+    get loading() {
+        return state.loading;
+    },
+    set loading(value) {
+        state.loading = value;
+    },
     get form() {
         return state.form;
     },
-    set form(value) {
-        state.form = value;
+    set form(data) {
+        state.form.carrierId = data.carrierId
+        state.form.stationId = data.stationId
+        state.form.acTypeId = data.acTypeId
+        state.form.fromDate = dateFormatterFull(data.fromDate)
+        state.form.untilDate = dateFormatterFull(data.untilDate)
+        state.form.operationTypeId = data.operationTypeId
+        state.form.flightNumber = data.flightNumber
+        state.form.inboundScheduledArrival = dateFormatterFull(data.inboundScheduledArrival)
+        state.form.outboundScheduleDeparture = dateFormatterFull(data.outboundScheduleDeparture)
+        state.form.outboundFlightNumber = data.outboundFlightNumber
+        state.form.daysOfWeek = data.daysOfWeek || []; 
     },
     reset() {
-        state.form = {};
+        state.form = {
+            carrierId: null,
+            stationId: null,
+            acTypeId: null,
+            fromDate: null,
+            untilDate: null,
+            operationTypeId: null,
+            flightNumber: null,
+            inboundScheduledArrival: null,
+            outboundScheduleDeparture: null,
+            outboundFlightNumber: null,
+            daysOfWeek: []
+        };
         state.showModal = false;
     },
+    dateFormatterFull,
 })).value
 
 
