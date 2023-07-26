@@ -8,6 +8,6 @@ export default async function updateScheduler(): Promise<void> {
         store.loading = false;
     } catch (error) {
       store.loading = false;
-      console.log(error, 'saveScheduler');
+      console.log(error, 'updateScheduler');
     }
 }

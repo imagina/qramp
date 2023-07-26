@@ -16,6 +16,7 @@ export default async function showScheduler(id: number): Promise<void> {
         store.loading = false;
     } catch (error) {
       store.showModal = false;
-      console.log(error, 'showRevisions');
+      store.loading = false;
+      console.log(error, 'showScheduler');
     }
 }
