@@ -135,7 +135,7 @@ export default function modelFields() {
                 },
                 label: Vue.prototype.$tr("ifly.cms.form.flight"),
             },
-            inboundScheduledArrival: {
+            inboundScheduleArrival: {
                 value: '',
                 type: 'fullDate',
                 props: {

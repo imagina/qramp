@@ -16,7 +16,7 @@ const state = reactive<State>({
         untilDate: null,
         operationTypeId: null,
         flightNumber: null,
-        inboundScheduledArrival: null,
+        inboundScheduleArrival: null,
         outboundScheduleDeparture: null,
         outboundFlightNumber: null,
         daysOfWeek: []
@@ -60,7 +60,7 @@ const store: Store = computed(() => ({
         state.form.untilDate = dateFormatterFull(data.untilDate)
         state.form.operationTypeId = data.operationTypeId
         state.form.flightNumber = data.flightNumber
-        state.form.inboundScheduledArrival = dateFormatterFull(data.inboundScheduledArrival)
+        state.form.inboundScheduleArrival = dateFormatterFull(data.inboundScheduleArrival)
         state.form.outboundScheduleDeparture = dateFormatterFull(data.outboundScheduleDeparture)
         state.form.outboundFlightNumber = data.outboundFlightNumber
         state.form.daysOfWeek = data.daysOfWeek || []; 
@@ -74,7 +74,7 @@ const store: Store = computed(() => ({
             untilDate: null,
             operationTypeId: null,
             flightNumber: null,
-            inboundScheduledArrival: null,
+            inboundScheduleArrival: null,
             outboundScheduleDeparture: null,
             outboundFlightNumber: null,
             daysOfWeek: []
