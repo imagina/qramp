@@ -832,7 +832,7 @@ export default {
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: `${this.isPassenger ? 'Actual Out': `*${this.$tr('ifly.cms.form.blockOut')}`}`,
+              label: `${this.isPassenger ? 'Actual Out': `${this.$tr('ifly.cms.form.blockOut')}`}`,
               clearable: true,
               color:"primary",
               format24h: true,
