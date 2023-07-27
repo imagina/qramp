@@ -22,6 +22,7 @@ const state = reactive<State>({
         daysOfWeek: []
     },
     loading: false,
+    updateModal: false,
 })
 function dateFormatterFull(date: string): string {
     if (!date) return '';
@@ -49,6 +50,12 @@ const store: Store = computed(() => ({
     set loading(value) {
         state.loading = value;
     },
+    get updateModal() {
+        return state.updateModal;
+    },
+    set updateModal(value) {
+        state.updateModal = value;
+    },
     get form() {
         return state.form;
     },
@@ -59,8 +66,8 @@ const store: Store = computed(() => ({
         state.form.carrierId = data.carrierId
         state.form.stationId = data.stationId
         state.form.acTypeId = data.acTypeId
-        state.form.fromDate = dateFormatterFull(data.fromDate)
-        state.form.untilDate = dateFormatterFull(data.untilDate)
+        state.form.fromDate = moment(data.fromDate).format('MM/DD/YYYY');
+        state.form.untilDate = moment(data.untilDate).format('MM/DD/YYYY');
         state.form.operationTypeId = data.operationTypeId
         state.form.flightNumber = data.flightNumber
         state.form.inboundScheduleArrival = dateFormatterFull(data.inboundScheduleArrival)

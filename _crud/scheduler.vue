@@ -40,6 +40,7 @@ export default {
         //permission: 'ramp.schedule-statuses',
         create: {
           method: async () => {
+            schedulerStore.updateModal = false;
             schedulerStore.titleModal = 'New Scheduler'
             schedulerStore.showModal = true;
           }

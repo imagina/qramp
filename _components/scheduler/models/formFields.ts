@@ -2,9 +2,11 @@ import Vue, { computed } from 'vue';
 import { COMPANY_RAMP } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
 import { modelWeek } from './constants'
+import store from '../store/index.store'
 
 
 export default function modelFields() {
+    const updateModal = computed(() => store.updateModal);
     const formFields = computed(() => ({
         mainForm: {
             carrierId: {
@@ -61,35 +63,37 @@ export default function modelFields() {
             },
             fromDate: {
                 value: '',
-                type: 'fullDate',
+                type: 'date',
                 props: {
                     rules: [
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
-                    hint: 'Format: MM/DD/YYYY HH:mm',
-                    mask: 'MM/DD/YYYY HH:mm',
-                    'place-holder': 'MM/DD/YYYY HH:mm',
+                    hint: 'Format: MM/DD/YYYY',
+                    mask: 'MM/DD/YYYY',
+                    'place-holder': 'MM/DD/YYYY',
                     label: `* fromDate`,
                     clearable: true,
                     color: "primary",
                     format24h: true,
+                    readonly: updateModal.value
                 },
                 label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
             },
             untilDate: {
                 value: '',
-                type: 'fullDate',
+                type: 'date',
                 props: {
                     rules: [
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
-                    hint: 'Format: MM/DD/YYYY HH:mm',
-                    mask: 'MM/DD/YYYY HH:mm',
-                    'place-holder': 'MM/DD/YYYY HH:mm',
+                    hint: 'Format: MM/DD/YYYY',
+                    mask: 'MM/DD/YYYY',
+                    'place-holder': 'MM/DD/YYYY',
                     label: `* untilDate`,
                     clearable: true,
                     color: "primary",
                     format24h: true,
+                    readonly: updateModal.value
                 },
                 label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
             },
@@ -104,6 +108,7 @@ export default function modelFields() {
                     label: 'daysOfWeek',
                     alphabeticalSort: false,
                     options: modelWeek,
+                    readonly: updateModal.value
                 },
             },
             operationTypeId: {

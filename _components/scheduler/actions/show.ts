@@ -5,6 +5,7 @@ import _ from 'lodash'
 export default async function showScheduler(id: number): Promise<void> {
     try {
         store.titleModal = `Update scheduler Id: ${id}`;
+        store.updateModal = true;
         store.loading = true;
         store.showModal = true;
         const params = {
