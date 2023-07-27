@@ -102,6 +102,7 @@ export default function modelFields() {
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
                     label: 'daysOfWeek',
+                    alphabeticalSort: false,
                     options: modelWeek,
                 },
             },
