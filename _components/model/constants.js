@@ -47,7 +47,6 @@ export const FlightformFieldModel = [
     'gateId',
     'statusId',
     'inboundBlockIn',
-    'outboundBlockOut'
   ];
   export const FlightformFieldPassengerModel = [
     'customerId',

@@ -826,7 +826,6 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
-              ...this.validateRulesBlock,
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
