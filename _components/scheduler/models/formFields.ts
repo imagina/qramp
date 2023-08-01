@@ -8,7 +8,7 @@ import store from '../store/index.store'
 export default function modelFields() {
     const updateModal = computed(() => store.updateModal);
     const formFields = computed(() => ({
-        mainForm: {
+        left: {
             carrierId: {
                 value: null,
                 type: 'select',
@@ -61,6 +61,8 @@ export default function modelFields() {
                     })),
                 },
             },
+        },
+        rigth: {
             fromDate: {
                 value: '',
                 type: 'date',
@@ -71,7 +73,7 @@ export default function modelFields() {
                     hint: 'Format: MM/DD/YYYY',
                     mask: 'MM/DD/YYYY',
                     'place-holder': 'MM/DD/YYYY',
-                    label: `* fromDate`,
+                    label: `* From Date`,
                     clearable: true,
                     color: "primary",
                     format24h: true,
@@ -89,7 +91,7 @@ export default function modelFields() {
                     hint: 'Format: MM/DD/YYYY',
                     mask: 'MM/DD/YYYY',
                     'place-holder': 'MM/DD/YYYY',
-                    label: `* untilDate`,
+                    label: `* Until Date`,
                     clearable: true,
                     color: "primary",
                     format24h: true,
@@ -105,12 +107,14 @@ export default function modelFields() {
                     rules: [
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
-                    label: 'daysOfWeek',
+                    label: 'Days Of Week',
                     alphabeticalSort: false,
                     options: modelWeek,
                     readonly: updateModal.value
                 },
             },
+        },
+        center: {
             operationTypeId: {
                 value: null,
                 type: 'select',
@@ -143,14 +147,11 @@ export default function modelFields() {
             },
             inboundScheduleArrival: {
                 value: '',
-                type: 'fullDate',
+                type: 'hour',
                 props: {
                     rules: [
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
-                    hint: 'Format: MM/DD/YYYY HH:mm',
-                    mask: 'MM/DD/YYYY HH:mm',
-                    'place-holder': 'MM/DD/YYYY HH:mm',
                     label: `*${Vue.prototype.$tr('ifly.cms.form.scheduledArrival')}`,
                     clearable: true,
                     color: "primary",
@@ -167,7 +168,7 @@ export default function modelFields() {
                     rules: [
                         (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
                     ],
-                    label: `* outboundFlightNumber`,
+                    label: `*Outbound Flight Number`,
                     clearable: true,
                     maxlength: 7,
                     color: "primary",
@@ -176,15 +177,12 @@ export default function modelFields() {
             },
             outboundScheduleDeparture: {
                 value: '',
-                type: 'fullDate',
+                type: 'hour',
                 props: {
                     rules: [
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
-                    hint: 'Format: MM/DD/YYYY HH:mm',
-                    mask: 'MM/DD/YYYY HH:mm',
-                    'place-holder': 'MM/DD/YYYY HH:mm',
-                    label: `* outbound Schedule Departure `,
+                    label: `*Outbound Schedule Departure `,
                     clearable: true,
                     color: "primary",
                     format24h: true,
@@ -192,6 +190,23 @@ export default function modelFields() {
                 label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
             },
         },
+        full: {
+            depDays: {
+                value: 0,
+                type: "input",
+                props: {
+                    type: 'number',
+                    rules: [
+                        (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
+                    ],
+                    label: `* Dep. +Days`,
+                    clearable: true,
+                    maxlength: 10,
+                    color: "primary",
+                },
+                label: Vue.prototype.$tr("ifly.cms.form.flight"),
+            },
+        }
     }))
 
     return {

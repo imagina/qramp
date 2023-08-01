@@ -5,7 +5,9 @@ import workOrderList from '../../../_store/actions/workOrderList';
 
 export default function useForm() {
     const refFormScheduler = ref(null);
+    const refCustomer = ref(null);
     const form = computed(() => store.form);
+    const loading = computed(() => store.loading);
     const { formFields } = modelFormFields();
     const isbound = computed(() => {
         if(form.value.operationTypeId) {
@@ -14,13 +16,13 @@ export default function useForm() {
           const type = operationType?.options?.type;
           if(type) {
             if(type === 'full'){
-              return [true, true];
+              return {inbound:true, outbound:true};
             }
             if(type === 'inbound') {
-              return [true, false]
+              return {inbound:true, outbound:false}
             }
             if(type === 'outbound') {
-              return [false, true];
+              return {inbound:false, outbound:true};
             }
           }
         }
@@ -31,5 +33,7 @@ export default function useForm() {
         form,
         refFormScheduler,
         isbound,
+        refCustomer,
+        loading,
     }
 }

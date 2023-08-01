@@ -19,7 +19,11 @@ const state = reactive<State>({
         inboundScheduleArrival: null,
         outboundScheduleDeparture: null,
         outboundFlightNumber: null,
-        daysOfWeek: []
+        daysOfWeek: [],
+        customerId: null,
+        contractId: null,
+        customCustomerName: null,
+        depDays: 0,
     },
     loading: false,
     updateModal: false,
@@ -70,10 +74,14 @@ const store: Store = computed(() => ({
         state.form.untilDate = moment(data.untilDate).format('MM/DD/YYYY');
         state.form.operationTypeId = data.operationTypeId
         state.form.flightNumber = data.flightNumber
-        state.form.inboundScheduleArrival = dateFormatterFull(data.inboundScheduleArrival)
-        state.form.outboundScheduleDeparture = dateFormatterFull(data.outboundScheduleDeparture)
+        state.form.inboundScheduleArrival = moment(data.inboundScheduleArrival,'HH:mm:ss').format('HH:mm')
+        state.form.outboundScheduleDeparture = moment(data.outboundScheduleDeparture, 'HH:mm:ss').format('HH:mm')
         state.form.outboundFlightNumber = data.outboundFlightNumber
-        state.form.daysOfWeek = data.daysOfWeek || []; 
+        state.form.daysOfWeek = data.daysOfWeek || [];
+        state.form.customerId = data.customerId;
+        state.form.contractId = data.contractId;
+        state.form.customCustomerName = data.customCustomerName || null;
+        state.form.depDays = data.depDays || 0;
     },
     reset() {
         state.form = {
@@ -87,7 +95,11 @@ const store: Store = computed(() => ({
             inboundScheduleArrival: null,
             outboundScheduleDeparture: null,
             outboundFlightNumber: null,
-            daysOfWeek: []
+            daysOfWeek: [],
+            customerId: null,
+            contractId: null,
+            customCustomerName: null,
+            depDays: 0,
         };
         state.showModal = false;
     },
