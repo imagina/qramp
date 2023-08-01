@@ -3,21 +3,25 @@ import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList';
 import { FormState, FieldConfig } from '../contracts/customers.contract';
 
+/**
+ * Hook to manage customer fields in a form.
+ *
+ * @param {any} props - The component props containing the `dataForm` property.
+ * @returns {Object} An object containing various functions and reactive state for managing customer fields.
+ */
 export default function useCustomerField(props: any) {
     const dataForm = computed(() => props.dataForm);
+    // Reactive state for the form fields and additional data.
     const state = reactive<FormState>({
         newCustumerAdHoc: [],
         bannerMessage: null,
         customerName: '',
         selectCustomers: '',
-        form: {
-            customerId: null,
-            contractId: null,
-            customCustomerName: null,
-        },
     })
 
+    // Computed property to generate the field configuration.
     const fields: ComputedRef<FieldConfig> = computed(() => ({
+        // Banner field configuration
         banner: {
             type: "banner",
             props: {
@@ -26,6 +30,7 @@ export default function useCustomerField(props: any) {
                 message: state.bannerMessage,
             },
         },
+        // Customer ID select field configuration
         customerId: {
             value: '',
             type: 'select',
@@ -36,7 +41,6 @@ export default function useCustomerField(props: any) {
                 rules: [
                     val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                 ],
-
                 label: `*${Vue.prototype.$tr('ifly.cms.form.customer')}`,
                 clearable: true,
                 color: "primary",
@@ -44,13 +48,20 @@ export default function useCustomerField(props: any) {
                 emitValue: false,
                 options: state.newCustumerAdHoc,
             },
+            // Load options asynchronously using `workOrderList().getCustomerWithContract`.
             loadOptions: {
                 delayed: workOrderList().getCustomerWithContract,
             },
             label: Vue.prototype.$tr('ifly.cms.form.customer'),
         }
     }))
+
+    /**
+     * Adds a new customer to the list.
+     * If the `customerName` is not empty, it creates a new customer with the provided name.
+     */
     function addCustumers(): void {
+        // Add the new customer to the list if `customerName` is not empty.
         if (state.customerName !== "") {
             const id = `customer-${qRampStore().numberInRange(8000, 1000)}`;
             state.newCustumerAdHoc = [{ id, label: state.customerName, value: state.customerName }];
@@ -66,35 +77,54 @@ export default function useCustomerField(props: any) {
             state.customerName = "";
             return;
         }
+        // Show an error alert if `customerName` is empty.
         Vue.prototype.$alert.error({
             message: Vue.prototype.$tr("ifly.cms.message.orderaddNewrecord"),
         });
     }
+
+    /**
+     * Sets the customer based on the selected option in the customerId field.
+     * Updates the reactive state and the dataForm.
+     */
     function setCustomer(): void {
+        // Get the selected customer object from the state.
         const selectCustomers: any =
             (state.selectCustomers === null
                 || state.selectCustomers === undefined
                 || state.selectCustomers === '')
                 ? {} : state.selectCustomers;
         const customCustomerName = selectCustomers.label || null;
+        // Set the custom customer name and customer ID in the dataForm.
         dataForm.value.customCustomerName = dataForm.value.customerId
             ? null
             : customCustomerName;
         dataForm.value.customerId = selectCustomers.id || null;
         dataForm.value.contractId = selectCustomers.contractId || null;
         let message = null;
+        // Set the banner message based on whether a customer is selected or not.
         if (Object.keys(selectCustomers).length > 0) {
-            message = state.form.contractId
+            message = dataForm.value.contractId
                 ? `${Vue.prototype.$tr("ifly.cms.message.selectedCustomerWithContract")}`
                 : Vue.prototype.$tr("ifly.cms.message.selectedCustomerWithoutContract");
         }
 
         state.bannerMessage =
-            selectCustomers && !state.form.contractId ? message : null;
+            selectCustomers && !dataForm.value.contractId ? message : null;
     }
+
+    /**
+     * Sets the `customerName` in the state based on the query string.
+     * @param {string} query - The query string representing the customer name.
+     */
     function setCustomerName(query: string): void {
         state.customerName = query || "";
     }
+
+    /**
+     * Initializes the form with data for the selected customer (if any).
+     * Retrieves customer details and sets them in the state and dataForm.
+     */
     async function init(): Promise<void> {
         const customer = await workOrderList().getCustomerWithContractLists().find(item => item.id == dataForm.value.customerId);
         if (customer) {
@@ -105,9 +135,12 @@ export default function useCustomerField(props: any) {
         }
         await setCustomer();
     }
+
+    // Execute the `init` function when the component is mounted.
     onMounted(async () => {
         await init();
     })
+
     return {
         fields,
         state,
@@ -115,4 +148,4 @@ export default function useCustomerField(props: any) {
         setCustomerName,
         setCustomer,
     }
-} 
+}

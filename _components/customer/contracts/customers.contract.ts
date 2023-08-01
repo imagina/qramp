@@ -9,11 +9,6 @@ export interface FormState {
     bannerMessage: string | null;
     customerName: string;
     selectCustomers: Customer | null | string;
-    form: {
-        customerId: string | null;
-        contractId: string | null;
-        customCustomerName: string | null;
-    };
 }
 
 export interface SelectField {
