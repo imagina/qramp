@@ -1,11 +1,12 @@
 <template>
   <div>
     <q-form ref="refFormScheduler">
-      <div class="tw-grid tw-grid-col-2 tw-grid-flow-col tw-gap-4">
+      <div class="tw-grid tw-grid-cols-2 tw-gap-4">
         <div>
           <customer
             v-if="!loading"
-            :dataForm="form" 
+            :dataForm="form"
+            :addNewOptions="false" 
             ref="refCustomer"
           />
           <div v-for="(field, keyField) in formFields.left" :key="keyField">

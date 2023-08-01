@@ -22,8 +22,8 @@ const state = reactive<State>({
         daysOfWeek: [],
         customerId: null,
         contractId: null,
-        customCustomerName: null,
-        depDays: 0,
+        //customCustomerName: null,
+        depDays: null,
     },
     loading: false,
     updateModal: false,
@@ -80,8 +80,8 @@ const store: Store = computed(() => ({
         state.form.daysOfWeek = data.daysOfWeek || [];
         state.form.customerId = data.customerId;
         state.form.contractId = data.contractId;
-        state.form.customCustomerName = data.customCustomerName || null;
-        state.form.depDays = data.depDays || 0;
+        //state.form.customCustomerName = data.customCustomerName || null;
+        state.form.depDays = data.depDays || null;
     },
     reset() {
         state.form = {
@@ -98,8 +98,8 @@ const store: Store = computed(() => ({
             daysOfWeek: [],
             customerId: null,
             contractId: null,
-            customCustomerName: null,
-            depDays: 0,
+            //customCustomerName: null,
+            depDays: null,
         };
         state.showModal = false;
     },

@@ -11,6 +11,7 @@ import { FormState, FieldConfig } from '../contracts/customers.contract';
  */
 export default function useCustomerField(props: any) {
     const dataForm = computed(() => props.dataForm);
+    const addNewOptions = computed(() => props.addNewOptions);
     // Reactive state for the form fields and additional data.
     const state = reactive<FormState>({
         newCustumerAdHoc: [],
@@ -71,7 +72,9 @@ export default function useCustomerField(props: any) {
                 value: state.customerName,
                 label: state.customerName,
             };
-            dataForm.value.customCustomerName = state.customerName;
+            if(addNewOptions.value) {
+                dataForm.value.customCustomerName = state.customerName;
+            }
             dataForm.value.customerId = null;
             dataForm.value.contractId = null;
             state.customerName = "";
@@ -94,11 +97,14 @@ export default function useCustomerField(props: any) {
                 || state.selectCustomers === undefined
                 || state.selectCustomers === '')
                 ? {} : state.selectCustomers;
-        const customCustomerName = selectCustomers.label || null;
-        // Set the custom customer name and customer ID in the dataForm.
-        dataForm.value.customCustomerName = dataForm.value.customerId
-            ? null
-            : customCustomerName;
+        if(addNewOptions.value) {
+            const customCustomerName = selectCustomers.label || null;
+            // Set the custom customer name and customer ID in the dataForm.
+            dataForm.value.customCustomerName = dataForm.value.customerId
+                ? null
+                : customCustomerName;
+        }       
+        
         dataForm.value.customerId = selectCustomers.id || null;
         dataForm.value.contractId = selectCustomers.contractId || null;
         let message = null;

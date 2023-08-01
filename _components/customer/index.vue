@@ -11,7 +11,7 @@
       @input="setCustomer"
       @filter="setCustomerName"
     >
-      <div slot="before-options">
+      <div slot="before-options" v-if="addNewOptions">
         <div class="q-py-md q-px-md" @click="addCustumers">
           <div class="row cursor-pointer">
             <div class="q-pr-md">
@@ -39,6 +39,10 @@ export default defineComponent({
         type: Object,
         default: {}
     },
+    addNewOptions: {
+      type: Boolean,
+      default: () => true,
+    }
   },
   setup(props) {
     return { ...useCustomerField(props) };

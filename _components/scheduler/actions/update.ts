@@ -4,6 +4,9 @@ import store from '../store/index.store'
 export default async function updateScheduler(): Promise<void> {
     try {
         store.loading = true;
+        const payload = {...store.form}
+        delete payload.inboundScheduleArrival
+        delete payload.outboundScheduleDeparture
         await baseService.update('apiRoutes.qramp.schedulers', store.form.id, store.form);
         store.loading = false;
     } catch (error) {
