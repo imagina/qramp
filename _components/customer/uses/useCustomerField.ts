@@ -1,4 +1,4 @@
-import Vue, { computed, reactive, onMounted, ComputedRef } from 'vue';
+import Vue, { computed, reactive, onMounted, ComputedRef, watch } from 'vue';
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList';
 import { FormState, FieldConfig } from '../contracts/customers.contract';
@@ -141,7 +141,9 @@ export default function useCustomerField(props: any) {
         }
         await setCustomer();
     }
-
+    watch(dataForm, async (newValue, oldValue) => {
+        await init();
+    },{ deep: true });
     // Execute the `init` function when the component is mounted.
     onMounted(async () => {
         await init();
