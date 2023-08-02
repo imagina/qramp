@@ -54,7 +54,18 @@ export default {
               style: 'width: 50px',
               action: (item) => false
             },
-
+            {
+              name: 'customerId',
+              label: 'Customers',
+              field: 'customerId',
+              formatAsync: async item => {
+                if (!item.customerId) return '-';
+                const response = await workOrderList().getCustomerList()
+                  .find(customer => customer.id === item.customerId) || {};
+                return `${response.customerName || '-'}`;
+              },
+              align: 'left',
+            },
             {
               name: 'flightNumber',
               label: 'FlightNumber',
