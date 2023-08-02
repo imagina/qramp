@@ -91,7 +91,7 @@ export default function modelFields() {
                 props: {
                     multiple: true,
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => val.length > 0 || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
                     label: 'Days Of Week',
                     alphabeticalSort: false,
@@ -203,6 +203,7 @@ export default function modelFields() {
                     clearable: true,
                     maxlength: 10,
                     color: "primary",
+                    readonly: updateModal.value
                 },
                 label: Vue.prototype.$tr("ifly.cms.form.flight"),
             },
