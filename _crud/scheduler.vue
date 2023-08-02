@@ -56,7 +56,7 @@ export default {
             },
             {
               name: 'customerId',
-              label: 'Customers',
+              label: this.$tr('isite.cms.label.customer'),
               field: 'customerId',
               formatAsync: async item => {
                 if (!item.customerId) return '-';
@@ -68,7 +68,7 @@ export default {
             },
             {
               name: 'flightNumber',
-              label: 'FlightNumber',
+              label: 'Flight Number',
               field: 'flightNumber',
               format: (val) => (val ? val : "-"),
               align: 'left',
