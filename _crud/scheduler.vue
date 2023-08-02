@@ -192,7 +192,12 @@ export default {
                 await show(item.id);
               }
             },
-          ]
+          ],
+          requestParams: {
+            filter: {
+              withoutDefaultInclude: true,
+            },
+          }
         },
         update: false,
         delete: true,
