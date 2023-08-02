@@ -303,6 +303,7 @@
       @deleteSchedule="deleteSchedule" @setEventComments="setEventComments" />
     <form-orders ref="formOrders" @getWorkOrderFilter="getWoCache" />
     <stationModal ref="stationModal" @saveFilterStationId="saveFilterStationId" />
+    <scheduler />
   </div>
 </template>
 <script>
@@ -332,7 +333,8 @@ import workOrderList from '../../_store/actions/workOrderList.ts';
 import completedSchedule from './completedSchedule.vue'
 import modelHoursFilter from './models/modelHoursFilter.js'
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
-
+import scheduler from '../scheduler/index.vue';
+import storeScheduler from '../scheduler/store/index.store.ts';
 export default {
   props: {
     isBlank: {
@@ -348,6 +350,7 @@ export default {
     lineForm,
     badgeComment,
     completedSchedule,
+    scheduler
   },
   data() {
     return {
@@ -485,7 +488,7 @@ export default {
       },
     },
     extraPageActions() {
-      return [
+      let extraActions = [
         {
           label: "Copy Tiny URL",
           props: {
@@ -514,6 +517,27 @@ export default {
           },
         },
       ];
+
+      if(!this.isPassenger){
+        extraActions.push({
+          label: "Scheduler",
+          props: {
+            label: "Scheduler",
+            icon: "fa-duotone fa-calendar-plus",
+          },
+          action: () => {
+            const routeName = this.isPassenger ? 'passenger' : 'ramp';
+            let hrefSplit = window.location.href.split("?");
+            let tinyUrl =
+              this.$store.state.qsiteApp.originURL +
+              `/#/${routeName}/schedule/index`;
+            if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
+            localStorage.setItem('urlSchedule', tinyUrl);
+            this.$router.push({name: 'qramp.admin.scheduler'})
+          },
+        })
+      }
+      return extraActions;
     },
     filterActions() {
       return {
