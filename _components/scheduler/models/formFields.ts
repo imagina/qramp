@@ -44,7 +44,8 @@ export default function modelFields() {
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
                     label: 'Station',
-                    'clearable': true
+                    'clearable': true,
+                    readonly: updateModal.value
                 },
             },
         },
@@ -152,7 +153,7 @@ export default function modelFields() {
                     rules: [
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
-                    label: `*${Vue.prototype.$tr('ifly.cms.form.scheduledArrival')}`,
+                    label: `* Inbound Schedule Arrival`,
                     clearable: true,
                     color: "primary",
                     format24h: true,
@@ -196,10 +197,7 @@ export default function modelFields() {
                 type: "input",
                 props: {
                     type: 'number',
-                    rules: [
-                        (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
-                    ],
-                    label: `* Dep. +Days`,
+                    label: `Dep. +Days`,
                     clearable: true,
                     maxlength: 10,
                     color: "primary",

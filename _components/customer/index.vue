@@ -42,7 +42,11 @@ export default defineComponent({
     addNewOptions: {
       type: Boolean,
       default: () => true,
-    }
+    }, 
+    readonly: {
+      type: Boolean,
+      default: () => false,
+    }, 
   },
   setup(props) {
     return { ...useCustomerField(props) };

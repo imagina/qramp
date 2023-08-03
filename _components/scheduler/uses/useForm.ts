@@ -8,6 +8,7 @@ export default function useForm() {
     const refCustomer = ref(null);
     const form = computed(() => store.form);
     const loading = computed(() => store.loading);
+    const updateModal = computed(() => store.updateModal);
     const { formFields } = modelFormFields();
     const isbound = computed(() => {
         if(form.value.operationTypeId) {
@@ -35,5 +36,6 @@ export default function useForm() {
         isbound,
         refCustomer,
         loading,
+        updateModal,
     }
 }
