@@ -48,6 +48,20 @@ export default function modelFields() {
                     readonly: updateModal.value
                 },
             },
+            acTypeId: {
+                value: null,
+                type: 'select',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
+                    options: workOrderList().getACTypesList().map(item => ({
+                        label: item.model,
+                        value: item.id
+                    })),
+                },
+            },
         },
         rigth: {
             fromDate: {
@@ -102,20 +116,6 @@ export default function modelFields() {
             },
         },
         center: {
-            acTypeId: {
-                value: null,
-                type: 'select',
-                props: {
-                    rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                    ],
-                    label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
-                    options: workOrderList().getACTypesList().map(item => ({
-                        label: item.model,
-                        value: item.id
-                    })),
-                },
-            },
             operationTypeId: {
                 value: null,
                 type: 'select',
