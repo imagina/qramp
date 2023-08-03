@@ -6,6 +6,7 @@
           <customer
             :dataForm="form"
             :addNewOptions="false" 
+            :readonly="updateModal"
             ref="refCustomer"
           />
           <div v-for="(field, keyField) in formFields.left" :key="keyField">

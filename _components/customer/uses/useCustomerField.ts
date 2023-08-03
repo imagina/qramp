@@ -12,6 +12,7 @@ import { FormState, FieldConfig } from '../contracts/customers.contract';
 export default function useCustomerField(props: any) {
     const dataForm = computed(() => props.dataForm);
     const addNewOptions = computed(() => props.addNewOptions);
+    const readonly = computed(() => props.readonly);
     // Reactive state for the form fields and additional data.
     const state = reactive<FormState>({
         newCustumerAdHoc: [],
@@ -48,6 +49,7 @@ export default function useCustomerField(props: any) {
                 'hide-bottom-space': false,
                 emitValue: false,
                 options: state.newCustumerAdHoc,
+                readonly: readonly.value
             },
             // Load options asynchronously using `workOrderList().getCustomerWithContract`.
             loadOptions: {

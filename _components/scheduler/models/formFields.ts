@@ -44,7 +44,22 @@ export default function modelFields() {
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
                     label: 'Station',
-                    'clearable': true
+                    'clearable': true,
+                    readonly: updateModal.value
+                },
+            },
+            acTypeId: {
+                value: null,
+                type: 'select',
+                props: {
+                    rules: [
+                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    ],
+                    label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
+                    options: workOrderList().getACTypesList().map(item => ({
+                        label: item.model,
+                        value: item.id
+                    })),
                 },
             },
         },
@@ -101,20 +116,6 @@ export default function modelFields() {
             },
         },
         center: {
-            acTypeId: {
-                value: null,
-                type: 'select',
-                props: {
-                    rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
-                    ],
-                    label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
-                    options: workOrderList().getACTypesList().map(item => ({
-                        label: item.model,
-                        value: item.id
-                    })),
-                },
-            },
             operationTypeId: {
                 value: null,
                 type: 'select',
@@ -140,7 +141,7 @@ export default function modelFields() {
                     ],
                     label: `*${Vue.prototype.$tr("ifly.cms.form.flight")}`,
                     clearable: true,
-                    maxlength: 7,
+                    maxlength: 10,
                     color: "primary",
                 },
                 label: Vue.prototype.$tr("ifly.cms.form.flight"),
@@ -152,7 +153,7 @@ export default function modelFields() {
                     rules: [
                         val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                     ],
-                    label: `*${Vue.prototype.$tr('ifly.cms.form.scheduledArrival')}`,
+                    label: `* Inbound Schedule Arrival`,
                     clearable: true,
                     color: "primary",
                     format24h: true,
@@ -170,7 +171,7 @@ export default function modelFields() {
                     ],
                     label: `*Outbound Flight Number`,
                     clearable: true,
-                    maxlength: 7,
+                    maxlength: 10,
                     color: "primary",
                 },
                 label: Vue.prototype.$tr("ifly.cms.form.flight"),
@@ -196,14 +197,10 @@ export default function modelFields() {
                 type: "input",
                 props: {
                     type: 'number',
-                    rules: [
-                        (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
-                    ],
-                    label: `* Dep. +Days`,
+                    label: `Dep. +Days`,
                     clearable: true,
                     maxlength: 10,
                     color: "primary",
-                    readonly: updateModal.value
                 },
                 label: Vue.prototype.$tr("ifly.cms.form.flight"),
             },
