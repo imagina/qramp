@@ -35,13 +35,12 @@
         ghost-class="ghostCard"
         drag-class="dragCard"
         filter=".ignoreItem"
-        class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 h-200"
+        class="tw-mb-4 h-200"
       >
         <kanban-card
           v-for="(card, index) in cards"
           :key="card.id"
           :card="card"
-          class="tw-border-2 tw-border-gray-100"
         />
       </draggable>
     </div>
@@ -87,7 +86,7 @@ export default defineComponent({
 
 <style>
 .columnCtn {
-  @apply tw-w-52;
+  @apply tw-w-64;
 }
 
 .dragCard {
