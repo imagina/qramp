@@ -7,7 +7,8 @@
      tw-my-2 
      tw-border-l-8 
      tw-border-yellow-400 
-     shadow-2"
+     shadow-2
+     tw-bg-white"
   >
     <div>
       <div class="tw-py-2 tw-pl-2 tw-w-full">
