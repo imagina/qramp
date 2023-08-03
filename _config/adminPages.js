@@ -172,6 +172,20 @@ export default {
       refresh: true,
     }
   },
+  scheduler: {
+    activated: true,
+    authenticated: true,
+    path: '/ramp/scheduler/index',
+    name: 'qramp.admin.scheduler',
+    crud: import('../_crud/scheduler.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.scheduler',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,

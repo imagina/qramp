@@ -32,5 +32,6 @@ export default {
   percentageWorkOrdersPosted: `${urlBase}/dashboard/percentage-work-orders-posted`,
   workOrdersByStatusLines: `${urlBase}/dashboard/work-orders-by-status-lines`,
   comments: `${urlBase}/comments`,
-  categories: `${urlBase}/categories`
+  categories: `${urlBase}/categories`,
+  schedulers: `${urlBase}/schedulers`
 }
