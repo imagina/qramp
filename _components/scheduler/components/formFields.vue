@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-form ref="refFormScheduler">
-      <div class="tw-grid tw-grid-cols-2 tw-gap-4">
+      <div class="tw-grid md:tw-grid-cols-2 tw-gap-4">
         <div>
           <customer
             :dataForm="form"
