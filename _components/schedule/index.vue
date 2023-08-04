@@ -518,7 +518,7 @@ export default {
         },
       ];
 
-      if(!this.isPassenger){
+      if(!this.isPassenger && this.$auth.hasAccess('ramp.schedulers.manage')){
         extraActions.push({
           label: "Scheduler",
           props: {

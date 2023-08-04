@@ -159,6 +159,7 @@ export default {
     }
   },
   scheduler: {
+    permission: 'ramp.schedulers.manage',
     activated: true,
     authenticated: true,
     path: '/ramp/scheduler/index',
