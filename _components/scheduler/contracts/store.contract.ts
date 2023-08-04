@@ -13,5 +13,6 @@ export interface Store {
     titleModal: string;
     updateModal: boolean;
     reset(): void;
+    validateOperationType(): void;
     dateFormatterFull(date: string): string;
 }
