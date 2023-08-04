@@ -28,7 +28,7 @@
         :date="column.date"
         :cards="column.cards"
         :groupOptions="groupOptions"
-        class="tw-flex-none tw-space-y-0 tw-h-auto tw-rounded-lg tw-shadow-md tw-border tw-w-48 tw-mx-2"
+        class="tw-flex-none tw-space-y-0 tw-h-auto tw-rounded-lg tw-shadow-md tw-border tw-w-48 tw-mx-2 tw-mb-4"
         :class="{
           'tw-border-blue-800 tw-bg-blue-800 tw-bg-opacity-20':
             selectedDate === column.date.format('YYYY/MM/DD'),

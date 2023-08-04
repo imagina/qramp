@@ -26,23 +26,30 @@
           </div>
         </div>
       </div>
-
-      <draggable
-        :list="cards"
-        :group="groupOptions"
-        :force-fallback="true"
-        group="data"
-        ghost-class="ghostCard"
-        drag-class="dragCard"
-        filter=".ignoreItem"
-        class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 h-200 tw-px-2"
+      <div class="tw-overflow-y-auto tw-overflow-x-hidden  h-200">
+      <div 
+        v-for="(card, key) in cards" 
+        :key="key"
       >
-        <kanban-card
-          v-for="(card, index) in cards"
-          :key="card.id"
-          :card="card"
-        />
+        {{  card.hour }}
+        <draggable
+          :lists="card.data"
+          :group="groupOptions"
+          :force-fallback="true"
+          group="data"
+          ghost-class="ghostCard"
+          drag-class="dragCard"
+          filter=".ignoreItem"
+          class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-64"
+        >
+          <kanban-card
+            v-for="(card, index) in card.data"
+            :key="card.id"
+            :card="card"
+          />
       </draggable>
+    </div>
+  </div>
     </div>
   </div>
 </template>
