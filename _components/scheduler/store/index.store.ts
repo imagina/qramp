@@ -74,8 +74,8 @@ const store: Store = computed(() => ({
         state.form.untilDate = moment(data.untilDate).format('MM/DD/YYYY');
         state.form.operationTypeId = data.operationTypeId
         state.form.flightNumber = data.flightNumber
-        state.form.inboundScheduleArrival = moment(data.inboundScheduleArrival,'HH:mm:ss').format('HH:mm')
-        state.form.outboundScheduleDeparture = moment(data.outboundScheduleDeparture, 'HH:mm:ss').format('HH:mm')
+        state.form.inboundScheduleArrival = moment(data.inboundScheduleArrival).format('HH:mm')
+        state.form.outboundScheduleDeparture = moment(data.outboundScheduleDeparture).format('HH:mm')
         state.form.outboundFlightNumber = data.outboundFlightNumber
         state.form.daysOfWeek = data.daysOfWeek || [];
         state.form.customerId = data.customerId;
