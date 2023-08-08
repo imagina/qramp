@@ -4,7 +4,7 @@ import { Action, ModelActionsModalResult } from './modelActionsModal.contract'
 /**
  * Reference to the form fields for the scheduler modal.
  */
-type RefFormFields = Ref<any>;
+type RefFormFields = Ref<HTMLElement | null>;
 
 /**
  * Computed property indicating whether the application is in a loading state.

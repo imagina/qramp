@@ -10,9 +10,9 @@ import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract
 export default function useSchedulerModal(): SchedulerModalComposition {
     /**
      * Reference to the form fields for the scheduler modal.
-     * @type {Ref<any>}
+     * @type {Ref<HTMLElement | null>}
      */
-    const refFormFields: Ref<any> = ref(null);
+    const refFormFields: Ref<HTMLElement | null> = ref(null);
 
     /**
      * Computed property indicating whether the application is in a loading state.
