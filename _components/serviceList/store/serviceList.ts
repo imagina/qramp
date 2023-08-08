@@ -9,7 +9,7 @@ import {
     ServiceListStoreContract,
     ReactiveStoreContract,
     DynamicField
-} from '../@Contract/index.contract';
+} from '../contracts/index.contract';
 import qRampStore from '../../../_store//qRampStore';
 import _ from 'lodash';
 
