@@ -1,4 +1,5 @@
 import { WritableComputedRef, ComputedRef, Ref } from 'vue';
+import { Action, ModelActionsModalResult } from './modelActionsModal.contract'
 
 /**
  * Reference to the form fields for the scheduler modal.
@@ -32,7 +33,7 @@ export interface ModalActions {
  */
 export interface SchedulerModalComposition {
     showModal: ShowModalWritableComputed;
-    actions: any;
+    actions: ComputedRef<Action[]>;
     refFormFields: RefFormFields;
     clear: () => void;
     loading: LoadingComputed;

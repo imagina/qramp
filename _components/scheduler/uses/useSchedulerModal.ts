@@ -2,6 +2,7 @@ import { ref, computed, WritableComputedRef, ComputedRef, Ref } from 'vue';
 import store from '../store/index.store';
 import modelActionsModal from '../models/modelActionsModal';
 import { SchedulerModalComposition } from '../contracts/useSchedulerModal.contract'
+import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract'
 /**
  * Custom composition function for managing scheduler modal state and actions.
  * @returns {SchedulerModalComposition}
@@ -53,7 +54,7 @@ export default function useSchedulerModal(): SchedulerModalComposition {
         store.reset();
     }
 
-    const { actions }: any = modelActionsModal();
+    const { actions } = modelActionsModal() as ModelActionsModalResult;
 
     return {
         showModal,
