@@ -1,6 +1,6 @@
 import Vue, { ref, computed } from 'vue';
 import serviceListStore from "./store/serviceList";
-import { ServiceModelContract } from './@Contract/index.contract';
+import { ServiceModelContract } from './contracts/index.contract';
 
 
 /**

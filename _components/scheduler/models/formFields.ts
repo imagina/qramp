@@ -1,13 +1,14 @@
-import Vue, { computed } from 'vue';
+import Vue, { computed, ComputedRef } from 'vue';
 import { COMPANY_RAMP } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
 import { modelWeek } from './constants'
 import store from '../store/index.store'
+import {ModelFields, FormFields} from '../contracts/formFields.contract'
 
 
-export default function modelFields() {
-    const updateModal = computed(() => store.updateModal);
-    const formFields = computed(() => ({
+export default function modelFields(): ModelFields {
+    const updateModal: ComputedRef<boolean> = computed(() => store.updateModal);
+    const formFields: ComputedRef<FormFields> = computed(() => ({
         left: {
             carrierId: {
                 value: null,
@@ -63,7 +64,7 @@ export default function modelFields() {
                 },
             },
         },
-        rigth: {
+        right: {
             fromDate: {
                 value: '',
                 type: 'date',
@@ -205,7 +206,7 @@ export default function modelFields() {
                 label: Vue.prototype.$tr("ifly.cms.form.flight"),
             },
         }
-    }))
+    }));
 
     return {
         formFields

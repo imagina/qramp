@@ -14,7 +14,7 @@
           </div>
         </div>
         <div>
-          <div v-for="(field, keyField) in formFields.rigth" :key="keyField">
+          <div v-for="(field, keyField) in formFields.right" :key="keyField">
             <dynamic-field v-model="form[keyField]" :field="field" />
           </div>
         </div>

@@ -2,6 +2,7 @@ import { reactive, computed } from 'vue';
 import {
     State,
     Store,
+    Form,
 } from '../contracts/store.contract'
 import moment from 'moment';
 import workOrderList from '../../../_store/actions/workOrderList'
@@ -37,34 +38,34 @@ function dateFormatterFull(date: string): string {
 }
 
 const store: Store = computed(() => ({
-    get showModal() {
+    get showModal(): boolean {
         return state.showModal;
     },
-    set showModal(value) {
+    set showModal(value: boolean) {
         state.showModal = value;
     },
-    get titleModal() {
+    get titleModal(): string {
         return state.titleModal;
     },
-    set titleModal(value) {
+    set titleModal(value: string) {
         state.titleModal = value;
     },
-    get loading() {
+    get loading(): boolean {
         return state.loading;
     },
-    set loading(value) {
+    set loading(value: boolean) {
         state.loading = value;
     },
-    get updateModal() {
+    get updateModal(): boolean {
         return state.updateModal;
     },
-    set updateModal(value) {
+    set updateModal(value: boolean) {
         state.updateModal = value;
     },
-    get form() {
+    get form(): Form {
         return state.form;
     },
-    set form(data) {
+    set form(data: Form) {
         if (data.id) {
             state.form.id = data.id
         }
@@ -84,7 +85,7 @@ const store: Store = computed(() => ({
         //state.form.customCustomerName = data.customCustomerName || null;
         state.form.depDays = data.depDays || null;
     },
-    reset() {
+    reset(): void {
         state.form = {
             carrierId: null,
             stationId: null,
@@ -104,7 +105,7 @@ const store: Store = computed(() => ({
         };
         state.showModal = false;
     },
-    validateOperationType() {
+    validateOperationType(): void {
         if (state.form.operationTypeId) {
             const operationType = workOrderList().getOperationTypeList()
                 .find(item => item.id === Number(state.form.operationTypeId));

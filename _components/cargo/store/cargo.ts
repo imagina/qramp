@@ -5,7 +5,7 @@ import {
     DelayListContract,
     PayloadContract,
     UseCargoStoreContract
-} from '../@Contract/cargo.contract';
+} from '../contracts/cargo.contract';
 /* A model for the delayList array. */
 const modelDelay = [
     {
