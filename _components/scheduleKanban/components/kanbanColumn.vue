@@ -2,27 +2,34 @@
   <div class="tw-relative columnCtn q-col">
     <div class="tw-py-4">
       <div class="tw-border-b-2 tw-border-gray-200 tw-pb-1">
-        <div class="tw-flex tw-space-x-2">
-          <div>
-            <p class="q-mb-md tw-text-lg tw-font-semibold">
-              {{ date.format("dddd") }}
-            </p>
+        <div class="tw-flex tw-w-full">
+          <div class="tw-w-1/2 tw-pl-3">
+            <div class="tw-flex tw-space-x-2">
+              <div>
+                <p class="q-mb-md tw-text-lg tw-font-semibold">
+                  {{ date.format("dddd") }}
+                </p>
+              </div>
+              <div>
+                <button 
+                  class="tw-rounded-full tw-w-7 tw-h-7"
+                  :class="{
+                    'tw-bg-blue-800 tw-text-white':
+                      selectedDate === date.format('YYYY/MM/DD'),
+                  }"
+                  @click="selectedDate = date.format('YYYY/MM/DD')"
+                >
+                  <span class="tw-font-semibold">
+                    {{ date.format("D") }}
+                  </span> 
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="tw--my-1">
-            <q-btn
-              flat
-              round
-              size="md"
-              :class="{
-                'tw-bg-blue-800 tw-text-white':
-                  selectedDate === date.format('YYYY/MM/DD'),
-              }"
-              @click="selectedDate = date.format('YYYY/MM/DD')"
-            >
-             <span class="tw-font-semibold">
-                {{ date.format("D") }}
-              </span> 
-            </q-btn>
+          <div class="tw-w-1/2 tw-text-right tw-px-6">
+            <button class="tw-py-1">
+              <i class="fa-duotone fa-rotate-right" />
+            </button>
           </div>
         </div>
       </div>
@@ -39,7 +46,17 @@
         v-for="(card, key) in cards" 
         :key="key"
       >
-        {{  card.hour }}
+        <div 
+          class="
+           tw-text-center 
+           tw-text-sm 
+           tw-text-blueGray-500 
+           tw-font-bold
+           tw-py-1"
+        >
+          <i class="fa-solid fa-clock" />
+          {{  card.hour }}h
+        </div>
         <draggable
           :lists="card.data"
           :group="groupOptions"
@@ -66,7 +83,7 @@
 import { ref, defineComponent, computed } from "vue";
 import draggable from "vuedraggable";
 import kanbanCard from "./kanbanCard.vue";
-import storeKanban from "../store/kanban.store";
+import useKanbanColumn from '../uses/useKanbanColumn'
 
 export default defineComponent({
   components: {
@@ -88,13 +105,9 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const selectedDate = computed({
-      get: () => storeKanban.selectedDate,
-      set: (value) => (storeKanban.selectedDate = value),
-    });
     return {
-      selectedDate,
-    };
+      ...useKanbanColumn(props)
+    }
   },
 });
 </script>
@@ -113,7 +126,7 @@ export default defineComponent({
   @apply tw-opacity-50 tw-bg-gray-100;
 }
 .columnCtn .h-200 {
-  height: 700px;
+  height: 72vh;
 }
 .columnCtn .columnKanbanCard::-webkit-scrollbar-track {
   @apply tw-bg-gray-100;

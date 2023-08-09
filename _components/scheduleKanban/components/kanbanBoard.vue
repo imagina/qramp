@@ -46,7 +46,6 @@
          tw-space-y-0 
          tw-h-auto 
          tw-rounded-lg 
-         tw-w-48 
          tw-mb-4"
       />
     </div>

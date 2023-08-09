@@ -4,7 +4,7 @@ import actionsModal from '../models/actionsModal.model'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract';
 
 export default function useFilters() {
-  const form = ref({});
+  const form = computed(() => store.form);
   /**
    * Computed property indicating whether the application is in a filters state.
    * @type {ComputedRef<any>}

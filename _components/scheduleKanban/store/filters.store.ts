@@ -107,6 +107,7 @@ const state = reactive({
           value: null,
         },  
     },
+    form: {},
     loading: false,
     updateModal: false,
 })
@@ -135,6 +136,12 @@ const store = computed(() => ({
     },
     set filters(data) {
         state.filters = {...data};
+    },
+    get form() {
+      return state.form;
+    },
+    set form(data) {
+      state.form = {...data};
     },
     reset(): void {
         //state.filters = {};
