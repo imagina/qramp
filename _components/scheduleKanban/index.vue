@@ -1,23 +1,21 @@
 <template>
-    <div>
-        <kanbanBoard />
-    </div>
+  <div>
+    <kanbanBoard />
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import kanbanBoard from './components/kanbanBoard.vue'
+import { defineComponent } from "vue";
+import kanbanBoard from "./components/kanbanBoard.vue";
 
 export default defineComponent({
-    components: {
-        kanbanBoard,
-    },
-    setup () {
-        return {}
-    }
-})
+  components: {
+    kanbanBoard,
+  },
+  setup() {
+    return {};
+  },
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

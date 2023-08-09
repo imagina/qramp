@@ -1,6 +1,6 @@
 <template>
-  <div class="columnCtn q-col">
-    <div class="tw-py-4 tw-px-2">
+  <div class="tw-relative columnCtn q-col">
+    <div class="tw-py-4">
       <div class="tw-border-b-2 tw-border-gray-200 tw-pb-1">
         <div class="tw-flex tw-space-x-2">
           <div>
@@ -26,7 +26,15 @@
           </div>
         </div>
       </div>
-      <div class="tw-overflow-y-auto tw-overflow-x-hidden  h-200">
+      <div 
+       class="
+         columnKanbanCard
+         tw-overflow-y-auto
+         tw-overflow-x-hidden  
+         h-200 
+         tw-bg-gray-100 
+         tw-px-2"
+      >
       <div 
         v-for="(card, key) in cards" 
         :key="key"
@@ -40,7 +48,7 @@
           ghost-class="ghostCard"
           drag-class="dragCard"
           filter=".ignoreItem"
-          class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-64"
+          class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1"
         >
           <kanban-card
             v-for="(card, index) in card.data"
@@ -58,7 +66,7 @@
 import { ref, defineComponent, computed } from "vue";
 import draggable from "vuedraggable";
 import kanbanCard from "./kanbanCard.vue";
-import storeKanban from "../store/kanban";
+import storeKanban from "../store/kanban.store";
 
 export default defineComponent({
   components: {
@@ -106,5 +114,11 @@ export default defineComponent({
 }
 .columnCtn .h-200 {
   height: 700px;
+}
+.columnCtn .columnKanbanCard::-webkit-scrollbar-track {
+  @apply tw-bg-gray-100;
+}
+.columnCtn .columnKanbanCard::-webkit-scrollbar-thumb {
+  @apply tw-bg-gray-100
 }
 </style>

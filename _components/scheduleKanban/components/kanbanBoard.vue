@@ -1,7 +1,14 @@
 <template>
+  <div>
+    <pageActions multipleRefresh />
   <div class="tw-flex tw-space-x-8">
     <div
-      class="tw-flex-none tw-py-4 tw-border-b tw-border-gray-200 tw-space-y-4"
+      class="
+        tw-flex-none 
+        tw-py-4 
+        tw-border-b 
+        tw-border-gray-200 
+        tw-space-y-4"
     >
       <q-btn-toggle
         v-model="scheduleType"
@@ -21,33 +28,42 @@
       <dynamic-field v-model="filterTime" :field="dynamicFieldTime" />
     </div>
 
-    <div class="tw-flex-1 tw-h-auto tw-flex tw-overflow-x-auto">
+    <div 
+      class="
+       tw-flex-1 
+       tw-h-auto 
+       tw-flex 
+       tw-overflow-x-auto"
+      >
       <kanbanColumn
         v-for="(column, index) in columns"
         :key="index"
         :date="column.date"
         :cards="column.cards"
         :groupOptions="groupOptions"
-        class="tw-flex-none tw-space-y-0 tw-h-auto tw-rounded-lg tw-shadow-md tw-border tw-w-48 tw-mx-2 tw-mb-4"
-        :class="{
-          'tw-border-blue-800 tw-bg-blue-800 tw-bg-opacity-20':
-            selectedDate === column.date.format('YYYY/MM/DD'),
-          'tw-border-gray-200':
-            selectedDate !== column.date.format('YYYY/MM/DD'),
-        }"
+        class="
+         tw-flex-none 
+         tw-space-y-0 
+         tw-h-auto 
+         tw-rounded-lg 
+         tw-w-48 
+         tw-mb-4"
       />
     </div>
   </div>
+</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
+import pageActions from './pageActions.vue'
 
 export default defineComponent({
   components: {
     kanbanColumn,
+    pageActions,
   },
   setup() {
     return {...useKanbanBoard()}

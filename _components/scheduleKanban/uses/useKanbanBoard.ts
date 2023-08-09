@@ -1,7 +1,7 @@
 import Vue, { ref, reactive, watch, computed } from 'vue';
 import moment from "moment";
-import storeKanban from "../store/kanban";
-import modelHoursFilter from "../models/modelHoursFilter";
+import storeKanban from "../store/kanban.store";
+import modelHoursFilter from "../models/hoursFilter.model";
 
 export default function useKanbanBoard() {
     const filterTime = ref(null);
@@ -26,7 +26,7 @@ export default function useKanbanBoard() {
 
     const groupOptions = { name: "kanban-columns" };
 
-    const columns = ref([]);
+    const columns = ref<any[]>([]);
     const scheduleTypeOptions = ref([
       {
         id: 2,
