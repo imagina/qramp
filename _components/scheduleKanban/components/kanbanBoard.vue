@@ -1,6 +1,11 @@
 <template>
   <div>
-    <pageActions multipleRefresh />
+    <page-actions 
+        ref="pageActions" 
+        :title="$t('ifly.cms.sidebar.schedule')" 
+        multipleRefresh 
+        class="q-mb-md" 
+    />
   <div class="tw-flex tw-space-x-8">
     <div
       class="
@@ -57,12 +62,10 @@
 import { defineComponent } from "vue";
 import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
-import pageActions from './pageActions.vue'
 
 export default defineComponent({
   components: {
     kanbanColumn,
-    pageActions,
   },
   setup() {
     return {...useKanbanBoard()}
