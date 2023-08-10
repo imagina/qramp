@@ -2,8 +2,9 @@
   <div>
     <page-actions 
         ref="pageActions" 
-        :title="$t('ifly.cms.sidebar.schedule')" 
-        multipleRefresh 
+        :title="$tr('ifly.cms.sidebar.schedule')" 
+        multipleRefresh
+        :extra-actions="extraPageActions"  
         class="q-mb-md" 
     />
   <div class="tw-flex tw-space-x-8">
