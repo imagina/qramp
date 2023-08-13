@@ -26,14 +26,11 @@
             class="
              tw-flex 
              tw-items-center 
-             tw-space-x-2 
-             tw-border-l 
-             tw-border-gray-200 
+             tw-space-x-2
              tw-px-3 
              tw-text-gray-500"
           >
-            <i class="fa-solid fa-comment"></i>
-            <span class="tw-font-bold tw-text-sm">5</span>
+            <i class="fa-solid fa-grip-dots-vertical" />
           </div>
         </div>
         <div 
@@ -50,8 +47,23 @@
               ETD: 1601
             </div>
           </div>
-          <div>
-            A/C#: N1235
+          <div class="tw-flex tw-space-x-1">
+            <div>
+              A/C#: N1235
+            </div>
+            <div 
+              class="
+              tw-flex 
+              tw-items-center 
+              tw-space-x-1
+              tw-border-l 
+              tw-border-gray-200 
+              tw-px-2 
+              tw-text-gray-500"
+            >
+              <i class="fa-solid fa-comment"></i>
+              <span class="tw-font-bold tw-text-sm">5</span>
+            </div>
           </div>
           <div class="tw-flex tw-pr-3">
             <div class="tw-w-4/5 tw-py-1">
@@ -71,8 +83,7 @@
       </div>
     </div>
     <div 
-      class="
-        tw-bg-gray-100 
+      class=" 
         tw-absolute 
         tw-bottom-0 
         tw-left-0
@@ -81,9 +92,10 @@
         tw-py-1
         tw-px-2
         tw-font-bold 
-        tw-text-xs
-        tw-space-x-2
+        text-x2
+        tw-space-x-1
         tw-rounded-br-lg"
+       :class="{'tw-text-yellow-400': true}" 
     >
         <i 
           class="
@@ -119,4 +131,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.text-x2 {
+  font-size: 10px;
+}
+</style>

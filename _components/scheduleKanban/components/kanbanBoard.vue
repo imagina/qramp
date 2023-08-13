@@ -7,14 +7,15 @@
         :extra-actions="extraPageActions"  
         class="q-mb-md" 
     />
-  <div class="tw-flex tw-space-x-8">
+   <actionBar /> 
+  <div class="tw-flex">
     <div
       class="
         tw-flex-none 
         tw-py-4 
         tw-border-b 
         tw-border-gray-200 
-        tw-space-y-4"
+        tw-space-y-4 tw-hidden"
     >
       <q-btn-toggle
         v-model="scheduleType"
@@ -63,10 +64,12 @@
 import { defineComponent } from "vue";
 import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
+import actionBar from './actionBar.vue'
 
 export default defineComponent({
   components: {
     kanbanColumn,
+    actionBar,
   },
   setup() {
     return {...useKanbanBoard()}

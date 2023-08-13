@@ -1,36 +1,47 @@
 <template>
   <div class="tw-relative columnCtn q-col">
-    <div class="tw-py-4">
-      <div class="tw-border-b-2 tw-border-gray-200 tw-pb-1">
-        <div class="tw-flex tw-w-full">
-          <div class="tw-w-1/2 tw-pl-3">
-            <div class="tw-flex tw-space-x-2">
-              <div>
-                <p class="q-mb-md tw-text-lg tw-font-semibold">
-                  {{ date.format("dddd") }}
-                </p>
-              </div>
-              <div>
-                <button 
-                  class="tw-rounded-full tw-w-7 tw-h-7"
-                  :class="{
-                    'tw-bg-blue-800 tw-text-white':
-                      selectedDate === date.format('YYYY/MM/DD'),
-                  }"
-                  @click="selectedDate = date.format('YYYY/MM/DD')"
-                >
-                  <span class="tw-font-semibold">
-                    {{ date.format("D") }}
-                  </span> 
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="tw-w-1/2 tw-text-right tw-px-6">
-            <button class="tw-py-1">
-              <i class="fa-duotone fa-rotate-right" />
-            </button>
-          </div>
+    <div class="tw-py-3">
+      <div 
+        class="
+         tw-border-b-2 
+         tw-border-gray-200 
+         tw-pb-1
+         tw-text-sm"
+      >
+        <div 
+          class="
+           tw-flex 
+           tw-items-center 
+           tw-space-x-2 
+           tw-justify-center"
+        >
+          <p 
+            class="
+             q-mb-md 
+             tw-font-semibold 
+             text-blue-gray-rb-5 
+             tw-uppercase"
+          >
+             {{ date.format("dddd") }}
+          </p>
+          <button 
+            class="
+             tw-rounded-full 
+             tw-w-7 
+             tw-h-7 
+             tw--mt-4
+             tw-bg-blueGray-300 
+             tw-text-blueGray-500"
+            :class="{
+              'buttom-day':
+              selectedDate === date.format('YYYY/MM/DD'),
+            }"
+            @click="selectedDate = date.format('YYYY/MM/DD')"
+          >
+            <span class="tw-font-semibold">
+              {{ date.format("D") }}
+            </span> 
+          </button>
         </div>
       </div>
       <div 
@@ -114,7 +125,7 @@ export default defineComponent({
 
 <style>
 .columnCtn {
-  @apply tw-w-72;
+  width: 260px;
 }
 
 .dragCard {
@@ -133,5 +144,11 @@ export default defineComponent({
 }
 .columnCtn .columnKanbanCard::-webkit-scrollbar-thumb {
   @apply tw-bg-gray-100
+}
+.columnCtn .text-blue-gray-rb-5 {
+  color: rgba(138, 152, 195, 1);
+}
+.columnCtn .buttom-day {
+  @apply tw-bg-blue-800 tw-text-white !important;
 }
 </style>
