@@ -56,7 +56,7 @@
           handle=".dot-vertical"
           @start="isDraggingCard = true" @end="isDraggingCard = false">
           <div
-            class="tw-text-7xl tw-text-center tw-pt-48"
+            class="tw-text-7xl tw-text-center tw-pt-48 tw-text-gray-300"
             :class="{ 'hidden': !isDraggingCard }"
           >
             <i class="fa-thin fa-cards-blank"/>
