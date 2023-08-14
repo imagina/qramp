@@ -1,5 +1,5 @@
 import Vue, { ref, reactive, watch, computed } from 'vue';
-import moment from "moment";
+import moment, { Moment } from "moment";
 import storeKanban from "../store/kanban.store";
 import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from './../../../_store/qRampStore.js'
@@ -112,7 +112,7 @@ export default function useKanbanBoard() {
     const startOfWeek = moment(selectedDate.value).startOf("week");
     columns.value = [];
     for (let i = 0; i <= 6; i++) {
-      const date = moment(startOfWeek).add(i, "days");
+      const date: Moment = moment(startOfWeek).add(i, "days");
       columns.value.push({
         date: date,
         cards: [
@@ -142,9 +142,7 @@ export default function useKanbanBoard() {
           { hour: "23", data: [{ "id": 24 }] },*/
         ],
       });
-    }
-    
-    const response = await getWorkOrder(true, {
+      const response = await getWorkOrder(true, {
         "date": {
           "field": "schedule_date",
           "type": "customRange",
@@ -152,6 +150,7 @@ export default function useKanbanBoard() {
           "to": date.endOf('day').format('YYYY-MM-DD HH:mm:ss')
         }
       })
+    }
   };
 
   watch(selectedDate, updateColumns);
