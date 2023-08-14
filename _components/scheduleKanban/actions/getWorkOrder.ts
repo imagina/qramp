@@ -5618,14 +5618,8 @@ export default function (refresh = false, date) {
             refresh,
             params: {
                 filter: {
-                    //businessUnitId,
-                    //...filterClone,
-                    //date: item,
-                    "businessUnitId": { // 8
-                        "operator": "!=",
-                        "value": 8
-                    },
-                    "stationId": "12",
+                    "businessUnitId":{"operator":"!=","value":8},
+                    "stationId":"12",
                     date,
                     withoutDefaultInclude: true,
                     order: {

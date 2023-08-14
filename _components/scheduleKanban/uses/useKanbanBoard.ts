@@ -5,9 +5,11 @@ import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from './../../../_store/qRampStore.js'
 import filtersStore from '../store/filters.store';
 import getWorkOrder from '../actions/getWorkOrder'
+import _ from "lodash";
 
 export default function useKanbanBoard() {
   const isPassenger = computed(() => qRampStore().getIsPassenger());
+  const isDraggingCard = computed(() => storeKanban.isDraggingCard);
   const fullscreen = ref(false);
   const filterTime = ref(null);
   const dynamicFieldTime = ref({
@@ -76,18 +78,6 @@ export default function useKanbanBoard() {
         },
       },
       {
-        label: Vue.prototype.$tr("isite.cms.label.filter"),
-        vIf: true,
-        props: {
-          icon: "fa-duotone fa-filter",
-          id: "filter-button-crud",
-        },
-        action: () => filtersStore.showModal = true,
-      },
-    ];
-
-    if(!isPassenger.value && Vue.prototype.$auth.hasAccess('ramp.schedulers.manage')){
-      extraActions.push({
         label: "Scheduler",
         props: {
           label: "Scheduler",
@@ -103,8 +93,37 @@ export default function useKanbanBoard() {
           localStorage.setItem('urlSchedule', tinyUrl);*/
           //Vue.$router.push({name: 'qramp.admin.scheduler'})
         },
+      },
+      {
+        label: Vue.prototype.$tr("isite.cms.label.filter"),
+        vIf: true,
+        props: {
+          icon: "fa-duotone fa-filter",
+          id: "filter-button-crud",
+        },
+        action: () => filtersStore.showModal = true,
+      },
+    ];
+
+    /*if(!isPassenger.value && Vue.prototype.$auth.hasAccess('ramp.schedulers.manage')){
+      extraActions.push({
+        label: "Scheduler",
+        props: {
+          label: "Scheduler",
+          icon: "fa-duotone fa-calendar-plus",
+        },
+        action: () => {
+          const routeName = isPassenger.value ? 'passenger' : 'ramp';
+          let hrefSplit = window.location.href.split("?");
+          let tinyUrl =
+            this.$store.state.qsiteApp.originURL +
+            `/#/${routeName}/schedule/index`;
+          if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
+          localStorage.setItem('urlSchedule', tinyUrl);
+          //Vue.$router.push({name: 'qramp.admin.scheduler'})
+        },
       })
-    }
+    }*/
     return extraActions;
   })
 
@@ -115,42 +134,36 @@ export default function useKanbanBoard() {
       const date: Moment = moment(startOfWeek).add(i, "days");
       columns.value.push({
         date: date,
-        cards: [
-          /*{ hour: "00", data: [{ "id": 1 }] },
-          { hour: "01", data: [{ "id": 2 }] },
-          { hour: "02", data: [{ "id": 3 }] },
-          { hour: "03", data: [{ "id": 4 }] },
-          { hour: "04", data: [{ "id": 5 }] },
-          { hour: "05", data: [{ "id": 6 }] },
-          { hour: "06", data: [{ "id": 7 }] },
-          { hour: "07", data: [{ "id": 8 }] },
-          { hour: "08", data: [{ "id": 9 }] },
-          { hour: "09", data: [{ "id": 10 }] },
-          { hour: "10", data: [{ "id": 11 }] },
-          { hour: "11", data: [{ "id": 12 }] },
-          { hour: "12", data: [{ "id": 13 }] },
-          { hour: "13", data: [{ "id": 14 }] },
-          { hour: "14", data: [{ "id": 15 }] },
-          { hour: "15", data: [{ "id": 16 }] },
-          { hour: "16", data: [{ "id": 17 }] },
-          { hour: "17", data: [{ "id": 18 }] },
-          { hour: "18", data: [{ "id": 19 }] },
-          { hour: "19", data: [{ "id": 20 }] },
-          { hour: "20", data: [{ "id": 21 }] },
-          { hour: "21", data: [{ "id": 22 }] },
-          { hour: "22", data: [{ "id": 23 }] },
-          { hour: "23", data: [{ "id": 24 }] },*/
-        ],
+        cards: [],
       });
-      const response = await getWorkOrder(true, {
-        "date": {
+    }
+    await columns.value.forEach(async item => {
+      const response = await getWorkOrder(true, 
+        {
           "field": "schedule_date",
           "type": "customRange",
-          "from": date.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-          "to": date.endOf('day').format('YYYY-MM-DD HH:mm:ss')
+          "from": item.date.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          "to": item.date.endOf('day').format('YYYY-MM-DD HH:mm:ss')
         }
-      })
-    }
+      )
+      const buildCards = response.data.reduce((accumulator, item) => {
+        const scheduleDate = moment(item.scheduleDate);
+        const hour = scheduleDate.format('HH');
+      
+        if (!accumulator.length || accumulator[accumulator.length - 1].hour !== hour) {
+          accumulator.push({ hour, data: [] });
+        }
+      
+        accumulator[accumulator.length - 1].data.push({ ...item });
+        return accumulator;
+      }, []);
+      //item.cards = buildCards;
+      item.cards = _.orderBy(
+        response.data,
+        ["scheduleDate"],
+        ["asc"]
+      );
+    })
   };
 
   watch(selectedDate, updateColumns);
@@ -165,5 +178,6 @@ export default function useKanbanBoard() {
     filterTime,
     dynamicFieldTime,
     extraPageActions,
+    isDraggingCard,
   };
 }

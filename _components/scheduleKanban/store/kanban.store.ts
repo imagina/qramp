@@ -3,7 +3,8 @@ import moment from 'moment';
 
 const state = reactive({
     selectedDate: moment().format('YYYY/MM/DD'),
-    scheduleType: 'week-agenda'
+    scheduleType: 'week-agenda',
+    isDraggingCard: false,
 });
 
 
@@ -19,6 +20,12 @@ const store = computed(() => ({
     },
     set scheduleType(value) {
         state.scheduleType = value;
+    },
+    get isDraggingCard() {
+        return state.isDraggingCard;
+    },
+    set isDraggingCard(value) {
+        state.isDraggingCard = value;
     },
 })).value;
 

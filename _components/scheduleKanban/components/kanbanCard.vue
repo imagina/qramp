@@ -1,74 +1,66 @@
 <template>
-  <div 
-    class="
+  <div class="
      tw-relative 
      tw-rounded-lg 
      tw-h-36 
      tw-my-2 
-     tw-border-l-8 
-     tw-border-yellow-400 
+     tw-border-l-8  
      shadow-2
-     tw-bg-white"
-  >
+     tw-bg-white" :class="colorCheckSchedule">
     <div>
       <div class="tw-py-2 tw-pl-2 tw-w-full">
         <div class="tw-flex tw-pb-3">
           <div class="tw-w-10/12">
-            <p 
-              class="
+            <p class="
                 tw-font-bold 
-                tw-text-sm"
-            >
-              AZ123/AZ321
+                tw-text-sm">
+              {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }}
             </p>
           </div>
-          <div 
-            class="
+          <div class="
              tw-flex 
              tw-items-center 
              tw-space-x-2
              tw-px-3 
-             tw-text-gray-500"
+             tw-text-gray-500
+             dot-vertical 
+             tw-cursor-move"
           >
             <i class="fa-solid fa-grip-dots-vertical" />
           </div>
         </div>
-        <div 
-          class="
+        <div class="
            tw-font-bold 
            tw-text-xs 
-           tw-space-y-1"
-        >
+           tw-space-y-1">
           <div class="tw-flex tw-space-x-4">
             <div>
-              ETH: 1600
+              ETH: {{ card.inboundScheduledArrival ? $moment(card.inboundScheduledArrival).format('HH:MM') : '' }}
             </div>
             <div>
-              ETD: 1601
+              ETD: {{ card.outboundScheduledDeparture ? $moment(card.outboundScheduledDeparture).format('HH:MM') : '' }}
             </div>
           </div>
           <div class="tw-flex tw-space-x-1">
             <div>
               A/C#: N1235
             </div>
-            <div 
-              class="
+            <div class="
               tw-flex 
               tw-items-center 
               tw-space-x-1
               tw-border-l 
               tw-border-gray-200 
               tw-px-2 
-              tw-text-gray-500"
-            >
+              tw-text-gray-500">
               <i class="fa-solid fa-comment"></i>
               <span class="tw-font-bold tw-text-sm">5</span>
             </div>
           </div>
           <div class="tw-flex tw-pr-3">
             <div class="tw-w-4/5 tw-py-1">
-              <span>
-                SCHEDULE
+              <span class="tw-uppercase">
+                {{ titleStatus }}
               </span>
             </div>
             <div class="
@@ -82,8 +74,7 @@
         </div>
       </div>
     </div>
-    <div 
-      class=" 
+    <div class=" 
         tw-absolute 
         tw-bottom-0 
         tw-left-0
@@ -94,23 +85,18 @@
         tw-font-bold 
         text-x2
         tw-space-x-1
-        tw-rounded-br-lg"
-       :class="{'tw-text-yellow-400': true}" 
-    >
-        <i 
-          class="
-           fa-solid 
-           fa-plane-departure" 
-        />
-        <span>
-          DEPARTED / On Air / Advanced
-        </span>
+        tw-rounded-br-lg" :class="flightStatuses.color">
+      <i :class="flightStatuses.icon" />
+      <span>
+        {{ flightStatuses.name }}
+      </span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import useKanbanCard from '../uses/useKanbanCard'
 
 export default defineComponent({
   props: {
@@ -119,14 +105,8 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
-    const onDeleteCard = () => {
-      // Implementar la lógica para eliminar la tarjeta
-    };
-
-    return {
-      onDeleteCard,
-    };
+  setup(props) {
+    return {...useKanbanCard(props)}
   },
 });
 </script>
