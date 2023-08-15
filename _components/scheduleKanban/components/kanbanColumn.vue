@@ -45,7 +45,7 @@
           'tw-border tw-border-gray-300 ': isDraggingCard
          }"
          >
-        <draggable 
+        <draggable
           :lists="cards" 
           :group="groupOptions" 
           :force-fallback="true" 
@@ -56,15 +56,17 @@
           handle=".dot-vertical"
           @start="isDraggingCard = true" @end="isDraggingCard = false">
           <div
+            v-if="!isDraggingCard"
             class="tw-text-7xl tw-text-center tw-pt-48 tw-text-gray-300"
             :class="{ 'hidden': !isDraggingCard }"
           >
             <i class="fa-thin fa-cards-blank"/>
           </div>
-          <kanban-card 
-            v-for="(card, index) in cards" :key="card.id" 
-            :card="card" :class="{ 'hidden': isDraggingCard }" 
-          />
+            <kanban-card
+              v-for="(card, index) in cards" :key="card.id" 
+              :card="card"
+              :class="{ 'hidden': isDraggingCard }" 
+            />
         </draggable>
       </div>
     </div>
@@ -97,7 +99,11 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    function hasWilmerNoClass(card) {
+      return card.classNames.includes('wilmerNo');
+    }
     return {
+      hasWilmerNoClass,
       ...useKanbanColumn(props)
     }
   },
@@ -106,7 +112,7 @@ export default defineComponent({
 
 <style>
 .columnCtn {
-  width: 260px;
+  width: 13.6vw;
 }
 
 .dragCard {
