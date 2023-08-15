@@ -19,6 +19,7 @@
           </button>
         </div>
       </div>
+      <completed-schedule />
       <div
         v-if="column.loading"
         class="tw-flex tw-justify-center tw-absolute tw-inset-0 tw-pt-48 tw-bg-white tw-bg-opacity-75 tw-z-20"
@@ -31,7 +32,6 @@
           'tw-border tw-border-gray-300 ': isDraggingCard,
         }"
       >
-        <completed-schedule />
         <draggable
           :lists="cards"
           :group="groupOptions"
