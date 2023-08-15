@@ -45,8 +45,7 @@
       <kanbanColumn
         v-for="(column, index) in columns"
         :key="index"
-        :date="column.date"
-        :cards="column.cards"
+        :column="column"
         :groupOptions="groupOptions"
         class="
          tw-flex-none 

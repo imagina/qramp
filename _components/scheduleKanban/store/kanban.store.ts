@@ -5,6 +5,8 @@ const state = reactive({
     selectedDate: moment().format('YYYY/MM/DD'),
     scheduleType: 'week-agenda',
     isDraggingCard: false,
+    columns: [],
+    loading: false,
 });
 
 
@@ -26,6 +28,18 @@ const store = computed(() => ({
     },
     set isDraggingCard(value) {
         state.isDraggingCard = value;
+    },
+    get columns() {
+        return state.columns;
+    },
+    set columns(value) {
+        state.columns = value;
+    },
+    get loading() {
+        return state.loading;
+    },
+    set loading(value) {
+        state.loading = value;
     },
 })).value;
 

@@ -1,6 +1,6 @@
 <template>
   <div class="tw-relative columnCtn q-col">
-    <div class="tw-py-3">
+    <div class="tw-py-3" :class="`cardCtn-${date}`">
       <div class="
          tw-border-b-2 
          tw-border-gray-200 
@@ -55,18 +55,24 @@
           class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-full" 
           handle=".dot-vertical"
           @start="isDraggingCard = true" @end="isDraggingCard = false">
-          <div
-            v-if="!isDraggingCard"
-            class="tw-text-7xl tw-text-center tw-pt-48 tw-text-gray-300"
-            :class="{ 'hidden': !isDraggingCard }"
-          >
-            <i class="fa-thin fa-cards-blank"/>
-          </div>
             <kanban-card
               v-for="(card, index) in cards" :key="card.id" 
               :card="card"
               :class="{ 'hidden': isDraggingCard }" 
             />
+            <div
+              class="tw-text-7xl tw-text-center tw-pt-48 tw-text-gray-300"
+              :class="{ 'hidden': !isDraggingCard }"
+            >
+              <i class="fa-thin fa-cards-blank"/>
+            </div>
+            <div
+              v-show="!isDraggingCard"
+              class="tw-text-center tw-h-5 tw-flex tw-justify-center"
+              :class="`trigger-${date}`"
+            >
+              <q-spinner v-if="isLoading" color="primary" size="1.3em" />
+            </div>
         </draggable>
       </div>
     </div>
@@ -85,12 +91,8 @@ export default defineComponent({
     kanbanCard,
   },
   props: {
-    date: {
+    column: {
       type: Object,
-      required: true,
-    },
-    cards: {
-      type: Array,
       required: true,
     },
     groupOptions: {
@@ -99,11 +101,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    function hasWilmerNoClass(card) {
-      return card.classNames.includes('wilmerNo');
-    }
     return {
-      hasWilmerNoClass,
       ...useKanbanColumn(props)
     }
   },
@@ -112,7 +110,7 @@ export default defineComponent({
 
 <style>
 .columnCtn {
-  width: 13.8vw;
+  width: 13.6vw;
 }
 
 .dragCard {
@@ -143,7 +141,7 @@ export default defineComponent({
 .columnCtn .buttom-day {
   @apply tw-bg-blue-800 tw-text-white !important;
 }
-@media (max-width: 768px) {
+@media (max-width: 1600px) {
   .columnCtn {
     width: 260px;
   }

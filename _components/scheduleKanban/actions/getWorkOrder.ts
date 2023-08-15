@@ -5612,11 +5612,13 @@ const data = [
         "isClone": false
     }
 ];
-export default function (refresh = false, date) {
+export default function (refresh = false, page = 1, date) {
     try {
         const params = {
             refresh,
             params: {
+                take: 10,
+                page,
                 filter: {
                     "businessUnitId":{"operator":"!=","value":8},
                     "stationId":"12",
@@ -5635,7 +5637,6 @@ export default function (refresh = false, date) {
 
         );
         return response;
-        return
     } catch (error) {
         console.log(error);
 

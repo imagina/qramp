@@ -10,6 +10,10 @@ import _ from "lodash";
 export default function useKanbanBoard() {
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
+  const loading = computed({
+    get: () => storeKanban.loading,
+    set: (value) => (storeKanban.loading = value),
+  });
   const fullscreen = ref(false);
   const filterTime = ref(null);
   const dynamicFieldTime = ref({
@@ -33,7 +37,11 @@ export default function useKanbanBoard() {
 
   const groupOptions = { name: "kanban-columns" };
 
-  const columns = ref<any[]>([]);
+  const columns: any = computed({
+    get: () => storeKanban.columns,
+    set: (value) => (storeKanban.columns = value),
+  });
+
   const scheduleTypeOptions = ref([
     {
       id: 2,
@@ -128,17 +136,18 @@ export default function useKanbanBoard() {
   })
 
   const updateColumns = async () => {
+    loading.value = true;
     const startOfWeek = moment(selectedDate.value).startOf("week");
-    columns.value = [];
     for (let i = 0; i <= 6; i++) {
       const date: Moment = moment(startOfWeek).add(i, "days");
       columns.value.push({
         date: date,
         cards: [],
+        page: 1,
       });
     }
     await columns.value.forEach(async item => {
-      const response = await getWorkOrder(true, 
+      const response = await getWorkOrder(true, item.page, 
         {
           "field": "schedule_date",
           "type": "customRange",
@@ -146,7 +155,7 @@ export default function useKanbanBoard() {
           "to": item.date.endOf('day').format('YYYY-MM-DD HH:mm:ss')
         }
       )
-      const buildCards = response.data.reduce((accumulator, item) => {
+      /*const buildCards = response.data.reduce((accumulator, item) => {
         const scheduleDate = moment(item.scheduleDate);
         const hour = scheduleDate.format('HH');
       
@@ -156,7 +165,7 @@ export default function useKanbanBoard() {
       
         accumulator[accumulator.length - 1].data.push({ ...item });
         return accumulator;
-      }, []);
+      }, []);*/
       //item.cards = buildCards;
       item.cards = _.orderBy(
         response.data,
@@ -164,6 +173,9 @@ export default function useKanbanBoard() {
         ["asc"]
       );
     })
+    setTimeout(() => {
+      loading.value = false;
+    }, 1000);
   };
 
   watch(selectedDate, updateColumns);
