@@ -5625,8 +5625,8 @@ export default function (refresh = false, page = 1, date) {
                     date,
                     withoutDefaultInclude: true,
                     order: {
-                        field: "id",
-                        way: "desc",
+                        field: "schedule_date",
+                        way: "asc",
                     },
                 },
             },

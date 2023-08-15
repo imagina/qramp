@@ -167,11 +167,7 @@ export default function useKanbanBoard() {
         return accumulator;
       }, []);*/
       //item.cards = buildCards;
-      item.cards = _.orderBy(
-        response.data,
-        ["scheduleDate"],
-        ["asc"]
-      );
+      item.cards = response.data;
     })
     setTimeout(() => {
       loading.value = false;
