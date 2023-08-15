@@ -31,6 +31,7 @@
           'tw-border tw-border-gray-300 ': isDraggingCard,
         }"
       >
+        <completed-schedule />
         <draggable
           :lists="cards"
           :group="groupOptions"
@@ -74,11 +75,13 @@ import { ref, defineComponent, computed } from "vue";
 import draggable from "vuedraggable";
 import kanbanCard from "./kanbanCard.vue";
 import useKanbanColumn from "../uses/useKanbanColumn";
+import completedSchedule from './completedSchedule';
 
 export default defineComponent({
   components: {
     draggable,
     kanbanCard,
+    completedSchedule
   },
   props: {
     column: {

@@ -6,6 +6,7 @@ export default function useCompletedSchedule(props: any) {
   const timestamp = computed(() => props.timestamp);
   const scheduleType = computed(() => props.scheduleType);
   function isEventListComplete(date: string): boolean {
+    return false
     return _.every(Object.entries(props.getEvents(date, false).data), (elemento) => {
       return _.every(elemento[1], (objeto) => {
         return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE;
@@ -13,8 +14,13 @@ export default function useCompletedSchedule(props: any) {
     });
   }
   function countIncompleteEvents(date: string): number[] {
+    let incomplete = Math.floor(Math.random() * 9) + 1;
+    let completed = Math.floor(Math.random() * 9) + 1;
+
+    /* dev only
     let incomplete = 0;
     let completed = 0;
+
     const events = props.getEvents(date, false).data;
 
     Object.entries(events).forEach((entry: any) => {
@@ -26,6 +32,7 @@ export default function useCompletedSchedule(props: any) {
         }
       });
     });
+    */
 
     return [completed, incomplete];
   }
@@ -37,7 +44,7 @@ export default function useCompletedSchedule(props: any) {
 
   function totalCompleted(date: string): string {
     const complete = countIncompleteEvents(date);
-    return `${complete[0]} Completed`;
+    return ` ${complete[0]} Completed`;
   }
 
   return {
