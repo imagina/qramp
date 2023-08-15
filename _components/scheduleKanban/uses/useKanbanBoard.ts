@@ -6,14 +6,11 @@ import qRampStore from './../../../_store/qRampStore.js'
 import filtersStore from '../store/filters.store';
 import getWorkOrder from '../actions/getWorkOrder'
 import _ from "lodash";
+import buildKanbanStructure from '../actions/buildKanbanStructure';
 
 export default function useKanbanBoard() {
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
-  const loading = computed({
-    get: () => storeKanban.loading,
-    set: (value) => (storeKanban.loading = value),
-  });
   const fullscreen = ref(false);
   const filterTime = ref(null);
   const dynamicFieldTime = ref({
@@ -135,52 +132,15 @@ export default function useKanbanBoard() {
     return extraActions;
   })
 
-  const updateColumns = async () => {
-    loading.value = true;
-    const startOfWeek = moment(selectedDate.value).startOf("week");
-    for (let i = 0; i <= 6; i++) {
-      const date: Moment = moment(startOfWeek).add(i, "days");
-      columns.value.push({
-        date: date,
-        cards: [],
-        page: 1,
-      });
-    }
-    await columns.value.forEach(async item => {
-      const response = await getWorkOrder(true, item.page, 
-        {
-          "field": "schedule_date",
-          "type": "customRange",
-          "from": item.date.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-          "to": item.date.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-        }
-      )
-      /*const buildCards = response.data.reduce((accumulator, item) => {
-        const scheduleDate = moment(item.scheduleDate);
-        const hour = scheduleDate.format('HH');
-      
-        if (!accumulator.length || accumulator[accumulator.length - 1].hour !== hour) {
-          accumulator.push({ hour, data: [] });
-        }
-      
-        accumulator[accumulator.length - 1].data.push({ ...item });
-        return accumulator;
-      }, []);*/
-      //item.cards = buildCards;
-      item.cards = response.data;
-    })
-    setTimeout(() => {
-      loading.value = false;
-    }, 1000);
+  const init = async () => {
+    await buildKanbanStructure();
   };
 
-  watch(selectedDate, updateColumns);
-  updateColumns();
+  init();
   return {
     selectedDate,
     columns,
     groupOptions,
-    updateColumns,
     scheduleTypeOptions,
     scheduleType,
     filterTime,

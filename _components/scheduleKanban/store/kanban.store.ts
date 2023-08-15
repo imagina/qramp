@@ -1,46 +1,47 @@
-import {reactive, computed} from 'vue';
-import moment from 'moment';
+import {reactive, computed, ComputedRef} from 'vue';
+import moment, { Moment } from 'moment';
+import {Columns, State} from '../contracts/kanbanStore.contract'
 
-const state = reactive({
-    selectedDate: moment().format('YYYY/MM/DD'),
-    scheduleType: 'week-agenda',
-    isDraggingCard: false,
-    columns: [],
-    loading: false,
+
+const state: State = reactive({
+  selectedDate: moment().format('YYYY/MM/DD'),
+  scheduleType: 'week-agenda',
+  isDraggingCard: false,
+  columns: [],
+  loading: false,
 });
 
-
-const store = computed(() => ({
-    get selectedDate() {
-        return state.selectedDate;
-    },
-    set selectedDate(value) {
-        state.selectedDate = value;
-    },
-    get scheduleType() {
-        return state.scheduleType;
-    },
-    set scheduleType(value) {
-        state.scheduleType = value;
-    },
-    get isDraggingCard() {
-        return state.isDraggingCard;
-    },
-    set isDraggingCard(value) {
-        state.isDraggingCard = value;
-    },
-    get columns() {
-        return state.columns;
-    },
-    set columns(value) {
-        state.columns = value;
-    },
-    get loading() {
-        return state.loading;
-    },
-    set loading(value) {
-        state.loading = value;
-    },
+const store: State = computed(() => ({
+  get selectedDate(): string {
+    return state.selectedDate;
+  },
+  set selectedDate(value: string) {
+    state.selectedDate = value;
+  },
+  get scheduleType(): string {
+    return state.scheduleType;
+  },
+  set scheduleType(value: string) {
+    state.scheduleType = value;
+  },
+  get isDraggingCard(): boolean {
+    return state.isDraggingCard;
+  },
+  set isDraggingCard(value: boolean) {
+    state.isDraggingCard = value;
+  },
+  get columns(): Columns[] {
+    return state.columns;
+  },
+  set columns(value: Columns[]) {
+    state.columns = value;
+  },
+  get loading(): boolean {
+    return state.loading;
+  },
+  set loading(value: boolean) {
+    state.loading = value;
+  },
 })).value;
 
 export default store;

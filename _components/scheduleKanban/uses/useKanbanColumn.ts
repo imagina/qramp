@@ -29,8 +29,7 @@ export default function useKanbanColumn(props: any = {}) {
   }
   async function infiniteHandler() {
     try {
-      console.log(loadingKanban.value);
-      if(loadingKanban.value) return;
+      if(props.column.loading) return;
       isLoading.value = true;
       props.column.page = props.column.page + 1;
       const response = await getWorkOrder(true, props.column.page,  {
