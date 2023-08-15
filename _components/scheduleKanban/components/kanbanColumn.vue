@@ -112,7 +112,7 @@ export default defineComponent({
 
 <style>
 .columnCtn {
-  width: 13.6vw;
+  width: 13.8vw;
 }
 
 .dragCard {
@@ -142,5 +142,10 @@ export default defineComponent({
 
 .columnCtn .buttom-day {
   @apply tw-bg-blue-800 tw-text-white !important;
+}
+@media (max-width: 768px) {
+  .columnCtn {
+    width: 260px;
+  }
 }
 </style>

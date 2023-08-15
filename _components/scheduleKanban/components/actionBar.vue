@@ -11,7 +11,6 @@
     </div>
     <div class="tw-flex tw-py-1 tw-text-sm tw-font-semibold tw-space-x-1">
       <div>July 2 - July 8, 10:00am-1:00pm</div>
-      <div class="tw-text-gray-400">(Week Resume)</div>
     </div>
   </div>
 </template>
