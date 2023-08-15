@@ -1,78 +1,68 @@
 <template>
   <div class="tw-relative columnCtn q-col">
     <div class="tw-py-3" :class="`cardCtn-${date}`">
-      <div class="
-         tw-border-b-2 
-         tw-border-gray-200 
-         tw-pb-1
-         tw-text-sm">
-        <div class="
-           tw-flex 
-           tw-items-center 
-           tw-space-x-2 
-           tw-justify-center">
-          <p class="
-             q-mb-md 
-             tw-font-semibold 
-             text-blue-gray-rb-5 
-             tw-uppercase">
+      <div class="tw-border-b-2 tw-border-gray-200 tw-pb-1 tw-text-sm">
+        <div class="tw-flex tw-items-center tw-space-x-2 tw-justify-center">
+          <p class="q-mb-md tw-font-semibold text-blue-gray-rb-5 tw-uppercase">
             {{ date.format("dddd") }}
           </p>
-          <button class="
-             tw-rounded-full 
-             tw-w-7 
-             tw-h-7 
-             tw--mt-4
-             tw-bg-blueGray-300 
-             tw-text-blueGray-500" :class="{
-               'buttom-day':
-                 selectedDate === date.format('YYYY/MM/DD'),
-             }" @click="selectedDate = date.format('YYYY/MM/DD')">
+          <button
+            class="tw-rounded-full tw-w-7 tw-h-7 tw--mt-4 tw-bg-blueGray-300 tw-text-blueGray-500"
+            :class="{
+              'buttom-day': selectedDate === date.format('YYYY/MM/DD'),
+            }"
+            @click="selectedDate = date.format('YYYY/MM/DD')"
+          >
             <span class="tw-font-semibold">
               {{ date.format("D") }}
             </span>
           </button>
         </div>
       </div>
-      <div class="
-         columnKanbanCard
-         tw-overflow-y-auto
-         tw-overflow-x-hidden  
-         h-200
-         tw-bg-gray-100 
-         tw-px-2"
-         :class="{
-          'tw-border tw-border-gray-300 ': isDraggingCard
-         }"
-         >
+      <div
+        v-if="column.loading"
+        class="tw-flex tw-justify-center tw-absolute tw-inset-0 tw-pt-48 tw-bg-white tw-bg-opacity-75 tw-z-20"
+      >
+        <q-spinner color="primary" size="2em" />
+      </div>
+      <div
+        class="columnKanbanCard tw-overflow-y-auto tw-overflow-x-hidden h-200 tw-bg-gray-100 tw-px-2"
+        :class="{
+          'tw-border tw-border-gray-300 ': isDraggingCard,
+        }"
+      >
         <draggable
-          :lists="cards" 
-          :group="groupOptions" 
-          :force-fallback="true" 
-          group="data" 
+          :lists="cards"
+          :group="groupOptions"
+          :force-fallback="true"
+          group="data"
           ghost-class="ghostCard"
-          drag-class="dragCard" filter=".ignoreItem"
-          class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-full" 
+          drag-class="dragCard"
+          filter=".ignoreItem"
+          class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-full"
           handle=".dot-vertical"
-          @start="isDraggingCard = true" @end="isDraggingCard = false">
-            <kanban-card
-              v-for="(card, index) in cards" :key="card.id" 
-              :card="card"
-              :class="{ 'hidden': isDraggingCard }" 
-            />
-            <div
-              class="tw-text-7xl tw-text-center tw-pt-48 tw-text-gray-300"
-              :class="{ 'hidden': !isDraggingCard }"
-            >
-              <i class="fa-thin fa-cards-blank"/>
-            </div>
-            <div
-              v-show="!isDraggingCard"
-              class="tw-text-center tw-h-5 tw-flex tw-justify-center"
-              :class="`trigger-${date}`"
-            >
-              <q-spinner v-if="isLoading" color="primary" size="1.3em" />
-            </div>
+          @start="isDraggingCard = true"
+          @end="isDraggingCard = false"
+        >
+          <kanban-card
+            v-for="(card, index) in cards"
+            :key="card.id"
+            :card="card"
+            :class="{ hidden: isDraggingCard }"
+          />
+          <div
+            class="tw-text-7xl tw-text-center tw-pt-48 tw-text-gray-300"
+            :class="{ hidden: !isDraggingCard }"
+          >
+            <i class="fa-thin fa-cards-blank" />
+          </div>
+          <div
+            v-show="!isDraggingCard"
+            class="tw-text-center tw-h-5 tw-flex tw-justify-center"
+            :class="`trigger-${date}`"
+          >
+            <q-spinner v-if="isLoading" color="primary" size="1.3em" />
+          </div>
         </draggable>
       </div>
     </div>
@@ -83,7 +73,7 @@
 import { ref, defineComponent, computed } from "vue";
 import draggable from "vuedraggable";
 import kanbanCard from "./kanbanCard.vue";
-import useKanbanColumn from '../uses/useKanbanColumn'
+import useKanbanColumn from "../uses/useKanbanColumn";
 
 export default defineComponent({
   components: {
@@ -102,8 +92,8 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     return {
-      ...useKanbanColumn(props)
-    }
+      ...useKanbanColumn(props),
+    };
   },
 });
 </script>
@@ -131,7 +121,7 @@ export default defineComponent({
 }
 
 .columnCtn .columnKanbanCard::-webkit-scrollbar-thumb {
-  @apply tw-bg-gray-100
+  @apply tw-bg-gray-100;
 }
 
 .columnCtn .text-blue-gray-rb-5 {
@@ -141,6 +131,7 @@ export default defineComponent({
 .columnCtn .buttom-day {
   @apply tw-bg-blue-800 tw-text-white !important;
 }
+
 @media (max-width: 1600px) {
   .columnCtn {
     width: 260px;
