@@ -5,4 +5,5 @@ export interface Columns {
     cards: any[];
     page: number;
     loading: boolean;
+    isDrag: boolean;
 }

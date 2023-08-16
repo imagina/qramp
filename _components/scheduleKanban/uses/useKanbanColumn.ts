@@ -6,7 +6,10 @@ import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
 
 export default function useKanbanColumn(props: any = {}) {
   const isLoading = ref(false);
-  const cards: any = computed(() => props.column.cards);
+  const cards: any = computed({
+    get: () => props.column.cards,
+    set: (value) => (props.column.cards = value),
+  });
   const date = computed(() => props.column.date)
   const selectedDate = computed({
     get: () => storeKanban.selectedDate,
@@ -49,6 +52,16 @@ export default function useKanbanColumn(props: any = {}) {
     props.column.cards = response.data;
     props.column.loading = false;
   }
+  function setDrag(isDrag = false) {
+    storeKanban.columns.forEach(item => {
+      if(isDrag && props.column.date === item.date) {
+        item.isDrag = isDrag
+      } else {
+        item.isDrag = false
+      }
+      
+    })
+  }
   onMounted(() => {
     const observerOptions = {
       root: document.querySelector(`.cardCtn-${date.value}`),
@@ -68,5 +81,6 @@ export default function useKanbanColumn(props: any = {}) {
     cards,
     date,
     singleFefreshed,
+    setDrag,
   }
 }

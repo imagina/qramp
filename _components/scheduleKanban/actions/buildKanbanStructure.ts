@@ -16,6 +16,7 @@ export async function getColumns(): Promise<Columns[]> {
       page: 1,
       loading: false,
       total: 0,
+      isDrag: false,
     }));
   } catch (error) {
     console.log(error);

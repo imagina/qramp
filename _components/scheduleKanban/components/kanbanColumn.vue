@@ -1,7 +1,20 @@
 <template>
-  <div class="tw-relative columnCtn q-col">
-    <div class="tw-py-3" :class="`cardCtn-${date}`">
-      <div class="tw-border-b-2 tw-border-gray-200 tw-pb-1 tw-text-sm">
+  <div 
+    class="tw-relative columnCtn q-col"
+  >
+    <div 
+      class="tw-py-3" 
+      :class="`cardCtn-${date}`"
+      @dragover.prevent="setDrag(true)"
+      @drop.prevent="setDrag(false)"
+    >
+      <div 
+       class="
+        tw-border-b-2 
+        tw-border-gray-200 
+        tw-pb-1 
+        tw-text-sm"
+      >
         <div class="tw-flex tw-items-center tw-space-x-2 tw-justify-center">
           <p class="q-mb-md tw-font-semibold text-column tw-uppercase">
             {{ date.format("dddd") }}
@@ -22,43 +35,54 @@
       <completed-schedule @refresh="singleFefreshed"/>
       <div
         v-if="column.loading"
-        class="tw-flex tw-justify-center tw-absolute tw-inset-0 tw-pt-48 tw-bg-white tw-bg-opacity-75 tw-z-20"
+        class="
+         tw-flex 
+         tw-justify-center 
+         tw-absolute 
+         tw-inset-0 
+         tw-pt-48 
+         tw-bg-white 
+         tw-bg-opacity-75 
+         tw-z-20"
       >
         <q-spinner color="primary" size="2em" />
       </div>
       <div
         class="h-200 bg-blue-gray-1000 tw-px-2 tw-pt-4"
         :class="{
-          'tw-border tw-border-gray-300 ': isDraggingCard,
+          'tw-border tw-border-gray-300 ': column.isDrag,
         }"
       >
+        <div 
+          v-if="column.isDrag"
+          class="
+           tw-flex 
+           tw-absolute 
+           tw-justify-center  
+           tw-inset-0 
+           tw-mt-80"
+        >
+            <i class="fa-thin fa-cards-blank tw-text-7xl tw-text-gray-300" />
+        </div>
         <draggable
-          :lists="cards"
-          :group="groupOptions"
-          :force-fallback="true"
-          group="data"
+          :id="`column-${date.format('YYYY-MM-DD')}`"
+          v-model="cards"
+          :animation="200"
+          group="cards"
           ghost-class="ghostCard"
           drag-class="dragCard"
           filter=".ignoreItem"
           class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-h-full tw-px-2"
           handle=".dot-vertical"
-          @start="isDraggingCard = true"
-          @end="isDraggingCard = false"
         >
           <kanban-card
             v-for="(card, index) in cards"
             :key="card.id"
             :card="card"
-            :class="{ hidden: isDraggingCard }"
+            :class="{ hidden: column.isDrag  }"
           />
           <div
-            class="tw-text-7xl tw-text-center tw-pt-48 tw-text-gray-300"
-            :class="{ hidden: !isDraggingCard }"
-          >
-            <i class="fa-thin fa-cards-blank" />
-          </div>
-          <div
-            v-show="!isDraggingCard"
+            v-show="!column.isDrag"
             class="tw-text-center tw-h-5 tw-flex tw-justify-center"
             :class="`trigger-${date}`"
           >
@@ -96,6 +120,7 @@ export default defineComponent({
   setup(props, { emit }) {
     return {
       ...useKanbanColumn(props),
+      
     };
   },
 });
