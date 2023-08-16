@@ -70,12 +70,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ref, defineComponent, computed } from "vue";
 import draggable from "vuedraggable";
 import kanbanCard from "./kanbanCard.vue";
 import useKanbanColumn from "../uses/useKanbanColumn";
-import completedSchedule from './completedSchedule';
+import completedSchedule from './completedSchedule.vue';
 
 export default defineComponent({
   components: {
