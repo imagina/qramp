@@ -8,8 +8,10 @@ import {
   STATUS_SCHEDULE,
 } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
+import qRampStore from './../../../_store/qRampStore.js'
 
 export default function useKanbanCard(props: any = {}) {
+  const isPassenger = computed(() => qRampStore().getIsPassenger());
   const colorCheckSchedule = computed(() => {
     const statusColor: string | undefined = workOrderList()
       .getWorkOrderStatusesList()
@@ -26,6 +28,24 @@ export default function useKanbanCard(props: any = {}) {
     const icon = flightStatuses?.icon || 'fa-light fa-circle-question';
     return { name: flightStatuses.name, color, icon };
   })
+  const actypes = computed(() => {
+    const actypesList: any =
+      workOrderList()
+      .getACTypesList()
+        .find(ac => ac.id === Number(props.card.acTypeId));
+    return actypesList ? actypesList.fullName : '';
+  })
+  const gates = computed(() => {
+    const gateList: any =
+      workOrderList()
+      .getGatesList()
+        .find(gate => gate.id === Number(props.card.gateId));
+    if(!isPassenger.value) {
+      return gateList ?  `P-${gateList.name}` : null;
+    }else {
+      return gateList ? `G-${gateList.name}` : null;
+    }
+  })
   const titleStatus = computed(() => {
     const statuses = {
       [STATUS_DRAFT]: 'Draft',
@@ -39,6 +59,8 @@ export default function useKanbanCard(props: any = {}) {
   return {
     colorCheckSchedule,
     titleStatus,
-    flightStatuses
+    flightStatuses,
+    actypes,
+    gates
   };
 }

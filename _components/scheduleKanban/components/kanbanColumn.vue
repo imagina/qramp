@@ -3,7 +3,7 @@
     <div class="tw-py-3" :class="`cardCtn-${date}`">
       <div class="tw-border-b-2 tw-border-gray-200 tw-pb-1 tw-text-sm">
         <div class="tw-flex tw-items-center tw-space-x-2 tw-justify-center">
-          <p class="q-mb-md tw-font-semibold text-blue-gray-rb-5 tw-uppercase">
+          <p class="q-mb-md tw-font-semibold text-column tw-uppercase">
             {{ date.format("dddd") }}
           </p>
           <button
@@ -27,7 +27,7 @@
         <q-spinner color="primary" size="2em" />
       </div>
       <div
-        class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden h-200 tw-bg-gray-100 tw-px-2"
+        class="h-200 bg-blue-gray-1000 tw-px-2 tw-pt-4"
         :class="{
           'tw-border tw-border-gray-300 ': isDraggingCard,
         }"
@@ -40,7 +40,7 @@
           ghost-class="ghostCard"
           drag-class="dragCard"
           filter=".ignoreItem"
-          class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-full"
+          class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-h-full tw-px-2"
           handle=".dot-vertical"
           @start="isDraggingCard = true"
           @end="isDraggingCard = false"
@@ -105,7 +105,22 @@ export default defineComponent({
 .columnCtn {
   width: 13.6vw;
 }
-
+.columnCtn .text-column {
+  color: #8A98C3;
+  leading-trim: both;
+  text-edge: cap;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: Manrope;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 142%; /* 19.88px */
+  letter-spacing: 0.07px;
+}
+.bg-blue-gray-1000 {
+  background: #F3F5FB;
+}
 .dragCard {
   @apply tw-bg-white tw-opacity-100;
   cursor: grabbing;
@@ -120,7 +135,7 @@ export default defineComponent({
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-track {
-  @apply tw-bg-gray-100 !important;
+  @apply tw-bg-gray-100  !important;
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-thumb {

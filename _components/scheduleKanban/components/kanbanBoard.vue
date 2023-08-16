@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="kanbanBoardCtn">
     <page-actions 
         ref="pageActions" 
         :title="$tr('ifly.cms.sidebar.schedule')" 
@@ -77,4 +77,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style>
+.kanbanBoardCtn {
+  font-family: 'Manrope', sans-serif;
+}
+</style>
