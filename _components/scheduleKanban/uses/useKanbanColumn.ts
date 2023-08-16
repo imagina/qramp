@@ -2,7 +2,7 @@ import Vue, { computed, ref, onMounted } from 'vue';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'
 import getWorkOrder from '../actions/getWorkOrder'
-import getIndividualWorkOrders from '../actions/getIndividualWorkOrders'
+import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
 
 export default function useKanbanColumn(props: any = {}) {
   const isLoading = ref(false);
@@ -41,6 +41,7 @@ export default function useKanbanColumn(props: any = {}) {
     }
   }
   async function singleFefreshed() {
+    props.column.cards = [];
     const page = 1;
     props.column.loading = true
     const response = await getIndividualWorkOrders(true, page, date);

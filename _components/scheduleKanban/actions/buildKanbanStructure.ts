@@ -23,7 +23,7 @@ export async function getColumns(): Promise<Columns[]> {
   }
 }
 
-async function getCards(): Promise<void> {
+export async function getCards(): Promise<void> {
   try {
     storeKanban.columns.forEach(async (item: Columns) => {
       item.loading = true;
