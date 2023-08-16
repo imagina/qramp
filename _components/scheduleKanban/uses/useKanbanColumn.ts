@@ -7,7 +7,6 @@ export default function useKanbanColumn(props: any = {}) {
   const isLoading = ref(false);
   const cards: any = computed(() => props.column.cards);
   const date = computed(() => props.column.date)
-  const loadingKanban = computed(() => storeKanban.loading);
   const selectedDate = computed({
     get: () => storeKanban.selectedDate,
     set: (value) => (storeKanban.selectedDate = value),
@@ -29,14 +28,14 @@ export default function useKanbanColumn(props: any = {}) {
   }
   async function infiniteHandler() {
     try {
-      if(props.column.loading) return;
+      if(props.column.loading && props.column.total === cards.value.length) return;
       isLoading.value = true;
       props.column.page = props.column.page + 1;
       const response = await getWorkOrder(true, props.column.page,  {
         "field": "schedule_date",
         "type": "customRange",
-        "from": props.column.date.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-        "to": props.column.date.endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        "from": date.value.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        "to": date.value.endOf('day').format('YYYY-MM-DD HH:mm:ss')
       })
       cards.value.push(...response.data);
       isLoading.value = false;

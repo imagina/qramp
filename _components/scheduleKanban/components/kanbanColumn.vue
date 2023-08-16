@@ -116,7 +116,7 @@ export default defineComponent({
 }
 
 .columnCtn .h-200 {
-  height: 72vh;
+  height: 60vh;
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-track {

@@ -5,6 +5,7 @@ export interface Columns {
   cards: any[]; // Replace 'any' with the actual card type
   page: number;
   loading: boolean;
+  total: number;
 }
 
 export interface State {

@@ -1,11 +1,11 @@
 import Vue from 'vue';
-
-export default function (refresh = false, page = 1, date) {
+import {WorkOrders} from '../contracts/getWorkOrder.contract'
+export default function getWorkOrders(refresh = false, page = 1, date): WorkOrders {
     try {
         const params = {
             refresh,
             params: {
-                take: 10,
+                take: 4,
                 page,
                 filter: {
                     "businessUnitId":{"operator":"!=","value":8},
@@ -27,6 +27,17 @@ export default function (refresh = false, page = 1, date) {
         return response;
     } catch (error) {
         console.log(error);
-
+        return {
+            data: [],
+            meta: {
+                page: {
+                    total: 0,
+                    HasNextPage: false,
+                    HasPreviousPage: false,
+                    currentPage: 1,
+                    perPage: 1
+                }
+            }
+        }
     }
 }
