@@ -2,6 +2,7 @@ import Vue, { computed, ref, onMounted } from 'vue';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'
 import getWorkOrder from '../actions/getWorkOrder'
+import getIndividualWorkOrders from '../actions/getIndividualWorkOrders'
 
 export default function useKanbanColumn(props: any = {}) {
   const isLoading = ref(false);
@@ -31,18 +32,21 @@ export default function useKanbanColumn(props: any = {}) {
       if(props.column.loading || props.column.total === cards.value.length) return;
       isLoading.value = true;
       props.column.page = props.column.page + 1;
-      const response = await getWorkOrder(true, props.column.page,  {
-        "field": "schedule_date",
-        "type": "customRange",
-        "from": date.value.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-        "to": date.value.endOf('day').format('YYYY-MM-DD HH:mm:ss')
-      })
+      const response = await getIndividualWorkOrders(true, props.column.page, date);
       cards.value.push(...response.data);
       isLoading.value = false;
     } catch (error) {
       console.log(error);
       isLoading.value = false;
     }
+  }
+  async function singleFefreshed() {
+    const page = 1;
+    props.column.loading = true
+    const response = await getIndividualWorkOrders(true, page, date);
+    props.column.page = page;
+    props.column.cards = response.data;
+    props.column.loading = false;
   }
   onMounted(() => {
     const observerOptions = {
@@ -62,5 +66,6 @@ export default function useKanbanColumn(props: any = {}) {
     isLoading,
     cards,
     date,
+    singleFefreshed,
   }
 }

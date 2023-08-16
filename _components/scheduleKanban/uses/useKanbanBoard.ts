@@ -147,5 +147,6 @@ export default function useKanbanBoard() {
     dynamicFieldTime,
     extraPageActions,
     isDraggingCard,
+    buildKanbanStructure
   };
 }

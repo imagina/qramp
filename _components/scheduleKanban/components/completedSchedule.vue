@@ -74,6 +74,7 @@
                     unelevated
                     flat
                     dense
+                    @click="refresh"
                 />
             </div>
             </div>
@@ -106,9 +107,9 @@ export default defineComponent({
             } //dev only
         }
     },
-    setup(props) {
+    setup(props, {emit}) {
         return {
-            ...useCompletedSchedule(props)
+            ...useCompletedSchedule(props, emit)
         }
     }
 })

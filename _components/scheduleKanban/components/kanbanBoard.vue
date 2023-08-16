@@ -5,7 +5,8 @@
         :title="$tr('ifly.cms.sidebar.schedule')" 
         multipleRefresh
         :extra-actions="extraPageActions"  
-        class="q-mb-md" 
+        class="q-mb-md"
+        @refresh="buildKanbanStructure" 
     />
    <actionBar /> 
   <div class="tw-flex">

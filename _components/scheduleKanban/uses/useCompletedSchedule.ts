@@ -2,7 +2,7 @@ import Vue, {computed} from 'vue';
 import {STATUS_DRAFT, STATUS_SCHEDULE} from '../../model/constants.js';
 import _ from "lodash";
 
-export default function useCompletedSchedule(props: any) {
+export default function useCompletedSchedule(props: any, emit: any) {
   const timestamp = computed(() => props.timestamp);
   const scheduleType = computed(() => props.scheduleType);
   function isEventListComplete(date: string): boolean {
@@ -46,7 +46,9 @@ export default function useCompletedSchedule(props: any) {
     const complete = countIncompleteEvents(date);
     return ` ${complete[0]} Completed`;
   }
-
+  function refresh() {
+    emit('refresh');
+  }
   return {
     isEventListComplete,
     titleCompletedSchedule,
@@ -54,5 +56,6 @@ export default function useCompletedSchedule(props: any) {
     scheduleType,
     totalCompleted,
     countIncompleteEvents,
+    refresh,
   }
 }

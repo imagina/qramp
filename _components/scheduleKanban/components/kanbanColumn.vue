@@ -19,7 +19,7 @@
           </button>
         </div>
       </div>
-      <completed-schedule />
+      <completed-schedule @refresh="singleFefreshed"/>
       <div
         v-if="column.loading"
         class="tw-flex tw-justify-center tw-absolute tw-inset-0 tw-pt-48 tw-bg-white tw-bg-opacity-75 tw-z-20"

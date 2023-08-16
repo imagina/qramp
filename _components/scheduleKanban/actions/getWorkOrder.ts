@@ -5,7 +5,7 @@ export default function getWorkOrders(refresh = false, page = 1, date): WorkOrde
         const params = {
             refresh,
             params: {
-                take: 4,
+                take: 6,
                 page,
                 filter: {
                     "businessUnitId":{"operator":"!=","value":8},
