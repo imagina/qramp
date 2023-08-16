@@ -8,6 +8,7 @@
         class="q-mb-md"
         @refresh="buildKanbanStructure" 
     />
+    <filters />
    <actionBar /> 
   <div class="tw-flex">
     <div
@@ -65,11 +66,13 @@ import { defineComponent } from "vue";
 import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
 import actionBar from './actionBar.vue'
+import filters from './filters.vue';
 
 export default defineComponent({
   components: {
     kanbanColumn,
     actionBar,
+    filters
   },
   setup() {
     return {...useKanbanBoard()}

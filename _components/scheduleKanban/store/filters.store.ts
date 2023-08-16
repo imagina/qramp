@@ -1,9 +1,20 @@
 import Vue, { reactive, computed } from 'vue';
+import modelHoursFilter from '../models/hoursFilter.model'
 
 const state = reactive({
     showModal: false,
     titleModal: '',
     filters: {
+        time: {
+          value: null,
+          type: 'select',
+          props: {
+            label: 'Filter by time',
+            format24h: true,
+            options: modelHoursFilter,
+            alphabeticalSort: false,
+          }
+        },
         carrierId: {
           value: null,
           type: "select",
