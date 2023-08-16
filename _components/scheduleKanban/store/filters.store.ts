@@ -121,6 +121,8 @@ const state = reactive({
     form: {},
     loading: false,
     updateModal: false,
+    scheduleTypeModel: 'week-agenda',
+    dateModel: ''
 })
 
 const store = computed(() => ({
@@ -153,6 +155,18 @@ const store = computed(() => ({
     },
     set form(data) {
       state.form = {...data};
+    },
+    get scheduleTypeModel() {
+      return state.scheduleTypeModel;
+    },
+    set scheduleTypeModel(value: string) {
+      state.scheduleTypeModel = value;
+    },
+    get dateModel() {
+      return state.dateModel;
+    },
+    set dateModel(value: string) {
+      state.dateModel = value;
     },
     reset(): void {
         //state.filters = {};

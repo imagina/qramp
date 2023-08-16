@@ -58,7 +58,7 @@
     <!--calendar-->
     <div class="text-center tw-p-4">
       <q-date class="text-primary shadow-4 custom_q_date"
-        v-model="date"
+        v-model="dateModel"
         color="primary"
         minimal
         bordered
@@ -95,30 +95,6 @@ export default defineComponent({
   components: {},
   setup() {
     return {...useFilters()};
-  },
-  data () {
-    return {
-      date: new Date(), //dummy dev only
-      scheduleTypeModel: 'week-agenda' //dummy dev only
-    }
-  },
-  computed: {
-    scheduleTypeOptions() {
-      return [
-        {
-          id: 2,
-          label: this.$tr("isite.cms.label.week"),
-          value: "week-agenda",
-          icon: "fa-light fa-calendar-lines"
-        },
-        {
-          id: 3,
-          label: this.$tr("isite.cms.label.day"),
-          value: "day-agenda",
-          icon: "fa-light fa-calendar-check",
-        },
-      ];
-    },
   }
 });
 </script>
