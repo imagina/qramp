@@ -6,8 +6,8 @@
               tw-inline-flex 
               tw-items-center
               tw-w-full
-              tw-px-2 
-              tw-py-1 
+              tw-px-4
+              tw-py-4
               tw-mt-1
               tw-text-xs 
               lg:tw-text-base 
@@ -18,7 +18,10 @@
               tw-label-not
               tw-h-14"
             >
-            <div class="tw-text-blueGray-500">
+            <div class="
+                tw-text-blueGray-500
+                tw-w-40"
+            >
                 <div>
                     <span :class="{
                             'tw-text-green-500': isEventListComplete(timestamp.date),
