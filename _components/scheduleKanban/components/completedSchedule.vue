@@ -6,8 +6,7 @@
               tw-inline-flex 
               tw-items-center
               tw-w-full
-              tw-px-4
-              tw-py-4
+              tw-p-4
               tw-mt-1
               tw-text-xs 
               lg:tw-text-base 

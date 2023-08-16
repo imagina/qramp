@@ -27,7 +27,7 @@
         <q-spinner color="primary" size="2em" />
       </div>
       <div
-        class="columnKanbanCard tw-overflow-y-auto tw-overflow-x-hidden h-200 tw-bg-gray-100 tw-px-2"
+        class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden h-200 tw-bg-gray-100 tw-px-2"
         :class="{
           'tw-border tw-border-gray-300 ': isDraggingCard,
         }"
@@ -40,7 +40,7 @@
           ghost-class="ghostCard"
           drag-class="dragCard"
           filter=".ignoreItem"
-          class="tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-full"
+          class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-px-1 tw-h-full"
           handle=".dot-vertical"
           @start="isDraggingCard = true"
           @end="isDraggingCard = false"
@@ -119,12 +119,12 @@ export default defineComponent({
   height: 72vh;
 }
 
-.columnCtn .columnKanbanCard::-webkit-scrollbar-track {
-  @apply tw-bg-gray-100;
+.columnCtn .scrollbar::-webkit-scrollbar-track {
+  @apply tw-bg-gray-100 !important;
 }
 
-.columnCtn .columnKanbanCard::-webkit-scrollbar-thumb {
-  @apply tw-bg-gray-100;
+.columnCtn .scrollbar::-webkit-scrollbar-thumb {
+  @apply tw-bg-gray-100 !important;
 }
 
 .columnCtn .text-blue-gray-rb-5 {
