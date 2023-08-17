@@ -9,13 +9,12 @@
               tw-p-4
               tw-mt-1
               tw-text-xs 
-              lg:tw-text-base 
-              tw-font-bold 
+              lg:tw-text-base
               tw-leading-none 
               tw-bg-white
               tw-rounded-lg
               tw-label-not
-              tw-h-14"
+              tw-h-20"
             >
             <div class="
                 tw-text-blueGray-500
@@ -24,7 +23,7 @@
                 <div>
                     <span :class="{
                             'tw-text-green-500': isEventListComplete(timestamp.date),
-                            'tw-text-orange-500': !isEventListComplete(timestamp.date)
+                            'tw-text-orange-400': !isEventListComplete(timestamp.date)
                         }"
                     >
                         <i class="fa-solid fa-circle-exclamation" />
@@ -54,7 +53,7 @@
                 tw-justify-center"
             >
                 <q-btn
-                    icon="fa-solid fa-plus tw-text-blue-500"
+                    icon="fa-light fa-plus tw-text-blue-500"
                     size="sm"
                     outline
                     unelevated
@@ -62,13 +61,14 @@
                     dense
                 />
                 <span class="
-                    tw-text-xl
-                    tw-text-gray-400
+                    tw-border-l-2
+                    tw-h-4
+                    tw-text-lg
+                    tw-text-gray-200
                     tw-mx-2"
-                >|
-                </span>
+                />
                 <q-btn
-                    icon="fa-solid fa-rotate-right tw-text-blue-500"
+                    icon="fa-light fa-rotate-right tw-text-blue-500"
                     size="sm"
                     outline
                     unelevated
