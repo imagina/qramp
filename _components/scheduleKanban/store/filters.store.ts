@@ -1,9 +1,20 @@
 import Vue, { reactive, computed } from 'vue';
+import modelHoursFilter from '../models/hoursFilter.model'
 
 const state = reactive({
     showModal: false,
     titleModal: '',
     filters: {
+        time: {
+          value: null,
+          type: 'select',
+          props: {
+            label: 'Filter by time',
+            format24h: true,
+            options: modelHoursFilter,
+            alphabeticalSort: false,
+          }
+        },
         carrierId: {
           value: null,
           type: "select",
@@ -110,6 +121,8 @@ const state = reactive({
     form: {},
     loading: false,
     updateModal: false,
+    scheduleTypeModel: 'week-agenda',
+    dateModel: ''
 })
 
 const store = computed(() => ({
@@ -142,6 +155,18 @@ const store = computed(() => ({
     },
     set form(data) {
       state.form = {...data};
+    },
+    get scheduleTypeModel() {
+      return state.scheduleTypeModel;
+    },
+    set scheduleTypeModel(value: string) {
+      state.scheduleTypeModel = value;
+    },
+    get dateModel() {
+      return state.dateModel;
+    },
+    set dateModel(value: string) {
+      state.dateModel = value;
     },
     reset(): void {
         //state.filters = {};

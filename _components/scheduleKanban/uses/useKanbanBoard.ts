@@ -106,7 +106,7 @@ export default function useKanbanBoard() {
           icon: "fa-duotone fa-filter",
           id: "filter-button-crud",
         },
-        action: () => filtersStore.showModal = true,
+        action: () => { filtersStore.showModal = true },
       },
     ];
 
