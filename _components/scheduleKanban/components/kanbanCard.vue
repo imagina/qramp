@@ -14,7 +14,7 @@
             <p class="
                 tw-font-bold 
                 tw-text-sm">
-              {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }}
+              {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }} {{ card.id }}
             </p>
           </div>
           <div class="

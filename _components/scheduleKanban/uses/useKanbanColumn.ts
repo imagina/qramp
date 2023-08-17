@@ -3,6 +3,7 @@ import storeKanban from '../store/kanban.store';
 import moment from 'moment'
 import getWorkOrder from '../actions/getWorkOrder'
 import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
+import updateWorkOrder from '../actions/updateWorkOrder'
 
 export default function useKanbanColumn(props: any = {}) {
   const isLoading = ref(false);
@@ -35,7 +36,7 @@ export default function useKanbanColumn(props: any = {}) {
       if(props.column.loading || props.column.total === cards.value.length) return;
       isLoading.value = true;
       props.column.page = props.column.page + 1;
-      const response = await getIndividualWorkOrders(true, props.column.page, date);
+      const response = await getIndividualWorkOrders(true, props.column.page, date.value);
       cards.value.push(...response.data);
       isLoading.value = false;
     } catch (error) {
@@ -43,11 +44,12 @@ export default function useKanbanColumn(props: any = {}) {
       isLoading.value = false;
     }
   }
-  async function singleFefreshed() {
+  async function singleFefreshed(columnDate) {
     props.column.cards = [];
     const page = 1;
     props.column.loading = true
-    const response = await getIndividualWorkOrders(true, page, date);
+    const scheduleDate = columnDate || date.value;
+    const response = await getIndividualWorkOrders(true, page,  scheduleDate);
     props.column.page = page;
     props.column.cards = response.data;
     props.column.loading = false;
@@ -61,6 +63,30 @@ export default function useKanbanColumn(props: any = {}) {
       }
       
     })
+  }
+  async function changeDate(event) {
+    if (event.from.id === event.to.id) return;
+    const column: any = storeKanban.columns.find(item => {
+      return item.date.format('YYYY-MM-DD') === event.to.id
+    });
+    if(!column) return;
+    column.loading = true;
+    const card = column.cards.find(item => item.id == event.item.id);
+    if(!card) return;
+    const arrivalHour = moment(card.inboundScheduledArrival).format('HH:MM');
+    const departureHour = moment(card.outboundScheduledDeparture).format('HH:MM');
+    const sheduleDateColumn = moment(event.to.id).format('MM/DD/YYYY');
+    const attributes = {
+      id: event.item.id,
+      inboundScheduledArrival: card.inboundScheduledArrival ? `${sheduleDateColumn} ${arrivalHour}`: null,
+      outboundScheduledDeparture: card.outboundScheduledDeparture ? `${sheduleDateColumn} ${departureHour}`: null 
+    }
+    column.cards = [];
+    await updateWorkOrder(event.item.id, attributes);
+    column.page = 1;
+    const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
+    column.cards = response.data;
+    column.loading = false;
   }
   onMounted(() => {
     const observerOptions = {
@@ -82,5 +108,6 @@ export default function useKanbanColumn(props: any = {}) {
     date,
     singleFefreshed,
     setDrag,
+    changeDate,
   }
 }

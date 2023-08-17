@@ -9,6 +9,7 @@ const state: State = reactive({
   isDraggingCard: false,
   columns: [],
   loading: false,
+  dragDate: '',
 });
 
 const store: State = computed(() => ({
@@ -41,6 +42,12 @@ const store: State = computed(() => ({
   },
   set loading(value: boolean) {
     state.loading = value;
+  },
+  get dragDate(): string {
+    return state.dragDate;
+  },
+  set dragDate(value: string) {
+    state.dragDate = value;
   },
 })).value;
 

@@ -7,7 +7,6 @@ export interface Columns {
   page: number;
   loading: boolean;
   total: number;
-
 }
 
 export interface State {
@@ -16,4 +15,5 @@ export interface State {
   isDraggingCard: boolean;
   columns: Columns[];
   loading: boolean;
+  dragDate: string;
 }

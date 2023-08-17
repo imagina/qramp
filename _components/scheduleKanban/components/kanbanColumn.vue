@@ -65,7 +65,7 @@
             <i class="fa-thin fa-cards-blank tw-text-7xl tw-text-gray-300" />
         </div>
         <draggable
-          :id="`column-${date.format('YYYY-MM-DD')}`"
+          :id="date.format('YYYY-MM-DD')"
           v-model="cards"
           :animation="200"
           group="cards"
@@ -74,9 +74,11 @@
           filter=".ignoreItem"
           class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-h-full tw-px-2"
           handle=".dot-vertical"
+          @end="changeDate"
         >
           <kanban-card
             v-for="(card, index) in cards"
+            :id="card.id"
             :key="card.id"
             :card="card"
             :class="{ hidden: column.isDrag  }"

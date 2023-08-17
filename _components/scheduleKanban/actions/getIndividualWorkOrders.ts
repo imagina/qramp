@@ -6,8 +6,8 @@ export default async function getIndividualWorkOrders(refresh = false, page = 1,
         const response = await getWorkOrder(refresh, page,  {
             "field": "schedule_date",
             "type": "customRange",
-            "from": date.value.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-            "to": date.value.endOf('day').format('YYYY-MM-DD HH:mm:ss')
+            "from": date.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+            "to": date.endOf('day').format('YYYY-MM-DD HH:mm:ss')
         })
         return response;
     } catch (error) {

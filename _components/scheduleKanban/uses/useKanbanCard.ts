@@ -61,6 +61,6 @@ export default function useKanbanCard(props: any = {}) {
     titleStatus,
     flightStatuses,
     actypes,
-    gates
+    gates,
   };
 }
