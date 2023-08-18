@@ -1,7 +1,10 @@
 <template>
     <div>
         <div 
-            v-if="['day-agenda', 'week-agenda'].includes(scheduleType)" 
+            v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
+            :class="{
+                'h-255': dataWo.length === 0,
+            }" 
             class="
               tw-inline-flex 
               tw-items-center
@@ -48,7 +51,12 @@
                 </div>
             </div>
 
-            <div class="tw-absolute tw-right-5">
+            <div 
+                class="tw-absolute tw-right-5"
+                :class="{
+                    'tw-mt-1': dataWo.length === 0
+                }"
+            >
             <div class="
                 tw-inline-flex
                 tw-items-center
@@ -109,4 +117,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style>
+.h-255 {
+  height: 4.7rem !important;
+}
+</style>
