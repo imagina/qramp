@@ -22,27 +22,27 @@
             >
                 <div>
                     <span :class="{
-                            'tw-text-green-500': isEventListComplete(timestamp.date),
-                            'tw-text-orange-400': !isEventListComplete(timestamp.date)
+                            'tw-text-green-500': isEventListComplete(),
+                            'tw-text-orange-400': !isEventListComplete()
                         }"
                     >
                         <i class="fa-solid fa-circle-exclamation" />
                     </span>
-                    <span class="tw-text-sm" v-html="titleCompletedSchedule(timestamp.date)" />
+                    <span class="tw-text-sm" v-html="titleCompletedSchedule()" />
                 </div>
                 <div
                    class="
                     tw-text-left
                     tw-py-1"
-                    v-if="countIncompleteEvents(timestamp.date)[0] > 0
-                    && !isEventListComplete(timestamp.date)"
+                    v-if="countIncompleteEvents()[0] > 0
+                    && !isEventListComplete()"
                 >
                     <i class="
                         fa-solid
                         fa-circle-check
                         tw-text-green-400"
                      />
-                    <span class="tw-text-sm" v-html="totalCompleted(timestamp.date)" />
+                    <span class="tw-text-sm" v-html="totalCompleted()" />
                 </div>
             </div>
 
@@ -89,8 +89,8 @@ import { date } from 'quasar';
 
 export default defineComponent({
     props: {
-        getEvents: {
-            type: Function,
+        dataWo: {
+            type: Array,
             default: () => {}
         },
         scheduleType: {
@@ -98,14 +98,6 @@ export default defineComponent({
             // default: () => ''
             default: () => 'week-agenda' //dev only
         },
-        timestamp: {
-            type: Object,
-            //default: () => {}
-            default: () => {
-                const d = new Date()
-                return { date: date.toString()}
-            } //dev only
-        }
     },
     setup(props, {emit}) {
         return {

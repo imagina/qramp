@@ -32,7 +32,10 @@
           </button>
         </div>
       </div>
-      <completed-schedule @refresh="singleFefreshed"/>
+      <completed-schedule
+       :dataWo="cards"
+       @refresh="singleFefreshed"
+      />
       <div
         v-if="column.loading"
         class="
