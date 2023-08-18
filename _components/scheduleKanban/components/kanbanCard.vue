@@ -2,7 +2,7 @@
   <div class="
      tw-relative 
      tw-rounded-lg 
-     tw-h-36 
+     card-h 
      tw-my-2 
      tw-border-l-8  
      showCard
@@ -11,10 +11,8 @@
       <div class="tw-py-3 tw-pl-2 tw-w-full">
         <div class="tw-flex tw-pb-1">
           <div class="tw-w-10/12">
-            <p class="
-                tw-font-bold 
-                tw-text-sm">
-              {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }} {{ card.id }}
+            <p class="text-kanban-card tw--mt-0.5">
+              {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }}
             </p>
           </div>
           <div class="
@@ -22,7 +20,7 @@
              tw-items-center 
              tw-space-x-2
              tw-px-3
-             tw--mt-1 
+             tw--mt-2 
              tw-text-gray-500
              dot-vertical 
              tw-cursor-move"
@@ -34,43 +32,30 @@
            tw-font-semibold 
            tw-text-xs 
            tw-space-y-1">
-          <div class="tw-flex tw-space-x-4">
+          <div class="tw-flex tw-space-x-4 arrival-text">
             <div>
-              STA: {{ card.inboundScheduledArrival ? $moment(card.inboundScheduledArrival).format('HH:MM') : '' }}
+              <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.inboundScheduledArrival ? $moment(card.inboundScheduledArrival).format('HH:MM') : '' }}
             </div>
             <div>
-              STD: {{ card.outboundScheduledDeparture ? $moment(card.outboundScheduledDeparture).format('HH:MM') : '' }}
+              <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.outboundScheduledDeparture ? $moment(card.outboundScheduledDeparture).format('HH:MM') : '' }}
             </div>
           </div>
           <div class="tw-flex tw-space-x-1">
-            <div>
-              A/C#: {{  actypes }}
+            <div class="ac-type-text">
+              <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }}  {{ gates }}
             </div>
-            <lastComments :card="card" />
           </div>
           <div 
             class="
              tw-py-1 
              tw-flex 
-             tw-justify-between 
              tw-items-center 
              tw-pr-3"
           >
-            <span class="tw-uppercase tw-font-extrabold">
+            <span class="tw-uppercase tw-font-extrabold text-status">
               {{ titleStatus }}
             </span>
-            <div 
-              v-if="gates" 
-              class="
-               tw-rounded-md 
-               tw-border 
-               tw-py-1 
-               tw-px-2 
-               tw-pl-4 
-               tw-text-center"
-            >
-              {{ gates }}
-            </div>
+            <lastComments :card="card" class="tw-pl-2"/>
           </div>
         </div>
       </div>
@@ -120,6 +105,51 @@ export default defineComponent({
 <style scoped>
 .text-x2 {
   font-size: 11px;
+}
+
+.card-h {
+  height: 125px;
+}
+.text-kanban-card {
+  color: #1F294F;
+  font-family: Manrope;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 110%; /* 15.4px */
+  letter-spacing: 0.7px;
+}
+.arrival-text {
+  color: #1F294F;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: Manrope;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 110%; /* 13.2px */
+  letter-spacing: 0.36px;
+}
+.ac-type-text {
+  color: #1F294F;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: Manrope;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0.36px;
+}
+.text-status {
+  color: #1F294F;
+  font-family: Manrope;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 110%; /* 13.2px */
+  letter-spacing: 0.36px;
+  text-transform: uppercase;
 }
 .showCard {
   box-shadow: 0px 2px 4px 0px rgba(31, 41, 79, 0.07), 4px 4px 8px 0px rgba(31, 41, 79, 0.14);

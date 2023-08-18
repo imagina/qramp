@@ -25,7 +25,7 @@ export default function useKanbanCard(props: any = {}) {
         .getFlightStatusesList()
         .find(status => status.id === Number(props.card.flightStatusId || 22));
     const color = flightStatuses ? `tw-text-${flightStatuses.color}` : 'tw-text-black';
-    const icon = flightStatuses?.icon || 'fa-light fa-circle-question';
+    const icon = flightStatuses?.icon || 'fa-solid fa-circle-question';
     return { name: flightStatuses.name, color, icon };
   })
   const actypes = computed(() => {
@@ -41,9 +41,9 @@ export default function useKanbanCard(props: any = {}) {
       .getGatesList()
         .find(gate => gate.id === Number(props.card.gateId));
     if(!isPassenger.value) {
-      return gateList ?  `P-${gateList.name}` : null;
+      return gateList ?  `${gateList.name}` : null;
     }else {
-      return gateList ? `G-${gateList.name}` : null;
+      return gateList ? `${gateList.name}` : null;
     }
   })
   const titleStatus = computed(() => {

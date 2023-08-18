@@ -9,7 +9,7 @@
        tw-border-l 
        tw-border-gray-200 
        tw-px-2 
-       tw-text-gray-500"
+       tw-text-gray-400"
     >
       <i class="fa-solid fa-comment"></i>
       <span class="tw-font-bold tw-text-sm">{{ card.comments }}</span>
