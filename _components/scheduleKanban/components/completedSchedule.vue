@@ -16,9 +16,11 @@
               tw-label-not
               tw-h-20"
             >
-            <div class="
+            <div 
+              class="
                 tw-text-blueGray-500
-                tw-w-40"
+                "
+                v-if="dataWo.length > 0"
             >
                 <div>
                     <span :class="{
@@ -46,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="tw-text-right">
+            <div class="tw-absolute tw-right-5">
             <div class="
                 tw-inline-flex
                 tw-items-center
