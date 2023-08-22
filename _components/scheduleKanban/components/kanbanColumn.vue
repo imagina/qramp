@@ -34,6 +34,7 @@
       </div>
       <completed-schedule
        :dataWo="cards"
+       :dateColumn="column.date.format('YYYY-MM-DD')"
        @refresh="singleFefreshed"
       />
       <div

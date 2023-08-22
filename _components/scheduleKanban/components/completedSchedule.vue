@@ -69,6 +69,7 @@
                     unelevated
                     flat
                     dense
+                    @click="openModalForm"
                 />
                 <span class="
                     tw-border-l-2
@@ -95,7 +96,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import useCompletedSchedule from '../uses/useCompletedSchedule'
-import { date } from 'quasar';
 
 export default defineComponent({
     props: {
@@ -105,9 +105,12 @@ export default defineComponent({
         },
         scheduleType: {
             type: String,
-            // default: () => ''
-            default: () => 'week-agenda' //dev only
+            default: () => 'week-agenda'
         },
+        dateColumn:{
+            type: String,
+            default: () => null
+        }
     },
     setup(props, {emit}) {
         return {

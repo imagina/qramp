@@ -58,6 +58,7 @@
       />
     </div>
   </div>
+  <modalSchedule />
 </div>
 </template>
 
@@ -67,12 +68,14 @@ import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
 import actionBar from './actionBar.vue'
 import filters from './filters.vue';
+import modalSchedule from './modalSchedule.vue'
 
 export default defineComponent({
   components: {
     kanbanColumn,
     actionBar,
-    filters
+    filters,
+    modalSchedule,
   },
   setup() {
     return {...useKanbanBoard()}

@@ -1,10 +1,21 @@
 import Vue, {computed} from 'vue';
 import {STATUS_DRAFT, STATUS_SCHEDULE} from '../../model/constants.js';
+import modalScheduleStore from '../store/modalSchedule.store'
 import _ from "lodash";
 
 export default function useCompletedSchedule(props: any, emit: any) {
   const scheduleType = computed(() => props.scheduleType);
-  function isEventListComplete(): boolean {
+  const dateColumn = computed(() => props.dateColumn);
+  const modalShowSchedule = computed({
+    get: () => modalScheduleStore.showModal,
+    set: (value: boolean) => modalScheduleStore.showModal = value
+  })
+  const modalTitleSchedule = computed({
+    get: () => modalScheduleStore.titleModal,
+    set: (value: string) => modalScheduleStore.titleModal = value
+  })
+  
+  function isEventListComplete(): boolean { 
      return _.every(props.dataWo, (objeto) => {
         return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE;
     })
@@ -33,6 +44,10 @@ export default function useCompletedSchedule(props: any, emit: any) {
     const complete = countIncompleteEvents();
     return ` ${complete[0]} Completed`;
   }
+  function openModalForm() {
+    modalShowSchedule.value = true;
+    modalTitleSchedule.value = `Create schedule date: ${dateColumn.value}`;
+  }
   function refresh() {
     emit('refresh');
   }
@@ -42,6 +57,8 @@ export default function useCompletedSchedule(props: any, emit: any) {
     scheduleType,
     totalCompleted,
     countIncompleteEvents,
+    modalShowSchedule,
     refresh,
+    openModalForm,
   }
 }
