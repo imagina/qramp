@@ -1,17 +1,19 @@
 import Vue, { reactive, computed } from 'vue';
 
 interface State {
-    showModal: boolean,
-    titleModal: string,
-    loading: boolean,
-    form: any
+    showModal: boolean;
+    titleModal: string;
+    loading: boolean;
+    form: any;
+    seletedDateColumn: any;
 }
 
 const state = reactive<State>({
     showModal: false,
     titleModal: '',
     loading: false,
-    form: {}
+    form: {},
+    seletedDateColumn: null,
 })
 
 const store = computed(() => ({
@@ -39,8 +41,14 @@ const store = computed(() => ({
     set form(data) {
       state.form = {...data};
     },
+    get seletedDateColumn() {
+        return state.seletedDateColumn;
+    },
+    set seletedDateColumn(value) {
+        state.seletedDateColumn = value;
+    },
     reset(): void {
-        //state.form = {};
+        state.form = {};
         state.showModal = false;
     },
 })).value

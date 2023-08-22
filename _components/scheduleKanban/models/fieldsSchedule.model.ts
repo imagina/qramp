@@ -46,14 +46,13 @@ export default function modelFields() {
             },
             stationId: {
               name:'stationId',
-              value: null,
+              value: 12,
               type: 'select',
               props: {
                 //readonly: this.isBlank,
                 rules: [
                   val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                 ],
-                selectByDefault : true,
                 label: `*${Vue.prototype.$tr('ifly.cms.form.station')}`,
                 clearable: true,
                 color:"primary"

@@ -14,7 +14,6 @@ export default function useCompletedSchedule(props: any, emit: any) {
     get: () => modalScheduleStore.titleModal,
     set: (value: string) => modalScheduleStore.titleModal = value
   })
-  
   function isEventListComplete(): boolean { 
      return _.every(props.dataWo, (objeto) => {
         return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE;
@@ -47,6 +46,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
   function openModalForm() {
     modalShowSchedule.value = true;
     modalTitleSchedule.value = `Create schedule date: ${dateColumn.value}`;
+    modalScheduleStore.seletedDateColumn = dateColumn.value;
   }
   function refresh() {
     emit('refresh');
