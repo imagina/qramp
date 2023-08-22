@@ -1,9 +1,11 @@
-import Vue, { computed, ref, onMounted } from 'vue';
+import Vue, { computed, ref, onMounted, ComputedRef } from 'vue';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'
 import getWorkOrder from '../actions/getWorkOrder'
 import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
 import updateWorkOrder from '../actions/updateWorkOrder'
+import workOrderList from '../../../_store/actions/workOrderList'
+import validateOperationType from '../actions/validateOperationType'
 
 export default function useKanbanColumn(props: any = {}) {
   const isLoading = ref(false);
@@ -24,6 +26,7 @@ export default function useKanbanColumn(props: any = {}) {
     return (index, card, cards) => index !== 0
       && moment(card.scheduleDate).format('HH') === moment(cards[index - 1].scheduleDate).format('HH')
   })
+  
   function observerCallback(entries) {
     entries.forEach(({ isIntersecting }) => {
       if (isIntersecting) {
@@ -73,20 +76,37 @@ export default function useKanbanColumn(props: any = {}) {
     column.loading = true;
     const card = column.cards.find(item => item.id == event.item.id);
     if(!card) return;
-    const arrivalHour = moment(card.inboundScheduledArrival).format('HH:MM');
-    const departureHour = moment(card.outboundScheduledDeparture).format('HH:MM');
-    const sheduleDateColumn = moment(event.to.id).format('MM/DD/YYYY');
-    const attributes = {
-      id: event.item.id,
-      inboundScheduledArrival: card.inboundScheduledArrival ? `${sheduleDateColumn} ${arrivalHour}`: null,
-      outboundScheduledDeparture: card.outboundScheduledDeparture ? `${sheduleDateColumn} ${departureHour}`: null 
-    }
+    const attributes = updateTransportScheduleChanges(card, event);
     column.cards = [];
     await updateWorkOrder(event.item.id, attributes);
     column.page = 1;
     const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
     column.cards = response.data;
     column.loading = false;
+  }
+  function updateTransportScheduleChanges(card, event) {
+    let arrival: any = moment(card.inboundScheduledArrival);
+    let departure: any = moment(card.outboundScheduledDeparture);
+    const sheduleDateColumn = moment(event.to.id);
+    const isbound = validateOperationType(card.operationTypeId);
+    if(isbound.inbound && !isbound.outbound) {
+      arrival = `${sheduleDateColumn.format('MM/DD/YYYY')} ${arrival.format('HH:MM')}`;
+      departure = null;
+    }
+    if(!isbound.inbound && isbound.outbound) {
+      arrival = null;
+      departure = `${sheduleDateColumn.format('MM/DD/YYYY')} ${departure.format('HH:MM')}`;
+    }
+    if(isbound.inbound && isbound.outbound) {
+      const daysDifference = sheduleDateColumn.diff(arrival.format('MM/DD/YYYY'), 'days');
+      departure.add(daysDifference, 'days');
+      arrival = `${sheduleDateColumn.format('MM/DD/YYYY')} ${arrival.format('HH:MM')}`;
+    }
+    return {
+      id: event.item.id,
+      inboundScheduledArrival: card.inboundScheduledArrival && arrival ? arrival : null,
+      outboundScheduledDeparture: card.outboundScheduledDeparture && departure ? departure.format('MM/DD/YYYY HH:MM'): null
+    }
   }
   onMounted(() => {
     const observerOptions = {
