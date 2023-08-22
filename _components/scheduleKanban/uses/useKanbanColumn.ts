@@ -47,7 +47,7 @@ export default function useKanbanColumn(props: any = {}) {
       isLoading.value = false;
     }
   }
-  async function singleFefreshed(columnDate) {
+  async function singleRefreshment(columnDate) {
     props.column.cards = [];
     const page = 1;
     props.column.loading = true
@@ -126,7 +126,7 @@ export default function useKanbanColumn(props: any = {}) {
     isLoading,
     cards,
     date,
-    singleFefreshed,
+    singleRefreshment,
     setDrag,
     changeDate,
   }

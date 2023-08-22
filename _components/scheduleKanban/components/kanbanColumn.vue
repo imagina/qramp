@@ -35,7 +35,7 @@
       <completed-schedule
        :dataWo="cards"
        :dateColumn="column.date.format('YYYY-MM-DD')"
-       @refresh="singleFefreshed"
+       @refresh="singleRefreshment"
       />
       <div
         v-if="column.loading"
