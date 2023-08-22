@@ -44,8 +44,8 @@
             <div class="ac-type-text">
               <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }} 
             </div>
-            <div class="tw-flex tw-items-center">
-              <img src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset=""> 
+            <div class="tw-flex tw-items-center" v-if="gates">
+              <img src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
               {{ gates }}
             </div>
           </div>
