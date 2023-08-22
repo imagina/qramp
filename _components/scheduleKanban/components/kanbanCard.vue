@@ -32,7 +32,7 @@
            tw-font-semibold 
            tw-text-xs 
            tw-space-y-1">
-          <div class="tw-flex tw-space-x-4 arrival-text">
+          <div class="tw-flex tw-space-x-2 arrival-text">
             <div>
               <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.inboundScheduledArrival ? $moment(card.inboundScheduledArrival).format('HH:MM') : '' }}
             </div>
@@ -42,7 +42,11 @@
           </div>
           <div class="tw-flex tw-space-x-1">
             <div class="ac-type-text">
-              <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }}  {{ gates }}
+              <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }} 
+            </div>
+            <div class="tw-flex tw-items-center">
+              <img src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset=""> 
+              {{ gates }}
             </div>
           </div>
           <div 
