@@ -11,7 +11,10 @@
       <div class="tw-py-3 tw-pl-2 tw-w-full">
         <div class="tw-flex tw-pb-1">
           <div class="tw-w-10/12">
-            <p class="text-kanban-card tw--mt-0.5">
+            <p 
+             class="text-kanban-card tw--mt-0.5 tw-cursor-pointer"
+             @click="openModalSchedule"
+            >
               {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }}
             </p>
           </div>
@@ -99,6 +102,10 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    dateColumn: {
+      type: String,
+      default: () => null
+    }
   },
   setup(props) {
     return {...useKanbanCard(props)}

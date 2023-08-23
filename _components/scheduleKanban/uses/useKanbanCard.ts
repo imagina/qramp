@@ -9,6 +9,7 @@ import {
 } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from './../../../_store/qRampStore.js'
+import modalScheduleStore from '../store/modalSchedule.store'
 
 export default function useKanbanCard(props: any = {}) {
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -56,11 +57,19 @@ export default function useKanbanCard(props: any = {}) {
     };
     return statuses[props.card.statusId] || '';
   })
+  function openModalSchedule() {
+    modalScheduleStore.isEdit = true;
+    modalScheduleStore.showModal = true;
+    modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
+    modalScheduleStore.form = { ...props.card };
+    modalScheduleStore.seletedDateColumn = props.dateColumn;
+  }
   return {
     colorCheckSchedule,
     titleStatus,
     flightStatuses,
     actypes,
     gates,
+    openModalSchedule,
   };
 }

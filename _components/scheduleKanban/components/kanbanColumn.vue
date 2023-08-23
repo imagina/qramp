@@ -85,6 +85,7 @@
             :id="card.id"
             :key="card.id"
             :card="card"
+            :dateColumn="column.date.format('YYYY-MM-DD')"
             :class="{ hidden: column.isDrag  }"
           />
           <div

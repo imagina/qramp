@@ -61,8 +61,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import useModalSchedule from '../uses/useModalSchedule'
+import comments from '@imagina/qsite/_components/master/comments/index.vue'
 
 export default defineComponent({
+  components: {
+    comments,
+  },
   setup (props, {emit}) {
     return {...useModalSchedule(props, emit)}
   }

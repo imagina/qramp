@@ -94,8 +94,9 @@ export default function useModalSchedule(props: any, emit: any) {
       form.value.inboundScheduledArrival = null;
     }
   }
-  function hideModal() {
+  async function hideModal() {
     store.reset();
+    if(store.isEdit) await getWorkOrder();
   }
   return {
     showModal,
