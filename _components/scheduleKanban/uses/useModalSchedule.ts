@@ -6,6 +6,8 @@ import saveSimpleWorkOrder from '../actions/saveSimpleWorkOrder'
 import kanbanStore from '../store/kanban.store';
 import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
 import moment from 'moment';
+import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import {STATUS_DRAFT} from 'src/modules/qramp/_components/model/constants.js'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -25,13 +27,18 @@ export default function useModalSchedule(props: any, emit: any) {
       },
       action: async() => {
         //await this.saveScheduleForm(STATUS_DRAFT);
+        store.loading = true;
+        await qRampStore().changeStatus(STATUS_DRAFT, form.value.id);
+        await getWorkOrder();
+        await hideModal();
+        store.loading = false;
       },
     },
     {
       props: {
         vIf: !kanbanStore.isBlank,
         color: "primary",
-        label: false
+        label: store.isEdit
           ? Vue.prototype.$tr("isite.cms.label.update")
           : Vue.prototype.$tr("isite.cms.label.save"),
       },
@@ -62,10 +69,12 @@ export default function useModalSchedule(props: any, emit: any) {
   async function saveForm() {
     refFormSchedule.value.validate().then(async (success) => {
       if (success) {
+        store.loading = true;
         await tranformData();
         await saveSimpleWorkOrder();
         await getWorkOrder();
         await hideModal();
+        store.loading = false;
       }
     });
   }
@@ -75,6 +84,7 @@ export default function useModalSchedule(props: any, emit: any) {
     });
     if(!column) return;
     column.loading = true;
+    column.page = 1;
     const response = await getIndividualWorkOrders(true, column.page,  moment(store.seletedDateColumn));
     column.cards = response.data;
     column.loading = false; 
