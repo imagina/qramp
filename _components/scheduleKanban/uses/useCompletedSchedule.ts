@@ -44,6 +44,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
     return ` ${complete[0]} Completed`;
   }
   function openModalForm() {
+    modalScheduleStore.isEdit = false;
     modalShowSchedule.value = true;
     modalTitleSchedule.value = `Create schedule date: ${dateColumn.value}`;
     modalScheduleStore.seletedDateColumn = dateColumn.value;

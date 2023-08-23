@@ -10,6 +10,7 @@ const state: State = reactive({
   columns: [],
   loading: false,
   dragDate: '',
+  isBlank: false,
 });
 
 const store: State = computed(() => ({
@@ -49,6 +50,13 @@ const store: State = computed(() => ({
   set dragDate(value: string) {
     state.dragDate = value;
   },
+  get isBlank(): boolean {
+    return state.isBlank;
+  },
+  set isBlank(value: boolean) {
+    state.isBlank = value;
+  },
+  
 })).value;
 
 export default store;

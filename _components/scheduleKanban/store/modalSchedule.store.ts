@@ -6,6 +6,7 @@ interface State {
     loading: boolean;
     form: any;
     seletedDateColumn: any;
+    isEdit: boolean;
 }
 
 const state = reactive<State>({
@@ -14,6 +15,7 @@ const state = reactive<State>({
     loading: false,
     form: {},
     seletedDateColumn: null,
+    isEdit: false,
 })
 
 const store = computed(() => ({
@@ -46,6 +48,12 @@ const store = computed(() => ({
     },
     set seletedDateColumn(value) {
         state.seletedDateColumn = value;
+    },
+    get isEdit() {
+        return state.isEdit;
+    },
+    set isEdit(value) {
+        state.isEdit = value;
     },
     reset(): void {
         state.form = {};

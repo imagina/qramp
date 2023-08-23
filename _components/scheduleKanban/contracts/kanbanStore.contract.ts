@@ -16,4 +16,5 @@ export interface State {
   columns: Columns[];
   loading: boolean;
   dragDate: string;
+  isBlank: boolean;
 }

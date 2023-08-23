@@ -19,7 +19,7 @@ export default function useModalSchedule(props: any, emit: any) {
   const actions = computed(() => [
     {
       props: {
-        //vIf: this.isEdit && !this.isBlank,
+        vIf: store.isEdit && !kanbanStore.isBlank,
         color: "green",
         label: 'Start Work Order',
       },
@@ -29,7 +29,7 @@ export default function useModalSchedule(props: any, emit: any) {
     },
     {
       props: {
-        //vIf: !this.isBlank,
+        vIf: !kanbanStore.isBlank,
         color: "primary",
         label: false
           ? Vue.prototype.$tr("isite.cms.label.update")
@@ -41,7 +41,7 @@ export default function useModalSchedule(props: any, emit: any) {
     },
     {
       props: {
-        //vIf: this.isEdit && !this.isBlank,
+        vIf: store.isEdit && !kanbanStore.isBlank,
         color: "red",
         label: Vue.prototype.$tr("isite.cms.label.delete"),
       },
