@@ -58,7 +58,7 @@
     <!--calendar-->
     <div class="text-center tw-p-4">
       <q-date class="text-primary shadow-4 custom_q_date"
-        v-model="dateModel"
+        v-model="date"
         color="primary"
         minimal
         bordered
@@ -83,7 +83,7 @@
         color="primary"
         no-caps class="tw-w-full"
         rounded
-        @click=""/>
+        @click="buildKanbanStructure"/>
     </div>
   </q-drawer>
 </template>

@@ -1,5 +1,6 @@
 import Vue, { reactive, computed } from 'vue';
 import modelHoursFilter from '../models/hoursFilter.model'
+import moment, { Moment } from 'moment';
 
 const state = reactive({
     showModal: false,
@@ -119,11 +120,27 @@ const state = reactive({
         },  
     },
     form: {},
+    payloadForm: {},
     loading: false,
     updateModal: false,
     scheduleTypeModel: 'week-agenda',
-    dateModel: ''
+    date: moment().format('YYYY/MM/DD')
 })
+
+function getFilterTimeCurrent(){
+  const currentHour = moment().hour();
+  const filterTime = modelHoursFilter.filter(item => item.value !== '0-23').find(range => {
+    const [start, end] = range.value.split('-').map(Number);
+      return currentHour >= start && currentHour <= end;
+  }).value || null;
+  return filterTime
+}
+
+function checkFilters(){
+  state.form.time = getFilterTimeCurrent()  //sets the current time
+}
+
+checkFilters()
 
 const store = computed(() => ({
     get showModal(): boolean {
@@ -162,11 +179,22 @@ const store = computed(() => ({
     set scheduleTypeModel(value: string) {
       state.scheduleTypeModel = value;
     },
-    get dateModel() {
-      return state.dateModel;
+    get date() {
+      return state.date;
     },
-    set dateModel(value: string) {
-      state.dateModel = value;
+    set date(value: string) {
+      state.date = value;
+    },
+    get dateTimeIsFullDay() {
+      return state.form.time === modelHoursFilter[0].value //0-23
+    },
+    get startDateTime(){
+      const time = state.form.time.split('-') || [0,0];
+      return moment(state.date).startOf('day').set({ hour: time[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss');
+    },
+    get endDateTime(){
+      const time = state.form.time.split('-') || [0,0];
+      return moment(state.date).endOf('day').set({ hour: time[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss');
     },
     reset(): void {
         //state.filters = {};

@@ -1,8 +1,10 @@
-import Vue, { ref, computed, ComputedRef, WritableComputedRef } from 'vue';
+import Vue, { ref, computed, ComputedRef, WritableComputedRef, onMounted, watch } from 'vue';
 import store from '../store/filters.store'
+import storeKanban from "../store/kanban.store";
 import actionsModal from '../models/actionsModal.model'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract';
 import scheduleTypeOptions from '../models/scheduleType.model'
+import buildKanbanStructure from '../actions/buildKanbanStructure';
 
 export default function useFilters() {
   const form = computed(() => store.form);
@@ -63,23 +65,27 @@ export default function useFilters() {
 
   /**
    * Writable computed property controlling the state of the q-date calendar.
-   * @type {WritableComputedRef<boolean>}
+   * @type {WritableComputedRef<string>}
    */
-  const dateModel: WritableComputedRef<string> = computed({
+  const date: WritableComputedRef<string> = computed({
     /**
      * Get the current value of the q-date calendar.
      * @returns {string} The state of the q-date calendar.
      */
-    get: () => store.dateModel,
+    get: () => store.date,
     /**
      * Set the value state of the q-date calendar.
      * @param {string} value - The new value state to set.
      */
     set: (value: string) => {
-      store.dateModel = value;
+      store.date = value;
     }
   });
   
+  watch(date, async (newDate, oldDate) => {
+    storeKanban.selectedDate = newDate
+  })
+
   const { actions } = actionsModal() as ModelActionsModalResult;
   
   return {
@@ -89,8 +95,9 @@ export default function useFilters() {
     showModal,
     form,
     actions,
-    dateModel,
+    date,
     scheduleTypeModel,
-    scheduleTypeOptions
+    scheduleTypeOptions,
+    buildKanbanStructure
   };
 }
