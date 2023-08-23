@@ -5,6 +5,7 @@ import actionsModal from '../models/actionsModal.model'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract';
 import scheduleTypeOptions from '../models/scheduleType.model'
 import buildKanbanStructure from '../actions/buildKanbanStructure';
+import getCurrentTime from '../actions/getCurrentTime';
 
 export default function useFilters() {
   const form = computed(() => store.form);
@@ -67,26 +68,35 @@ export default function useFilters() {
    * Writable computed property controlling the state of the q-date calendar.
    * @type {WritableComputedRef<string>}
    */
-  const date: WritableComputedRef<string> = computed({
+  const selectedDate: WritableComputedRef<string> = computed({
     /**
      * Get the current value of the q-date calendar.
      * @returns {string} The state of the q-date calendar.
      */
-    get: () => store.date,
+    get: () => store.selectedDate,
     /**
      * Set the value state of the q-date calendar.
      * @param {string} value - The new value state to set.
      */
     set: (value: string) => {
-      store.date = value;
+      store.selectedDate = value;
     }
   });
-  
-  watch(date, async (newDate, oldDate) => {
+
+  const { actions } = actionsModal() as ModelActionsModalResult;
+
+  function checkFilters(){
+    store.form['time'] = getCurrentTime()  //sets the current time
+    console.log(store.form['time'])
+  }
+
+  watch(selectedDate, async (newDate, oldDate) => {
     storeKanban.selectedDate = newDate
   })
 
-  const { actions } = actionsModal() as ModelActionsModalResult;
+  onMounted(() => {
+    checkFilters()
+  })
   
   return {
     filters,
@@ -95,9 +105,9 @@ export default function useFilters() {
     showModal,
     form,
     actions,
-    date,
+    selectedDate,
     scheduleTypeModel,
     scheduleTypeOptions,
-    buildKanbanStructure
+    buildKanbanStructure,
   };
 }

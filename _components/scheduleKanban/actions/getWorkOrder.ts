@@ -10,8 +10,7 @@ export default function getWorkOrders(refresh = false, page = 1, date): WorkOrde
                 page,
                 filter: {
                     "businessUnitId":{"operator":"!=","value":8},
-                    "stationId":"12",
-                    ...filtersStore.form,
+                    ...filtersStore.payload,
                     date,
                     withoutDefaultInclude: true,
                     order: {

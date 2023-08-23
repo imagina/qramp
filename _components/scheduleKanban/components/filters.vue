@@ -58,7 +58,7 @@
     <!--calendar-->
     <div class="text-center tw-p-4">
       <q-date class="text-primary shadow-4 custom_q_date"
-        v-model="date"
+        v-model="selectedDate"
         color="primary"
         minimal
         bordered

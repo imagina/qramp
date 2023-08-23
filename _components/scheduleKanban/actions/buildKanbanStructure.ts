@@ -7,7 +7,7 @@ import storeFilters from "../store/filters.store";
 
 export async function getColumns(): Promise<Columns[]> {
   try {
-    const startOfWeek: Moment = moment(storeFilters.date).startOf(
+    const startOfWeek: Moment = moment(storeFilters.selectedDate).startOf(
       "week"
     );
 
@@ -25,15 +25,26 @@ export async function getColumns(): Promise<Columns[]> {
   }
 }
 
+function setDateTime (date){
+  if (storeFilters.dateTimeIsFullDay){
+    storeFilters.startDateTime = date.startOf("day").format("YYYY-MM-DD HH:mm:ss")
+    storeFilters.endDateTime = date.endOf("day").format("YYYY-MM-DD HH:mm:ss")
+  }else{
+    storeFilters.startDateTime = storeFilters.filterDateTime.startDateTime
+    storeFilters.endDateTime = storeFilters.filterDateTime.endDateTime
+  }
+}
+
 export async function getCards(): Promise<void> {
   try {
     storeKanban.columns.forEach(async (item: Columns) => {
       item.loading = true;
+      setDateTime(item.date)
       const response = await getWorkOrder(true, item.page, {
         field: "schedule_date",
         type: "customRange",
-        from: storeFilters.dateTimeIsFullDay ? item.date.startOf("day").format("YYYY-MM-DD HH:mm:ss") : storeFilters.startDateTime,
-        to: storeFilters.dateTimeIsFullDay ? item.date.endOf("day").format("YYYY-MM-DD HH:mm:ss") : storeFilters.endDateTime,
+        from: storeFilters.startDateTime,
+        to: storeFilters.endDateTime,
       });
       item.cards = response.data;
       item.loading = false;
