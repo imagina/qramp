@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Vue, { reactive, computed } from 'vue';
 
 interface State {
@@ -17,6 +18,25 @@ const state = reactive<State>({
     seletedDateColumn: null,
     isEdit: false,
 })
+
+function getForm(data: any) {
+    const form: any = {};
+    if (data.id) {
+        form.id = data.id
+    }
+    form.sta = data.inboundScheduledArrival ? moment(data.inboundScheduledArrival).format('HH:mm') : null;
+    form.outboundScheduledDeparture = data.outboundScheduledDeparture ? moment(data.outboundScheduledDeparture).format('MM/DD/YYYY HH:mm') : null;
+    form.preFlightNumber = data.preFlightNumber;
+    form.stationId = data.stationId;
+    form.gateId = data.gateId;
+    form.operationTypeId = data.operationTypeId;
+    form.std = data.std;
+    form.flightStatusId = data.flightStatusId;
+    form.acTypeId = data.acTypeId;
+    form.inboundScheduledArrival = data.inboundScheduledArrival;
+    form.statusId = data.statusId;
+    return form;
+}
 
 const store = computed(() => ({
     get showModal(): boolean {
@@ -38,10 +58,10 @@ const store = computed(() => ({
         state.loading = value;
     },
     get form() {
-      return state.form;
+        return state.form;
     },
     set form(data) {
-      state.form = {...data};
+        state.form = getForm(data);
     },
     get seletedDateColumn() {
         return state.seletedDateColumn;

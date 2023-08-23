@@ -1,4 +1,4 @@
-import Vue, {computed,ComputedRef, ref} from 'vue';
+import Vue, { computed, ComputedRef, ref } from 'vue';
 import store from '../store/modalSchedule.store'
 import fieldsSchedule from '../models/fieldsSchedule.model'
 import validateOperationType from '../actions/validateOperationType'
@@ -7,7 +7,8 @@ import kanbanStore from '../store/kanban.store';
 import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
 import moment from 'moment';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
-import {STATUS_DRAFT} from 'src/modules/qramp/_components/model/constants.js'
+import { STATUS_DRAFT } from 'src/modules/qramp/_components/model/constants.js'
+import updateSimpleWorkOrder from '../actions/updateSimpleWorkOrder';
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -25,8 +26,7 @@ export default function useModalSchedule(props: any, emit: any) {
         color: "green",
         label: 'Start Work Order',
       },
-      action: async() => {
-        //await this.saveScheduleForm(STATUS_DRAFT);
+      action: async () => {
         store.loading = true;
         await qRampStore().changeStatus(STATUS_DRAFT, form.value.id);
         await getWorkOrder();
@@ -57,7 +57,7 @@ export default function useModalSchedule(props: any, emit: any) {
       },
     },
   ]);
-  const permisionComments  = computed(() => Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`))
+  const permisionComments = computed(() => Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`))
   const flightStatus = computed(() => fieldsSchedule().flightStatus.value);
   const isbound = computed(() => validateOperationType(form.value.operationTypeId));
   const fields = computed(() => fieldsSchedule().fields.value);
@@ -71,7 +71,11 @@ export default function useModalSchedule(props: any, emit: any) {
       if (success) {
         store.loading = true;
         await tranformData();
-        await saveSimpleWorkOrder();
+        if (store.isEdit) {
+          await updateSimpleWorkOrder();
+        } else {
+          await saveSimpleWorkOrder();
+        }
         await getWorkOrder();
         await hideModal();
         store.loading = false;
@@ -82,31 +86,31 @@ export default function useModalSchedule(props: any, emit: any) {
     const column: any = kanbanStore.columns.find(item => {
       return item.date.format('YYYY-MM-DD') === store.seletedDateColumn
     });
-    if(!column) return;
+    if (!column) return;
     column.loading = true;
     column.page = 1;
-    const response = await getIndividualWorkOrders(true, column.page,  moment(store.seletedDateColumn));
+    const response = await getIndividualWorkOrders(true, column.page, moment(store.seletedDateColumn));
     column.cards = response.data;
-    column.loading = false; 
+    column.loading = false;
   }
   async function tranformData() {
     form.value.inboundScheduledArrival = `${moment(form.value.inboundScheduledArrival || store.seletedDateColumn).format('MM/DD/YYYY')} ${form.value.sta || '00:00'}`;
     form.value.outboundScheduledDeparture = form.value.outboundScheduledDeparture;
-    form.value.std = form.value.outboundScheduledDeparture ? moment(form.value.outboundScheduledDeparture).format('HH:mm'): null;
+    form.value.std = form.value.outboundScheduledDeparture ? moment(form.value.outboundScheduledDeparture).format('HH:mm') : null;
     const isbound = validateOperationType(form.value.operationTypeId);
-    if(isbound.inbound && isbound.outbound) return;
-    if(isbound.inbound && !isbound.outbound) {
+    if (isbound.inbound && isbound.outbound) return;
+    if (isbound.inbound && !isbound.outbound) {
       form.value.std = null;
       form.value.outboundScheduledDeparture = null;
     }
-    if(!isbound.inbound && isbound.outbound) {
+    if (!isbound.inbound && isbound.outbound) {
       form.value.sta = null;
       form.value.inboundScheduledArrival = null;
     }
   }
   async function hideModal() {
     store.reset();
-    if(store.isEdit) await getWorkOrder();
+    if (store.isEdit) await getWorkOrder();
   }
   return {
     showModal,
