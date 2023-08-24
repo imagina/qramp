@@ -48,14 +48,18 @@ export default function useKanbanColumn(props: any = {}) {
     }
   }
   async function singleRefreshment(columnDate) {
-    props.column.cards = [];
-    const page = 1;
-    props.column.loading = true
-    const scheduleDate = columnDate || date.value;
-    const response = await getIndividualWorkOrders(true, page,  scheduleDate);
-    props.column.page = page;
-    props.column.cards = response.data;
-    props.column.loading = false;
+    try {
+      props.column.cards = [];
+      const page = 1;
+      props.column.loading = true
+      const scheduleDate = columnDate || date.value;
+      const response = await getIndividualWorkOrders(true, page,  scheduleDate);
+      props.column.page = page;
+      props.column.cards = response.data;
+      props.column.loading = false;
+    } catch (error) {
+      props.column.loading = false;
+    }
   }
   function setDrag(isDrag = false) {
     storeKanban.columns.forEach(item => {
@@ -73,16 +77,20 @@ export default function useKanbanColumn(props: any = {}) {
       return item.date.format('YYYY-MM-DD') === event.to.id
     });
     if(!column) return;
-    column.loading = true;
-    const card = column.cards.find(item => item.id == event.item.id);
-    if(!card) return;
-    const attributes = updateTransportScheduleChanges(card, event);
-    column.cards = [];
-    await updateWorkOrder(event.item.id, attributes);
-    column.page = 1;
-    const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
-    column.cards = response.data;
-    column.loading = false;
+    try {
+      column.loading = true;
+      const card = column.cards.find(item => item.id == event.item.id);
+      if(!card) return;
+      const attributes = updateTransportScheduleChanges(card, event);
+      column.cards = [];
+      await updateWorkOrder(event.item.id, attributes);
+      column.page = 1;
+      const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
+      column.cards = response.data;
+      column.loading = false;
+    } catch (error) {
+      column.loading = false;
+    }
   }
   function updateTransportScheduleChanges(card, event) {
     let arrival: any = moment(card.inboundScheduledArrival);
