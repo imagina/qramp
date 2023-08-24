@@ -1,5 +1,6 @@
 import Vue, { computed, ref, onMounted, provide } from 'vue';
 import storeKanban from '../store/kanban.store';
+import storeFilters from '../store/filters.store'
 import moment from 'moment'
 import getWorkOrder from '../actions/getWorkOrder'
 import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
@@ -16,8 +17,8 @@ export default function useKanbanColumn(props: any = {}) {
   });
   const date = computed(() => props.column.date)
   const selectedDate = computed({
-    get: () => storeKanban.selectedDate,
-    set: (value) => (storeKanban.selectedDate = value),
+    get: () => storeFilters.selectedDate,
+    set: (value) => (storeFilters.selectedDate = value),
   });
   const isDraggingCard = computed({
     get: () => storeKanban.isDraggingCard,

@@ -1,6 +1,7 @@
 import Vue, { ref, reactive, watch, computed, provide, inject } from 'vue';
 import moment, { Moment } from "moment";
 import storeKanban from "../store/kanban.store";
+import storeFilter from '../store/filters.store'
 import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from './../../../_store/qRampStore.js'
 import filtersStore from '../store/filters.store';
@@ -25,10 +26,7 @@ export default function useKanbanBoard() {
       options: modelHoursFilter,
     },
   });
-  const selectedDate = computed({
-    get: () => storeKanban.selectedDate,
-    set: (value) => (storeKanban.selectedDate = value),
-  });
+  const selectedDate = computed(() => storeFilter.selectedDate)
 
   const scheduleType = computed({
     get: () => storeKanban.scheduleType,
