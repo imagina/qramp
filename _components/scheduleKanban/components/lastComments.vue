@@ -14,6 +14,7 @@
       <i class="fa-solid fa-comment"></i>
       <span class="tw-font-bold tw-text-sm">{{ card.comments }}</span>
       <q-tooltip
+        v-model="showTooltip"
         :content-class="{
           tooltipComments: true,
           'tw-text-center': loadingComment,
@@ -34,13 +35,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent, computed } from "vue";
-import {
-  getCommentsFilter,
-  getLastComment,
-  setLastComment,
-  getLoading,
-} from "../../../_store/actions/comments";
+import Vue, { defineComponent } from "vue";
+import useLastComments from '../uses/useLastComments'
 
 export default defineComponent({
   props: {
@@ -61,26 +57,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const loadingComment = computed(() => getLoading());
-    const card = computed(() => props.card);
-    const sizeBadge = computed(() => props.sizeBadge);
-    const iconClass = computed(() => props.iconClass);
-    const permisionComments = computed(() =>
-      Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`)
-    );
-    const lastComment = computed(() => getLastComment());
-    async function changeLastComment(card) {
-      await setLastComment("");
-      await getCommentsFilter(card.id);
-    }
     return {
-      card,
-      permisionComments,
-      loadingComment,
-      changeLastComment,
-      lastComment,
-      sizeBadge,
-      iconClass,
+      ...useLastComments(props)
     };
   },
 });
