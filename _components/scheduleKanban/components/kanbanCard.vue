@@ -68,7 +68,7 @@
       </div>
     </div>
     <div class="
-        tw-bg-gray-200 
+        bg-gray-c-100 
         tw-absolute 
         tw-bottom-0 
         tw-left-0
@@ -164,5 +164,8 @@ export default defineComponent({
 }
 .showCard {
   box-shadow: 0px 2px 4px 0px rgba(31, 41, 79, 0.07), 4px 4px 8px 0px rgba(31, 41, 79, 0.14);
+}
+.bg-gray-c-100 {
+  background: rgba(31, 41, 79, 0.07);
 }
 </style>
