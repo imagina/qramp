@@ -39,6 +39,9 @@ export async function getCards(): Promise<void> {
       item.total = response.meta.page.total;
     });
   } catch (error) {
+    storeKanban.columns.forEach(async (item: Columns) => {
+      item.loading = false;
+    });
     console.log(error);
   }
 }
