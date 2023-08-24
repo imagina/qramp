@@ -1,4 +1,4 @@
-import Vue, {computed} from 'vue';
+import Vue, {computed, inject } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
@@ -10,8 +10,10 @@ import {
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from './../../../_store/qRampStore.js'
 import modalScheduleStore from '../store/modalSchedule.store'
+import showWorkOrder from '../actions/showWorkOrders';
 
 export default function useKanbanCard(props: any = {}) {
+  const refFormOrders: any = inject('refFormOrders');
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const colorCheckSchedule = computed(() => {
     const statusColor: string | undefined = workOrderList()
@@ -57,10 +59,23 @@ export default function useKanbanCard(props: any = {}) {
     };
     return statuses[props.card.statusId] || '';
   })
-  function openModalSchedule() {
+  async function openModalSchedule() {
+    modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
+    if(props.card.statusId !== STATUS_SCHEDULE) {
+      const response = await showWorkOrder(props.card.id);
+      await refFormOrders.value.loadform({
+        modalProps: {
+          title: modalScheduleStore.titleModal,
+          update: true,
+          workOrderId: response.data.id,
+          width: "90vw",
+        },
+        data: response.data,
+      });
+      return;
+    }
     modalScheduleStore.isEdit = true;
     modalScheduleStore.showModal = true;
-    modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.form = { ...props.card };
     modalScheduleStore.seletedDateColumn = props.dateColumn;
   }

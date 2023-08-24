@@ -59,6 +59,7 @@
     </div>
   </div>
   <modalSchedule />
+  <formOrders ref="refFormOrders" />
 </div>
 </template>
 
@@ -69,6 +70,7 @@ import useKanbanBoard from '../uses/useKanbanBoard'
 import actionBar from './actionBar.vue'
 import filters from './filters.vue';
 import modalSchedule from './modalSchedule.vue'
+import formOrders from "../../formOrders.vue";
 
 export default defineComponent({
   components: {
@@ -76,6 +78,7 @@ export default defineComponent({
     actionBar,
     filters,
     modalSchedule,
+    formOrders,
   },
   setup() {
     return {...useKanbanBoard()}

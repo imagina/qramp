@@ -1,4 +1,4 @@
-import Vue, { ref, reactive, watch, computed } from 'vue';
+import Vue, { ref, reactive, watch, computed, provide } from 'vue';
 import moment, { Moment } from "moment";
 import storeKanban from "../store/kanban.store";
 import modelHoursFilter from "../models/hoursFilter.model";
@@ -9,6 +9,8 @@ import _ from "lodash";
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 
 export default function useKanbanBoard() {
+  const refFormOrders = ref(null);
+  provide('refFormOrders', refFormOrders);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
   const fullscreen = ref(false);
@@ -147,6 +149,7 @@ export default function useKanbanBoard() {
     dynamicFieldTime,
     extraPageActions,
     isDraggingCard,
-    buildKanbanStructure
+    buildKanbanStructure,
+    refFormOrders
   };
 }
