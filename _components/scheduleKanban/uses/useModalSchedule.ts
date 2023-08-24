@@ -9,6 +9,7 @@ import moment from 'moment';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import { STATUS_DRAFT } from 'src/modules/qramp/_components/model/constants.js'
 import updateSimpleWorkOrder from '../actions/updateSimpleWorkOrder';
+import deleteWorkOrders from '../actions/deleteWorkOrders';
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -52,8 +53,12 @@ export default function useModalSchedule(props: any, emit: any) {
         color: "red",
         label: Vue.prototype.$tr("isite.cms.label.delete"),
       },
-      action: () => {
-        hideModal();
+      action: async () => {
+        store.loading = true;
+        await deleteWorkOrders(form.value.id);
+        await getWorkOrder();
+        await hideModal();
+        store.loading = false;
       },
     },
   ]);
