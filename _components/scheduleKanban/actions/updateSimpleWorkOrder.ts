@@ -2,7 +2,7 @@ import Vue from 'vue';
 import qRampStore from "src/modules/qramp/_store/qRampStore";
 import modalScheduleStore from '../store/modalSchedule.store'
 
-export default async function updateSimpleWorkOrder() {
+export default async function updateSimpleWorkOrder(): Promise<void> {
     try {
         const params = {params: {
             titleOffline: qRampStore().getTitleOffline()

@@ -3,7 +3,7 @@ import Vue, { computed} from 'vue';
 import { BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, COMPANY_RAMP } from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
 
-export default async function saveSimpleWorkOrders() {
+export default async function saveSimpleWorkOrders(): Promise<void> {
     try {
         const isPassenger = qRampStore().getIsPassenger();
         const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP

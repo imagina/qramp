@@ -10,6 +10,7 @@ import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import { STATUS_DRAFT } from 'src/modules/qramp/_components/model/constants.js'
 import updateSimpleWorkOrder from '../actions/updateSimpleWorkOrder';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
+import individualRefreshByColumns from '../actions/individualRefreshByColumns';
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -30,7 +31,7 @@ export default function useModalSchedule(props: any, emit: any) {
       action: async () => {
         store.loading = true;
         await qRampStore().changeStatus(STATUS_DRAFT, form.value.id);
-        await getWorkOrder();
+        await individualRefreshByColumns();
         await hideModal();
         store.loading = false;
       },
@@ -56,7 +57,7 @@ export default function useModalSchedule(props: any, emit: any) {
       action: async () => {
         store.loading = true;
         await deleteWorkOrders(form.value.id);
-        await getWorkOrder();
+        await individualRefreshByColumns();
         await hideModal();
         store.loading = false;
       },
@@ -81,22 +82,11 @@ export default function useModalSchedule(props: any, emit: any) {
         } else {
           await saveSimpleWorkOrder();
         }
-        await getWorkOrder();
+        await individualRefreshByColumns();
         await hideModal();
         store.loading = false;
       }
     });
-  }
-  async function getWorkOrder() {
-    const column: any = kanbanStore.columns.find(item => {
-      return item.date.format('YYYY-MM-DD') === store.seletedDateColumn
-    });
-    if (!column) return;
-    column.loading = true;
-    column.page = 1;
-    const response = await getIndividualWorkOrders(true, column.page, moment(store.seletedDateColumn));
-    column.cards = response.data;
-    column.loading = false;
   }
   async function tranformData() {
     form.value.inboundScheduledArrival = `${moment(form.value.inboundScheduledArrival || store.seletedDateColumn).format('MM/DD/YYYY')} ${form.value.sta || '00:00'}`;
@@ -115,7 +105,7 @@ export default function useModalSchedule(props: any, emit: any) {
   }
   async function hideModal() {
     store.reset();
-    if (store.isEdit) await getWorkOrder();
+    if (store.isEdit) await individualRefreshByColumns();
   }
   return {
     showModal,

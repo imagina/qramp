@@ -1,5 +1,6 @@
 import Vue from 'vue';
-export default async function showWorkOrder(workOrderId: number) {
+import { DataWorkOrder } from '../contracts/getWorkOrder.contract';
+export default async function showWorkOrder(workOrderId: number): Promise<{data: DataWorkOrder | any}> {
     try {
         return await Vue.prototype.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
             refresh: true,
@@ -8,5 +9,6 @@ export default async function showWorkOrder(workOrderId: number) {
         })
     } catch (error) {
         console.log(error);
+        return { data: {} }
     }
 }

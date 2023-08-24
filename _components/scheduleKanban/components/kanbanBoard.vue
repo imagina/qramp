@@ -59,7 +59,7 @@
     </div>
   </div>
   <modalSchedule />
-  <formOrders ref="refFormOrders" />
+  <formOrders ref="refFormOrders" @getWorkOrderFilter="individualRefreshByColumns" />
 </div>
 </template>
 

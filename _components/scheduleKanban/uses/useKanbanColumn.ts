@@ -1,4 +1,4 @@
-import Vue, { computed, ref, onMounted, ComputedRef } from 'vue';
+import Vue, { computed, ref, onMounted, provide } from 'vue';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'
 import getWorkOrder from '../actions/getWorkOrder'
@@ -8,6 +8,7 @@ import workOrderList from '../../../_store/actions/workOrderList'
 import validateOperationType from '../actions/validateOperationType'
 
 export default function useKanbanColumn(props: any = {}) {
+  provide('singleRefreshmentColumn', singleRefreshment);
   const isLoading = ref(false);
   const cards: any = computed({
     get: () => props.column.cards,
@@ -47,7 +48,7 @@ export default function useKanbanColumn(props: any = {}) {
       isLoading.value = false;
     }
   }
-  async function singleRefreshment(columnDate) {
+  async function singleRefreshment(columnDate = null) {
     try {
       props.column.cards = [];
       const page = 1;

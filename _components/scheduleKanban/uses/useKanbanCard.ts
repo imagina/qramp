@@ -61,6 +61,7 @@ export default function useKanbanCard(props: any = {}) {
   })
   async function openModalSchedule() {
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
+    modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE) {
       const response = await showWorkOrder(props.card.id);
       await refFormOrders.value.loadform({
@@ -77,7 +78,6 @@ export default function useKanbanCard(props: any = {}) {
     modalScheduleStore.isEdit = true;
     modalScheduleStore.showModal = true;
     modalScheduleStore.form = { ...props.card };
-    modalScheduleStore.seletedDateColumn = props.dateColumn;
   }
   return {
     colorCheckSchedule,

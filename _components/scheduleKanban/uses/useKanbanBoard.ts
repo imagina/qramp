@@ -1,4 +1,4 @@
-import Vue, { ref, reactive, watch, computed, provide } from 'vue';
+import Vue, { ref, reactive, watch, computed, provide, inject } from 'vue';
 import moment, { Moment } from "moment";
 import storeKanban from "../store/kanban.store";
 import modelHoursFilter from "../models/hoursFilter.model";
@@ -7,6 +7,7 @@ import filtersStore from '../store/filters.store';
 import getWorkOrder from '../actions/getWorkOrder'
 import _ from "lodash";
 import buildKanbanStructure from '../actions/buildKanbanStructure';
+import individualRefreshByColumns from '../actions/individualRefreshByColumns'
 
 export default function useKanbanBoard() {
   const refFormOrders = ref(null);
@@ -150,6 +151,7 @@ export default function useKanbanBoard() {
     extraPageActions,
     isDraggingCard,
     buildKanbanStructure,
-    refFormOrders
+    refFormOrders,
+    individualRefreshByColumns,
   };
 }

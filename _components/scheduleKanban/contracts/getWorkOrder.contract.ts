@@ -88,7 +88,7 @@ export interface DataWorkOrder {
     isReportable: boolean;
     transactions: Transaction[];
     flightStatusColor: null;
-    id: number;
+    id: number | null;
     createdAt: string;
     updatedAt: string;
     deletedAt: null;

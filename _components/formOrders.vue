@@ -372,7 +372,7 @@ export default {
       this.loading = value;
     },
     async getWorkOrders(data = null) {
-      this.$emit('getWorkOrderFilter', data)
+      this.$emit('getWorkOrderFilter', data);
     }
   },
 }
