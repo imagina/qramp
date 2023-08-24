@@ -1065,14 +1065,15 @@ export default {
         actualIn,
         actualOut,
       } = data;
-      if(this.name.includes('outboundFlightNumber')){
+      if(!this.isbound[0] && this.isbound[1]){
         const destinationAirportId = destinationAirport?.id || null;
         this.$set(this.form, "outboundFlightNumber", ident)
         this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
         this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
         this.$set(this.form, "outboundTailNumber", registration)
         if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
-      } else {
+      } 
+      if(this.isbound[0] && !this.isbound[1]) {
         this.$set(this.form, "inboundFlightNumber", ident)
         const originAirportId = originAirport?.id || null;
         this.$set(this.form, "inboundOriginAirportId", originAirportId)
@@ -1082,6 +1083,32 @@ export default {
           this.$set(this.form, "outboundTailNumber", registration);
         }
         if(this.isPassenger) this.$set(this.form, "outboundGateDeparture", gateOrigin);
+      }
+      if(this.isbound[0] && this.isbound[1]) {
+        if(this.name.includes('inboundFlightNumber')) {
+          const destinationAirportId = destinationAirport?.id || null;
+          this.$set(this.form, "outboundFlightNumber", ident)
+          this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
+          this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
+          this.$set(this.form, "outboundTailNumber", registration)
+          if(this.isPassenger) this.$set(this.form, "outboundGateDeparture", gateOrigin);
+          if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
+          this.$set(this.form, "inboundFlightNumber", ident)
+          const originAirportId = originAirport?.id || null;
+          this.$set(this.form, "inboundOriginAirportId", originAirportId)
+          this.$set(this.form, "inboundScheduledArrival", this.dateFormatterFull(estimatedOn))
+          this.$set(this.form, "inboundTailNumber", registration)
+          if(this.form.outboundTailNumber) {
+            this.$set(this.form, "outboundTailNumber", registration);
+          }
+        } else {
+          const destinationAirportId = destinationAirport?.id || null;
+          this.$set(this.form, "outboundFlightNumber", ident)
+          this.$set(this.form, "outboundDestinationAirportId", destinationAirportId)
+          this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
+          this.$set(this.form, "outboundTailNumber", registration)
+          if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
+        }
       }
       if(this.isPassenger) {
         this.$set(this.form, "inboundBlockIn", this.dateFormatterFull(actualIn))
@@ -1099,12 +1126,6 @@ export default {
       this.setForm(this.mainData.find((item,index) => {
         return index === select.index 
       }))
-      this.name = this.name == 'inboundFlightNumber' ?  'outboundFlightNumber' : 'inboundFlightNumber';
-      if(!this.inOutBound && this.openAlert){
-        this.setForm(this.mainData.find((item,index) => {
-          return index === select.index 
-        }))
-      }
     },
     dateFormatterFull(date) {
       if (!date) return null
