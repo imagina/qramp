@@ -89,12 +89,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, getCurrentInstance } from "vue";
 import useFilters from '../uses/useFilters'
 export default defineComponent({
   components: {},
-  setup() {
-    return {...useFilters()};
+  props: {},
+  setup(props) {
+    const proxy = (getCurrentInstance() as any).proxy as any;
+    return {...useFilters(props, proxy)};
   }
 });
 </script>

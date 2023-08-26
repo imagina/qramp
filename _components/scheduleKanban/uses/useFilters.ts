@@ -6,9 +6,9 @@ import scheduleTypeOptions from '../models/scheduleType.model'
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import getCurrentTime from '../actions/getCurrentTime';
 import moment, { Moment } from 'moment';
+import setUrlParams from '../actions/setUrlParams';
 
-
-export default function useFilters() {
+export default function useFilters(props, proxy) {
   const form = computed(() => store.form);
   /**
    * Computed property indicating whether the application is in a filters state.
@@ -83,59 +83,14 @@ export default function useFilters() {
       store.selectedDate = value;
     }
   });
-
+  const router = proxy.$router;
+  const route = proxy.$route;
   const { actions } = actionsModal() as ModelActionsModalResult;
 
-  function checkFilters(){
-    const stationId = '12' //dev only
-    store.form.stationId = stationId //dev only
-    store.form.time = getCurrentTime()  //sets the current time
-  }
-
-  // validate Object Filter
-  function validateObjectFilter(operator = '?', item, data) {
-    if (data[item]) {
-      if (typeof data[item] === 'object'
-        || Array.isArray(data[item])) {
-        return `${operator}${item}=${JSON.stringify(data[item])}`;
-      }
-      return `${operator}${item}=${data[item]}`;
-    }
-    return '';
-  }
-
-  async function mutateCurrentURL(){
-    try {
-      const objUrl = {}
-      const filters = Object.keys(objUrl).length === 0 ? store.payload : objUrl;
-      let paramsUrl = '';
-      //scheduleType: 'week-agenda',
-      filters.type = 2
-      const currentDay = moment(store.selectedDate)
-      filters.dateStart = currentDay.startOf("week").format('YYYYMMDD')
-      filters.dateEnd = currentDay.endOf("week").format('YYYYMMDD')
-
-      Object.keys(filters).forEach((item, index) => {
-        if (index === 0) {
-          paramsUrl += validateObjectFilter('?', item, filters);
-        } else {
-          paramsUrl += validateObjectFilter('&', item, filters);
-        }
-      })
-      const origin = window.location.href.split('?');
-      const urlBase = `${origin[0]}${paramsUrl}`
-      window.history.replaceState({}, '', urlBase);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async function callBuildKanbanStructure (){
-    await mutateCurrentURL()
+    await setUrlParams(router, route.name)
     await buildKanbanStructure()
   }
-
-  checkFilters()
   
   return {
     filters,

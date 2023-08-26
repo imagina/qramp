@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, getCurrentInstance } from "vue";
 import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
 import actionBar from './actionBar.vue'
@@ -80,8 +80,9 @@ export default defineComponent({
     modalSchedule,
     formOrders,
   },
-  setup() {
-    return {...useKanbanBoard()}
+  setup(props) {
+    const proxy = (getCurrentInstance() as any).proxy as any;
+    return {...useKanbanBoard(props, proxy)}
   },
 });
 </script>

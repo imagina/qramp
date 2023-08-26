@@ -25,26 +25,23 @@ export async function getColumns(): Promise<Columns[]> {
   }
 }
 
-function setDateTime (date){
-  if (storeFilters.dateTimeIsFullDay){
-    storeFilters.startDateTime = date.startOf("day").format("YYYY-MM-DD HH:mm:ss")
-    storeFilters.endDateTime = date.endOf("day").format("YYYY-MM-DD HH:mm:ss")
-  }else{
-    storeFilters.startDateTime = storeFilters.filterDateTime.startDateTime
-    storeFilters.endDateTime = storeFilters.filterDateTime.endDateTime
-  }
+function setFilterTime(date, {hour, minute, second} ){
+  return date.set({ hour, minute, second}).format('YYYY-MM-DD HH:mm:ss');
 }
 
 export async function getCards(): Promise<void> {
   try {
     storeKanban.columns.forEach(async (item: Columns) => {
       item.loading = true;
-      setDateTime(item.date)
+      const startDate = item.date.startOf('day');
+      const endDate = item.date.endOf('day');
+      const filterTime = storeFilters.filterTime;
+
       const response = await getWorkOrder(true, item.page, {
         field: "schedule_date",
         type: "customRange",
-        from: storeFilters.startDateTime,
-        to: storeFilters.endDateTime,
+        from: setFilterTime(startDate, { hour: filterTime[0], minute: 0, second: 0 }),
+        to: setFilterTime(endDate, { hour: filterTime[1], minute: 59, second: 59 })
       });
       item.cards = response.data;
       item.loading = false;

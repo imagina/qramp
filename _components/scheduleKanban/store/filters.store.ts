@@ -1,5 +1,6 @@
 import Vue, { reactive, computed } from 'vue';
 import modelHoursFilter from '../models/hoursFilter.model'
+import scheduleTypeModel from '../models/scheduleType.model';
 import filters from '../models/filters.model'
 import moment, { Moment } from 'moment';
 
@@ -14,6 +15,7 @@ interface State {
   selectedDate: string,
   startDateTime: string,
   endDateTime: string,
+  fullDay: string,
   stationId: string
 }
 
@@ -24,10 +26,11 @@ const state = reactive<State>({
     form: {},
     loading: false,
     updateModal: false,
-    scheduleType: 'week-agenda',
+    scheduleType: scheduleTypeModel[0].value,
     selectedDate: moment().format('YYYY/MM/DD'),
     startDateTime: '',
     endDateTime: '',
+    fullDay: modelHoursFilter[0].value,
     stationId: ''
 })
 
@@ -92,33 +95,21 @@ const store = computed(() => ({
     set stationId(value: string) {
       state.stationId = value;
     },
-    get dateTimeIsFullDay() {
-      return state.form.time === modelHoursFilter[0].value //0-23
-    },
-    get filterDateTime(){
-      const timeFormat = 'YYYY-MM-DD HH:mm:ss'
+    get filterTime(){
       if(state.form.time !== null){
-        const time = state.form.time.split('-') || [0,0];
-        const selectedDate = moment(state.selectedDate)
-        const startDateTime = selectedDate.startOf('day').set({ hour: time[0], minute: 0, second: 0 }).format(timeFormat);
-        const endDateTime = selectedDate.endOf('day').set({ hour: time[1], minute: 59, second: 59 }).format(timeFormat);
-        return { startDateTime, endDateTime}
+        return state.form.time.split('-') || [0,0];
       }
-
-      return {
-        startDateTime: moment().startOf("day").format(timeFormat),
-        endDateTime: moment().endOf("day").format(timeFormat)
-      }
+      return state.fullDay.split('-');
     },
     get payload(){
-      const filters = {...state.form}
-      delete filters.time
+      const filters = {...state.form};
+      delete filters.time;
+      delete filters.scheduleType;
       Object.keys(filters).forEach(
         (key) => (filters[key] === null) && delete filters[key]
-      )
+      );
       return filters
     },
-
     reset(): void {
         //state.filters = {};
         state.showModal = false;

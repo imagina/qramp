@@ -9,8 +9,10 @@ import getWorkOrder from '../actions/getWorkOrder'
 import _ from "lodash";
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import individualRefreshByColumns from '../actions/individualRefreshByColumns'
+import checkUrlParams from '../actions/checkUrlParams';
+import setUrlParams from '../actions/setUrlParams';
 
-export default function useKanbanBoard() {
+export default function useKanbanBoard(props, proxy) {
   const refFormOrders = ref(null);
   provide('refFormOrders', refFormOrders);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -26,7 +28,11 @@ export default function useKanbanBoard() {
       options: modelHoursFilter,
     },
   });
-  const selectedDate = computed(() => storeFilter.selectedDate)
+
+  const router = proxy.$router;
+  const route = proxy.$route;
+
+  const selectedDate = computed(() => storeFilter.selectedDate);
 
   const scheduleType = computed({
     get: () => storeKanban.scheduleType,
@@ -134,6 +140,8 @@ export default function useKanbanBoard() {
   })
 
   const init = async () => {
+    await checkUrlParams({...route.query});
+    await setUrlParams(router, route.name);
     await buildKanbanStructure();
   };
 
