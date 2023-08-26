@@ -26,10 +26,10 @@ export default function useKanbanCard(props: any = {}) {
     const flightStatuses: any =
       workOrderList()
         .getFlightStatusesList()
-        .find(status => status.id === Number(props.card.flightStatusId || 22));
+        .find(status => status.id === Number(props.card.flightStatusId));
     const color = flightStatuses ? `tw-text-${flightStatuses.color}` : 'tw-text-black';
     const icon = flightStatuses?.icon || 'fa-solid fa-circle-question';
-    return { name: flightStatuses.name, color, icon };
+    return flightStatuses ? { name: flightStatuses.name, color, icon } : null;
   })
   const actypes = computed(() => {
     const actypesList: any =

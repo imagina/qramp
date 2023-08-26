@@ -67,7 +67,9 @@
         </div>
       </div>
     </div>
-    <div class="
+    <div
+      v-if="flightStatuses" 
+      class="
         bg-gray-c-100 
         tw-absolute 
         tw-bottom-0 
