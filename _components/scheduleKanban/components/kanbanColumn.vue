@@ -20,9 +20,18 @@
             {{ date.format("dddd") }}
           </p>
           <button
-            class="tw-rounded-full tw-w-7 tw-h-7 tw--mt-4 tw-bg-blueGray-300 tw-text-blueGray-500"
+            class="
+             tw-rounded-full 
+             tw-w-7 
+             tw-h-7 
+             tw--mt-4 
+             tw-bg-blueGray-300 
+             tw-text-blueGray-500"
             :class="{
-              'buttom-day': selectedDate === date.format('YYYY/MM/DD'),
+              'buttom-day': selectedDate === date.format('YYYY/MM/DD')
+                && $moment().format('YYYY/MM/DD') === date.format('YYYY/MM/DD'),
+              'tw-border tw-border-blue-500': selectedDate === date.format('YYYY/MM/DD') 
+                && $moment().format('YYYY/MM/DD') !== date.format('YYYY/MM/DD')
             }"
             @click="selectedDate = date.format('YYYY/MM/DD')"
           >
