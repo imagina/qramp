@@ -12,4 +12,5 @@ export interface State {
     fullDay: string,
     stationId: string
     showModalStation: boolean
+    titleFilter: string;
 }

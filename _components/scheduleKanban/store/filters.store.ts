@@ -18,7 +18,8 @@ const state = reactive<State>({
     endDateTime: '',
     fullDay: modelHoursFilter[0].value,
     stationId: '',
-    showModalStation: false
+    showModalStation: false,
+    titleFilter: '',
 })
 
 const store = computed(() => ({
@@ -45,6 +46,12 @@ const store = computed(() => ({
     },
     set filters(data) {
         state.filters = {...data};
+    },
+    get titleFilter(): string {
+      return state.titleFilter;
+    },
+    set titleFilter(data: string) {
+        state.titleFilter = data;
     },
     get form() {
       return state.form;
