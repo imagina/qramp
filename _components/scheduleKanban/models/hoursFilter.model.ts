@@ -1,4 +1,5 @@
-export default [
+import { HoursFilter } from '../contracts/hourFilter.contract'
+const hoursFilter: HoursFilter[] = [
     {
         label: 'All Day',
         value: '0-23'
@@ -35,4 +36,6 @@ export default [
         label: '22 - 23:59 H',
         value: '22-23'
     },
-]
+];
+
+export default hoursFilter;
