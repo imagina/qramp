@@ -6,7 +6,6 @@
      tw-flex-col 
      tw-items-center 
      tw-py-4 
-     md:tw-px-8 
      tw-text-blue-500 
      md:tw-text-lg 
      tw-space-y-2 
