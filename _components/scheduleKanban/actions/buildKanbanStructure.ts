@@ -55,6 +55,7 @@ export default async function buildKanbanStructure(): Promise<void> {
   try {
     storeKanban.loading = true;
     storeKanban.columns = await getColumns();
+    if(!storeFilters.stationId) return;
     await getCards();
     storeKanban.loading = false;
   } catch (error) {
