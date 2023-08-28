@@ -1,26 +1,56 @@
 <template>
-  <div class="tw-flex actions-bar tw-py-4 tw-text-blue-500 tw-space-x-2">
-    <div class="tw-text-lg tw-font-bold">Today</div>
-    <div class="tw-space-x-2 tw--mt-1">
-      <button class="btn-action">
+  <div 
+    class="
+     actions-bar 
+     tw-flex 
+     tw-flex-col 
+     tw-items-center 
+     tw-py-4 
+     tw-text-blue-500 
+     md:tw-text-lg 
+     tw-space-y-2 
+     md:tw-space-x-2 
+     md:tw-flex-row"
+  >
+    <div 
+      class="
+       tw-text-base 
+       md:tw-text-lg 
+       tw-font-bold 
+       md:tw-mt-1">
+       Today
+    </div>
+    <div class="tw-flex tw-space-x-2">
+      <button class="btn-action" @click="back">
         <i class="fa-regular fa-angle-left"></i>
       </button>
-      <button class="btn-action">
+      <button class="btn-action" @click="next">
         <i class="fa-regular fa-angle-right"></i>
       </button>
     </div>
-    <div class="tw-flex tw-py-1 tw-text-sm tw-font-semibold tw-space-x-1">
-      <div>July 2 - July 8, 10:00am-1:00pm</div>
+    <div
+      class="
+        tw-flex 
+        tw-items-center 
+        tw-text-sm md:tw-text-base 
+        tw-font-semibold 
+        tw-space-x-1 
+        tw-cursor-pointer
+      "
+      @click="openDrawerFilter"
+    >
+      <div>{{ titleFilter }}</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import useActionsBar from '../uses/useActionsBar'
 
 export default defineComponent({
-  setup() {
-    return {};
+  setup(props) {
+    return {...useActionsBar(props)};
   },
 });
 </script>

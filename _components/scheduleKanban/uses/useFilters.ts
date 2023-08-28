@@ -4,9 +4,8 @@ import actionsModal from '../models/actionsModal.model'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract';
 import scheduleTypeOptions from '../models/scheduleType.model'
 import buildKanbanStructure from '../actions/buildKanbanStructure';
-import getCurrentTime from '../actions/getCurrentTime';
-import moment, { Moment } from 'moment';
 import setUrlParams from '../actions/setUrlParams';
+import getTitleFilter from '../actions/getTitleFilter';
 
 export default function useFilters() {
   const proxy = (getCurrentInstance() as any).proxy as any;
@@ -87,11 +86,12 @@ export default function useFilters() {
 
   const { actions } = actionsModal() as ModelActionsModalResult;
 
-  async function callBuildKanbanStructure (){
+  async function callBuildKanbanStructure() {
+    getTitleFilter();
     await setUrlParams(proxy)
     await buildKanbanStructure()
+    store.showModal = false;
   }
-  
   return {
     filters,
     loading,

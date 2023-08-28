@@ -1,16 +1,15 @@
 import Vue, { ref, computed, provide, getCurrentInstance } from 'vue';
-import moment, { Moment } from "moment";
 import storeKanban from "../store/kanban.store";
 import storeFilter from '../store/filters.store'
 import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from './../../../_store/qRampStore.js'
 import filtersStore from '../store/filters.store';
-import getWorkOrder from '../actions/getWorkOrder'
 import _ from "lodash";
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import individualRefreshByColumns from '../actions/individualRefreshByColumns'
 import checkUrlParams from '../actions/checkUrlParams';
 import setUrlParams from '../actions/setUrlParams';
+import getTitleFilter from '../actions/getTitleFilter';
 
 export default function useKanbanBoard(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
@@ -139,8 +138,13 @@ export default function useKanbanBoard(props) {
 
   const init = async () => {
     await checkUrlParams(proxy);
-    await setUrlParams(proxy);
-    await buildKanbanStructure();
+    if (storeFilter.stationId) {
+      getTitleFilter();
+      await setUrlParams(proxy);
+      await buildKanbanStructure();
+    } else {
+      storeFilter.showModalStation = true
+    }
   };
 
   init();
