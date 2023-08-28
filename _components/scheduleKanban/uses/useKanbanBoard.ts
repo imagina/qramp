@@ -141,8 +141,12 @@ export default function useKanbanBoard(props, proxy) {
 
   const init = async () => {
     await checkUrlParams({...route.query});
-    await setUrlParams(router, route.name);
-    await buildKanbanStructure();
+    if(storeFilter.stationId){
+      await setUrlParams(router, route.name);
+      await buildKanbanStructure();
+    }else{
+      storeFilter.showModalStation = true
+    }
   };
 
   init();

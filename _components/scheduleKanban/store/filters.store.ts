@@ -3,21 +3,7 @@ import modelHoursFilter from '../models/hoursFilter.model'
 import scheduleTypeModel from '../models/scheduleType.model';
 import filters from '../models/filters.model'
 import moment, { Moment } from 'moment';
-
-interface State {
-  showModal: boolean;
-  titleModal: string;
-  filters: any,
-  form: any;
-  loading: boolean;
-  updateModal: boolean,
-  scheduleType: string,
-  selectedDate: string,
-  startDateTime: string,
-  endDateTime: string,
-  fullDay: string,
-  stationId: string
-}
+import { State } from '../contracts/filtersStore.contract';
 
 const state = reactive<State>({
     showModal: false,
@@ -31,7 +17,8 @@ const state = reactive<State>({
     startDateTime: '',
     endDateTime: '',
     fullDay: modelHoursFilter[0].value,
-    stationId: ''
+    stationId: '',
+    showModalStation: false
 })
 
 const store = computed(() => ({
@@ -94,6 +81,12 @@ const store = computed(() => ({
     },
     set stationId(value: string) {
       state.stationId = value;
+    },
+    get showModalStation(){
+      return state.showModalStation;
+    },
+    set showModalStation(value: boolean){
+      state.showModalStation = value;
     },
     get filterTime(){
       if(state.form.time !== null){

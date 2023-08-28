@@ -60,6 +60,7 @@
   </div>
   <modalSchedule />
   <formOrders ref="refFormOrders" @getWorkOrderFilter="individualRefreshByColumns" />
+  <modalStation />
 </div>
 </template>
 
@@ -71,6 +72,7 @@ import actionBar from './actionBar.vue'
 import filters from './filters.vue';
 import modalSchedule from './modalSchedule.vue'
 import formOrders from "../../formOrders.vue";
+import modalStation from "./modalStation.vue";
 
 export default defineComponent({
   components: {
@@ -79,6 +81,7 @@ export default defineComponent({
     filters,
     modalSchedule,
     formOrders,
+    modalStation
   },
   setup(props) {
     const proxy = (getCurrentInstance() as any).proxy as any;

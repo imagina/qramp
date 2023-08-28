@@ -25,10 +25,6 @@ export async function getColumns(): Promise<Columns[]> {
   }
 }
 
-function setFilterTime(date, {hour, minute, second} ){
-  return date.set({ hour, minute, second}).format('YYYY-MM-DD HH:mm:ss');
-}
-
 export async function getCards(): Promise<void> {
   try {
     storeKanban.columns.forEach(async (item: Columns) => {
@@ -40,8 +36,8 @@ export async function getCards(): Promise<void> {
       const response = await getWorkOrder(true, item.page, {
         field: "schedule_date",
         type: "customRange",
-        from: setFilterTime(startDate, { hour: filterTime[0], minute: 0, second: 0 }),
-        to: setFilterTime(endDate, { hour: filterTime[1], minute: 59, second: 59 })
+        from: startDate.set({ hour: filterTime[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss'),
+        to: endDate.set({ hour: filterTime[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss')
       });
       item.cards = response.data;
       item.loading = false;

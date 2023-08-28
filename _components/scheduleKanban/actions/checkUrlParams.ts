@@ -7,7 +7,8 @@ export default async function checkUrlParams(params){
     try{
       if(Object.keys(params).length !== 0){        
         /* 12 is for Dev only -> To Do: get stationId from cache */
-        store.form.stationId = params.stationId ? params.stationId : '12';
+        store.stationId = params.stationId ? params.stationId : null
+        store.form.stationId = store.stationId;
 
         if (params.type) store.form.scheduleType = params.type;
         if (params.carrierId) store.form.carrierId = params.carrierId;
@@ -30,7 +31,8 @@ export default async function checkUrlParams(params){
          */
         
         /* 12 is for Dev only -> To Do: show modal if stationId isn't cached */
-        store.form.stationId = '12';
+        //store.stationId = '12'
+        store.form.stationId = store.stationId;
         
         /**
          * To Do: set scheduletype to day-agenda as default.
