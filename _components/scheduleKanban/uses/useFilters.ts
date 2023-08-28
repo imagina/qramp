@@ -90,6 +90,7 @@ export default function useFilters(props, proxy) {
     getTitleFilter();
     await setUrlParams(router, route.name)
     await buildKanbanStructure()
+    store.showModal = false;
   }
   return {
     filters,
