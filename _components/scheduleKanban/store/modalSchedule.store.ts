@@ -8,6 +8,7 @@ interface State {
     form: any;
     seletedDateColumn: any;
     isEdit: boolean;
+    stationId: number | null,
 }
 
 const state = reactive<State>({
@@ -17,6 +18,7 @@ const state = reactive<State>({
     form: {},
     seletedDateColumn: null,
     isEdit: false,
+    stationId: null,
 })
 
 function getForm(data: any) {
@@ -56,6 +58,12 @@ const store = computed(() => ({
     },
     set loading(value: boolean) {
         state.loading = value;
+    },
+    get stationId(): number | null {
+        return state.stationId;
+    },
+    set stationId(value: number | null) {
+        state.stationId = value;
     },
     get form() {
         return state.form;
