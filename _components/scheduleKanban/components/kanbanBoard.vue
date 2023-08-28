@@ -60,17 +60,19 @@
   </div>
   <modalSchedule />
   <formOrders ref="refFormOrders" @getWorkOrderFilter="individualRefreshByColumns" />
+  <modalStation />
 </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, getCurrentInstance } from "vue";
 import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
 import actionBar from './actionBar.vue'
 import filters from './filters.vue';
 import modalSchedule from './modalSchedule.vue'
 import formOrders from "../../formOrders.vue";
+import modalStation from "./modalStation.vue";
 
 export default defineComponent({
   components: {
@@ -79,9 +81,10 @@ export default defineComponent({
     filters,
     modalSchedule,
     formOrders,
+    modalStation
   },
-  setup() {
-    return {...useKanbanBoard()}
+  setup(props) {
+    return {...useKanbanBoard(props)}
   },
 });
 </script>

@@ -41,7 +41,7 @@
     <!--tabs-->
     <div class="text-center tw-px-4">
     <q-btn-toggle
-      v-model="scheduleTypeModel"
+      v-model="scheduleType"
       rounded
       no-caps
       unelevated
@@ -58,7 +58,7 @@
     <!--calendar-->
     <div class="text-center tw-p-4">
       <q-date class="text-primary shadow-4 custom_q_date"
-        v-model="dateModel"
+        v-model="selectedDate"
         color="primary"
         minimal
         bordered
@@ -83,18 +83,20 @@
         color="primary"
         no-caps class="tw-w-full"
         rounded
-        @click=""/>
+        @click="callBuildKanbanStructure"/>
     </div>
   </q-drawer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, getCurrentInstance } from "vue";
 import useFilters from '../uses/useFilters'
 export default defineComponent({
   components: {},
-  setup() {
-    return {...useFilters()};
+  props: {},
+  setup(props) {
+    const proxy = (getCurrentInstance() as any).proxy as any;
+    return {...useFilters(props, proxy)};
   }
 });
 </script>

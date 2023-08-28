@@ -14,12 +14,6 @@ const state: State = reactive({
 });
 
 const store: State = computed(() => ({
-  get selectedDate(): string {
-    return state.selectedDate;
-  },
-  set selectedDate(value: string) {
-    state.selectedDate = value;
-  },
   get scheduleType(): string {
     return state.scheduleType;
   },

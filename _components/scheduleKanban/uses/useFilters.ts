@@ -3,8 +3,12 @@ import store from '../store/filters.store'
 import actionsModal from '../models/actionsModal.model'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract';
 import scheduleTypeOptions from '../models/scheduleType.model'
+import buildKanbanStructure from '../actions/buildKanbanStructure';
+import getCurrentTime from '../actions/getCurrentTime';
+import moment, { Moment } from 'moment';
+import setUrlParams from '../actions/setUrlParams';
 
-export default function useFilters() {
+export default function useFilters(props, proxy) {
   const form = computed(() => store.form);
   /**
    * Computed property indicating whether the application is in a filters state.
@@ -46,41 +50,47 @@ export default function useFilters() {
    * Writable computed property controlling the state of the toggle button.
    * @type {WritableComputedRef<string>}
    */
-  const scheduleTypeModel: WritableComputedRef<string> = computed({
+  const scheduleType: WritableComputedRef<string> = computed({
     /**
      * Get the current value of the toggle button .
      * @returns {string} The state of the toggle buton.
      */
-    get: () => store.scheduleTypeModel,
+    get: () => store.scheduleType,
     /**
      * Set the value state of the toggle button.
      * @param {string} value - The new value state to set.
      */
     set: (value: string) => {
-      store.scheduleTypeModel = value;
+      store.scheduleType = value;
     }
   });
 
   /**
    * Writable computed property controlling the state of the q-date calendar.
-   * @type {WritableComputedRef<boolean>}
+   * @type {WritableComputedRef<string>}
    */
-  const dateModel: WritableComputedRef<string> = computed({
+  const selectedDate: WritableComputedRef<string> = computed({
     /**
      * Get the current value of the q-date calendar.
      * @returns {string} The state of the q-date calendar.
      */
-    get: () => store.dateModel,
+    get: () => store.selectedDate,
     /**
      * Set the value state of the q-date calendar.
      * @param {string} value - The new value state to set.
      */
     set: (value: string) => {
-      store.dateModel = value;
+      store.selectedDate = value;
     }
   });
-  
+  const router = proxy.$router;
+  const route = proxy.$route;
   const { actions } = actionsModal() as ModelActionsModalResult;
+
+  async function callBuildKanbanStructure (){
+    await setUrlParams(router, route.name)
+    await buildKanbanStructure()
+  }
   
   return {
     filters,
@@ -89,8 +99,10 @@ export default function useFilters() {
     showModal,
     form,
     actions,
-    dateModel,
-    scheduleTypeModel,
-    scheduleTypeOptions
+    selectedDate,
+    scheduleType,
+    scheduleTypeOptions,
+    buildKanbanStructure,
+    callBuildKanbanStructure
   };
 }

@@ -1,128 +1,24 @@
 import Vue, { reactive, computed } from 'vue';
 import modelHoursFilter from '../models/hoursFilter.model'
+import scheduleTypeModel from '../models/scheduleType.model';
+import filters from '../models/filters.model'
+import moment, { Moment } from 'moment';
+import { State } from '../contracts/filtersStore.contract';
 
-const state = reactive({
+const state = reactive<State>({
     showModal: false,
     titleModal: '',
-    filters: {
-        time: {
-          value: null,
-          type: 'select',
-          props: {
-            label: 'Filter by time',
-            format24h: true,
-            options: modelHoursFilter,
-            alphabeticalSort: false,
-          }
-        },
-        carrierId: {
-          value: null,
-          type: "select",
-          loadOptions: {
-            apiRoute: "apiRoutes.qsetupagione.airlines",
-            select: { label: "airlineName", id: "id" },
-            requestParams: {
-            },
-          },
-          props: {
-            label: "Carrier",
-            clearable: true,
-          },
-        },
-        stationId: {
-          value: null,
-          type: "select",
-          loadOptions: {
-            apiRoute: "apiRoutes.qsetupagione.setupStations",
-            select: { label: "fullName", id: "id" },
-            requestParams: {
-              filter: {
-                companyId: 26,
-              },
-            },
-          },
-          props: {
-            label: "Station",
-          },
-        },
-        statusId: {
-          value: null,
-          type: 'select',
-          loadOptions: {
-            apiRoute: 'apiRoutes.qramp.workOrderStatuses',
-            select: { 'label': 'statusName', 'id': 'id' },
-            requestParams: {
-              filter: {
-                companyId: 26,
-              },
-            },
-          },
-          props: {
-            label: 'Status',
-            'clearable': true
-          },
-        },
-        adHoc: {
-          value: null,
-          type: "select",
-          props: {
-            label: "Ad Hoc",
-            clearable: true,
-            options: [
-              { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
-              { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
-            ],
-          },
-        },
-        flightStatusId: {
-          value: null,
-          type: "select",
-          loadOptions: {
-            apiRoute: "apiRoutes.qfly.flightStatuses",
-            select: { label: "name", id: "id" },
-            requestParams: {
-              filter: {
-                companyId: 26,
-              },
-            },
-          },
-          props: {
-            label: "Flight Status",
-            clearable: true,
-          },
-        },
-        areaId: {
-          value: null,
-          type: 'select',
-          loadOptions: {
-            apiRoute: 'apiRoutes.qsetupagione.areas',
-            select: { label: 'name', id: 'id' },
-            requestParams: {
-              filter: {
-                companyId: 26,
-              },
-            },
-          },
-          props: {
-            label: 'Areas',
-            'clearable': true
-          },
-        },
-        type: {
-          value: null,
-        },
-        dateStart: {
-          value: null,
-        },
-        dateEnd: {
-          value: null,
-        },  
-    },
+    filters,
     form: {},
     loading: false,
     updateModal: false,
-    scheduleTypeModel: 'week-agenda',
-    dateModel: ''
+    scheduleType: scheduleTypeModel[0].value,
+    selectedDate: moment().format('YYYY/MM/DD'),
+    startDateTime: '',
+    endDateTime: '',
+    fullDay: modelHoursFilter[0].value,
+    stationId: '',
+    showModalStation: false
 })
 
 const store = computed(() => ({
@@ -156,17 +52,56 @@ const store = computed(() => ({
     set form(data) {
       state.form = {...data};
     },
-    get scheduleTypeModel() {
-      return state.scheduleTypeModel;
+    get scheduleType() {
+      return state.scheduleType;
     },
-    set scheduleTypeModel(value: string) {
-      state.scheduleTypeModel = value;
+    set scheduleType(value: string) {
+      state.scheduleType = value;
     },
-    get dateModel() {
-      return state.dateModel;
+    get selectedDate() {
+      return state.selectedDate;
     },
-    set dateModel(value: string) {
-      state.dateModel = value;
+    set selectedDate(value: string) {
+      state.selectedDate = value;
+    },
+    get startDateTime() {
+      return state.startDateTime;
+    },
+    set startDateTime(value: string) {
+      state.startDateTime = value;
+    },
+    get endDateTime() {
+      return state.endDateTime;
+    },
+    set endDateTime(value: string) {
+      state.endDateTime = value;
+    },
+    get stationId() {
+      return state.stationId;
+    },
+    set stationId(value: string) {
+      state.stationId = value;
+    },
+    get showModalStation(){
+      return state.showModalStation;
+    },
+    set showModalStation(value: boolean){
+      state.showModalStation = value;
+    },
+    get filterTime(){
+      if(state.form.time !== null){
+        return state.form.time.split('-') || [0,0];
+      }
+      return state.fullDay.split('-');
+    },
+    get payload(){
+      const filters = {...state.form};
+      delete filters.time;
+      delete filters.scheduleType;
+      Object.keys(filters).forEach(
+        (key) => (filters[key] === null) && delete filters[key]
+      );
+      return filters
     },
     reset(): void {
         //state.filters = {};

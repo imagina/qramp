@@ -10,7 +10,6 @@ export interface Columns {
 }
 
 export interface State {
-  selectedDate: string;
   scheduleType: string;
   isDraggingCard: boolean;
   columns: Columns[];

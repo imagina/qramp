@@ -1,6 +1,7 @@
-import Vue, { ref, reactive, watch, computed, provide, inject } from 'vue';
+import Vue, { ref, computed, provide, getCurrentInstance } from 'vue';
 import moment, { Moment } from "moment";
 import storeKanban from "../store/kanban.store";
+import storeFilter from '../store/filters.store'
 import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from './../../../_store/qRampStore.js'
 import filtersStore from '../store/filters.store';
@@ -8,8 +9,11 @@ import getWorkOrder from '../actions/getWorkOrder'
 import _ from "lodash";
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import individualRefreshByColumns from '../actions/individualRefreshByColumns'
+import checkUrlParams from '../actions/checkUrlParams';
+import setUrlParams from '../actions/setUrlParams';
 
-export default function useKanbanBoard() {
+export default function useKanbanBoard(props) {
+  const proxy = (getCurrentInstance() as any).proxy as any;
   const refFormOrders = ref(null);
   provide('refFormOrders', refFormOrders);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -25,10 +29,11 @@ export default function useKanbanBoard() {
       options: modelHoursFilter,
     },
   });
-  const selectedDate = computed({
-    get: () => storeKanban.selectedDate,
-    set: (value) => (storeKanban.selectedDate = value),
-  });
+
+  const router = proxy.$router;
+  const route = proxy.$route;
+
+  const selectedDate = computed(() => storeFilter.selectedDate);
 
   const scheduleType = computed({
     get: () => storeKanban.scheduleType,
@@ -136,7 +141,13 @@ export default function useKanbanBoard() {
   })
 
   const init = async () => {
-    await buildKanbanStructure();
+    await checkUrlParams({ ...route.query });
+    if (storeFilter.stationId) {
+      await setUrlParams(router, route.name);
+      await buildKanbanStructure();
+    } else {
+      storeFilter.showModalStation = true
+    }
   };
 
   init();
