@@ -1,4 +1,4 @@
-import Vue, { ref, reactive, watch, computed, provide, inject } from 'vue';
+import Vue, { ref, computed, provide, getCurrentInstance } from 'vue';
 import moment, { Moment } from "moment";
 import storeKanban from "../store/kanban.store";
 import storeFilter from '../store/filters.store'
@@ -12,7 +12,8 @@ import individualRefreshByColumns from '../actions/individualRefreshByColumns'
 import checkUrlParams from '../actions/checkUrlParams';
 import setUrlParams from '../actions/setUrlParams';
 
-export default function useKanbanBoard(props, proxy) {
+export default function useKanbanBoard(props) {
+  const proxy = (getCurrentInstance() as any).proxy as any;
   const refFormOrders = ref(null);
   provide('refFormOrders', refFormOrders);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -140,11 +141,11 @@ export default function useKanbanBoard(props, proxy) {
   })
 
   const init = async () => {
-    await checkUrlParams({...route.query});
-    if(storeFilter.stationId){
+    await checkUrlParams({ ...route.query });
+    if (storeFilter.stationId) {
       await setUrlParams(router, route.name);
       await buildKanbanStructure();
-    }else{
+    } else {
       storeFilter.showModalStation = true
     }
   };

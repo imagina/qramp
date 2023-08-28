@@ -84,8 +84,7 @@ export default defineComponent({
     modalStation
   },
   setup(props) {
-    const proxy = (getCurrentInstance() as any).proxy as any;
-    return {...useKanbanBoard(props, proxy)}
+    return {...useKanbanBoard(props)}
   },
 });
 </script>
