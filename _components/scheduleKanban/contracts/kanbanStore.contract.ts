@@ -16,4 +16,5 @@ export interface State {
   loading: boolean;
   dragDate: string;
   isBlank: boolean;
+  filterCompany?: number;
 }

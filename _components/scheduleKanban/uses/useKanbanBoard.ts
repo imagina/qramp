@@ -1,4 +1,4 @@
-import Vue, { ref, computed, provide, getCurrentInstance } from 'vue';
+import Vue, { ref, computed, provide, getCurrentInstance, watch, onMounted } from 'vue';
 import storeKanban from "../store/kanban.store";
 import storeFilter from '../store/filters.store'
 import modelHoursFilter from "../models/hoursFilter.model";
@@ -10,6 +10,8 @@ import individualRefreshByColumns from '../actions/individualRefreshByColumns'
 import checkUrlParams from '../actions/checkUrlParams';
 import setUrlParams from '../actions/setUrlParams';
 import getTitleFilter from '../actions/getTitleFilter';
+import cache from '@imagina/qsite/_plugins/cache';
+import workOrderList from 'src/modules/qramp/_store/actions/workOrderList';
 
 export default function useKanbanBoard(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
@@ -137,13 +139,51 @@ export default function useKanbanBoard(props) {
   })
 
   const init = async () => {
+    await setStations();
     await checkUrlParams(proxy);
     getTitleFilter();
     await setUrlParams(proxy);
     await buildKanbanStructure();
   };
-
-  init();
+  async function setStations() {
+    const params = {...proxy.$route.query}
+    const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
+    storeFilter.stationId = getStationAssigned(proxy.$store.state.quserAuth.userData) || (params.stationId || null) || (localStationId || null);
+    storeFilter.form.stationId = storeFilter.stationId;
+    const station = await workOrderList().getStationList().find(item => item.id == Number(storeFilter.stationId) && item.companyId === storeKanban.filterCompany);
+    if (!station) {
+      storeFilter.stationId = null;
+      storeFilter.showModalStation = true
+      return;
+    }
+  }
+  function getStationAssigned(userData) {
+    try {
+      let stationsAssigned = null;
+      if (userData) {
+        if (userData.options) {
+          if (userData.options.stationsAssigned
+            && Array.isArray(userData.options.stationsAssigned)
+            && userData.options.stationsAssigned.length > 0) {
+            stationsAssigned = userData.options.stationsAssigned.shift();
+          }
+        }
+      }
+      return stationsAssigned;
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  onMounted(() => {
+    init();
+  })
+  watch(() => proxy.$route, async (currentValue, oldValue) => {
+    if(!storeKanban.loading) {
+      init();
+    }
+  },
+  { deep: true }
+  );
   return {
     selectedDate,
     columns,

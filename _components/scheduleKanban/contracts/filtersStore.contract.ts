@@ -10,7 +10,7 @@ export interface State {
     startDateTime: string,
     endDateTime: string,
     fullDay: string,
-    stationId: string
+    stationId: string | null
     showModalStation: boolean
     titleFilter: string;
 }

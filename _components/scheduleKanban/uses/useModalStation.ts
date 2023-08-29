@@ -1,6 +1,6 @@
 import Vue, { ref, computed, ComputedRef, getCurrentInstance } from 'vue';
 import store from '../store/filters.store'
-import fields from '../models/modalStation.model';
+import modalStationFields from '../models/modalStation.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
 import checkUrlParams from '../actions/checkUrlParams';
@@ -10,7 +10,9 @@ import getTitleFilter from '../actions/getTitleFilter';
 export default function useModalStation() {
   const proxy = (getCurrentInstance() as any).proxy as any;
   const refModalStation: any = ref(null);
-  
+  const fields = computed(() => {
+    return modalStationFields().fields.value
+  });
   const loading: ComputedRef<boolean> = computed(() => store.loading);
 
   const showModalStation = computed({
@@ -41,16 +43,13 @@ export default function useModalStation() {
     try {
       refModalStation.value.validate().then(async (success) => {
         if (success) {
-          cache.set("stationId", store.stationId);
-          await checkUrlParams(proxy);
-          if(store.stationId){
-            getTitleFilter();
-            await setUrlParams(proxy);
-            await buildKanbanStructure();
-            store.showModalStation = false;
-          }else{
-            store.showModalStation = true
-          }
+          await cache.set("stationId", store.stationId);
+          store.form.stationId = store.stationId;
+          //await checkUrlParams(proxy);
+          getTitleFilter();
+          await setUrlParams(proxy);
+          await buildKanbanStructure();
+          store.showModalStation = false;
         }
       });
     } catch (error) {

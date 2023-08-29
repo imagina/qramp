@@ -1,6 +1,8 @@
 import {reactive, computed, ComputedRef} from 'vue';
 import moment, { Moment } from 'moment';
 import {Columns, State} from '../contracts/kanbanStore.contract'
+import { COMPANY_PASSENGER, COMPANY_RAMP } from '../../model/constants';
+import qRampStore from 'src/modules/qramp/_store/qRampStore';
 
 
 const state: State = reactive({
@@ -12,6 +14,8 @@ const state: State = reactive({
   dragDate: '',
   isBlank: false,
 });
+
+const isPassenger = computed(() => qRampStore().getIsPassenger());
 
 const store: State = computed(() => ({
   get scheduleType(): string {
@@ -50,7 +54,9 @@ const store: State = computed(() => ({
   set isBlank(value: boolean) {
     state.isBlank = value;
   },
-  
+  get filterCompany(): number {
+    return isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP;
+  },
 })).value;
 
 export default store;

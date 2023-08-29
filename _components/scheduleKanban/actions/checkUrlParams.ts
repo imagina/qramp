@@ -6,14 +6,6 @@ import cache from '@imagina/qsite/_plugins/cache';
 export default async function checkUrlParams(proxy){
   const params = {...proxy.$route.query}
   store.form.time = getCurrentTime();
-  const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
-  store.stationId = getStationAssigned(proxy.$store.state.quserAuth.userData) || (params.stationId || null) || (localStationId || null);
-  //const station = await workOrderList().getStationList().find(item => item.id == stationId && item.companyId === filterCompany);
-  if (!store.stationId) {
-    store.showModalStation = true
-    return;
-  }
-
   try{
     if(store.stationId){
       store.form.stationId = store.stationId;
@@ -37,23 +29,5 @@ export default async function checkUrlParams(proxy){
     }
   } catch(err) {
     console.log(err);
-  }
-}
-
-function getStationAssigned(userData) {
-  try {
-    let stationsAssigned = null;
-    if (userData) {
-      if (userData.options) {
-        if (userData.options.stationsAssigned
-          && Array.isArray(userData.options.stationsAssigned)
-          && userData.options.stationsAssigned.length > 0) {
-          stationsAssigned = userData.options.stationsAssigned.shift();
-        }
-      }
-    }
-    return stationsAssigned;
-  } catch (error) {
-    console.log(error)
   }
 }

@@ -17,7 +17,7 @@ const state = reactive<State>({
     startDateTime: '',
     endDateTime: '',
     fullDay: modelHoursFilter[0].value,
-    stationId: '',
+    stationId: null,
     showModalStation: false,
     titleFilter: '',
 })
@@ -83,10 +83,10 @@ const store = computed(() => ({
     set endDateTime(value: string) {
       state.endDateTime = value;
     },
-    get stationId() {
+    get stationId(): string | null  {
       return state.stationId;
     },
-    set stationId(value: string) {
+    set stationId(value: string | null) {
       state.stationId = value;
     },
     get showModalStation(){
