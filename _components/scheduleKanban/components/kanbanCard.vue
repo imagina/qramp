@@ -12,7 +12,11 @@
         <div class="tw-flex tw-pb-1">
           <div class="tw-w-10/12">
             <p 
-             class="text-kanban-card tw--mt-0.5 tw-cursor-pointer"
+             class="
+              text-kanban-card 
+              tw--mt-0.5 
+              tw-cursor-pointer 
+              tw-truncate"
              @click="openModalSchedule"
             >
               {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }}
