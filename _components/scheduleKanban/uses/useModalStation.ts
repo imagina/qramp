@@ -5,6 +5,7 @@ import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
 import checkUrlParams from '../actions/checkUrlParams';
 import cache from '@imagina/qsite/_plugins/cache';
+import getTitleFilter from '../actions/getTitleFilter';
 
 export default function useModalStation() {
   const proxy = (getCurrentInstance() as any).proxy as any;
@@ -43,6 +44,7 @@ export default function useModalStation() {
           cache.set("stationId", store.stationId);
           await checkUrlParams(proxy);
           if(store.stationId){
+            getTitleFilter();
             await setUrlParams(proxy);
             await buildKanbanStructure();
             store.showModalStation = false;

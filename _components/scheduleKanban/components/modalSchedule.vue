@@ -15,7 +15,7 @@
       <div 
         class="tw-grid tw-grid-cols-1 tw-gap-4"
         :class="{'lg:tw-grid-cols-2': form.id && permisionComments}"
-      >
+      > 
           <div>
             <div v-for="(field, keyField) in fields.form" :key="keyField">
               <dynamic-field

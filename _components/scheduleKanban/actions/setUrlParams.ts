@@ -1,6 +1,7 @@
 import moment from 'moment';
 import store from '../store/filters.store';
 import cache from '@imagina/qsite/_plugins/cache';
+import modalScheduleStore from '../store/modalSchedule.store'
 
 export default async function setUrlParams(proxy){
     try {
@@ -9,8 +10,8 @@ export default async function setUrlParams(proxy){
       query.type = store.scheduleType;
       query.dateStart = selectedDate.startOf("week").format('YYYYMMDD');
       query.dateEnd = selectedDate.endOf("week").format('YYYYMMDD');
+      modalScheduleStore.stationId = query.stationId;
       cache.set("stationId", store.form.stationId);
-
       proxy.$router.push({
         name: proxy.$route.name,
         query

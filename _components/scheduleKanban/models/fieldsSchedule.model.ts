@@ -3,6 +3,7 @@ import {COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
 import store from '../store/modalSchedule.store'
+import filtersStore from '../store/filters.store';
 
 
 export default function modelFields() {
@@ -12,7 +13,9 @@ export default function modelFields() {
     const filterGates = computed(() => {
         return workOrderList()
           .getGatesList()
-          .filter(item => item.stationId == form.value?.stationId)
+          .filter(item => {
+            return item.stationId == Number(store.stationId)
+          })
           .map(item =>
             ({
               value: item.id,
@@ -46,7 +49,7 @@ export default function modelFields() {
             },
             stationId: {
               name:'stationId',
-              value: 12,
+              value: store.stationId,
               type: 'select',
               props: {
                 //readonly: this.isBlank,
