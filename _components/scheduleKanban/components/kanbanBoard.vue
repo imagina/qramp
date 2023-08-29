@@ -9,7 +9,7 @@
         @refresh="buildKanbanStructure" 
     />
     <filters />
-    <filtersBar />
+    <filtersBar v-if="false"/>
    <actionBar /> 
   <div class="tw-flex">
     <div

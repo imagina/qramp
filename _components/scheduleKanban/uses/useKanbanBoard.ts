@@ -138,13 +138,9 @@ export default function useKanbanBoard(props) {
 
   const init = async () => {
     await checkUrlParams(proxy);
-    if (storeFilter.stationId) {
-      getTitleFilter();
-      await setUrlParams(proxy);
-      await buildKanbanStructure();
-    } else {
-      storeFilter.showModalStation = true
-    }
+    getTitleFilter();
+    await setUrlParams(proxy);
+    await buildKanbanStructure();
   };
 
   init();

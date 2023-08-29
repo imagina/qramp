@@ -15,12 +15,12 @@ export default function useFiltersBar() {
     
     /* station */
     const stationId = store.form.stationId || store.stationId
-    const station =  workOrderList().getStationList().find(item => stationId == item.id) || {};
+    const station: any =  workOrderList().getStationList().find(item => stationId == item.id) || {};
     delete filters.stationId;      
     filters.station = station.fullName
 
     /* status */
-    const statusId = workOrderList().getWorkOrderStatusesList().find(item => filters.statusId == item.id) || {};
+    const statusId: any = workOrderList().getWorkOrderStatusesList().find(item => filters.statusId == item.id) || {};
     filters.status = statusId.statusName    
     delete filters.statusId;
 
@@ -28,7 +28,7 @@ export default function useFiltersBar() {
     filters.adHoc = filters.adHoc ? 'Yes' : 'No'
     /* flight status*/
 
-    const flightStatus = workOrderList().getFlightStatusesList().find(item => filters.flightStatusId == item.id) || {};
+    const flightStatus: any = workOrderList().getFlightStatusesList().find(item => filters.flightStatusId == item.id) || {};
     filters.flightStatus = flightStatus.name
 
     /* Areas */
