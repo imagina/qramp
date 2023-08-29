@@ -5,16 +5,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance, watch } from "vue";
+import { defineComponent, getCurrentInstance, watch, onMounted } from "vue";
 import kanbanBoard from "./components/kanbanBoard.vue";
 import workOrderList from '../../_store/actions/workOrderList'
 import qRampStore from "../../_store/qRampStore";
+import kanbanStore from './store/kanban.store'
 
 export default defineComponent({
   components: {
     kanbanBoard,
   },
-  setup() {
+  props: {
+    isBlank: {
+      type: Boolean,
+      default: () => false,
+    }
+  },
+  setup(props) {
     const proxy = (getCurrentInstance() as any).proxy as any;
     init();
     watch(() => proxy.$route, (currentValue, oldValue) => {
@@ -31,6 +38,10 @@ export default defineComponent({
         await workOrderList().getCustomerWithContract();
       })
     }
+    onMounted(() => {
+      kanbanStore.isBlank = props.isBlank;
+      qRampStore().setIsblank(props.isBlank)
+    })
     return {};
   },
 });

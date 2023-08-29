@@ -30,7 +30,10 @@
              tw--mt-2 
              tw-text-gray-500
              dot-vertical 
-             tw-cursor-move"
+             "
+             :class="{
+              'tw-cursor-move': !isBlank
+             }"
           >
             <i class="fa-solid fa-grip-dots-vertical tw-text-lg" />
           </div>
@@ -98,6 +101,7 @@
 import { defineComponent } from "vue";
 import useKanbanCard from '../uses/useKanbanCard'
 import lastComments from './lastComments.vue'
+import { is } from "quasar";
 
 export default defineComponent({
   components: {

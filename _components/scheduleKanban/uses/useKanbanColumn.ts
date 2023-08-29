@@ -15,6 +15,7 @@ export default function useKanbanColumn(props: any = {}) {
     get: () => props.column.cards,
     set: (value) => (props.column.cards = value),
   });
+  const isBlank = computed(() => storeKanban.isBlank);
   const date = computed(() => props.column.date)
   const selectedDate = computed({
     get: () => storeFilters.selectedDate,
@@ -64,6 +65,7 @@ export default function useKanbanColumn(props: any = {}) {
     }
   }
   function setDrag(isDrag = false) {
+    if(isBlank) return;
     storeKanban.columns.forEach(item => {
       if(isDrag && props.column.date === item.date) {
         item.isDrag = isDrag
@@ -139,5 +141,6 @@ export default function useKanbanColumn(props: any = {}) {
     singleRefreshment,
     setDrag,
     changeDate,
+    isBlank,
   }
 }

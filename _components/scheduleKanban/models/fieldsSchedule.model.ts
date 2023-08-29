@@ -3,12 +3,12 @@ import {COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
 import store from '../store/modalSchedule.store'
-import filtersStore from '../store/filters.store';
-
+import kanbanStore from '../store/kanban.store'
 
 export default function modelFields() {
     const isPassenger = computed(() =>  qRampStore().getIsPassenger());
     const companyId = computed(() => isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP);
+    const isBlank = computed(() => kanbanStore.isBlank);
     const form = computed(() => store.form)
     const filterGates = computed(() => {
         return workOrderList()
@@ -38,7 +38,7 @@ export default function modelFields() {
               value: '',
               type: 'input',
               props: {
-                //readonly: this.isBlank,
+                readonly: isBlank.value,
                 rules: [
                   val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                 ],
@@ -52,7 +52,7 @@ export default function modelFields() {
               value: store.stationId,
               type: 'select',
               props: {
-                //readonly: this.isBlank,
+                readonly: isBlank.value,
                 rules: [
                   val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                 ],
@@ -76,7 +76,7 @@ export default function modelFields() {
               type: 'select',
               props: {
                 vIf: !isPassenger.value,
-                //readonly: this.isBlank,
+                readonly: isBlank.value,
                 label: `${Vue.prototype.$tr('ifly.cms.form.gate')}`,
                 clearable: true,
                 color:"primary",
@@ -107,7 +107,7 @@ export default function modelFields() {
                 rules: [
                   val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                 ],
-                //readonly: this.isBlank,
+                readonly: isBlank.value,
                 label: 'STA',
                 format24h: true,
               },
@@ -121,7 +121,7 @@ export default function modelFields() {
                 ],
                 mask:'MM/DD/YYYY HH:mm',
                 hint:'Format: MM/DD/YYYY HH:mm',
-                //readonly: this.isBlank,
+                readonly: isBlank.value,
                 label: 'STD',
                 format24h: true,
               },
@@ -130,7 +130,7 @@ export default function modelFields() {
               value: null,
               type: 'select',
               props: {
-                //readonly: this.isBlank,
+                readonly: isBlank.value,
                 selectColor: true,
                 colorType: 'tailwindcss',
                 label: `Flight Status`,

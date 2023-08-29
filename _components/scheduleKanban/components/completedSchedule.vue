@@ -63,6 +63,7 @@
                 tw-justify-center"
             >
                 <q-btn
+                    v-if="!isBlank"
                     icon="fa-light fa-plus tw-text-blue-500"
                     size="sm"
                     outline
@@ -72,11 +73,13 @@
                     @click="openModalForm"
                 />
                 <span class="
-                    tw-border-l-2
                     tw-h-4
                     tw-text-lg
                     tw-text-gray-200
                     tw-mx-2"
+                    :class="{
+                      'tw-border-l-2': !isBlank
+                    }"
                 />
                 <q-btn
                     icon="fa-light fa-rotate-right tw-text-blue-500"

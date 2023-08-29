@@ -1,9 +1,11 @@
 import Vue, {computed} from 'vue';
 import {STATUS_DRAFT, STATUS_SCHEDULE} from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
+import storeKanban from '../store/kanban.store'
 import _ from "lodash";
 
 export default function useCompletedSchedule(props: any, emit: any) {
+  const isBlank = computed(() => storeKanban.isBlank);
   const scheduleType = computed(() => props.scheduleType);
   const dateColumn = computed(() => props.dateColumn);
   const modalShowSchedule = computed({
@@ -61,5 +63,6 @@ export default function useCompletedSchedule(props: any, emit: any) {
     modalShowSchedule,
     refresh,
     openModalForm,
+    isBlank,
   }
 }

@@ -14,6 +14,7 @@ import showWorkOrder from '../actions/showWorkOrders';
 
 export default function useKanbanCard(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
+  const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const colorCheckSchedule = computed(() => {
     const statusColor: string | undefined = workOrderList()
@@ -86,5 +87,6 @@ export default function useKanbanCard(props: any = {}) {
     actypes,
     gates,
     openModalSchedule,
+    isBlank,
   };
 }
