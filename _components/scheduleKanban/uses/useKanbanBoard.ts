@@ -1,22 +1,29 @@
-import Vue, { ref, computed, provide, getCurrentInstance, watch, onMounted } from 'vue';
+import Vue, {
+  ref,
+  computed,
+  provide,
+  getCurrentInstance,
+  watch,
+  onMounted,
+} from "vue";
 import storeKanban from "../store/kanban.store";
-import storeFilter from '../store/filters.store'
+import storeFilter from "../store/filters.store";
 import modelHoursFilter from "../models/hoursFilter.model";
-import qRampStore from './../../../_store/qRampStore.js'
-import filtersStore from '../store/filters.store';
+import qRampStore from "./../../../_store/qRampStore.js";
+import filtersStore from "../store/filters.store";
 import _ from "lodash";
-import buildKanbanStructure from '../actions/buildKanbanStructure';
-import individualRefreshByColumns from '../actions/individualRefreshByColumns'
-import checkUrlParams from '../actions/checkUrlParams';
-import setUrlParams from '../actions/setUrlParams';
-import getTitleFilter from '../actions/getTitleFilter';
-import cache from '@imagina/qsite/_plugins/cache';
-import workOrderList from 'src/modules/qramp/_store/actions/workOrderList';
+import buildKanbanStructure from "../actions/buildKanbanStructure";
+import individualRefreshByColumns from "../actions/individualRefreshByColumns";
+import checkUrlParams from "../actions/checkUrlParams";
+import setUrlParams from "../actions/setUrlParams";
+import getTitleFilter from "../actions/getTitleFilter";
+import cache from "@imagina/qsite/_plugins/cache";
+import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 
 export default function useKanbanBoard(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
   const refFormOrders = ref(null);
-  provide('refFormOrders', refFormOrders);
+  provide("refFormOrders", refFormOrders);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
   const fullscreen = ref(false);
@@ -67,10 +74,10 @@ export default function useKanbanBoard(props) {
           icon: "fa-light fa-copy",
         },
         action: () => {
-          const routeName = isPassenger.value ? 'passenger' : 'ramp';
+          const routeName = isPassenger.value ? "passenger" : "ramp";
           let hrefSplit = window.location.href.split("?");
           let tinyUrl =
-          proxy.$store.state.qsiteApp.originURL +
+            proxy.$store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/public/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
           Vue.prototype.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
@@ -90,20 +97,22 @@ export default function useKanbanBoard(props) {
       },
       {
         label: "Scheduler",
-        vIf: !isPassenger.value && Vue.prototype.$auth.hasAccess('ramp.schedulers.manage'),
+        vIf:
+          !isPassenger.value &&
+          Vue.prototype.$auth.hasAccess("ramp.schedulers.manage"),
         props: {
           label: "Scheduler",
           icon: "fa-duotone fa-calendar-plus",
         },
         action: () => {
-          const routeName = isPassenger.value ? 'passenger' : 'ramp';
+          const routeName = isPassenger.value ? "passenger" : "ramp";
           let hrefSplit = window.location.href.split("?");
           let tinyUrl =
             proxy.$store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-          localStorage.setItem('urlSchedule', tinyUrl);
-          proxy.$router.push({name: 'qramp.admin.scheduler'})
+          localStorage.setItem("urlSchedule", tinyUrl);
+          proxy.$router.push({ name: "qramp.admin.scheduler" });
         },
       },
       {
@@ -113,12 +122,14 @@ export default function useKanbanBoard(props) {
           icon: "fa-duotone fa-filter",
           id: "filter-button-crud",
         },
-        action: () => { filtersStore.showModal = true },
+        action: () => {
+          filtersStore.showModal = true;
+        },
       },
     ];
 
     return extraActions;
-  })
+  });
 
   const init = async () => {
     await setStations();
@@ -128,14 +139,28 @@ export default function useKanbanBoard(props) {
     await buildKanbanStructure();
   };
   async function setStations() {
-    const params = {...proxy.$route.query}
-    const localStationId = await cache.get.item("stationId") !== 'null' ? await cache.get.item("stationId") : null;
-    storeFilter.stationId = getStationAssigned(proxy.$store.state.quserAuth.userData) || (params.stationId || null) || (localStationId || null);
+    const params = { ...proxy.$route.query };
+    const localStationId =
+      (await cache.get.item("stationId")) !== "null"
+        ? await cache.get.item("stationId")
+        : null;
+    storeFilter.stationId =
+      getStationAssigned(proxy.$store.state.quserAuth.userData) ||
+      params.stationId ||
+      null ||
+      localStationId ||
+      null;
     storeFilter.form.stationId = storeFilter.stationId;
-    const station = await workOrderList().getStationList().find(item => item.id == Number(storeFilter.stationId) && item.companyId === storeKanban.filterCompany);
+    const station = await workOrderList()
+      .getStationList()
+      .find(
+        (item) =>
+          item.id == Number(storeFilter.stationId) &&
+          item.companyId === storeKanban.filterCompany
+      );
     if (!station) {
       storeFilter.stationId = null;
-      storeFilter.showModalStation = true
+      storeFilter.showModalStation = true;
       return;
     }
   }
@@ -144,27 +169,31 @@ export default function useKanbanBoard(props) {
       let stationsAssigned = null;
       if (userData) {
         if (userData.options) {
-          if (userData.options.stationsAssigned
-            && Array.isArray(userData.options.stationsAssigned)
-            && userData.options.stationsAssigned.length > 0) {
+          if (
+            userData.options.stationsAssigned &&
+            Array.isArray(userData.options.stationsAssigned) &&
+            userData.options.stationsAssigned.length > 0
+          ) {
             stationsAssigned = userData.options.stationsAssigned.shift();
           }
         }
       }
       return stationsAssigned;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   onMounted(() => {
     init();
-  })
-  watch(() => proxy.$route, async (currentValue, oldValue) => {
-    if(!storeKanban.loading) {
-      init();
-    }
-  },
-  { deep: true }
+  });
+  watch(
+    () => proxy.$route,
+    async (currentValue, oldValue) => {
+      if (!storeKanban.loading) {
+        init();
+      }
+    },
+    { deep: true }
   );
   return {
     selectedDate,
