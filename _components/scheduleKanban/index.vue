@@ -25,7 +25,6 @@ export default defineComponent({
     function init() {
       new Promise(async (resolve, reject) => {
         const currentRouteName = proxy.$router.currentRoute.path.indexOf('passenger');
-        console.log(proxy.$router.currentRoute.path);
         await workOrderList().setStationList([]);
         await qRampStore().setIsPassenger(currentRouteName !== -1);
         await workOrderList().getAllList();
