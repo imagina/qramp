@@ -32,7 +32,6 @@ export async function getCards(): Promise<void> {
       const startDate = item.date.startOf('day');
       const endDate = item.date.endOf('day');
       const filterTime = storeFilters.filterTime;
-
       const response = await getWorkOrder(true, item.page, {
         field: "schedule_date",
         type: "customRange",

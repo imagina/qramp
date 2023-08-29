@@ -1,11 +1,8 @@
 import moment from 'moment';
 import store from '../store/filters.store';
-import getCurrentTime from './getCurrentTime';
-import cache from '@imagina/qsite/_plugins/cache';
 
 export default async function checkUrlParams(proxy){
   const params = {...proxy.$route.query}
-  store.form.time = getCurrentTime();
   try{
     if(store.stationId){
       store.form.stationId = store.stationId;

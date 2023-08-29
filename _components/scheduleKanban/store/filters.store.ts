@@ -4,12 +4,15 @@ import scheduleTypeModel from '../models/scheduleType.model';
 import filterModel from '../models/filters.model'
 import moment, { Moment } from 'moment';
 import { State } from '../contracts/filtersStore.contract';
+import getCurrentTime from '../actions/getCurrentTime';
 
 const state = reactive<State>({
     showModal: false,
     titleModal: '',
     filters: filterModel(),
-    form: {},
+    form: {
+      time: getCurrentTime()
+    },
     loading: false,
     updateModal: false,
     scheduleType: scheduleTypeModel[0].value,
