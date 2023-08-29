@@ -75,7 +75,7 @@ export default function modelFields() {
               value: null,
               type: 'select',
               props: {
-                //vIf: !this.isPassenger,
+                vIf: !isPassenger.value,
                 //readonly: this.isBlank,
                 label: `${Vue.prototype.$tr('ifly.cms.form.gate')}`,
                 clearable: true,

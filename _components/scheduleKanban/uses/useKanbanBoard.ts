@@ -68,12 +68,12 @@ export default function useKanbanBoard(props) {
         },
         action: () => {
           const routeName = isPassenger.value ? 'passenger' : 'ramp';
-          /*let hrefSplit = window.location.href.split("?");
+          let hrefSplit = window.location.href.split("?");
           let tinyUrl =
-            Vue.prototype.$store.state.qsiteApp.originURL +
+          proxy.$store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/public/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-          Vue.prototype.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");*/
+          Vue.prototype.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
         },
       },
       {
@@ -84,25 +84,26 @@ export default function useKanbanBoard(props) {
           icon: fullscreen.value ? "fullscreen_exit" : "fullscreen",
         },
         action: () => {
-          //this.fullscreen = !this.fullscreen;
-          //Vue.prototype.$q.fullscreen.toggle();
+          fullscreen.value = !fullscreen.value;
+          proxy.$q.fullscreen.toggle();
         },
       },
       {
         label: "Scheduler",
+        vIf: !isPassenger.value && Vue.prototype.$auth.hasAccess('ramp.schedulers.manage'),
         props: {
           label: "Scheduler",
           icon: "fa-duotone fa-calendar-plus",
         },
         action: () => {
-          /*const routeName = isPassenger.value ? 'passenger' : 'ramp';
+          const routeName = isPassenger.value ? 'passenger' : 'ramp';
           let hrefSplit = window.location.href.split("?");
           let tinyUrl =
-            this.$store.state.qsiteApp.originURL +
+            proxy.$store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-          localStorage.setItem('urlSchedule', tinyUrl);*/
-          //Vue.$router.push({name: 'qramp.admin.scheduler'})
+          localStorage.setItem('urlSchedule', tinyUrl);
+          proxy.$router.push({name: 'qramp.admin.scheduler'})
         },
       },
       {
@@ -116,25 +117,6 @@ export default function useKanbanBoard(props) {
       },
     ];
 
-    /*if(!isPassenger.value && Vue.prototype.$auth.hasAccess('ramp.schedulers.manage')){
-      extraActions.push({
-        label: "Scheduler",
-        props: {
-          label: "Scheduler",
-          icon: "fa-duotone fa-calendar-plus",
-        },
-        action: () => {
-          const routeName = isPassenger.value ? 'passenger' : 'ramp';
-          let hrefSplit = window.location.href.split("?");
-          let tinyUrl =
-            this.$store.state.qsiteApp.originURL +
-            `/#/${routeName}/schedule/index`;
-          if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-          localStorage.setItem('urlSchedule', tinyUrl);
-          //Vue.$router.push({name: 'qramp.admin.scheduler'})
-        },
-      })
-    }*/
     return extraActions;
   })
 
