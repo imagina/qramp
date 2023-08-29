@@ -1,16 +1,18 @@
-import Vue from 'vue';
-import modelHoursFilter from '../models/hoursFilter.model'
+import Vue, { computed } from "vue";
+import modelHoursFilter from "../models/hoursFilter.model";
+import kanbanStore from "../store/kanban.store";
 
-export default  {
+export default function filterModel() {
+  return computed(() => ({
     time: {
       value: null,
-      type: 'select',
+      type: "select",
       props: {
-        label: 'Filter by time',
+        label: "Filter by time",
         format24h: true,
         options: modelHoursFilter,
         alphabeticalSort: false,
-      }
+      },
     },
     carrierId: {
       value: null,
@@ -18,8 +20,7 @@ export default  {
       loadOptions: {
         apiRoute: "apiRoutes.qsetupagione.airlines",
         select: { label: "airlineName", id: "id" },
-        requestParams: {
-        },
+        requestParams: {},
       },
       props: {
         label: "Carrier",
@@ -34,7 +35,7 @@ export default  {
         select: { label: "fullName", id: "id" },
         requestParams: {
           filter: {
-            companyId: 26,
+            companyId: kanbanStore.filterCompany,
           },
         },
       },
@@ -44,19 +45,19 @@ export default  {
     },
     statusId: {
       value: null,
-      type: 'select',
+      type: "select",
       loadOptions: {
-        apiRoute: 'apiRoutes.qramp.workOrderStatuses',
-        select: { 'label': 'statusName', 'id': 'id' },
+        apiRoute: "apiRoutes.qramp.workOrderStatuses",
+        select: { label: "statusName", id: "id" },
         requestParams: {
           filter: {
-            companyId: 26,
+            companyId: kanbanStore.filterCompany,
           },
         },
       },
       props: {
-        label: 'Status',
-        'clearable': true
+        label: "Status",
+        clearable: true,
       },
     },
     adHoc: {
@@ -79,7 +80,7 @@ export default  {
         select: { label: "name", id: "id" },
         requestParams: {
           filter: {
-            companyId: 26,
+            companyId: kanbanStore.filterCompany,
           },
         },
       },
@@ -90,19 +91,19 @@ export default  {
     },
     areaId: {
       value: null,
-      type: 'select',
+      type: "select",
       loadOptions: {
-        apiRoute: 'apiRoutes.qsetupagione.areas',
-        select: { label: 'name', id: 'id' },
+        apiRoute: "apiRoutes.qsetupagione.areas",
+        select: { label: "name", id: "id" },
         requestParams: {
           filter: {
-            companyId: 26,
+            companyId: kanbanStore.filterCompany,
           },
         },
       },
       props: {
-        label: 'Areas',
-        'clearable': true
+        label: "Areas",
+        clearable: true,
       },
     },
     type: {
@@ -113,5 +114,6 @@ export default  {
     },
     dateEnd: {
       value: null,
-    },  
+    },
+  }));
 }

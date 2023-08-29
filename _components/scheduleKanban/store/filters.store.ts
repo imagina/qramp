@@ -1,14 +1,14 @@
 import Vue, { reactive, computed } from 'vue';
 import modelHoursFilter from '../models/hoursFilter.model'
 import scheduleTypeModel from '../models/scheduleType.model';
-import filters from '../models/filters.model'
+import filterModel from '../models/filters.model'
 import moment, { Moment } from 'moment';
 import { State } from '../contracts/filtersStore.contract';
 
 const state = reactive<State>({
     showModal: false,
     titleModal: '',
-    filters,
+    filters: filterModel(),
     form: {},
     loading: false,
     updateModal: false,
