@@ -9,6 +9,7 @@
         @refresh="buildKanbanStructure" 
     />
     <filters />
+    <filtersBar v-if="false"/>
    <actionBar /> 
   <div class="tw-flex">
     <div
@@ -65,11 +66,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance } from "vue";
+import { defineComponent } from "vue";
 import kanbanColumn from "./kanbanColumn.vue";
 import useKanbanBoard from '../uses/useKanbanBoard'
 import actionBar from './actionBar.vue'
 import filters from './filters.vue';
+import filtersBar from "./filtersBar.vue";
 import modalSchedule from './modalSchedule.vue'
 import formOrders from "../../formOrders.vue";
 import modalStation from "./modalStation.vue";
@@ -79,6 +81,7 @@ export default defineComponent({
     kanbanColumn,
     actionBar,
     filters,
+    filtersBar,
     modalSchedule,
     formOrders,
     modalStation

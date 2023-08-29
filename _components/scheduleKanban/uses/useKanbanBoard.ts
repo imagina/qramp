@@ -29,9 +29,6 @@ export default function useKanbanBoard(props) {
     },
   });
 
-  const router = proxy.$router;
-  const route = proxy.$route;
-
   const selectedDate = computed(() => storeFilter.selectedDate);
 
   const scheduleType = computed({
@@ -140,14 +137,10 @@ export default function useKanbanBoard(props) {
   })
 
   const init = async () => {
-    await checkUrlParams({ ...route.query });
-    if (storeFilter.stationId) {
-      getTitleFilter();
-      await setUrlParams(router, route.name);
-      await buildKanbanStructure();
-    } else {
-      storeFilter.showModalStation = true
-    }
+    await checkUrlParams(proxy);
+    getTitleFilter();
+    await setUrlParams(proxy);
+    await buildKanbanStructure();
   };
 
   init();

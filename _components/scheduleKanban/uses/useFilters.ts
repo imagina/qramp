@@ -1,4 +1,4 @@
-import Vue, { ref, computed, ComputedRef, WritableComputedRef } from 'vue';
+import Vue, { ref, computed, ComputedRef, WritableComputedRef, getCurrentInstance } from 'vue';
 import store from '../store/filters.store'
 import actionsModal from '../models/actionsModal.model'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract';
@@ -7,7 +7,8 @@ import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
 import getTitleFilter from '../actions/getTitleFilter';
 
-export default function useFilters(props, proxy) {
+export default function useFilters() {
+  const proxy = (getCurrentInstance() as any).proxy as any;
   const form = computed(() => store.form);
   /**
    * Computed property indicating whether the application is in a filters state.
@@ -82,13 +83,12 @@ export default function useFilters(props, proxy) {
       store.selectedDate = value;
     }
   });
-  const router = proxy.$router;
-  const route = proxy.$route;
+
   const { actions } = actionsModal() as ModelActionsModalResult;
 
   async function callBuildKanbanStructure() {
     getTitleFilter();
-    await setUrlParams(router, route.name)
+    await setUrlParams(proxy)
     await buildKanbanStructure()
     store.showModal = false;
   }
