@@ -1,15 +1,20 @@
 import Vue from 'vue';
 import {WorkOrders} from '../contracts/getWorkOrder.contract'
 import filtersStore from '../store/filters.store'
+import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP } from '../../model/constants';
+
 export default function getWorkOrders(refresh = false, page = 1, date): WorkOrders {
     try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
         const params = {
             refresh,
             params: {
                 take: 6,
                 page,
                 filter: {
-                    "businessUnitId":{"operator":"!=","value":8},
+                    businessUnitId,
                     ...filtersStore.payload,
                     date,
                     withoutDefaultInclude: true,
