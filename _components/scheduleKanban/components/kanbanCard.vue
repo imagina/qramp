@@ -84,10 +84,10 @@
         tw-w-full
         tw-h-6
         tw-py-1
-        tw-px-2
-        tw-font-bold 
+        tw-px-2 
         text-x2
         tw-space-x-1
+        tw-font-extrabold
         tw-rounded-br-lg tw-uppercase" :class="flightStatuses.color">
       <i :class="flightStatuses.icon" />
       <span>
