@@ -19,7 +19,7 @@
               tw-truncate"
              @click="openModalSchedule"
             >
-              {{ card.inboundFlightNumber }}/{{ card.outboundFlightNumber }}
+              {{ card.calendar.title }}
             </p>
           </div>
           <div class="
@@ -44,10 +44,10 @@
            tw-space-y-1">
           <div class="tw-flex tw-space-x-2 arrival-text">
             <div>
-              <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.inboundScheduledArrival ? $moment(card.inboundScheduledArrival).format('HH:MM') : '' }}
+              <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.calendar.sta ? $moment(card.calendar.sta).format('HH:MM') : '' }}
             </div>
             <div>
-              <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.outboundScheduledDeparture ? $moment(card.outboundScheduledDeparture).format('HH:MM') : '' }}
+              <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.calendar.std ? $moment(card.calendar.std).format('HH:MM') : '' }}
             </div>
           </div>
           <div class="tw-flex tw-space-x-1">
