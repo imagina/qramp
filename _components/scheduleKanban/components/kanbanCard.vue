@@ -88,7 +88,7 @@
         tw-font-bold 
         text-x2
         tw-space-x-1
-        tw-rounded-br-lg" :class="flightStatuses.color">
+        tw-rounded-br-lg tw-uppercase" :class="flightStatuses.color">
       <i :class="flightStatuses.icon" />
       <span>
         {{ flightStatuses.name }}
