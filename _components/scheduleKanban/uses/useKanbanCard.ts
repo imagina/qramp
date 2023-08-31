@@ -88,5 +88,6 @@ export default function useKanbanCard(props: any = {}) {
     gates,
     openModalSchedule,
     isBlank,
+    isPassenger,
   };
 }
