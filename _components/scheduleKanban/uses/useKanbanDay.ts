@@ -2,10 +2,11 @@ import Vue, { computed, ComputedRef } from 'vue';
 import { Screen } from 'quasar'
 
 export default function useKanbanDay() {
-
-  const isMobile = computed(() => Screen.width < 724 ); 
-  const isTablet = computed(() => Screen.width >= 724  && Screen.width < 1440); 
-  const isDesktop = computed(() => Screen.width >= 1440 ); 
+  const maxWidthMobile = 724;
+  const maxWidthTablet = 1440;
+  const isMobile = computed(() => Screen.width < maxWidthMobile );
+  const isTablet = computed(() => Screen.width >= maxWidthMobile  && Screen.width < maxWidthTablet);
+  const isDesktop = computed(() => Screen.width >= maxWidthTablet );
     
   return {  
     isMobile,
