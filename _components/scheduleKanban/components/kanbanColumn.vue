@@ -64,6 +64,7 @@
         class="h-200 bg-blue-gray-1000 tw-px-2 tw-pt-4"
         :class="{
           'tw-border tw-border-gray-300 ': column.isDrag,
+          'h-201-black': isBlank
         }"
       >
         <div 
@@ -174,6 +175,10 @@ export default defineComponent({
 
 .columnCtn .h-200 {
   height: 60vh;
+}
+
+.columnCtn .h-201-black {
+  height: 68vh;
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-track {
