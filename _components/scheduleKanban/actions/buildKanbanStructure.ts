@@ -25,14 +25,14 @@ export async function getColumns(): Promise<Columns[]> {
   }
 }
 
-export async function getCards(): Promise<void> {
+export async function getCards(refresh = false): Promise<void> {
   try {
     storeKanban.columns.forEach(async (item: Columns) => {
       item.loading = true;
       const startDate = item.date.startOf('day');
       const endDate = item.date.endOf('day');
       const filterTime = storeFilters.filterTime;
-      const response = await getWorkOrder(true, item.page, {
+      const response = await getWorkOrder(refresh, item.page, {
         field: "schedule_date",
         type: "customRange",
         from: startDate.set({ hour: filterTime[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss'),
@@ -50,12 +50,12 @@ export async function getCards(): Promise<void> {
   }
 }
 
-export default async function buildKanbanStructure(): Promise<void> {
+export default async function buildKanbanStructure(refresh = false): Promise<void> {
   try {
     storeKanban.loading = true;
     storeKanban.columns = await getColumns();
     if(!storeFilters.stationId) return;
-    await getCards();
+    await getCards(refresh);
     storeKanban.loading = false;
   } catch (error) {
     console.log(error);

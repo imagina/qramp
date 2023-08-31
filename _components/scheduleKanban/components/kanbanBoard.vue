@@ -6,7 +6,7 @@
         multipleRefresh
         :extra-actions="extraPageActions"  
         class="q-mb-md"
-        @refresh="buildKanbanStructure" 
+        @refresh="buildKanbanStructure(true)" 
     />
     <filters />
     <filtersBar v-if="false"/>

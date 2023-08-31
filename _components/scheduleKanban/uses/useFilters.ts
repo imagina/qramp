@@ -89,7 +89,7 @@ export default function useFilters() {
   async function callBuildKanbanStructure() {
     getTitleFilter();
     await setUrlParams(proxy)
-    await buildKanbanStructure()
+    await buildKanbanStructure(true)
     store.showModal = false;
   }
   return {
