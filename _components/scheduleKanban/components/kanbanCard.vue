@@ -43,10 +43,10 @@
            tw-text-xs 
            tw-space-y-1">
           <div class="tw-flex tw-space-x-2 arrival-text">
-            <div>
+            <div v-if="card.calendar.sta">
               <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
             </div>
-            <div>
+            <div v-if="card.calendar.std">
               <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
             </div>
           </div>
