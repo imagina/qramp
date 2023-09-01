@@ -1,6 +1,7 @@
 <template>
   <div 
-    class="tw-relative columnCtn q-col"
+    class="tw-relative  columnCtn q-col tw-w-full"
+    :class="{'columnCtnFull' : !isWeekAgenda }"
   >
     <div 
       class="tw-py-3" 
@@ -33,7 +34,7 @@
               'tw-border tw-border-blue-500': selectedDate === date.format('YYYY/MM/DD') 
                 && $moment().format('YYYY/MM/DD') !== date.format('YYYY/MM/DD')
             }"
-            @click="selectedDate = date.format('YYYY/MM/DD')"
+            @click="showKanbanDay(date)"
           >
             <span class="tw-font-semibold">
               {{ date.format("D") }}
@@ -89,9 +90,10 @@
           class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-h-full tw-px-2"
           handle=".dot-vertical"
           @end="changeDate"
-          :disabled="isBlank"
+          :disabled="isBlank && isWeekAgenda"
         >
-          <kanban-card
+          <component
+            :is="cardComponentName"
             v-for="(card, index) in cards"
             :id="card.id"
             :key="card.id"
@@ -118,12 +120,14 @@ import draggable from "vuedraggable";
 import kanbanCard from "./kanbanCard.vue";
 import useKanbanColumn from "../uses/useKanbanColumn";
 import completedSchedule from './completedSchedule.vue';
+import kanbanDay from "./kanbanDay.vue";
 
 export default defineComponent({
   components: {
     draggable,
     kanbanCard,
-    completedSchedule
+    completedSchedule,
+    kanbanDay
   },
   props: {
     column: {
@@ -138,7 +142,6 @@ export default defineComponent({
   setup(props, { emit }) {
     return {
       ...useKanbanColumn(props),
-      
     };
   },
 });
@@ -147,6 +150,9 @@ export default defineComponent({
 <style>
 .columnCtn {
   width: 13.6vw;
+}
+.columnCtnFull {
+  width: 100% !important;
 }
 .columnCtn .text-column {
   color: #8A98C3;

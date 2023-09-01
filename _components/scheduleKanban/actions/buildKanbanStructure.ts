@@ -4,15 +4,20 @@ import moment, { Moment } from "moment";
 import getWorkOrder from "../actions/getWorkOrder";
 import { Columns } from "../contracts/kanbanStore.contract";
 import storeFilters from "../store/filters.store";
+import scheduleTypeModel from '../models/scheduleType.model';
 
 export async function getColumns(): Promise<Columns[]> {
   try {
+    const  weekAgenda = scheduleTypeModel[0].value;
+    storeKanban.scheduleType = storeFilters.scheduleType;
+    const isWeek = storeKanban.scheduleType == weekAgenda;
+    const days = isWeek ? 7 : 1 //full week | one day
     const startOfWeek: Moment = moment(storeFilters.selectedDate).startOf(
       "week"
     );
 
-    return [...Array(7)].map((_, i) => ({
-      date: moment(startOfWeek).add(i, "days"),
+    return [...Array(days)].map((_, i) => ({
+      date: isWeek ? moment(startOfWeek).add(i, "days") : moment(storeFilters.selectedDate),
       cards: [],
       page: 1,
       loading: false,

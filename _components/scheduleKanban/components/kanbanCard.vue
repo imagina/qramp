@@ -82,7 +82,7 @@
         tw-bottom-0 
         tw-left-0
         tw-w-full
-        tw-h-6
+        tw-h-7
         tw-py-1
         tw-px-2 
         text-x2
@@ -94,6 +94,17 @@
         {{ flightStatuses.name }}
       </span>
     </div>
+    <div class="
+      tw-flex
+      tw-absolute
+      tw-bottom-0
+      tw-left-0
+      tw-w-full
+      tw-h-7
+      tw-px-2"
+    >
+      <kanbanCardActions />
+    </div>
   </div>
 </template>
 
@@ -101,11 +112,13 @@
 import { defineComponent } from "vue";
 import useKanbanCard from '../uses/useKanbanCard'
 import lastComments from './lastComments.vue'
+import kanbanCardActions from './KanbanCardActions.vue'
 import { is } from "quasar";
 
 export default defineComponent({
   components: {
     lastComments,
+    kanbanCardActions
   },
   props: {
     card: {
