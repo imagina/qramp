@@ -50,6 +50,7 @@ export default function useKanbanColumn(props: any = {}) {
     if(storeKanban.scheduleType == scheduleTypeModel[0].value) {
       storeFilters.selectedDate = date.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
+      storeKanban.scheduleType = storeFilters.scheduleType;
       await buildKanbanStructure();
       setUrlParams(proxy);
     }
