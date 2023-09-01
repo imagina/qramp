@@ -6,6 +6,7 @@ import scheduleTypeOptions from '../models/scheduleType.model'
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
 import getTitleFilter from '../actions/getTitleFilter';
+import storeKanban from '../store/kanban.store';
 
 export default function useFilters() {
   const proxy = (getCurrentInstance() as any).proxy as any;
@@ -89,6 +90,7 @@ export default function useFilters() {
   async function callBuildKanbanStructure() {
     getTitleFilter();
     await setUrlParams(proxy)
+    storeKanban.scheduleType = store.scheduleType;
     await buildKanbanStructure(true)
     store.showModal = false;
   }

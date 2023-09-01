@@ -9,7 +9,7 @@ import scheduleTypeModel from '../models/scheduleType.model';
 export async function getColumns(): Promise<Columns[]> {
   try {
     const  weekAgenda = scheduleTypeModel[0].value;
-    storeKanban.scheduleType = storeFilters.scheduleType;
+    //storeKanban.scheduleType = storeFilters.scheduleType;
     const isWeek = storeKanban.scheduleType == weekAgenda;
     const days = isWeek ? 7 : 1 //full week | one day
     const startOfWeek: Moment = moment(storeFilters.selectedDate).startOf(

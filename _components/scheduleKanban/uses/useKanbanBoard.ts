@@ -136,6 +136,7 @@ export default function useKanbanBoard(props) {
     await checkUrlParams(proxy);
     getTitleFilter();
     await setUrlParams(proxy);
+    storeKanban.scheduleType = storeFilter.scheduleType;
     await buildKanbanStructure();
   };
   async function setStations() {
