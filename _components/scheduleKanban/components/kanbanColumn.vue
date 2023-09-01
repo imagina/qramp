@@ -26,13 +26,11 @@
              tw-w-7 
              tw-h-7 
              tw--mt-4 
-             tw-bg-blueGray-300 
-             tw-text-blueGray-500"
+             tw-text-blueGray-500
+             dayGray"
             :class="{
-              'buttom-day': selectedDate === date.format('YYYY/MM/DD')
-                && $moment().format('YYYY/MM/DD') === date.format('YYYY/MM/DD'),
-              'tw-border tw-border-blue-500': selectedDate === date.format('YYYY/MM/DD') 
-                && $moment().format('YYYY/MM/DD') !== date.format('YYYY/MM/DD')
+              'buttom-day': selectedDate === date.format('YYYY/MM/DD'),
+              'tw-border tw-border-blue-500': $moment().format('YYYY/MM/DD') === date.format('YYYY/MM/DD')
             }"
             @click="showKanbanDay(date)"
           >
@@ -169,6 +167,9 @@ export default defineComponent({
 }
 .bg-blue-gray-1000 {
   background: #F3F5FB;
+}
+.dayGray {
+  background: #F1F4FA
 }
 .dragCard {
   @apply tw-bg-white tw-opacity-100;
