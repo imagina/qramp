@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import Vue, {defineComponent} from 'vue';
-import useKanbanCard from '../uses/useKanbanCard';
+import useKanbanCardActions from '../uses/useKanbanCardActions';
 
 export default defineComponent({
   props: {
@@ -37,7 +37,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    return {...useKanbanCard(props)}
+    return {...useKanbanCardActions(props)}
   }
 });
 </script>

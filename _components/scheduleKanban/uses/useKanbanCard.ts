@@ -11,9 +11,6 @@ import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from './../../../_store/qRampStore.js'
 import modalScheduleStore from '../store/modalSchedule.store'
 import showWorkOrder from '../actions/showWorkOrders';
-import scheduleTypeModel from '../models/scheduleType.model';
-import { Screen } from 'quasar'
-import devicesModel from '../models/devices.model';
 
 export default function useKanbanCard(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -64,36 +61,6 @@ export default function useKanbanCard(props: any = {}) {
     return statuses[props.card.statusId] || '';
   })
 
-  const isMobile = computed(() => Screen.width < devicesModel.mobile.maxWidth );
-  const isTablet = computed(() => Screen.width >= devicesModel.mobile.maxWidth  && Screen.width < devicesModel.tablet.maxWidth);
-  const isDesktop = computed(() => Screen.width >= devicesModel.tablet.maxWidth );
-  const showKanbanCardsActions = computed(() => storeKanban.scheduleType == scheduleTypeModel[1].value)
-
-  const cardActions = computed(() => [
-    {
-      icon: 'fa-light fa-bring-forward',
-      toolttip: 'Start Work Order',
-      action: () => {},
-    },
-    {
-      icon: 'fa-light fa-copy',
-      toolttip: 'Duplicate',
-      action: () => {},
-    },
-    {
-      icon: 'fa-light fa-pen-to-square',
-      toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
-      action: () => {
-        openModalSchedule()
-      },
-    },
-    {
-      icon: 'fa-light fa-trash',
-      toolttip: Vue.prototype.$tr('isite.cms.label.delete'),
-      action: () => {},
-    }
-  ])
-
   async function openModalSchedule() {
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
@@ -123,11 +90,6 @@ export default function useKanbanCard(props: any = {}) {
     gates,
     openModalSchedule,
     isBlank,
-    isPassenger,
-    isMobile,
-    isTablet,
-    isDesktop,
-    showKanbanCardsActions,
-    cardActions
+    isPassenger
   };
 }

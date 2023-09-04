@@ -1,256 +1,25 @@
 <template>
   <div>
-    <!--Tablet-->
-    <div class="
-        tw-flex
-        tw-flex-row
-        tw-rounded-lg
-        tw-border-l-8
-        tw-my-2
-        tw-border-blue-400
-        tw-bg-white
-        items-center
-        showCard"
-        :class="colorCheckSchedule"
-        v-show="isTablet"
-      >
-        <div class="
-          tw-flex
-          tw-p-2"
-        >
-          <div class="tw-min-w-36">
-            <p class="text-kanban-card-tablet">{{ card.calendar.title }}</p>
-            <span class="arrival-text-tablet" v-if="card.calendar.sta">
-              <i class="
-                fa-solid
-                fa-arrow-down-right
-                tw-mr-1"
-              />STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
-            </span>
-            <span class="arrival-text-tablet" v-if="card.calendar.std">
-              <i class="
-                fa-solid
-                fa-arrow-up-right
-                tw-mx-1"
-              />STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
-            </span>
-          </div> 
-        </div>
-        <div class="
-          tw-flex
-          tw-36
-          tw-p-2"
-        >
-          <div class="ac-type-text-tablet">
-            <div>
-              <i class="
-                fa-solid
-                fa-plane
-                tw-mr-1"
-              />A/C#: {{ actypes }}
-            </div>
-            <div class="tw-flex" v-if="gates">
-              <img v-if="!isPassenger" src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
-              <img v-if="isPassenger" src="../svg/g-small.svg" class="tw-pr-1" alt="" srcset="">
-              {{ gates }}
-            </div>
-          </div>
-        </div>
-        <div class="
-          tw-flex
-          tw-32
-          tw-p-2"
-        >
-          <div class="
-            tw-uppercase
-            text-kanban-card-tablet"
-          >
-            {{ titleStatus }}
-          </div>
-          <lastComments :card="card" class="tw-pl-2" />
-        </div>
-        <div class="
-          tw-flex
-          tw-32
-          tw-p-2"
-          v-if="flightStatuses"
-        >
-          <div class="
-            tw-rounded-lg
-            tw-border-2                
-          tw-border-gray-200
-            tw-px-2
-            tw-py-1
-            tw-uppercase
-            text-status-tablet"
-          >
-            <span :class="flightStatuses.color">
-              <i class="tw-mr-1" :class="flightStatuses.icon"
-              />{{ flightStatuses.name}}
-            </span>            
-          </div>
-        </div>
-        <!--card actions-->
-        <kanbanCardActions
-          :id="card.id"
-          :key="card.id"
-          :card="card"
-          :dateColumn="dateColumn"
-        />
-    </div>
-    <!--Desktop-->
-    <div class="
-          tw-flex tw-flex-row
-          tw-rounded-lg
-          tw-border-l-8
-          tw-my-2
-          tw-py-2
-          tw-border-blue-400
-          tw-bg-white
-          items-center
-          showCard"
-          :class="colorCheckSchedule"
-          v-show="isDesktop"
-        >
-        <div class="
-          tw-flex
-          tw-p-2
-          tw-pl-6
-          text-kanban-card-desktop"
-        >
-          <p>{{ card.calendar.title }}</p>
-        </div>
-        <div class="
-          tw-flex
-          tw-mx-6"
-        >
-          <img src="../svg/slash.svg" alt="" srcset="" class="">
-        </div>
-        <div class="
-          tw-flex
-          tw-p-2
-          arrival-text-desktop"
-        >
-          <div v-if="card.calendar.sta">
-            <i class="
-              fa-solid
-              fa-arrow-down-right
-              tw-mr-2"
-            />STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
-          </div>
-          <div v-if="card.calendar.std">
-            <i class="
-              fa-solid
-              fa-arrow-up-right
-              tw-ml-4
-              tw-mr-1"
-            />STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
-          </div>
-        </div>
-        <div class="
-          tw-flex
-          tw-mx-6"
-        >
-          <img src="../svg/slash.svg" alt="" srcset="" class="">
-        </div>
-        <div class="
-          tw-flex
-          ac-type-text-desktop"
-        >
-          <p>
-            <i class="
-              fa-solid
-              fa-plane
-              tw-mr-1"
-            />A/C#: {{ actypes }}
-          </p>
-        </div>
-        <div class="
-          tw-flex
-          tw-mx-6"
-          v-if="gates"
-        >
-          <img src="../svg/slash.svg" alt="" srcset="" class="">
-        </div>
-        <div class="
-          tw-flex
-          ac-type-text-desktop"
-          v-if="gates"
-        >
-          <p>
-            <div class="tw-flex">
-              <img v-if="!isPassenger" src="../svg/p-big.svg" class="tw-pr-1" alt="" srcset="">
-              <img v-if="isPassenger" src="../svg/g-big.svg" class="tw-pr-1" alt="" srcset="">
-              {{ gates }}
-            </div>
-          </p>
-        </div>
-        <div class="
-          tw-flex
-          tw-mx-6"
-        >
-          <img src="../svg/slash.svg" alt="" srcset="" class="">
-        </div>
-        <div class="
-          tw-flex
-          tw-32
-          tw-p-2"
-        >
-          <div class="
-            tw-uppercase
-            text-kanban-card-desktop"
-          >
-            {{ titleStatus }}
-          </div>
-          <lastComments :card="card" class="tw-pl-2" />
-        </div>
-        <div class="
-          tw-flex
-          tw-mx-6"
-          v-if="flightStatuses"
-        >
-          <img src="../svg/slash.svg" alt="" srcset="" class="">
-        </div>
-        <div class="
-          tw-flex
-          tw-32
-          tw-p-2"
-          v-if="flightStatuses"
-        >
-          <div class="
-            tw-rounded-lg
-            tw-border-2
-          tw-border-gray-200
-            tw-px-2
-            tw-py-1
-            text-status-desktop"
-          >
-            <span :class="flightStatuses.color">
-              <i class="tw-mr-1" :class="flightStatuses.icon"
-              />{{ flightStatuses.name}}
-            </span>
-          </div>
-        </div>
-        <!--card actions-->
-        <kanbanCardActions
-          :id="card.id"
-          :key="card.id"
-          :card="card"
-          :dateColumn="dateColumn"
-        />
-    </div>
+    <component
+      :is="cardComponentName"
+      cardComponentName
+      :id="card.id"
+      :key="card.id"
+      :card="card"
+      :dateColumn="dateColumn"
+    />
   </div>
 </template>
 <script lang="ts">
 import Vue, {defineComponent} from 'vue';
-import kanbanCardActions from './KanbanCardActions.vue'
-import useKanbanCard from '../uses/useKanbanCard';
-import lastComments from './lastComments.vue'
+import useKanbanCardActions from '../uses/useKanbanCardActions';
+import kanbanCardTablet from './kanbanCardTablet.vue';
+import kanbanCardDesktop from './kanbanCardDesktop.vue';
 
 export default defineComponent({
   components: {
-    lastComments,
-    kanbanCardActions
+    kanbanCardTablet,
+    kanbanCardDesktop
   },
   props: {
     card: {
@@ -263,7 +32,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    return {...useKanbanCard(props)}
+    return {...useKanbanCardActions(props)}
   },
 });
 </script>
