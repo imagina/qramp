@@ -45,10 +45,10 @@ export default function useKanbanColumn(props: any = {}) {
       && moment(card.scheduleDate).format('HH') === moment(cards[index - 1].scheduleDate).format('HH')
   })
   
-  async function showKanbanDay(date){
+  async function showKanbanDay(){
     /* only on week-agenda */
     if(storeKanban.scheduleType == scheduleTypeModel[0].value) {
-      storeFilters.selectedDate = date.format('YYYY/MM/DD');
+      storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
       storeKanban.scheduleType = storeFilters.scheduleType;
       await buildKanbanStructure();
