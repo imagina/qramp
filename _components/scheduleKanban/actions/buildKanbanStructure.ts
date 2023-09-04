@@ -12,12 +12,11 @@ export async function getColumns(): Promise<Columns[]> {
     //storeKanban.scheduleType = storeFilters.scheduleType;
     const isWeek = storeKanban.scheduleType == weekAgenda;
     const days = isWeek ? 7 : 1 //full week | one day
-    const startOfWeek: Moment = moment(storeFilters.selectedDate).startOf(
-      "week"
-    );
+    const type = isWeek ? 'week' : 'day'
+    const startOfWeek: Moment = moment(storeFilters.selectedDate).startOf(type);
 
     return [...Array(days)].map((_, i) => ({
-      date: isWeek ? moment(startOfWeek).add(i, "days") : moment(storeFilters.selectedDate),
+      date: moment(startOfWeek).add(i, "days"),
       cards: [],
       page: 1,
       loading: false,
