@@ -50,7 +50,9 @@
               />A/C#: {{ actypes }}
             </div>
             <div class="tw-flex" v-if="gates">
-              <img src="../svg/p-small.svg" alt="" srcset="" class="tw-mr-1">{{ gates }}
+              <img v-if="!isPassenger" src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
+              <img v-if="isPassenger" src="../svg/g-small.svg" class="tw-pr-1" alt="" srcset="">
+              {{ gates }}
             </div>
           </div>
         </div>
@@ -172,7 +174,9 @@
         >
           <p>
             <div class="tw-flex">
-              <img src="../svg/p-big.svg" alt="" srcset="" class="tw-mr-1">{{ gates }}
+              <img v-if="!isPassenger" src="../svg/p-big.svg" class="tw-pr-1" alt="" srcset="">
+              <img v-if="isPassenger" src="../svg/g-big.svg" class="tw-pr-1" alt="" srcset="">
+              {{ gates }}
             </div>
           </p>
         </div>
@@ -232,7 +236,7 @@ import Vue, {defineComponent} from 'vue';
 import kanbanCardActions from './KanbanCardActions.vue'
 import useKanbanCard from '../uses/useKanbanCard';
 import lastComments from './lastComments.vue'
-import { is } from "quasar";
+
 export default defineComponent({
   components: {
     lastComments,
