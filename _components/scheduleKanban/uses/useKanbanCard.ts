@@ -64,10 +64,11 @@ export default function useKanbanCard(props: any = {}) {
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE) {
+      const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
       const response = await showWorkOrder(props.card.id);
       await refFormOrders.value.loadform({
         modalProps: {
-          title: modalScheduleStore.titleModal,
+          title: titleModal,
           update: true,
           workOrderId: response.data.id,
           width: "90vw",

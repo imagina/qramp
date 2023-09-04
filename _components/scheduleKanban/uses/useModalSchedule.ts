@@ -111,10 +111,11 @@ export default function useModalSchedule(props: any, emit: any) {
     if (store.isEdit) await individualRefreshByColumns();
   }
   async function showModalFull() {
+    const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
     const response = await showWorkOrder(form.value.id);
     await refFormOrders.value.loadform({
       modalProps: {
-        title: store.titleModal,
+        title: titleModal,
         update: true,
         workOrderId: response.data.id,
         width: "90vw",
