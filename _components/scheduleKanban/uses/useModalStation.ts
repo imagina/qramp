@@ -47,9 +47,9 @@ export default function useModalStation() {
           await cache.set("stationId", store.stationId);
           store.form.stationId = store.stationId;
           //await checkUrlParams(proxy);
+          storeKanban.scheduleType = store.scheduleType;
           getTitleFilter();
           await setUrlParams(proxy);
-          storeKanban.scheduleType = store.scheduleType;
           await buildKanbanStructure();
           store.showModalStation = false;
         }

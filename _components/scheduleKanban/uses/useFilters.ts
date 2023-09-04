@@ -88,9 +88,9 @@ export default function useFilters() {
   const { actions } = actionsModal() as ModelActionsModalResult;
 
   async function callBuildKanbanStructure() {
+    storeKanban.scheduleType = store.scheduleType;
     getTitleFilter();
     await setUrlParams(proxy)
-    storeKanban.scheduleType = store.scheduleType;
     await buildKanbanStructure(true)
     store.showModal = false;
   }
