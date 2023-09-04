@@ -36,19 +36,21 @@ export default function useActionsBar(props: any) {
     storeFilters.showModal = true;
   }
 
-  async function week(){
-    storeKanban.scheduleType = scheduleTypeModel[0].value; //week view
+  async function changeAgenda(scheduleType) {
+    storeKanban.scheduleType = scheduleType
+    storeFilters.scheduleType = scheduleType
     await setUrlParams(proxy);
     await buildKanbanStructure();
     getTitleFilter()
   }
 
+  async function week(){
+    await changeAgenda(scheduleTypeModel[0].value) //week view
+  }
+
   async function today(){
-    storeKanban.scheduleType = scheduleTypeModel[1].value; //day view
     storeFilters.selectedDate = moment().format('YYYY/MM/DD');
-    await setUrlParams(proxy);
-    await buildKanbanStructure();
-    getTitleFilter()
+    await changeAgenda(scheduleTypeModel[1].value) //day view
   }
 
   return {
