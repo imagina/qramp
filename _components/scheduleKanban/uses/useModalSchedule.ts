@@ -1,4 +1,4 @@
-import Vue, { computed, ComputedRef, ref } from 'vue';
+import Vue, { computed, ComputedRef, ref, onBeforeUnmount, inject } from 'vue';
 import store from '../store/modalSchedule.store'
 import fieldsSchedule from '../models/fieldsSchedule.model'
 import validateOperationType from '../actions/validateOperationType'
@@ -11,9 +11,11 @@ import { STATUS_DRAFT } from 'src/modules/qramp/_components/model/constants.js'
 import updateSimpleWorkOrder from '../actions/updateSimpleWorkOrder';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
 import individualRefreshByColumns from '../actions/individualRefreshByColumns';
+import showWorkOrder from '../actions/showWorkOrders';
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
+  const refFormOrders: any = inject('refFormOrders');
   const showModal = computed({
     get: () => store.showModal,
     set: (value) => store.showModal = value
@@ -32,6 +34,7 @@ export default function useModalSchedule(props: any, emit: any) {
         store.loading = true;
         await qRampStore().changeStatus(STATUS_DRAFT, form.value.id);
         await individualRefreshByColumns();
+        await showModalFull();
         await hideModal();
         store.loading = false;
       },
@@ -107,6 +110,21 @@ export default function useModalSchedule(props: any, emit: any) {
     store.reset();
     if (store.isEdit) await individualRefreshByColumns();
   }
+  async function showModalFull() {
+    const response = await showWorkOrder(form.value.id);
+    await refFormOrders.value.loadform({
+      modalProps: {
+        title: store.titleModal,
+        update: true,
+        workOrderId: response.data.id,
+        width: "90vw",
+      },
+      data: response.data,
+    });
+  }
+  onBeforeUnmount(() => {
+    store.reset();
+  });
   return {
     showModal,
     titleModal,
