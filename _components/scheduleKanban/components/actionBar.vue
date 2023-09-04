@@ -12,13 +12,44 @@
      md:tw-space-x-2 
      md:tw-flex-row"
   >
-    <div 
-      class="
-       tw-text-base 
-       md:tw-text-lg 
-       tw-font-bold 
-       md:tw-mt-1">
-       Today
+    <div class="">
+        <q-btn
+          v-show="!isWeekAgenda"
+          @click="week"
+          flat
+          outline
+          no-caps
+          dense
+          class="
+            tw-text-base
+            md:tw-text-lg
+            tw-font-bold
+            md:tw-mt-1"
+        >Week
+        </q-btn>
+        <span
+          v-show="!isWeekAgenda"
+          class="
+            tw-w-1
+            tw-h-1
+            tw-mx-1
+            tw-border-l-2
+            tw-text-xs
+            tw-border-grey-200"
+        ></span>
+        <q-btn
+          @click="today"
+          flat
+          outline
+          no-caps
+          dense
+          class="
+            tw-text-base
+            md:tw-text-lg
+            tw-font-bold
+            md:tw-mt-1"
+        >Today
+      </q-btn>
     </div>
     <div class="tw-flex tw-space-x-2">
       <button class="btn-action" @click="back">

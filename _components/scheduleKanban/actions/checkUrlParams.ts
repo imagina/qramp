@@ -13,15 +13,13 @@ export default async function checkUrlParams(proxy){
         if (params.adHoc) store.form.adHoc = params.adHoc;
         if (params.flightStatusId) store.form.flightStatusId = params.flightStatusId;
         if (params.areaId) store.form.areaId = params.areaId;
+        if( params.type) store.scheduleType = params.type;
 
         const dateStart = moment(params.dateStart).format('YYYY/MM/DD');
         const dateEnd = moment(params.endDate).format('YYYY/MM/DD');
         const dayOfweek = moment(store.selectedDate).day();
         const selectedDay = moment(dateStart).day(dayOfweek).format('YYYY/MM/DD');
         store.selectedDate = selectedDay;
-        /**
-         * To Do: set scheduletype to day-agenda as default.
-         */
       }
     }
   } catch(err) {

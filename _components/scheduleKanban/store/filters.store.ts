@@ -15,7 +15,7 @@ const state = reactive<State>({
     },
     loading: false,
     updateModal: false,
-    scheduleType: scheduleTypeModel[0].value,
+    scheduleType: scheduleTypeModel[1].value,
     selectedDate: moment().format('YYYY/MM/DD'),
     startDateTime: '',
     endDateTime: '',

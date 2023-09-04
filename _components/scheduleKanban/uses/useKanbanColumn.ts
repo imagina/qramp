@@ -1,4 +1,4 @@
-import Vue, { computed, ref, onMounted, provide } from 'vue';
+import Vue, { computed, ref, onMounted, provide, getCurrentInstance } from 'vue';
 import storeKanban from '../store/kanban.store';
 import storeFilters from '../store/filters.store'
 import moment from 'moment'
@@ -7,15 +7,30 @@ import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
 import updateWorkOrder from '../actions/updateWorkOrder'
 import workOrderList from '../../../_store/actions/workOrderList'
 import validateOperationType from '../actions/validateOperationType'
+import scheduleTypeModel from '../models/scheduleType.model';
+import devicesModel from '../models/devices.model';
+import buildKanbanStructure from '../actions/buildKanbanStructure';
+import setUrlParams from '../actions/setUrlParams';
+import { Screen } from 'quasar'
 
 export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
+  const proxy = (getCurrentInstance() as any).proxy as any;
   const isLoading = ref(false);
   const cards: any = computed({
     get: () => props.column.cards,
     set: (value) => (props.column.cards = value),
   });
   const isBlank = computed(() => storeKanban.isBlank);
+  const isWeekAgenda = computed(() => storeKanban.scheduleType == scheduleTypeModel[0].value );
+
+  const cardComponentName = computed(() => {
+    const kanbanCardComponentName = 'kanban-card';
+    const kanbanDayComponentName = 'kanban-day';
+    if ( (storeKanban.scheduleType == scheduleTypeModel[1].value) && ( Screen.width > devicesModel.mobile.maxWidth )) return kanbanDayComponentName;
+    return kanbanCardComponentName;
+  })
+
   const date = computed(() => props.column.date)
   const selectedDate = computed({
     get: () => storeFilters.selectedDate,
@@ -30,6 +45,17 @@ export default function useKanbanColumn(props: any = {}) {
       && moment(card.scheduleDate).format('HH') === moment(cards[index - 1].scheduleDate).format('HH')
   })
   
+  async function showKanbanDay(){
+    /* only on week-agenda */
+    if(storeKanban.scheduleType == scheduleTypeModel[0].value) {
+      storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
+      storeFilters.scheduleType = scheduleTypeModel[1].value;
+      storeKanban.scheduleType = storeFilters.scheduleType;
+      await buildKanbanStructure();
+      setUrlParams(proxy);
+    }
+  }
+
   function observerCallback(entries) {
     entries.forEach(({ isIntersecting }) => {
       if (isIntersecting) {
@@ -142,5 +168,8 @@ export default function useKanbanColumn(props: any = {}) {
     setDrag,
     changeDate,
     isBlank,
+    isWeekAgenda,
+    showKanbanDay,
+    cardComponentName
   }
 }

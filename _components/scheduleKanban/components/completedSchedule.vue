@@ -3,13 +3,14 @@
         <div 
             v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
             :class="{
-                'h-255': dataWo.length === 0,
+                'h-43': dataWo.length === 0,
             }" 
             class="
               tw-inline-flex 
               tw-items-center
               tw-w-full
-              tw-p-4
+              tw-px-4
+              tw-py-2
               tw-mt-1
               tw-text-xs 
               lg:tw-text-base
@@ -17,7 +18,7 @@
               tw-bg-white
               tw-rounded-lg
               tw-label-not
-              tw-h-20"
+              tw-h-12"
             >
             <div 
               class="
@@ -124,7 +125,7 @@ export default defineComponent({
 </script>
 
 <style>
-.h-255 {
-  height: 4.7rem !important;
+.h-43 {
+  height: 43px !important;
 }
 </style>

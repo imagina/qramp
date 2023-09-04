@@ -134,6 +134,7 @@ export default function useKanbanBoard(props) {
   const init = async () => {
     await setStations();
     await checkUrlParams(proxy);
+    storeKanban.scheduleType = storeFilter.scheduleType;
     getTitleFilter();
     await setUrlParams(proxy);
     await buildKanbanStructure();
