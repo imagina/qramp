@@ -55,7 +55,8 @@
               <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }} 
             </div>
             <div class="tw-flex tw-items-center" v-if="gates">
-              <img src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
+              <img v-if="!isPassenger" src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
+              <img v-if="isPassenger" src="../svg/g-small.svg" class="tw-pr-1" alt="" srcset="">
               {{ gates }}
             </div>
           </div>
