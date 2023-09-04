@@ -69,6 +69,31 @@ export default function useKanbanCard(props: any = {}) {
   const isDesktop = computed(() => Screen.width >= devicesModel.tablet.maxWidth );
   const showKanbanCardsActions = computed(() => storeKanban.scheduleType == scheduleTypeModel[1].value)
 
+  const cardActions = computed(() => [
+    {
+      icon: 'fa-light fa-bring-forward',
+      toolttip: 'Start Work Order',
+      action: () => {},
+    },
+    {
+      icon: 'fa-light fa-copy',
+      toolttip: 'Duplicate',
+      action: () => {},
+    },
+    {
+      icon: 'fa-light fa-pen-to-square',
+      toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
+      action: () => {
+        openModalSchedule()
+      },
+    },
+    {
+      icon: 'fa-light fa-trash',
+      toolttip: Vue.prototype.$tr('isite.cms.label.delete'),
+      action: () => {},
+    }
+  ])
+
   async function openModalSchedule() {
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
@@ -102,6 +127,7 @@ export default function useKanbanCard(props: any = {}) {
     isMobile,
     isTablet,
     isDesktop,
-    showKanbanCardsActions
+    showKanbanCardsActions,
+    cardActions
   };
 }

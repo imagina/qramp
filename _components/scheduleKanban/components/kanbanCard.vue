@@ -104,7 +104,12 @@
       tw-h-7
       tw-px-2"
     >
-      <kanbanCardActions />
+    <kanbanCardActions
+      :id="card.id"
+      :key="card.id"
+      :card="card"
+      :dateColumn="dateColumn"
+    />
     </div>
   </div>
 </template>

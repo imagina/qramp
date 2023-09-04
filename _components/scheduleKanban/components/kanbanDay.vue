@@ -91,7 +91,12 @@
           </div>
         </div>
         <!--card actions-->
-        <kanbanCardActions />
+        <kanbanCardActions
+          :id="card.id"
+          :key="card.id"
+          :card="card"
+          :dateColumn="dateColumn"
+        />
     </div>
     <!--Desktop-->
     <div class="
@@ -227,7 +232,12 @@
           </div>
         </div>
         <!--card actions-->
-        <kanbanCardActions />
+        <kanbanCardActions
+          :id="card.id"
+          :key="card.id"
+          :card="card"
+          :dateColumn="dateColumn"
+        />
     </div>
   </div>
 </template>
