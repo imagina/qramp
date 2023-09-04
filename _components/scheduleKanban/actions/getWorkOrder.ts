@@ -11,7 +11,7 @@ export default function getWorkOrders(refresh = false, page = 1, date): WorkOrde
         const params = {
             refresh,
             params: {
-                take: 6,
+                take: 10,
                 page,
                 filter: {
                     businessUnitId,
