@@ -91,7 +91,7 @@
           @end="changeDate"
           :disabled="isBlank && isWeekAgenda"
         >
-          <inlineSchedule v-if="!isWeekAgenda"/>
+          <inlineSchedule v-if="!isWeekAgenda && showInline"/>
           <component
             :is="cardComponentName"
             v-for="(card, index) in cards"

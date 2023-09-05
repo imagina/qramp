@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showInline">
+  <div>
     <q-form ref="refFormSchedule">
       <div
         class="
