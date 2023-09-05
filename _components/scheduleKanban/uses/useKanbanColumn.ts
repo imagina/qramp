@@ -53,6 +53,7 @@ export default function useKanbanColumn(props: any = {}) {
   async function showKanbanDay(){
     /* only on week-agenda */
     if(storeKanban.scheduleType == scheduleTypeModel[0].value) {
+      showInline.value = false;
       storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
       storeKanban.scheduleType = storeFilters.scheduleType;
