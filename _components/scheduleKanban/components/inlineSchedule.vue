@@ -25,7 +25,7 @@
              tw-rounded-lg
              tw-px-2 tw-py-1
              tw-text-white"
-            @click="saveForm"
+            @click.prevent="saveForm"
           >
             <i class="fa-light fa-floppy-disk" />
             <q-tooltip>
@@ -39,7 +39,7 @@
              tw-px-2 tw-py-1
              tw-text-white"
              v-if="false"
-            @click="openCommentsModal"
+            @click.prevent="openCommentsModal"
           >
             <i class="fa-light fa-comment" />
             <q-tooltip>
@@ -47,7 +47,7 @@
             </q-tooltip>
           </button>
           <button
-            @click="hideInline"
+            @click.prevent="hideInline"
             class="
              tw-bg-blue-800
              tw-rounded-lg
