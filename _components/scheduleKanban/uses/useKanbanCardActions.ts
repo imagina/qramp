@@ -25,7 +25,7 @@ export default function useKanbanCardActions(props: any = {}) {
   const isMobile = computed(() => Screen.width < devicesModel.mobile.maxWidth );
   const isTablet = computed(() => Screen.width >= devicesModel.mobile.maxWidth  && Screen.width < devicesModel.tablet.maxWidth);
   const isDesktop = computed(() => Screen.width >= devicesModel.tablet.maxWidth );
-  const showKanbanCardsActions = computed(() => (storeKanban.scheduleType == scheduleTypeModel[1].value) && !isBlank.value)
+  const showKanbanCardsActions = computed(() => (storeKanban.scheduleType == scheduleTypeModel[1].value) && !isBlank.value )
 
   const cardComponentName = computed(() => {
     const kanbanCardTabletComponentName = 'kanbanCardTablet';
@@ -38,7 +38,9 @@ export default function useKanbanCardActions(props: any = {}) {
     {
       icon: 'fa-light fa-bring-forward',
       toolttip: 'Start Work Order',
-      action: () => {},
+      action: () => {
+        startWorkOrder()
+      },
     },
     {
       icon: 'fa-light fa-copy',
@@ -83,9 +85,23 @@ export default function useKanbanCardActions(props: any = {}) {
     modalScheduleStore.form = { ...props.card };
   }
 
+  async function startWorkOrder() {
+    modalScheduleStore.loading = true;
+    await qRampStore().changeStatus(STATUS_DRAFT, props.card.id);
+    await buildKanbanStructure(true)
+    await openModalSchedule();
+    await hideModal();
+    modalScheduleStore.loading = false;
+  }
+
   async function deleteWorkOrder(){
     await deleteWorkOrders(props.card.id);
     await buildKanbanStructure(true);
+  }
+
+  async function hideModal() {
+    modalScheduleStore.reset();
+    //if (modalScheduleStore.isEdit) await individualRefreshByColumns();
   }
 
   return {
