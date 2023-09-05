@@ -19,6 +19,11 @@ export default function useModalSchedule(props: any, emit: any) {
   const showModal = computed({
     get: () => store.showModal,
     set: (value) => store.showModal = value
+  });
+
+  const showInline = computed({
+    get: () => store.showInline,
+    set: (value) => store.showInline = value
   })
   const titleModal: ComputedRef<string> = computed(() => store.titleModal);
   const form = computed(() => store.form);
@@ -110,6 +115,10 @@ export default function useModalSchedule(props: any, emit: any) {
     store.reset();
     if (store.isEdit) await individualRefreshByColumns();
   }
+
+  function hideInline(){
+    store.showInline = false;
+  }
   async function showModalFull() {
     const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
     const response = await showWorkOrder(form.value.id);
@@ -128,6 +137,8 @@ export default function useModalSchedule(props: any, emit: any) {
   });
   return {
     showModal,
+    showInline,
+    hideInline,
     titleModal,
     loading,
     form,

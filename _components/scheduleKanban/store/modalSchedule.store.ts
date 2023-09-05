@@ -3,6 +3,7 @@ import Vue, { reactive, computed } from 'vue';
 
 interface State {
     showModal: boolean;
+    showInline: boolean;
     titleModal: string;
     loading: boolean;
     form: any;
@@ -13,6 +14,7 @@ interface State {
 
 const state = reactive<State>({
     showModal: false,
+    showInline: false,
     titleModal: '',
     loading: false,
     form: {},
@@ -46,6 +48,12 @@ const store = computed(() => ({
     },
     set showModal(value: boolean) {
         state.showModal = value;
+    },
+    get showInline(): boolean {
+        return state.showInline;
+    },
+    set showInline(value: boolean) {
+        state.showInline = value;
     },
     get titleModal(): string {
         return state.titleModal;

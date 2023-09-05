@@ -71,7 +71,7 @@
                     unelevated
                     flat
                     dense
-                    @click="openModalForm"
+                    @click="isWeekAgenda? openModalForm() : openInlineForm()"
                 />
                 <span class="
                     tw-h-4
@@ -114,6 +114,10 @@ export default defineComponent({
         dateColumn:{
             type: String,
             default: () => null
+        },
+        isWeekAgenda: {
+            type: Boolean,
+            default: true
         }
     },
     setup(props, {emit}) {

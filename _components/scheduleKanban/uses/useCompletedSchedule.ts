@@ -51,6 +51,13 @@ export default function useCompletedSchedule(props: any, emit: any) {
     modalTitleSchedule.value = `Create schedule date: ${dateColumn.value}`;
     modalScheduleStore.seletedDateColumn = dateColumn.value;
   }
+
+  function openInlineForm() {
+    modalScheduleStore.isEdit = false;
+    modalScheduleStore.showInline = true;
+    modalScheduleStore.seletedDateColumn = dateColumn.value;
+  }
+
   function refresh() {
     emit('refresh');
   }
@@ -64,5 +71,6 @@ export default function useCompletedSchedule(props: any, emit: any) {
     refresh,
     openModalForm,
     isBlank,
+    openInlineForm
   }
 }

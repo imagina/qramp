@@ -64,6 +64,7 @@ export default function useKanbanCardActions(props: any = {}) {
   ])
 
   async function openModalSchedule() {
+    modalScheduleStore.showInline = false;
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE) {
