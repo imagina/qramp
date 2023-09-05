@@ -3,22 +3,20 @@
     <q-form ref="refFormSchedule">
       <div
         class="
-            tw-border
-            tw-bg-white
-            tw-rounded-lg
-            tw-py-3
-            tw-px-4
-            tw-my-1
-            lg:tw-flex
-            lg:tw-space-x-2
-            lg:tw-flex-wrap
-            md:tw-flex-wrap
-          "
+          tw-border
+          tw-rounded-lg
+          tw-bg-white
+          tw-py-3
+          tw-px-4
+          tw-my-1
+          lg:tw-flex
+          lg:tw-space-x-2
+          lg:tw-flex-wrap
+          md:tw-flex-wrap"
       >
-        <scheduleForm
-          class="
-            tw-flex
-            tw-space-x-2"
+        <scheduleForm class="
+          lg:tw-flex
+          lg:tw-space-x-2"
         />
         <div class="tw-space-x-2 tw-my-1">
           <button
