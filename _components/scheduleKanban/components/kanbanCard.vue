@@ -1,117 +1,126 @@
 <template>
-  <div class="
-     tw-relative 
-     tw-rounded-lg 
-     card-h 
-     tw-my-2 
-     tw-border-l-8  
-     showCard
-     tw-bg-white" :class="colorCheckSchedule">
-    <div>
-      <div class="tw-py-3 tw-pl-2 tw-w-full">
-        <div class="tw-flex tw-pb-1">
-          <div class="tw-w-10/12">
-            <p 
-             class="
-              text-kanban-card 
-              tw--mt-0.5 
-              tw-cursor-pointer 
-              tw-truncate"
-             @click="openModalSchedule"
+  <div>
+    <inlineSchedule v-if="card.editable"
+      :card="card"
+    />
+    <div class="
+      tw-relative 
+      tw-rounded-lg 
+      card-h 
+      tw-my-2 
+      tw-border-l-8  
+      showCard
+      tw-bg-white" :class="colorCheckSchedule"
+      v-if="!card.editable"      
+    >
+      <div>
+        <div class="tw-py-3 tw-pl-2 tw-w-full">
+          <div class="tw-flex tw-pb-1">
+            <div class="tw-w-10/12">
+              <p 
+              class="
+                text-kanban-card 
+                tw--mt-0.5 
+                tw-cursor-pointer 
+                tw-truncate"
+              @click="openModalSchedule"
+              >
+                {{ card.calendar.title }}
+              </p>
+            </div>
+            <div class="
+              tw-flex 
+              tw-items-center 
+              tw-space-x-2
+              tw-px-3
+              tw--mt-2 
+              tw-text-gray-500
+              dot-vertical 
+              "
+              :class="{
+                'tw-cursor-move': !isBlank
+              }"
             >
-              {{ card.calendar.title }}
-            </p>
+              <i class="fa-solid fa-grip-dots-vertical tw-text-lg" />
+            </div>
           </div>
           <div class="
-             tw-flex 
-             tw-items-center 
-             tw-space-x-2
-             tw-px-3
-             tw--mt-2 
-             tw-text-gray-500
-             dot-vertical 
-             "
-             :class="{
-              'tw-cursor-move': !isBlank
-             }"
-          >
-            <i class="fa-solid fa-grip-dots-vertical tw-text-lg" />
-          </div>
-        </div>
-        <div class="
-           tw-font-semibold 
-           tw-text-xs 
-           tw-space-y-1">
-          <div class="tw-flex tw-space-x-2 arrival-text">
-            <div v-if="card.calendar.sta">
-              <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
+            tw-font-semibold 
+            tw-text-xs 
+            tw-space-y-1">
+            <div class="tw-flex tw-space-x-2 arrival-text">
+              <div v-if="card.calendar.sta">
+                <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
+              </div>
+              <div v-if="card.calendar.std">
+                <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
+              </div>
             </div>
-            <div v-if="card.calendar.std">
-              <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
+            <div class="tw-flex tw-space-x-1">
+              <div class="ac-type-text">
+                <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }} 
+              </div>
+              <div class="tw-flex tw-items-center" v-if="gates">
+                <img v-if="!isPassenger" src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
+                <img v-if="isPassenger" src="../svg/g-small.svg" class="tw-pr-1" alt="" srcset="">
+                {{ gates }}
+              </div>
             </div>
-          </div>
-          <div class="tw-flex tw-space-x-1">
-            <div class="ac-type-text">
-              <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }} 
+            <div 
+              class="
+              tw-py-1 
+              tw-flex 
+              tw-items-center 
+              tw-pr-3"
+            >
+              <span class="tw-uppercase tw-font-extrabold text-status">
+                {{ titleStatus }}
+              </span>
+              <lastComments :card="card" class="tw-pl-2"/>
             </div>
-            <div class="tw-flex tw-items-center" v-if="gates">
-              <img v-if="!isPassenger" src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
-              <img v-if="isPassenger" src="../svg/g-small.svg" class="tw-pr-1" alt="" srcset="">
-              {{ gates }}
-            </div>
-          </div>
-          <div 
-            class="
-             tw-py-1 
-             tw-flex 
-             tw-items-center 
-             tw-pr-3"
-          >
-            <span class="tw-uppercase tw-font-extrabold text-status">
-              {{ titleStatus }}
-            </span>
-            <lastComments :card="card" class="tw-pl-2"/>
           </div>
         </div>
       </div>
-    </div>
-    <div
-      v-if="flightStatuses" 
-      class="
-        bg-gray-c-100 
-        tw-absolute 
-        tw-bottom-0 
+      <div
+        v-if="flightStatuses" 
+        class="
+          bg-gray-c-100 
+          tw-absolute 
+          tw-bottom-0 
+          tw-left-0
+          tw-w-full
+          tw-h-7
+          tw-py-1
+          tw-px-2 
+          text-x2
+          tw-space-x-1
+          tw-font-extrabold
+          tw-rounded-br-lg tw-uppercase" :class="flightStatuses.color">
+        <i :class="flightStatuses.icon" />
+        <span>
+          {{ flightStatuses.name }}
+        </span>
+      </div>
+      <div class="
+        tw-flex
+        tw-absolute
+        tw-bottom-0
         tw-left-0
         tw-w-full
         tw-h-7
-        tw-py-1
-        tw-px-2 
-        text-x2
-        tw-space-x-1
-        tw-font-extrabold
-        tw-rounded-br-lg tw-uppercase" :class="flightStatuses.color">
-      <i :class="flightStatuses.icon" />
-      <span>
-        {{ flightStatuses.name }}
-      </span>
-    </div>
-    <div class="
-      tw-flex
-      tw-absolute
-      tw-bottom-0
-      tw-left-0
-      tw-w-full
-      tw-h-7
-      tw-px-2"
-    >
-    <kanbanCardActions
-      :id="card.id"
-      :key="card.id"
-      :card="card"
-      :dateColumn="dateColumn"
-    />
+        tw-px-2"
+      >
+      <kanbanCardActions
+        :id="card.id"
+        :key="card.id"
+        :card="card"
+        :dateColumn="dateColumn"
+      />
+      </div>
     </div>
   </div>
+
+
 </template>
 
 <script lang="ts">
@@ -120,11 +129,13 @@ import useKanbanCard from '../uses/useKanbanCard'
 import lastComments from './lastComments.vue'
 import kanbanCardActions from './KanbanCardActions.vue'
 import { is } from "quasar";
+import inlineSchedule from "./inlineSchedule.vue";
 
 export default defineComponent({
   components: {
     lastComments,
-    kanbanCardActions
+    kanbanCardActions,
+    inlineSchedule
   },
   props: {
     card: {

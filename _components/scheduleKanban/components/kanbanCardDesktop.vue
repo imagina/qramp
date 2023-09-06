@@ -1,9 +1,9 @@
 <template>
   <div>
-    <!--Desktop-->
     <inlineSchedule v-if="card.editable"
       :card="card"
     />
+    <!--Desktop-->
     <div class="
           tw-flex tw-flex-row
           tw-rounded-lg
