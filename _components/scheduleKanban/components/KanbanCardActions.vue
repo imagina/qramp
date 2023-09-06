@@ -15,6 +15,7 @@
           :key="index"
           :icon="button.icon"
           @click="button.action"
+          v-if="button.vIf"
         >
             <q-tooltip> {{ button.toolttip }}</q-tooltip>
         </q-btn>

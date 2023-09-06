@@ -35,8 +35,11 @@ export default function useKanbanCardActions(props: any = {}) {
     return kanbanCardDesktopComponentName;
   })
 
+  const showCardActions = computed(()=> !modalScheduleStore.isEdit && !modalScheduleStore.showInline && !modalScheduleStore.showModal)
+
   const cardActions = computed(() => [
     {
+      vIf: showCardActions.value,
       icon: 'fa-light fa-bring-forward',
       toolttip: 'Start Work Order',
       action: () => {
@@ -44,11 +47,13 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
+      vIf: showCardActions.value,
       icon: 'fa-light fa-copy',
       toolttip: 'Duplicate',
       action: () => {},
     },
     {
+      vIf: showCardActions.value,
       icon: 'fa-light fa-pen-to-square',
       toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
       action: () => {
@@ -56,6 +61,7 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
+      vIf: showCardActions.value,
       icon: 'fa-light fa-trash',
       toolttip: Vue.prototype.$tr('isite.cms.label.delete'),
       action: () => {

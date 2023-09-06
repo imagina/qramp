@@ -124,6 +124,7 @@ export default function useModalSchedule(props: any, emit: any) {
         store.showInline = false;
       }
     }
+    store.isEdit = false
   }
   async function showModalFull() {
     const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
