@@ -91,7 +91,6 @@
           @end="changeDate"
           :disabled="isBlank && isWeekAgenda"
         >
-          <inlineSchedule v-if="!isWeekAgenda && showInline"/>
           <component
             :is="cardComponentName"
             v-for="(card, index) in cards"
@@ -121,15 +120,13 @@ import kanbanCard from "./kanbanCard.vue";
 import useKanbanColumn from "../uses/useKanbanColumn";
 import completedSchedule from './completedSchedule.vue';
 import kanbanDay from "./kanbanDay.vue";
-import inlineSchedule from "./inlineSchedule.vue";
 
 export default defineComponent({
   components: {
     draggable,
     kanbanCard,
     completedSchedule,
-    kanbanDay,
-    inlineSchedule
+    kanbanDay
   },
   props: {
     column: {

@@ -12,6 +12,9 @@ import updateSimpleWorkOrder from '../actions/updateSimpleWorkOrder';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
 import individualRefreshByColumns from '../actions/individualRefreshByColumns';
 import showWorkOrder from '../actions/showWorkOrders';
+import storeKanban from '../store/kanban.store';
+import getCurrentColumn from '../actions/getCurrentColumn';
+import setEditableCard from '../actions/setEditableCard';
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -20,11 +23,6 @@ export default function useModalSchedule(props: any, emit: any) {
     get: () => store.showModal,
     set: (value) => store.showModal = value
   });
-
-  const showInline = computed({
-    get: () => store.showInline,
-    set: (value) => store.showInline = value
-  })
   const titleModal: ComputedRef<string> = computed(() => store.titleModal);
   const form = computed(() => store.form);
   const loading: ComputedRef<boolean> = computed(() => store.loading);
@@ -117,7 +115,15 @@ export default function useModalSchedule(props: any, emit: any) {
   }
 
   function hideInline(){
-    store.showInline = false;
+    if(props.card.id){
+      setEditableCard(props.card.id, false);
+    } else {
+      const col = getCurrentColumn()
+      if(col.cards){
+        col.cards.shift();
+        store.showInline = false;
+      }
+    }
   }
   async function showModalFull() {
     const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
@@ -137,7 +143,6 @@ export default function useModalSchedule(props: any, emit: any) {
   });
   return {
     showModal,
-    showInline,
     hideInline,
     titleModal,
     loading,

@@ -16,6 +16,7 @@ import { Screen } from 'quasar'
 import devicesModel from '../models/devices.model';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
+import setEditableCard from '../actions/setEditableCard';
 
 export default function useKanbanCardActions(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -64,7 +65,13 @@ export default function useKanbanCardActions(props: any = {}) {
   ])
 
   async function openModalSchedule() {
-    modalScheduleStore.showInline = false;
+    if(props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) {
+      const response = await showWorkOrder(props.card.id);
+      modalScheduleStore.isEdit = true;
+      modalScheduleStore.form = { ...response.data };
+      setEditableCard(props.card.id, true)
+      return;
+    }
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE) {

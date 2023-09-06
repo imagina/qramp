@@ -64,7 +64,7 @@
                 tw-justify-center"
             >
                 <q-btn
-                    v-if="!isBlank"
+                    v-if="!isBlank && !showInline"
                     icon="fa-light fa-plus tw-text-blue-500"
                     size="sm"
                     outline

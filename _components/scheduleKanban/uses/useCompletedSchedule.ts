@@ -3,11 +3,15 @@ import {STATUS_DRAFT, STATUS_SCHEDULE} from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
 import storeKanban from '../store/kanban.store'
 import _ from "lodash";
+import getCurrentColumn from '../actions/getCurrentColumn';
+
 
 export default function useCompletedSchedule(props: any, emit: any) {
   const isBlank = computed(() => storeKanban.isBlank);
   const scheduleType = computed(() => props.scheduleType);
   const dateColumn = computed(() => props.dateColumn);
+
+  const showInline = computed(()=> modalScheduleStore.showInline)
   const modalShowSchedule = computed({
     get: () => modalScheduleStore.showModal,
     set: (value: boolean) => modalScheduleStore.showModal = value
@@ -56,6 +60,13 @@ export default function useCompletedSchedule(props: any, emit: any) {
     modalScheduleStore.isEdit = false;
     modalScheduleStore.showInline = true;
     modalScheduleStore.seletedDateColumn = dateColumn.value;
+    const dummyCard = {
+      id: false,
+      editable: true,
+      statusId: null,
+    }
+    const col = getCurrentColumn()
+    col.cards.unshift(dummyCard)
   }
 
   function refresh() {
@@ -71,6 +82,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
     refresh,
     openModalForm,
     isBlank,
-    openInlineForm
+    openInlineForm,
+    showInline
   }
 }

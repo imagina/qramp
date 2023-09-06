@@ -73,6 +73,12 @@ export default defineComponent({
   components: {
     scheduleForm
   },
+  props: {
+    card: {
+      type: Object,
+      required: false,
+    }
+  },
   setup (props, {emit}) {
     return {...useModalSchedule(props, emit)}
   }

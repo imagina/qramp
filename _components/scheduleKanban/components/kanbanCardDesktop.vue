@@ -1,6 +1,9 @@
 <template>
   <div>
     <!--Desktop-->
+    <inlineSchedule v-if="card.editable"
+      :card="card"
+    />
     <div class="
           tw-flex tw-flex-row
           tw-rounded-lg
@@ -12,6 +15,7 @@
           items-center
           showCard"
           :class="colorCheckSchedule"
+          v-if="!card.editable"
         >
         <div class="
           tw-flex
@@ -147,11 +151,13 @@ import Vue, {defineComponent} from 'vue';
 import kanbanCardActions from './KanbanCardActions.vue'
 import useKanbanCard from '../uses/useKanbanCard';
 import lastComments from './lastComments.vue'
+import inlineSchedule from "./inlineSchedule.vue";
 
 export default defineComponent({
   components: {
     lastComments,
-    kanbanCardActions
+    kanbanCardActions,
+    inlineSchedule
   },
   props: {
     card: {

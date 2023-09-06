@@ -45,15 +45,11 @@ export default function useKanbanColumn(props: any = {}) {
     return (index, card, cards) => index !== 0
       && moment(card.scheduleDate).format('HH') === moment(cards[index - 1].scheduleDate).format('HH')
   })
-  
-  const showInline = computed({
-    get: () => modalScheduleStore.showInline,
-    set: (value) => modalScheduleStore.showInline = value
-  })
+
   async function showKanbanDay(){
     /* only on week-agenda */
+    modalScheduleStore.showInline = false;
     if(storeKanban.scheduleType == scheduleTypeModel[0].value) {
-      showInline.value = false;
       storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
       storeKanban.scheduleType = storeFilters.scheduleType;
@@ -176,7 +172,6 @@ export default function useKanbanColumn(props: any = {}) {
     isBlank,
     isWeekAgenda,
     showKanbanDay,
-    cardComponentName,
-    showInline
+    cardComponentName
   }
 }

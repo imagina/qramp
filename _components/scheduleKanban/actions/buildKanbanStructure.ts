@@ -43,6 +43,7 @@ export async function getCards(refresh = false): Promise<void> {
         to: endDate.set({ hour: filterTime[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss')
       });
       item.cards = response.data;
+      item.cards.forEach((card) => { card.editable = false });
       item.loading = false;
       item.total = response.meta.page.total;
     });
