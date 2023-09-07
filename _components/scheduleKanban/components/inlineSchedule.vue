@@ -1,6 +1,5 @@
 <template>
   <div>
-    <q-form ref="refFormSchedule">
       <div
         class="
           tw-border
@@ -59,8 +58,7 @@
             <q-tooltip> Discard </q-tooltip>
           </button>
         </div>
-      </div>
-    </q-form>
+    </div>
   </div>
 </template>
 
