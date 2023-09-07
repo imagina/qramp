@@ -127,7 +127,7 @@ export default function useKanbanCardActions(props: any = {}) {
     const newCard = Object.assign({}, col.cards[index])
     delete newCard.id;
     newCard.duplicated = true
-    newCard.editable = true;
+    newCard.editable = false;
     col.cards.splice(index, 0, newCard);
     modalScheduleStore.isEdit = true;
     modalScheduleStore.form = { ...newCard };
