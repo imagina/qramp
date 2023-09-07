@@ -22,7 +22,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
   })
   function isEventListComplete(): boolean { 
      return _.every(props.dataWo, (objeto) => {
-        return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE;
+        return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE && objeto.statusId;
     })
   }
   function countIncompleteEvents(): number[] {
@@ -30,7 +30,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
     let completed = 0;
 
     props.dataWo.forEach((objeto) => {
-      if (objeto.statusId === STATUS_DRAFT || objeto.statusId === STATUS_SCHEDULE) {
+      if (!objeto.statusId || objeto.statusId === STATUS_DRAFT || objeto.statusId === STATUS_SCHEDULE) {
         incomplete++;
       } else {
         completed++;
