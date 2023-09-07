@@ -1,8 +1,5 @@
 <template>
   <div>
-    <inlineSchedule v-if="card.editable"
-      :card="card"
-    />
     <div class="
       tw-relative 
       tw-rounded-lg 
@@ -129,13 +126,11 @@ import useKanbanCard from '../uses/useKanbanCard'
 import lastComments from './lastComments.vue'
 import kanbanCardActions from './KanbanCardActions.vue'
 import { is } from "quasar";
-import inlineSchedule from "./inlineSchedule.vue";
 
 export default defineComponent({
   components: {
     lastComments,
-    kanbanCardActions,
-    inlineSchedule
+    kanbanCardActions
   },
   props: {
     card: {
