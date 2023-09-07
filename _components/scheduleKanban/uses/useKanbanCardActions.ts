@@ -17,6 +17,7 @@ import devicesModel from '../models/devices.model';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setEditableCard from '../actions/setEditableCard';
+import getCurrentColumn from '../actions/getCurrentColumn';
 
 export default function useKanbanCardActions(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -50,7 +51,9 @@ export default function useKanbanCardActions(props: any = {}) {
       vIf: showCardActions.value,
       icon: 'fa-light fa-copy',
       toolttip: 'Duplicate',
-      action: () => {},
+      action: () => {
+        duplicateWorkOrder()
+      },
     },
     {
       vIf: showCardActions.value,
@@ -116,6 +119,18 @@ export default function useKanbanCardActions(props: any = {}) {
   async function hideModal() {
     modalScheduleStore.reset();
     //if (modalScheduleStore.isEdit) await individualRefreshByColumns();
+  }
+
+  async function duplicateWorkOrder() {
+    const col  = getCurrentColumn();
+    const index  = col.cards.findIndex((card) => card.id === props.card.id)
+    const newCard = Object.assign({}, col.cards[index])
+    delete newCard.id;
+    newCard.duplicated = true
+    newCard.editable = true;
+    col.cards.splice(index, 0, newCard);
+    modalScheduleStore.isEdit = true;
+    modalScheduleStore.form = { ...newCard };
   }
 
   return {

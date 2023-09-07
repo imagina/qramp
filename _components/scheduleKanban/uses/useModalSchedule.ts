@@ -118,7 +118,13 @@ export default function useModalSchedule(props: any, emit: any) {
     if(props.card.id){
       setEditableCard(props.card.id, false);
     } else {
-      const col = getCurrentColumn()
+      const col = getCurrentColumn();
+      if (props.card.duplicated){
+        const index = col.cards.findIndex((card) => card.duplicated === props.card.duplicated);
+        col.cards.splice(index, 1);
+        store.isEdit = false;
+        return;
+      }
       if(col.cards){
         col.cards.shift();
         store.showInline = false;
