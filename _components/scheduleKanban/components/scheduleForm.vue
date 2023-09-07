@@ -31,7 +31,7 @@
               </div>
         </div>
         </div>
-        <div>
+        <div v-if="showCommentsComponent">
           <comments 
             v-if="form.id && permisionComments"
             apiRoute="apiRoutes.qramp.comments"

@@ -26,6 +26,7 @@ export default function useModalSchedule(props: any, emit: any) {
   const titleModal: ComputedRef<string> = computed(() => store.titleModal);
   const form = computed(() => store.form);
   const loading: ComputedRef<boolean> = computed(() => store.loading);
+  const showCommentsComponent = computed(() => !store.showInline)
   const actions = computed(() => [
     {
       props: {
@@ -166,5 +167,6 @@ export default function useModalSchedule(props: any, emit: any) {
     fields,
     refFormSchedule,
     saveForm,
+    showCommentsComponent
   }
 }
