@@ -110,6 +110,7 @@ export default function useKanbanCardActions(props: any = {}) {
     await openModalSchedule();
     await hideModal();
     modalScheduleStore.loading = false;
+    modalScheduleStore.showInline = false;
   }
 
   async function deleteWorkOrder(){
