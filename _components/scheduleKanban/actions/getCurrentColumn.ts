@@ -3,7 +3,8 @@ import storeKanban from "../store/kanban.store";
 
 export default function getCurrentColumn() {
     try {
-        return storeKanban.columns.find((col) => col.date.format('YYYY/MM/DD') === storeFilters.selectedDate)
+        const col:any = storeKanban.columns.find((col) => col.date.format('YYYY/MM/DD') === storeFilters.selectedDate)
+        return col;
     } catch (error) {
         console.log(error);
     }
