@@ -129,7 +129,7 @@ export default function useKanbanCardActions(props: any = {}) {
     newCard.duplicated = true
     newCard.editable = true;
     col.cards.splice(index, 0, newCard);
-    modalScheduleStore.isEdit = true;
+    modalScheduleStore.isEdit = false;
     modalScheduleStore.form = { ...newCard };
   }
 
