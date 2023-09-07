@@ -120,7 +120,8 @@ export default function useModalSchedule(props: any, emit: any) {
     } else {
       const col = getCurrentColumn();
       if (props.card.duplicated){
-        const index = col.cards.findIndex((card) => card.duplicated === props.card.duplicated);
+        const card = col.cards.find((card) => card.duplicated === props.card.duplicated);
+        const index = col.cards.indexOf(card)
         col.cards.splice(index, 1);
         store.isEdit = false;
         return;

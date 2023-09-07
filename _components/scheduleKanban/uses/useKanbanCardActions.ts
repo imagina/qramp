@@ -123,8 +123,9 @@ export default function useKanbanCardActions(props: any = {}) {
 
   async function duplicateWorkOrder() {
     const col  = getCurrentColumn();
-    const index  = col.cards.findIndex((card) => card.id === props.card.id)
-    const newCard = Object.assign({}, col.cards[index])
+    const card  = col.cards.find((card) => card.id === props.card.id)
+    const index  = col.cards.indexOf(card)
+    const newCard = {...card}
     delete newCard.id;
     newCard.duplicated = true
     newCard.editable = true;
