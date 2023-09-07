@@ -73,6 +73,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
   }
 
   function refresh() {
+    modalScheduleStore.showInline = false; // forces to close the scheduleForm
     emit('refresh');
   }
   return {

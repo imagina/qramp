@@ -5,6 +5,7 @@ import getWorkOrder from "../actions/getWorkOrder";
 import { Columns } from "../contracts/kanbanStore.contract";
 import storeFilters from "../store/filters.store";
 import scheduleTypeModel from '../models/scheduleType.model';
+import modalScheduleStore from '../store/modalSchedule.store'
 
 export async function getColumns(): Promise<Columns[]> {
   try {
@@ -57,6 +58,7 @@ export async function getCards(refresh = false): Promise<void> {
 
 export default async function buildKanbanStructure(refresh = false): Promise<void> {
   try {
+    modalScheduleStore.showInline = false; // forces to close the scheduleForm
     storeKanban.loading = true;
     storeKanban.columns = await getColumns();
     if(!storeFilters.stationId) return;
