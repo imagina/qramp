@@ -108,7 +108,7 @@ export default function useKanbanCardActions(props: any = {}) {
     await qRampStore().changeStatus(STATUS_DRAFT, props.card.id);
     await buildKanbanStructure(true)
     await openModalSchedule();
-    await hideModal();
+    // await hideModal();
     modalScheduleStore.loading = false;
     modalScheduleStore.showInline = false;
   }
