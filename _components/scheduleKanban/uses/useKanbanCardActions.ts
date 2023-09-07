@@ -60,7 +60,7 @@ export default function useKanbanCardActions(props: any = {}) {
       icon: 'fa-light fa-pen-to-square',
       toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
       action: () => {
-        openModalSchedule()
+        (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) ? openInlineSchedule() : openModalSchedule()
       },
     },
     {
@@ -73,15 +73,15 @@ export default function useKanbanCardActions(props: any = {}) {
     }
   ])
 
+  async function openInlineSchedule(){
+    const response = await showWorkOrder(props.card.id);
+    modalScheduleStore.isEdit = true;
+    modalScheduleStore.showInline = true;
+    modalScheduleStore.form = { ...response.data };
+    setEditableCard(props.card.id, true)
+  }
+
   async function openModalSchedule() {
-    if(props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) {
-      const response = await showWorkOrder(props.card.id);
-      modalScheduleStore.isEdit = true;
-      modalScheduleStore.showInline = true;
-      modalScheduleStore.form = { ...response.data };
-      setEditableCard(props.card.id, true)
-      return;
-    }
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE) {
