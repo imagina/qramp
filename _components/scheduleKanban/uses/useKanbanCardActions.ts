@@ -36,7 +36,7 @@ export default function useKanbanCardActions(props: any = {}) {
     return kanbanCardDesktopComponentName;
   })
 
-  const showCardActions = computed(()=> !modalScheduleStore.isEdit && !modalScheduleStore.showInline && !modalScheduleStore.showModal)
+  const showCardActions = computed(()=> !modalScheduleStore.showInline && !modalScheduleStore.showModal)
 
   const cardActions = computed(() => [
     {
@@ -77,6 +77,7 @@ export default function useKanbanCardActions(props: any = {}) {
     if(props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) {
       const response = await showWorkOrder(props.card.id);
       modalScheduleStore.isEdit = true;
+      modalScheduleStore.showInline = true;
       modalScheduleStore.form = { ...response.data };
       setEditableCard(props.card.id, true)
       return;
@@ -131,6 +132,7 @@ export default function useKanbanCardActions(props: any = {}) {
     newCard.editable = true;
     col.cards.splice(index, 0, newCard);
     modalScheduleStore.isEdit = false;
+    modalScheduleStore.showInline = true;
     modalScheduleStore.form = { ...newCard };
   }
 

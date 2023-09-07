@@ -91,6 +91,7 @@ export default function useModalSchedule(props: any, emit: any) {
         await individualRefreshByColumns();
         await hideModal();
         store.loading = false;
+        store.showInline = false;
       }
     });
   }
@@ -124,14 +125,15 @@ export default function useModalSchedule(props: any, emit: any) {
         const index = col.cards.indexOf(card)
         col.cards.splice(index, 1);
         store.isEdit = false;
+        store.showInline = false;
         return;
       }
       if(col.cards){
         col.cards.shift();
-        store.showInline = false;
       }
     }
     store.isEdit = false
+    store.showInline = false;
   }
   async function showModalFull() {
     const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
