@@ -40,7 +40,7 @@ export default function useKanbanCardActions(props: any = {}) {
 
   const cardActions = computed(() => [
     {
-      vIf: showCardActions.value,
+      vIf: showCardActions.value && props.card.statusId === STATUS_SCHEDULE,
       icon: 'fa-light fa-bring-forward',
       toolttip: 'Start Work Order',
       action: () => {
