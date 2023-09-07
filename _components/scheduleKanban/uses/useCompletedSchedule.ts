@@ -30,7 +30,10 @@ export default function useCompletedSchedule(props: any, emit: any) {
     let completed = 0;
 
     props.dataWo.forEach((objeto) => {
-      if (!objeto.statusId || objeto.statusId === STATUS_DRAFT || objeto.statusId === STATUS_SCHEDULE) {
+      if (!objeto.statusId 
+        || objeto.statusId === STATUS_DRAFT 
+        || objeto.statusId === STATUS_SCHEDULE) 
+      {
         incomplete++;
       } else {
         completed++;
