@@ -81,21 +81,25 @@ export default function useKanbanCardActions(props: any = {}) {
     setEditableCard(props.card.id, true)
   }
 
+  async function showModalFull() {
+    const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
+    const response = await showWorkOrder(props.card.id);
+    await refFormOrders.value.loadform({
+      modalProps: {
+        title: titleModal,
+        update: true,
+        workOrderId: response.data.id,
+        width: "90vw",
+      },
+      data: response.data,
+    });
+  }
+
   async function openModalSchedule() {
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
-      const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
-      const response = await showWorkOrder(props.card.id);
-      await refFormOrders.value.loadform({
-        modalProps: {
-          title: titleModal,
-          update: true,
-          workOrderId: response.data.id,
-          width: "90vw",
-        },
-        data: response.data,
-      });
+      showModalFull()
       return;
     }
     modalScheduleStore.isEdit = true;
@@ -107,8 +111,7 @@ export default function useKanbanCardActions(props: any = {}) {
     modalScheduleStore.loading = true;
     await qRampStore().changeStatus(STATUS_DRAFT, props.card.id);
     await buildKanbanStructure(true)
-    await openModalSchedule();
-    // await hideModal();
+    await showModalFull();
     modalScheduleStore.loading = false;
     modalScheduleStore.showInline = false;
   }
