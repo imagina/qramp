@@ -1,7 +1,8 @@
-import Vue, { computed, ComputedRef, ref, onBeforeUnmount, inject } from 'vue';
+import Vue, { computed, getCurrentInstance } from 'vue';
 import store from '../store/modalSchedule.store'
 
 export default function useModalComment() {
+  const proxy = (getCurrentInstance() as any).proxy as any;
   
   const visible = computed({
     get: () => store.showModalComments,
@@ -13,8 +14,7 @@ export default function useModalComment() {
     set: (value) => store.loading = value
   });
 
-  const isAppOffline = computed(() => Vue.prototype.$store.state.qofflineMaster.isAppOffline) 
-  const isAppOffline = computed(() => false) 
+  const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
   const permisionCommentsIndex = computed(() => Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`))  
 
   function showModalComments() {    
