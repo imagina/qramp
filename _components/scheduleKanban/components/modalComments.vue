@@ -39,8 +39,8 @@ export default defineComponent({
         default: () => false,
       },
     },
-  setup () {
-    return {...useModalComment()}
+  setup (props) {
+    return {...useModalComment(props)}
   }
 })
 </script>

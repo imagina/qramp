@@ -1,7 +1,8 @@
 import Vue, { computed, getCurrentInstance } from 'vue';
 import store from '../store/modalSchedule.store'
+import getCurrentColumn from '../actions/getCurrentColumn';
 
-export default function useModalComment() {
+export default function useModalComment(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
   
   const visible = computed({
@@ -25,10 +26,22 @@ export default function useModalComment() {
     visible.value = true;
   }
 
-  function hideModalComments() {
+  async function hideModalComments() {
     loading.value = false;
     visible.value = false;
-    // if(this.isCrud) this.$root.$emit('crud.data.refresh');
+    try {
+      const workOrderId = props.commentableId
+      const col = getCurrentColumn()
+      const card = col.cards.find((card) => card.id == workOrderId)
+      if (card) {
+        const response = await Vue.prototype.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
+          refresh: true
+        })
+        card.comments = response.data.comments;
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return {
