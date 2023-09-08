@@ -13,7 +13,7 @@
       md:tw-flex-wrap"
   >
     <q-form ref="refFormSchedule">
-      <scheduleFields class="lg:tw-flex lg:tw-space-x-2"
+      <scheduleFields class="lg:tw-flex lg:tw-space-x-1"
         :inlineMode="true"
       />
     </q-form>
