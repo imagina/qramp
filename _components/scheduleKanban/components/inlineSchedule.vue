@@ -12,7 +12,9 @@
       lg:tw-flex-wrap
       md:tw-flex-wrap"
   >
-    <scheduleFields class="lg:tw-flex lg:tw-space-x-2"/>
+    <q-form ref="refFormSchedule">
+      <scheduleFields class="lg:tw-flex lg:tw-space-x-2"/>
+    </q-form>
     <modalComments
       v-if="card.id"
       :commentableId="card.id"
