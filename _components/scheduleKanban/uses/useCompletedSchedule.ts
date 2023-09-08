@@ -20,6 +20,9 @@ export default function useCompletedSchedule(props: any, emit: any) {
     get: () => modalScheduleStore.titleModal,
     set: (value: string) => modalScheduleStore.titleModal = value
   })
+
+  const openForm = computed(() => props.isWeekAgenda? openModalForm : openInlineForm)
+
   function isEventListComplete(): boolean { 
      return _.every(props.dataWo, (objeto) => {
         return objeto.statusId !== STATUS_DRAFT && objeto.statusId !== STATUS_SCHEDULE && objeto.statusId;
@@ -87,6 +90,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
     openModalForm,
     isBlank,
     openInlineForm,
-    showInline
+    showInline,
+    openForm
   }
 }

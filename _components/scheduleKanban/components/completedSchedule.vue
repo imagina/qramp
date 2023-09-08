@@ -71,7 +71,7 @@
                     unelevated
                     flat
                     dense
-                    @click="isWeekAgenda? openModalForm() : openInlineForm()"
+                    @click="openForm"
                 />
                 <span class="
                     tw-h-4
