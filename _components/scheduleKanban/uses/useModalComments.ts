@@ -1,10 +1,9 @@
-import Vue, { computed, getCurrentInstance } from 'vue';
+import Vue, { computed } from 'vue';
 import store from '../store/modalSchedule.store'
 import getCurrentColumn from '../actions/getCurrentColumn';
+import storeKanban from '../store/kanban.store'
 
 export default function useModalComment(props) {
-  const proxy = (getCurrentInstance() as any).proxy as any;
-  
   const visible = computed({
     get: () => store.showModalComments,
     set: (value) => store.showModalComments = value
@@ -15,10 +14,10 @@ export default function useModalComment(props) {
     set: (value) => store.loading = value
   });
 
-  const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
-  const permisionCommentsIndex = computed(() => Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`))  
+  const isAppOffline = computed(() => storeKanban.isAppOffline)
+  const permisionCommentsIndex = computed(() => Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`))
 
-  function showModalComments() {    
+  function showModalComments() {
     if(!permisionCommentsIndex.value) {
         Vue.prototype.$alert.warning({message: 'You do not have permission to view comments'});
       return;

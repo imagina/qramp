@@ -135,6 +135,7 @@ export default function useKanbanBoard(props) {
     await setStations();
     await checkUrlParams(proxy);
     storeKanban.scheduleType = storeFilter.scheduleType;
+    storeKanban.isAppOffline = proxy.$store.state.qofflineMaster.isAppOffline
     getTitleFilter();
     await setUrlParams(proxy);
     await buildKanbanStructure();

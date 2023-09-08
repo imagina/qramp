@@ -84,7 +84,7 @@ export default defineComponent({
     }
   },
   setup (props, {emit}) {
-    return {...useModalSchedule(props, emit), ...useModalComments()}
+    return {...useModalSchedule(props, emit), ...useModalComments(props)}
   }
 })
 </script>

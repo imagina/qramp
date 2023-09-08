@@ -17,4 +17,5 @@ export interface State {
   dragDate: string;
   isBlank: boolean;
   filterCompany?: number;
+  isAppOffline: boolean;
 }
