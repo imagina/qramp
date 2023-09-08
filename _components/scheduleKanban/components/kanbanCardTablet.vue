@@ -18,7 +18,11 @@
           tw-flex
           tw-p-2"
         >
-          <div class="tw-min-w-36">
+          <div
+            class="tw-min-w-36
+            tw-cursor-pointer"
+            @click="openModalSchedule"
+          >
             <p class="text-kanban-card-tablet">{{ card.calendar.title }}</p>
             <span class="arrival-text-tablet" v-if="card.calendar.sta">
               <i class="
@@ -39,7 +43,9 @@
         <div class="
           tw-flex
           tw-36
-          tw-p-2"
+          tw-p-2
+          tw-cursor-pointer"
+          @click="openModalSchedule"
         >
           <div class="ac-type-text-tablet">
             <div>
@@ -59,7 +65,9 @@
         <div class="
           tw-flex
           tw-32
-          tw-p-2"
+          tw-p-2
+          tw-cursor-pointer"
+          @click="openModalSchedule"
         >
           <div class="
             tw-uppercase

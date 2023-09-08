@@ -18,7 +18,9 @@
           tw-flex
           tw-p-2
           tw-pl-6
+          tw-cursor-pointer
           text-kanban-card-desktop"
+          @click="openModalSchedule"
         >
           <p>{{ card.calendar.title }}</p>
         </div>
@@ -31,7 +33,9 @@
         <div class="
           tw-flex
           tw-p-2
+          tw-cursor-pointer
           arrival-text-desktop"
+          @click="openModalSchedule"
         >
           <div v-if="card.calendar.sta">
             <i class="
@@ -57,7 +61,9 @@
         </div>
         <div class="
           tw-flex
+          tw-cursor-pointer
           ac-type-text-desktop"
+          @click="openModalSchedule"
         >
           <p>
             <i class="
@@ -80,7 +86,10 @@
           v-if="gates"
         >
           <p>
-            <div class="tw-flex">
+            <div class="tw-flex
+              tw-cursor-pointer"
+              @click="openModalSchedule"
+            >
               <img v-if="!isPassenger" src="../svg/p-big.svg" class="tw-pr-1" alt="" srcset="">
               <img v-if="isPassenger" src="../svg/g-big.svg" class="tw-pr-1" alt="" srcset="">
               {{ gates }}
@@ -96,7 +105,9 @@
         <div class="
           tw-flex
           tw-32
-          tw-p-2"
+          tw-p-2
+          tw-cursor-pointer"
+          @click="openModalSchedule"
         >
           <div class="
             tw-uppercase
