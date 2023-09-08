@@ -13,6 +13,10 @@
       md:tw-flex-wrap"
   >
     <scheduleFields class="lg:tw-flex lg:tw-space-x-2"/>
+    <modalComments
+      v-if="card.id"
+      :commentableId="card.id"
+    />
     <div class="tw-space-x-2 tw-my-1">
       <button
         class="
@@ -33,8 +37,8 @@
           tw-rounded-lg
           tw-px-2 tw-py-1
           tw-text-white"
-          v-if="false"
-        @click.prevent="openCommentsModal"
+          v-if="card.id"
+        @click.prevent="showModalComments"
       >
         <i class="fa-light fa-comment" />
         <q-tooltip>
@@ -61,10 +65,13 @@
 import { defineComponent } from 'vue'
 import useModalSchedule from '../uses/useModalSchedule'
 import scheduleFields from './scheduleFields.vue'
+import modalComments from './modalComments.vue'
+import useModalComments from '../uses/useModalComments';
 
 export default defineComponent({
   components: {
-    scheduleFields
+    scheduleFields,
+    modalComments
   },
   props: {
     card: {
@@ -73,7 +80,7 @@ export default defineComponent({
     }
   },
   setup (props, {emit}) {
-    return {...useModalSchedule(props, emit)}
+    return {...useModalSchedule(props, emit), ...useModalComments()}
   }
 })
 </script>

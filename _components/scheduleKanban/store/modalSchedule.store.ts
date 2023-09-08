@@ -10,6 +10,7 @@ interface State {
     seletedDateColumn: any;
     isEdit: boolean;
     stationId: number | null,
+    showModalComments: boolean
 }
 
 const state = reactive<State>({
@@ -21,6 +22,7 @@ const state = reactive<State>({
     seletedDateColumn: null,
     isEdit: false,
     stationId: null,
+    showModalComments: false,
 })
 
 function getForm(data: any) {
@@ -54,6 +56,12 @@ const store = computed(() => ({
     },
     set showInline(value: boolean) {
         state.showInline = value;
+    },
+    get showModalComments(): boolean {
+        return state.showModalComments;
+    },
+    set showModalComments(value: boolean) {
+        state.showModalComments = value;
     },
     get titleModal(): string {
         return state.titleModal;
