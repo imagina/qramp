@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{'lg:tw-flex-wrap lg:tw-space-x-0 xl:tw-flex xl:tw-space-x-2' : inlineMode }">
     <div v-for="(field, keyField) in fields.form" :key="keyField">
       <dynamic-field
         v-if="keyField !== 'sta' && keyField !== 'outboundScheduledDeparture'"
@@ -8,7 +8,7 @@
         @input="zanetizeData(keyField)"
         :class="{
          'tw-hidden': keyField === 'stationId',
-         'lg:tw-w-32 xl:tw-w-fit 2xl:tw-w-full' : inlineMode}"
+         'xl:tw-w-fit' : inlineMode }"
       />
       <div v-if="isbound.inbound && keyField === 'sta'">
         <dynamic-field

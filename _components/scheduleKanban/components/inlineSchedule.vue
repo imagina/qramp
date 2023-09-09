@@ -7,13 +7,10 @@
       tw-py-3
       tw-px-4
       tw-my-1
-      lg:tw-flex
-      lg:tw-space-x-2
-      lg:tw-flex-wrap
       md:tw-flex-wrap"
   >
     <q-form ref="refFormSchedule">
-      <scheduleFields class="lg:tw-flex lg:tw-space-x-1"
+      <scheduleFields
         :inlineMode="true"
       />
     </q-form>
