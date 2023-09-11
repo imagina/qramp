@@ -63,6 +63,7 @@ export default function useKanbanCard(props: any = {}) {
   })
 
   async function openModalSchedule() {
+    if (modalScheduleStore.showInline) return
     if (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value){
       openInlineSchedule(props);
       return;

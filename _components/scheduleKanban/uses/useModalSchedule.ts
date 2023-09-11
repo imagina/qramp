@@ -118,6 +118,7 @@ export default function useModalSchedule(props: any, emit: any) {
 
   function hideInline(){
     if(props.card.id){
+      store.showInline = false;
       setEditableCard(props.card.id, false);
     } else {
       const col = getCurrentColumn();
