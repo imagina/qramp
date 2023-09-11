@@ -12,11 +12,13 @@ import qRampStore from './../../../_store/qRampStore.js'
 import modalScheduleStore from '../store/modalSchedule.store'
 import showWorkOrder from '../actions/showWorkOrders';
 import openInlineSchedule from '../actions/openInlineSchedule'
+import scheduleTypeModel from "../models/scheduleType.model";
 
 export default function useKanbanCard(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
   const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
+  const isWeekAgenda = computed(() => storeKanban.scheduleType == scheduleTypeModel[0].value );
   const colorCheckSchedule = computed(() => {
     const statusColor: string | undefined = workOrderList()
       .getWorkOrderStatusesList()
@@ -63,8 +65,8 @@ export default function useKanbanCard(props: any = {}) {
   })
 
   async function openModalSchedule() {
-    if (modalScheduleStore.showInline) return
-    if (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value){
+    if (!isWeekAgenda.value && modalScheduleStore.showInline) return
+    if (!isWeekAgenda.value && props.card.statusId === STATUS_SCHEDULE && !isPassenger.value){
       openInlineSchedule(props);
       return;
     }
