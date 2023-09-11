@@ -11,14 +11,14 @@ import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from './../../../_store/qRampStore.js'
 import modalScheduleStore from '../store/modalSchedule.store'
 import showWorkOrder from '../actions/showWorkOrders';
-import scheduleTypeModel from '../models/scheduleType.model';
-import { Screen } from 'quasar'
-import devicesModel from '../models/devices.model';
+import openInlineSchedule from '../actions/openInlineSchedule'
+import scheduleTypeModel from "../models/scheduleType.model";
 
 export default function useKanbanCard(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
   const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
+  const isWeekAgenda = computed(() => storeKanban.scheduleType == scheduleTypeModel[0].value );
   const colorCheckSchedule = computed(() => {
     const statusColor: string | undefined = workOrderList()
       .getWorkOrderStatusesList()
@@ -64,12 +64,12 @@ export default function useKanbanCard(props: any = {}) {
     return statuses[props.card.statusId] || '';
   })
 
-  const isMobile = computed(() => Screen.width < devicesModel.mobile.maxWidth );
-  const isTablet = computed(() => Screen.width >= devicesModel.mobile.maxWidth  && Screen.width < devicesModel.tablet.maxWidth);
-  const isDesktop = computed(() => Screen.width >= devicesModel.tablet.maxWidth );
-  const showKanbanCardsActions = computed(() => storeKanban.scheduleType == scheduleTypeModel[1].value)
-
   async function openModalSchedule() {
+    if (!isWeekAgenda.value && modalScheduleStore.showInline) return
+    if (!isWeekAgenda.value && props.card.statusId === STATUS_SCHEDULE && !isPassenger.value){
+      openInlineSchedule(props);
+      return;
+    }
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
@@ -98,10 +98,6 @@ export default function useKanbanCard(props: any = {}) {
     gates,
     openModalSchedule,
     isBlank,
-    isPassenger,
-    isMobile,
-    isTablet,
-    isDesktop,
-    showKanbanCardsActions
+    isPassenger
   };
 }

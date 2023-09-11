@@ -3,22 +3,26 @@ import Vue, { reactive, computed } from 'vue';
 
 interface State {
     showModal: boolean;
+    showInline: boolean;
     titleModal: string;
     loading: boolean;
     form: any;
     seletedDateColumn: any;
     isEdit: boolean;
     stationId: number | null,
+    showModalComments: boolean
 }
 
 const state = reactive<State>({
     showModal: false,
+    showInline: false,
     titleModal: '',
     loading: false,
     form: {},
     seletedDateColumn: null,
     isEdit: false,
     stationId: null,
+    showModalComments: false,
 })
 
 function getForm(data: any) {
@@ -46,6 +50,18 @@ const store = computed(() => ({
     },
     set showModal(value: boolean) {
         state.showModal = value;
+    },
+    get showInline(): boolean {
+        return state.showInline;
+    },
+    set showInline(value: boolean) {
+        state.showInline = value;
+    },
+    get showModalComments(): boolean {
+        return state.showModalComments;
+    },
+    set showModalComments(value: boolean) {
+        state.showModalComments = value;
     },
     get titleModal(): string {
         return state.titleModal;

@@ -12,6 +12,9 @@ import updateSimpleWorkOrder from '../actions/updateSimpleWorkOrder';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
 import individualRefreshByColumns from '../actions/individualRefreshByColumns';
 import showWorkOrder from '../actions/showWorkOrders';
+import storeKanban from '../store/kanban.store';
+import getCurrentColumn from '../actions/getCurrentColumn';
+import setEditableCard from '../actions/setEditableCard';
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -19,10 +22,11 @@ export default function useModalSchedule(props: any, emit: any) {
   const showModal = computed({
     get: () => store.showModal,
     set: (value) => store.showModal = value
-  })
+  });
   const titleModal: ComputedRef<string> = computed(() => store.titleModal);
   const form = computed(() => store.form);
   const loading: ComputedRef<boolean> = computed(() => store.loading);
+  const showCommentsComponent = computed(() => !store.showInline)
   const actions = computed(() => [
     {
       props: {
@@ -85,6 +89,7 @@ export default function useModalSchedule(props: any, emit: any) {
         } else {
           await saveSimpleWorkOrder();
         }
+        hideInline();
         await individualRefreshByColumns();
         await hideModal();
         store.loading = false;
@@ -110,6 +115,28 @@ export default function useModalSchedule(props: any, emit: any) {
     store.reset();
     if (store.isEdit) await individualRefreshByColumns();
   }
+
+  function hideInline(){
+    if(props.card.id){
+      store.showInline = false;
+      setEditableCard(props.card.id, false);
+    } else {
+      const col = getCurrentColumn();
+      if (props.card.duplicated){
+        const card = col.cards.find((card) => card.duplicated === props.card.duplicated);
+        const index = col.cards.indexOf(card)
+        col.cards.splice(index, 1);
+        store.isEdit = false;
+        store.showInline = false;
+        return;
+      }
+      if(col.cards){
+        col.cards.shift();
+      }
+    }
+    store.isEdit = false
+    store.showInline = false;
+  }
   async function showModalFull() {
     const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
     const response = await showWorkOrder(form.value.id);
@@ -128,6 +155,7 @@ export default function useModalSchedule(props: any, emit: any) {
   });
   return {
     showModal,
+    hideInline,
     titleModal,
     loading,
     form,
@@ -140,5 +168,6 @@ export default function useModalSchedule(props: any, emit: any) {
     fields,
     refFormSchedule,
     saveForm,
+    showCommentsComponent
   }
 }

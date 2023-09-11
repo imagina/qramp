@@ -13,6 +13,7 @@ const state: State = reactive({
   loading: false,
   dragDate: '',
   isBlank: false,
+  isAppOffline: false,
 });
 
 const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -53,6 +54,12 @@ const store: State = computed(() => ({
   },
   set isBlank(value: boolean) {
     state.isBlank = value;
+  },
+  get isAppOffline(): boolean {
+    return state.isAppOffline;
+  },
+  set isAppOffline(value: boolean) {
+    state.isAppOffline = value;
   },
   get filterCompany(): number {
     return isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP;

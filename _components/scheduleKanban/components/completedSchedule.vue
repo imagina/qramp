@@ -64,14 +64,14 @@
                 tw-justify-center"
             >
                 <q-btn
-                    v-if="!isBlank"
+                    v-if="!isBlank && !showInline"
                     icon="fa-light fa-plus tw-text-blue-500"
                     size="sm"
                     outline
                     unelevated
                     flat
                     dense
-                    @click="openModalForm"
+                    @click="openForm"
                 />
                 <span class="
                     tw-h-4
@@ -114,6 +114,10 @@ export default defineComponent({
         dateColumn:{
             type: String,
             default: () => null
+        },
+        isWeekAgenda: {
+            type: Boolean,
+            default: true
         }
     },
     setup(props, {emit}) {

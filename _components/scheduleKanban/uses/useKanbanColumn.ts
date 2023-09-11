@@ -12,6 +12,7 @@ import devicesModel from '../models/devices.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
 import { Screen } from 'quasar'
+import modalScheduleStore from '../store/modalSchedule.store'
 
 export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
@@ -44,9 +45,10 @@ export default function useKanbanColumn(props: any = {}) {
     return (index, card, cards) => index !== 0
       && moment(card.scheduleDate).format('HH') === moment(cards[index - 1].scheduleDate).format('HH')
   })
-  
+
   async function showKanbanDay(){
     /* only on week-agenda */
+    modalScheduleStore.showInline = false;
     if(storeKanban.scheduleType == scheduleTypeModel[0].value) {
       storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
