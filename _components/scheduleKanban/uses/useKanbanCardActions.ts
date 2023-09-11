@@ -18,6 +18,7 @@ import deleteWorkOrders from '../actions/deleteWorkOrders';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setEditableCard from '../actions/setEditableCard';
 import getCurrentColumn from '../actions/getCurrentColumn';
+import openInlineSchedule from '../actions/openInlineSchedule'
 
 export default function useKanbanCardActions(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -60,7 +61,7 @@ export default function useKanbanCardActions(props: any = {}) {
       icon: 'fa-light fa-pen-to-square',
       toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
       action: () => {
-        (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) ? openInlineSchedule() : openModalSchedule()
+        (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) ? openInlineSchedule(props) : openModalSchedule()
       },
     },
     {
@@ -72,15 +73,7 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     }
   ])
-
-  async function openInlineSchedule(){
-    const response = await showWorkOrder(props.card.id);
-    modalScheduleStore.isEdit = true;
-    modalScheduleStore.showInline = true;
-    modalScheduleStore.form = { ...response.data };
-    setEditableCard(props.card.id, true)
-  }
-
+  
   async function showModalFull() {
     const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
     const response = await showWorkOrder(props.card.id);
