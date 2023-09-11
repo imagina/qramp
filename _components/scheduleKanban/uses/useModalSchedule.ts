@@ -89,10 +89,10 @@ export default function useModalSchedule(props: any, emit: any) {
         } else {
           await saveSimpleWorkOrder();
         }
+        hideInline();
         await individualRefreshByColumns();
         await hideModal();
         store.loading = false;
-        store.showInline = false;
       }
     });
   }
