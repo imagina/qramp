@@ -11,6 +11,7 @@ import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from './../../../_store/qRampStore.js'
 import modalScheduleStore from '../store/modalSchedule.store'
 import showWorkOrder from '../actions/showWorkOrders';
+import setEditableCard from '../actions/setEditableCard';
 
 export default function useKanbanCard(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -61,7 +62,19 @@ export default function useKanbanCard(props: any = {}) {
     return statuses[props.card.statusId] || '';
   })
 
+  async function openInlineSchedule(){
+    const response = await showWorkOrder(props.card.id);
+    modalScheduleStore.isEdit = true;
+    modalScheduleStore.showInline = true;
+    modalScheduleStore.form = { ...response.data };
+    setEditableCard(props.card.id, true)
+  }
+
   async function openModalSchedule() {
+    if (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value){
+      openInlineSchedule();
+      return;
+    }
     modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
