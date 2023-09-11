@@ -37,6 +37,7 @@
               :class="{
                 'tw-cursor-move': !isBlank
               }"
+              v-if="isWeekAgenda"
             >
               <i class="fa-solid fa-grip-dots-vertical tw-text-lg" />
             </div>
@@ -140,6 +141,10 @@ export default defineComponent({
     dateColumn: {
       type: String,
       default: () => null
+    },
+    isWeekAgenda: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props) {

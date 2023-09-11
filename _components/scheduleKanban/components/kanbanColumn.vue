@@ -94,6 +94,7 @@
           <component
             v-for="(card, index) in cards"
             :is="card.editable? 'inlineSchedule': cardComponentName"
+            :isWeekAgenda="isWeekAgenda"
             :id="card.id"
             :key="card.id"
             :card="card"
