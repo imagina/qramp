@@ -9,7 +9,8 @@ export default async function setIndividualCards(cardId: number): Promise<void> 
     if (!column) return;
     try {
         const response = await showWorkOrders(cardId);
-        column.cards = response.data;
+        let card = column.cards.find(card => card.id === cardId);
+        card = { ...response.data, editable: false };
     } catch (error) {
         console.log(error);
     }

@@ -33,8 +33,8 @@ export default function modelFields() {
     const operationTypeList =  computed(() => workOrderList().getOperationTypeList());
     const fields: ComputedRef<any> = computed(() => ({
         form: {
-            preFlightNumber: {
-              name:'preFlightNumber',
+            inboundFlightNumber: {
+              name:'inboundFlightNumber',
               value: '',
               type: 'input',
               props: {

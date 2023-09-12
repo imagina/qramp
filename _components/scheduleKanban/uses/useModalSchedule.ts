@@ -16,6 +16,7 @@ import storeKanban from '../store/kanban.store';
 import getCurrentColumn from '../actions/getCurrentColumn';
 import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
+import updateWorkOrder from '../actions/updateWorkOrder'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -86,12 +87,12 @@ export default function useModalSchedule(props: any, emit: any) {
         store.loading = true;
         await tranformData();
         if (store.isEdit) {
-          await updateSimpleWorkOrder();
+          await updateWorkOrder(form.value.id, form.value);
         } else {
           await saveSimpleWorkOrder();
         }
         hideInline();
-        await individualRefreshByColumns();
+        await setIndividualCards(form.value.id);
         await hideModal();
         store.loading = false;
       }

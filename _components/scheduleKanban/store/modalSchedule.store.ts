@@ -32,7 +32,7 @@ function getForm(data: any) {
     }
     form.sta = data.inboundScheduledArrival ? moment(data.inboundScheduledArrival).format('HH:mm') : null;
     form.outboundScheduledDeparture = data.outboundScheduledDeparture ? moment(data.outboundScheduledDeparture).format('MM/DD/YYYY HH:mm') : null;
-    form.preFlightNumber = data.preFlightNumber;
+    form.inboundFlightNumber = data.inboundFlightNumber;
     form.stationId = data.stationId;
     form.gateId = data.gateId;
     form.operationTypeId = data.operationTypeId;
