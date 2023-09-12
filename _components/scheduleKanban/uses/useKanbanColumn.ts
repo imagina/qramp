@@ -124,7 +124,6 @@ export default function useKanbanColumn(props: any = {}) {
       column.loading = false;
     } catch (error) {
       column.loading = false;
-      console.log(error);
     }
   }
   function updateTransportScheduleChanges(card, event) {
@@ -144,6 +143,7 @@ export default function useKanbanColumn(props: any = {}) {
       const daysDifference = sheduleDateColumn.diff(arrival.format('MM/DD/YYYY'), 'days');
       departure.add(daysDifference, 'days');
       arrival = `${sheduleDateColumn.format('MM/DD/YYYY')} ${arrival.format('HH:MM')}`;
+      departure = departure.format('MM/DD/YYYY HH:MM');
     }
     return {
       id: event.item.id,
