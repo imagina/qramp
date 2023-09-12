@@ -115,6 +115,19 @@
         :dateColumn="dateColumn"
       />
       </div>
+      <div
+       v-if="false"
+       class="
+        tw-absolute 
+        tw-inset-0 
+        tw-bg-opacity-75 
+        tw-pt-12 
+        tw-bg-white 
+        tw-flex 
+        tw-justify-center"
+      >
+         <q-spinner color="primary" size="2em" />
+      </div>
     </div>
   </div>
 
