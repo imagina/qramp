@@ -15,6 +15,7 @@ import showWorkOrder from '../actions/showWorkOrders';
 import storeKanban from '../store/kanban.store';
 import getCurrentColumn from '../actions/getCurrentColumn';
 import setEditableCard from '../actions/setEditableCard';
+import setIndividualCards from '../actions/setIndividualCards'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -37,7 +38,7 @@ export default function useModalSchedule(props: any, emit: any) {
       action: async () => {
         store.loading = true;
         await qRampStore().changeStatus(STATUS_DRAFT, form.value.id);
-        await individualRefreshByColumns();
+        await setIndividualCards(form.value.id);
         await showModalFull();
         await hideModal();
         store.loading = false;
@@ -64,7 +65,7 @@ export default function useModalSchedule(props: any, emit: any) {
       action: async () => {
         store.loading = true;
         await deleteWorkOrders(form.value.id);
-        await individualRefreshByColumns();
+        await setIndividualCards(form.value.id);
         await hideModal();
         store.loading = false;
       },
