@@ -116,7 +116,7 @@
       />
       </div>
       <div
-       v-if="false"
+       v-if="card.loading"
        class="
         tw-absolute 
         tw-inset-0 

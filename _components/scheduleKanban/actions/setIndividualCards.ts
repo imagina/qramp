@@ -9,8 +9,12 @@ export default async function setIndividualCards(cardId: number): Promise<void> 
             .find(card => card.id === cardId);
 
         if (!foundCard) return;
+        foundCard.loading = true;
         const response = await showWorkOrders(cardId);
-        Object.assign(foundCard, { ...response.data, editable: false });
+        setTimeout(() => {
+            foundCard.loading = false;
+            Object.assign(foundCard, { ...response.data, editable: false });
+        }, 100);        
     } catch (error) {
         console.log(error);
     }
