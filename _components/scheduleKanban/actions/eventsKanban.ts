@@ -1,6 +1,3 @@
-import Vue, { computed, getCurrentInstance, ComputedRef } from 'vue';
-import storeKanban from "../store/kanban.store";
-import showWorkOrders from './showWorkOrders';
 import setIndividualCards from './setIndividualCards';
 
 export default function eventsKanban(proxy: any) {
@@ -12,7 +9,6 @@ export default function eventsKanban(proxy: any) {
         } catch (error) {
             console.log(error);
         }
-
     }
     return {
         cardRefresh
