@@ -89,6 +89,7 @@ export default function useKanbanColumn(props: any = {}) {
       props.column.cards = response.data;
       props.column.loading = false;
     } catch (error) {
+      console.log(error);
       props.column.loading = false;
     }
   }
@@ -108,7 +109,6 @@ export default function useKanbanColumn(props: any = {}) {
     const column: any = storeKanban.columns.find(item => {
       return item.date.format('YYYY-MM-DD') === event.to.id
     });
-    console.log(column);
     if(!column) return;
     try {
       column.loading = true;
@@ -119,10 +119,10 @@ export default function useKanbanColumn(props: any = {}) {
       await updateWorkOrder(event.item.id, attributes);
       column.page = 1;
       const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
-      console.log(response.data);
       column.cards = response.data;
       column.loading = false;
     } catch (error) {
+      console.log(error);
       column.loading = false;
     }
   }
