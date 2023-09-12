@@ -15,8 +15,12 @@ export default async function checkUrlParams(proxy){
         if (params.flightStatusId) store.form.flightStatusId = params.flightStatusId;
         if (params.areaId) store.form.areaId = params.areaId;
         if( params.type) store.scheduleType = params.type;
-
         store.selectedDate = getSelectedDay(params)
+      } else {
+        /* defaults */
+        store.form.scheduleType = scheduleTypeModel[1].value;
+        store.scheduleType = scheduleTypeModel[1].value
+        store.selectedDate = moment().format('YYYY/MM/DD');
       }
     }
   } catch(err) {
