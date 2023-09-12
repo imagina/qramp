@@ -108,6 +108,7 @@ export default function useKanbanColumn(props: any = {}) {
     const column: any = storeKanban.columns.find(item => {
       return item.date.format('YYYY-MM-DD') === event.to.id
     });
+    console.log(column);
     if(!column) return;
     try {
       column.loading = true;
@@ -118,10 +119,12 @@ export default function useKanbanColumn(props: any = {}) {
       await updateWorkOrder(event.item.id, attributes);
       column.page = 1;
       const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
+      console.log(response.data);
       column.cards = response.data;
       column.loading = false;
     } catch (error) {
       column.loading = false;
+      console.log(error);
     }
   }
   function updateTransportScheduleChanges(card, event) {
@@ -145,7 +148,7 @@ export default function useKanbanColumn(props: any = {}) {
     return {
       id: event.item.id,
       inboundScheduledArrival: card.inboundScheduledArrival && arrival ? arrival : null,
-      outboundScheduledDeparture: card.outboundScheduledDeparture && departure ? departure.format('MM/DD/YYYY HH:MM'): null
+      outboundScheduledDeparture: card.outboundScheduledDeparture && departure ? departure : null
     }
   }
   onMounted(() => {
