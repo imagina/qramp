@@ -66,7 +66,7 @@ export default function useModalSchedule(props: any, emit: any) {
       action: async () => {
         store.loading = true;
         await deleteWorkOrders(form.value.id);
-        await setIndividualCards(form.value.id);
+        await individualRefreshByColumns();
         await hideModal();
         store.loading = false;
       },
@@ -92,6 +92,9 @@ export default function useModalSchedule(props: any, emit: any) {
           await saveSimpleWorkOrder();
         }
         hideInline();
+        if(!store.isEdit) {
+          individualRefreshByColumns(); 
+        }
         await setIndividualCards(form.value.id);
         await hideModal();
         store.loading = false;
