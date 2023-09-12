@@ -19,6 +19,7 @@ import setUrlParams from "../actions/setUrlParams";
 import getTitleFilter from "../actions/getTitleFilter";
 import cache from "@imagina/qsite/_plugins/cache";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
+import eventsKanban from '../actions/eventsKanban'
 
 export default function useKanbanBoard(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
@@ -132,6 +133,7 @@ export default function useKanbanBoard(props) {
   });
 
   const init = async () => {
+    eventsKanban(proxy).cardRefresh();
     await setStations();
     await checkUrlParams(proxy);
     storeKanban.scheduleType = storeFilter.scheduleType;
