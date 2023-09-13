@@ -37,6 +37,7 @@ export default function useActionsBar(props: any) {
   }
 
   async function changeAgenda(scheduleType) {
+    storeKanban.columns = [];
     storeKanban.scheduleType = scheduleType
     storeFilters.scheduleType = scheduleType
     await setUrlParams(proxy);

@@ -38,7 +38,8 @@
       <dynamic-field v-model="filterTime" :field="dynamicFieldTime" />
     </div>
 
-    <div 
+    <div
+      v-if="columns.length > 0" 
       class="
        tw-flex-1 
        tw-h-auto 
