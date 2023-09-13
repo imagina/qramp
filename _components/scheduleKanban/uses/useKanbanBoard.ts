@@ -39,6 +39,7 @@ export default function useKanbanBoard(props) {
     },
   });
 
+  const title = computed(() => isPassenger.value ? 'Passenger Schedule' : 'Ramp Schedule')
   const selectedDate = computed(() => storeFilter.selectedDate);
 
   const scheduleType = computed({
@@ -212,5 +213,6 @@ export default function useKanbanBoard(props) {
     buildKanbanStructure,
     refFormOrders,
     individualRefreshByColumns,
+    title
   };
 }
