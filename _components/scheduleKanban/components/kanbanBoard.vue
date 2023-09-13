@@ -2,7 +2,7 @@
   <div class="kanbanBoardCtn">
     <page-actions 
         ref="pageActions" 
-        :title="$tr('ifly.cms.sidebar.schedule')" 
+        :title="title"
         multipleRefresh
         :extra-actions="extraPageActions"  
         class="q-mb-md"
