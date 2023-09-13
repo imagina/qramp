@@ -1,13 +1,15 @@
 <template>
   <div class="kanbanBoardCtn">
-    <page-actions 
+    <div class="tw-h-12">
+      <page-actions
         ref="pageActions" 
         :title="title"
         multipleRefresh
         :extra-actions="extraPageActions"  
         class="q-mb-md"
         @refresh="buildKanbanStructure(true)" 
-    />
+      />
+    </div>
     <filters />
     <filtersBar v-if="false"/>
    <actionBar /> 

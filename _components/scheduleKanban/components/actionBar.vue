@@ -5,7 +5,7 @@
      tw-flex 
      tw-flex-col 
      tw-items-center 
-     tw-py-4 
+     tw-pb-4
      tw-text-blue-500 
      md:tw-text-lg 
      tw-space-y-2 
@@ -24,7 +24,8 @@
             tw-text-base
             md:tw-text-lg
             tw-font-bold
-            md:tw-mt-1"
+            md:tw-mt-1
+            agendaButtons"
         >Week
         </q-btn>
         <span
@@ -47,7 +48,8 @@
             tw-text-base
             md:tw-text-lg
             tw-font-bold
-            md:tw-mt-1"
+            md:tw-mt-1
+            agendaButtons"
         >Today
       </q-btn>
     </div>
@@ -63,14 +65,17 @@
       class="
         tw-flex 
         tw-items-center 
-        tw-text-sm md:tw-text-base 
+        tw-text-sm 
+        md:tw-text-base 
         tw-font-semibold 
         tw-space-x-1 
         tw-cursor-pointer
       "
       @click="openDrawerFilter"
     >
-      <div>{{ titleFilter }}</div>
+      <div class="agendaResume">
+        {{ titleFilter }}
+      </div>
     </div>
   </div>
 </template>
@@ -89,5 +94,14 @@ export default defineComponent({
 <style>
 .actions-bar .btn-action {
   @apply tw-text-blue-500 tw-rounded-md tw-shadow-sm tw-border tw-w-9 tw-h-9 tw-border-gray-200 tw-font-bold hover:tw-bg-gray-200 hover:tw-text-white;
+}
+
+.agendaButtons {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.agendaResume {
+  font-size: 14px;
 }
 </style>
