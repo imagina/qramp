@@ -53,7 +53,7 @@ export default function useKanbanColumn(props: any = {}) {
       storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
       storeKanban.scheduleType = storeFilters.scheduleType;
-      await buildKanbanStructure();
+      await buildKanbanStructure;
       setUrlParams(proxy);
     }
   }
