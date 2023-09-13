@@ -253,7 +253,7 @@ export default {
       this.$emit('loading', true)
       const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData, params)
           : this.$crud.create(route, formatData, params);
-      await request.then(res => {
+      await request.then(async res => {
         this.clean()
         this.$emit('close-modal', false)
         const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}`
@@ -262,6 +262,7 @@ export default {
         this.$emit('loading', false)
         this.disabled = false;
         qRampStore().hideLoading();
+        await this.$emit('getWorkOrders', formatData);
       })
           .catch(async err => {
             qRampStore().hideLoading();

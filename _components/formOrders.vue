@@ -18,7 +18,8 @@
       ref="stepper" 
       :steps="steppers"
       :data="modalProps" 
-      @close-modal="close($event)" 
+      @close-modal="close($event)"
+      @getWorkOrders="getWorkOrders" 
     />
     <simpleWorkOrders 
       v-if="!modalProps.update" 
@@ -30,6 +31,7 @@
         v-if="!isAppOffline"
         ref="commentsModal"
         :commentableId="modalProps.workOrderId"
+        @getWorkOrders="getWorkOrders"
         isCrud
     />
   </div>
@@ -372,7 +374,7 @@ export default {
       this.loading = value;
     },
     async getWorkOrders(data = null) {
-      this.$emit('getWorkOrderFilter', data)
+      this.$emit('getWorkOrderFilter', data);
     }
   },
 }
