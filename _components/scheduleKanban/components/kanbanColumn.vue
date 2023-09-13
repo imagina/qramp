@@ -185,7 +185,7 @@ export default defineComponent({
 }
 
 .columnCtn .h-200 {
-  height: 60vh;
+  height: 70vh;
 }
 
 .columnCtn .h-201-black {
