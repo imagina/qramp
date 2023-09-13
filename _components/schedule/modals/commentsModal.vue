@@ -51,7 +51,10 @@ export default {
   methods: {
     hideModal() {
       this.visible = false;
-      if(this.isCrud) this.$root.$emit('crud.data.refresh');
+      if(this.isCrud) {
+        this.$root.$emit('crud.data.refresh')
+        this.$emit('getWorkOrders');
+      }
     },
     showModal() {
       if(!this.permisionCommentsIndex) {
