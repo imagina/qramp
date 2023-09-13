@@ -101,6 +101,7 @@ export default function useKanbanCardActions(props: any = {}) {
   }
 
   async function startWorkOrder() {
+    modalScheduleStore.seletedDateColumn = props.dateColumn;
     modalScheduleStore.loading = true;
     await qRampStore().changeStatus(STATUS_DRAFT, props.card.id);
     await buildKanbanStructure(true)
@@ -120,6 +121,7 @@ export default function useKanbanCardActions(props: any = {}) {
   }
 
   async function duplicateWorkOrder() {
+    modalScheduleStore.seletedDateColumn = props.dateColumn;
     const col  = getCurrentColumn();
     const card  = col.cards.find((card) => card.id === props.card.id)
     const index  = col.cards.indexOf(card)
