@@ -1,13 +1,13 @@
 <template>
   <div class="kanbanBoardCtn">
-    <page-actions 
+      <page-actions
         ref="pageActions" 
-        :title="$tr('ifly.cms.sidebar.schedule')" 
+        :title="title"
         multipleRefresh
         :extra-actions="extraPageActions"  
         class="q-mb-md"
         @refresh="buildKanbanStructure(true)" 
-    />
+      />
     <filters />
     <filtersBar v-if="false"/>
    <actionBar /> 
