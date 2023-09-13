@@ -50,11 +50,13 @@ export default function useKanbanColumn(props: any = {}) {
     /* only on week-agenda */
     modalScheduleStore.showInline = false;
     if(storeKanban.scheduleType == scheduleTypeModel[0].value) {
+      props.column.loading = true;
       storeKanban.columns = [];
       storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
       storeKanban.scheduleType = storeFilters.scheduleType;
       await buildKanbanStructure;
+      props.column.loading = false;
       setUrlParams(proxy);
     }
   }
