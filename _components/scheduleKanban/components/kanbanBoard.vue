@@ -1,6 +1,5 @@
 <template>
   <div class="kanbanBoardCtn">
-    <div class="tw-h-12">
       <page-actions
         ref="pageActions" 
         :title="title"
@@ -9,7 +8,6 @@
         class="q-mb-md"
         @refresh="buildKanbanStructure(true)" 
       />
-    </div>
     <filters />
     <filtersBar v-if="false"/>
    <actionBar /> 
