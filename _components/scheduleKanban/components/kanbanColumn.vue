@@ -41,6 +41,7 @@
         </div>
       </div>
       <completed-schedule
+       :column="column"
        :dataWo="cards"
        :dateColumn="column.date.format('YYYY-MM-DD')"
        @refresh="singleRefreshment"

@@ -26,29 +26,21 @@
                 "
                 v-if="dataWo.length > 0"
             >
-                <div>
-                    <span :class="{
-                            'tw-text-green-500': isEventListComplete(),
-                            'tw-text-orange-400': !isEventListComplete()
-                        }"
-                    >
+                <div v-if="uncompleted">
+                    <span class="tw-text-orange-400">
                         <i class="fa-solid fa-circle-exclamation" />
                     </span>
-                    <span class="tw-text-sm" v-html="titleCompletedSchedule()" />
+                    <span class="tw-text-sm" >
+                        {{ uncompleted }} Not completed
+                    </span>
                 </div>
-                <div
-                   class="
-                    tw-text-left
-                    tw-py-1"
-                    v-if="countIncompleteEvents()[0] > 0
-                    && !isEventListComplete()"
-                >
-                    <i class="
-                        fa-solid
-                        fa-circle-check
-                        tw-text-green-400"
-                     />
-                    <span class="tw-text-sm" v-html="totalCompleted()" />
+                <div v-if="completed">
+                    <span class="tw-text-green-500">
+                        <i class="fa-solid fa-circle-exclamation" />
+                    </span>
+                    <span class="tw-text-sm" >
+                        {{ completed }} Completed
+                    </span>
                 </div>
             </div>
 
@@ -118,6 +110,10 @@ export default defineComponent({
         isWeekAgenda: {
             type: Boolean,
             default: true
+        },
+        column: {
+            type: Object,
+            default: () => {}
         }
     },
     setup(props, {emit}) {
