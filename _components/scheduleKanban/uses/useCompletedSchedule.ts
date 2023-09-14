@@ -9,7 +9,9 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 export default function useCompletedSchedule(props: any, emit: any) {
   const isBlank = computed(() => storeKanban.isBlank);
   const scheduleType = computed(() => props.scheduleType);
-  const dateColumn = computed(() => props.dateColumn);
+  const dateColumn = computed(() => props.column.date.format('YYYY-MM-DD'));
+  const cards = computed(() => props.column.cards)
+
 
   const showInline = computed(()=> modalScheduleStore.showInline)
   const modalShowSchedule = computed({
@@ -59,6 +61,7 @@ export default function useCompletedSchedule(props: any, emit: any) {
     showInline,
     openForm,
     completed,
-    uncompleted
+    uncompleted,
+    cards
   }
 }

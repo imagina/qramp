@@ -3,7 +3,7 @@
         <div 
             v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
             :class="{
-                'h-43': dataWo.length === 0,
+                'h-43': cards.length === 0,
             }" 
             class="
               tw-inline-flex 
@@ -24,7 +24,7 @@
               class="
                 tw-text-blueGray-500
                 "
-                v-if="dataWo.length > 0"
+                v-if="cards.length > 0"
             >
                 <div v-if="uncompleted">
                     <span class="tw-text-orange-400">
@@ -47,7 +47,7 @@
             <div 
                 class="tw-absolute tw-right-5"
                 :class="{
-                    'tw-mt-1': dataWo.length === 0
+                    'tw-mt-1': cards.length === 0
                 }"
             >
             <div class="
@@ -95,17 +95,9 @@ import useCompletedSchedule from '../uses/useCompletedSchedule'
 
 export default defineComponent({
     props: {
-        dataWo: {
-            type: Array,
-            default: () => {}
-        },
         scheduleType: {
             type: String,
             default: () => 'week-agenda'
-        },
-        dateColumn:{
-            type: String,
-            default: () => null
         },
         isWeekAgenda: {
             type: Boolean,
