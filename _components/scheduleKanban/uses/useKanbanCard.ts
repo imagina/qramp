@@ -43,19 +43,14 @@ export default function useKanbanCard(props: any = {}) {
     return actypesList ? actypesList.fullName : '';
   })
   const gates = computed(() => {
-    if(props.card.calendar?.gate &&  isPassenger.value) {
+    if(props.card.calendar?.gate && isPassenger.value) {
       if(props.card.calendar.gate.trim().length !== 0 ) return props.card.calendar.gate
     }
-
     const gateList: any =
       workOrderList()
       .getGatesList()
         .find(gate => gate.id === Number(props.card.gateId));
-    if(!isPassenger.value) {
-      return gateList ?  `${gateList.name}` : null;
-    }else {
-      return gateList ? `${gateList.name}` : null;
-    }
+    return gateList ? `${gateList.name}` : null;
   })
   const titleStatus = computed(() => {
     const statuses = {
