@@ -9,6 +9,7 @@ export default {
   urlBase: urlBase,
   version: moduleVersion,
   workOrders: `${urlBase}/work-orders`,
+  workOrdersStatistics: `${urlBase}/work-orders/schedule/statistics`,
   workOrderChangeStatus: `${urlBase}/work-orders/change-status`,
   workOrderStatuses: `${urlBase}/work-order-statuses`,
   operationTypes: `${urlBase}/operation-types`,

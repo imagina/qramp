@@ -3,7 +3,7 @@
         <div 
             v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
             :class="{
-                'h-43': dataWo.length === 0,
+                'h-43': cards.length === 0,
             }" 
             class="
               tw-inline-flex 
@@ -24,38 +24,30 @@
               class="
                 tw-text-blueGray-500
                 "
-                v-if="dataWo.length > 0"
+                v-if="cards.length > 0"
             >
-                <div>
-                    <span :class="{
-                            'tw-text-green-500': isEventListComplete(),
-                            'tw-text-orange-400': !isEventListComplete()
-                        }"
-                    >
+                <div v-if="uncompleted">
+                    <span class="tw-text-orange-400">
                         <i class="fa-solid fa-circle-exclamation" />
                     </span>
-                    <span class="tw-text-sm" v-html="titleCompletedSchedule()" />
+                    <span class="tw-text-sm" >
+                        {{ uncompleted }} Not completed
+                    </span>
                 </div>
-                <div
-                   class="
-                    tw-text-left
-                    tw-py-1"
-                    v-if="countIncompleteEvents()[0] > 0
-                    && !isEventListComplete()"
-                >
-                    <i class="
-                        fa-solid
-                        fa-circle-check
-                        tw-text-green-400"
-                     />
-                    <span class="tw-text-sm" v-html="totalCompleted()" />
+                <div v-if="completed">
+                    <span class="tw-text-green-500">
+                        <i class="fa-solid fa-circle-exclamation" />
+                    </span>
+                    <span class="tw-text-sm" >
+                        {{ completed }} Completed
+                    </span>
                 </div>
             </div>
 
             <div 
                 class="tw-absolute tw-right-5"
                 :class="{
-                    'tw-mt-1': dataWo.length === 0
+                    'tw-mt-1': cards.length === 0
                 }"
             >
             <div class="
@@ -103,21 +95,17 @@ import useCompletedSchedule from '../uses/useCompletedSchedule'
 
 export default defineComponent({
     props: {
-        dataWo: {
-            type: Array,
-            default: () => {}
-        },
         scheduleType: {
             type: String,
             default: () => 'week-agenda'
         },
-        dateColumn:{
-            type: String,
-            default: () => null
-        },
         isWeekAgenda: {
             type: Boolean,
             default: true
+        },
+        column: {
+            type: Object,
+            default: () => {}
         }
     },
     setup(props, {emit}) {

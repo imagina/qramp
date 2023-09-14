@@ -7,6 +7,8 @@ export interface Columns {
   page: number;
   loading: boolean;
   total: number;
+  completed: number;
+  uncompleted: number;
 }
 
 export interface State {

@@ -41,8 +41,7 @@
         </div>
       </div>
       <completed-schedule
-       :dataWo="cards"
-       :dateColumn="column.date.format('YYYY-MM-DD')"
+       :column="column"
        @refresh="singleRefreshment"
        :isWeekAgenda = "isWeekAgenda"
       />
