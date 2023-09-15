@@ -89,6 +89,7 @@
           handle=".dot-vertical"
           @end="changeDate"
           :disabled="isBlank && isWeekAgenda"
+          @scroll.native="callInfiniteHandler"
         >
           <component
             v-for="(card, index) in cards"
