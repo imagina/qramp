@@ -11,8 +11,9 @@ import scheduleTypeModel from '../models/scheduleType.model';
 import devicesModel from '../models/devices.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
-import { Screen } from 'quasar'
-import modalScheduleStore from '../store/modalSchedule.store'
+import { Screen } from 'quasar';
+import modalScheduleStore from '../store/modalSchedule.store';
+import getWorkOrdersStatistics from '../actions/getWorkOrderStatistics';
 
 export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
@@ -81,12 +82,29 @@ export default function useKanbanColumn(props: any = {}) {
       isLoading.value = false;
     }
   }
+
+  async function updateColumnStatistics (date, column){
+    const startDate = date.startOf('day');
+      const endDate = date.endOf('day');
+      const filterTime = storeFilters.filterTime;
+      const params = {
+        field: "schedule_date",
+        type: "customRange",
+        from: startDate.set({ hour: filterTime[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss'),
+        to: endDate.set({ hour: filterTime[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss')
+      }
+      const statistics:any = await getWorkOrdersStatistics(true, params)
+      column.completed = statistics.data.completed
+      column.uncompleted = statistics.data.uncompleted
+  }
+
   async function singleRefreshment(columnDate = null) {
     try {
       props.column.cards = [];
       const page = 1;
       props.column.loading = true
       const scheduleDate = columnDate || date.value;
+      await updateColumnStatistics(scheduleDate, props.column);
       const response = await getIndividualWorkOrders(true, page,  scheduleDate);
       props.column.page = page;
       props.column.cards = response.data;
@@ -122,6 +140,9 @@ export default function useKanbanColumn(props: any = {}) {
       await updateWorkOrder(event.item.id, attributes);
       column.page = 1;
       const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
+      const previousColumn:any = storeKanban.columns.find((element) => element.date.format('YYYY-MM-DD') == event.from.id)      
+      await updateColumnStatistics( previousColumn.date, previousColumn)
+      await updateColumnStatistics( column.date, column)
       column.cards = response.data;
       column.loading = false;
     } catch (error) {
