@@ -1,6 +1,7 @@
 import Vue, { computed } from "vue";
 import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
+import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 
 export default function filterModel() {
   return computed(() => ({
@@ -30,17 +31,12 @@ export default function filterModel() {
     stationId: {
       value: null,
       type: "select",
-      loadOptions: {
-        apiRoute: "apiRoutes.qsetupagione.setupStations",
-        select: { label: "fullName", id: "id" },
-        requestParams: {
-          filter: {
-            companyId: kanbanStore.filterCompany,
-          },
-        },
-      },
       props: {
         label: "Station",
+        options: workOrderList().getStationList().map(item => ({
+          label: item.fullName,
+          value: item.id
+        })),
       },
     },
     statusId: {
