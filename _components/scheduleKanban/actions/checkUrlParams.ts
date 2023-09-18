@@ -2,7 +2,7 @@ import moment from 'moment';
 import store from '../store/filters.store';
 import scheduleTypeModel from '../models/scheduleType.model';
 
-export default async function checkUrlParams(proxy){
+export default async function checkUrlParams(proxy: any): Promise<void>{
   const params = {...proxy.$route.query}
   try{
     if(store.stationId){
@@ -28,11 +28,10 @@ export default async function checkUrlParams(proxy){
   }
 }
 
-function getSelectedDay(params){
+function getSelectedDay(params: any): string {
   const isWeek = store.scheduleType == scheduleTypeModel[0].value
   if(isWeek){
     const dateStart = moment(params.dateStart).format('YYYY/MM/DD');
-    // const dateEnd = moment(params.endDate).format('YYYY/MM/DD');
     const dayOfweek = moment(store.selectedDate).day();
     return moment(dateStart).day(dayOfweek).format('YYYY/MM/DD');
     } else {

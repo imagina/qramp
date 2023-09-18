@@ -4,7 +4,7 @@ import store from '../store/filters.store';
 import storeKanban from '../store/kanban.store';
 import scheduleTypeModel from "../models/scheduleType.model";
 
-export default function getTitleFilter() {
+export default function getTitleFilter(): void {
     const filterTime = modelHoursFilter.find(item => store.form.time === item.value) || null;
     const selectedDate = moment(store.selectedDate);
 

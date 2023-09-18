@@ -1,7 +1,7 @@
 import setIndividualCards from './setIndividualCards';
 import storeKanban from '../store/kanban.store'
 export default function eventsKanban(proxy: any) {
-    function cardRefresh() {
+    function cardRefresh(): void {
         try {
             proxy.$eventBus.$on('ramp.workOrders.cardRefresh', async (response) => {
                 const foundCard = storeKanban.columns

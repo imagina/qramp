@@ -4,7 +4,7 @@ import cache from '@imagina/qsite/_plugins/cache';
 import modalScheduleStore from '../store/modalSchedule.store'
 import scheduleTypeModel from '../models/scheduleType.model';
 
-export default async function setUrlParams(proxy){
+export default async function setUrlParams(proxy: any): Promise<void>{
     try {
       const selectedDate = moment(store.selectedDate);
       const query = store.payload;
