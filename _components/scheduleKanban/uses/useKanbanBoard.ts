@@ -194,6 +194,10 @@ export default function useKanbanBoard(props) {
   watch(
     () => proxy.$route,
     async (currentValue, oldValue) => {
+      if(storeFilter.stationId == null) {
+        storeFilter.showModalStation = true;
+      }
+
       if (!storeKanban.loading) {
         init();
       }
