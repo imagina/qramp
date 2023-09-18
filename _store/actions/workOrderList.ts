@@ -264,7 +264,6 @@ export default function workOrderList(): WorkOrderList {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
                 const filterRamp = isPassenger ? {companyId} : {
-                    "status": 1,
                     companyId,
                     "allTranslations": true
                 };
@@ -403,7 +402,6 @@ export default function workOrderList(): WorkOrderList {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
                 const filterRamp = isPassenger ? {companyId} : {
-                    "status": 1,
                     companyId,
                     "allTranslations": true
                 }
