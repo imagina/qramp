@@ -150,9 +150,6 @@ export default defineComponent({
       getCodeList();
       delay.value = delayList.value.length > 0;
     })
-    onBeforeUnmount(() => {
-      cargoStore().reset();
-    })
     return {
       delayFields,
       delayList,
