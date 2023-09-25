@@ -278,7 +278,7 @@ export default {
             await this.$refs.stepper.sendInfo();
             await qRampStore().setStatusId(null);
             if (!this.isAppOffline) {
-              await workOrderList().getWorkOrders(true);
+              workOrderList().getWorkOrders(true);
             }
             qRampStore().hideLoading()
           }

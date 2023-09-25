@@ -319,7 +319,6 @@ export default {
     async saveRequestSimpleWorkOrder() {
       try {
         qRampStore().showLoading();
-        console.log("Aquí ?")
         const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
         const offlineId = 'work-order-' + this.$uid();
         const dataForm = {
@@ -331,9 +330,7 @@ export default {
         };
         const response = await this.$crud.create(
             "apiRoutes.qramp.simpleWorkOrders",dataForm,
-        ).catch(error => {
-          qRampStore().hideLoading();
-        });
+        )
         if(this.isAppOffline) {
           const offlineWorkOrder = {
             ...modelWorkOrder,
@@ -346,8 +343,7 @@ export default {
           };
           cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", offlineWorkOrder);
         }else{
-          console.log("GET WO")
-          await workOrderList().getWorkOrders(true, true)
+          workOrderList().getWorkOrders(true, true);
         }
         qRampStore().hideLoading();
         
