@@ -20,10 +20,9 @@
     </div>
     <div v-if="delay" class="tw-px-6">
       <div class="row">
-        <template v-for="(field, keyField) in delayFields">
+        <template v-for="(field, keyField) in delayFields" :key="keyField">
           <dynamic-field
             class="col-12 col-md-5 q-pr-sm"
-            :key="keyField"
             :field="field"
             v-model="
               delayList[
@@ -140,7 +139,7 @@ export default defineComponent({
       Vue.prototype.$crud
         .index(API_ROUTE, params)
         .then((res) => {
-          const data = res.data || [];    
+          const data = res.data || [];
           const codeList = data.map((item) => ({
             id: item.id,
             label: item.name,

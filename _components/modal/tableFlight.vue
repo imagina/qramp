@@ -1,6 +1,6 @@
 <template>
   <q-dialog
-    v-model="dialog"
+    v-model="dialogModel"
     persistent
     full-width
     transition-show="slide-up"
@@ -108,6 +108,16 @@ export default {
     }
   },
   computed:{
+    dialogModel: {
+      // getter
+      get() {
+        return this.dialog
+      },
+      // setter
+      set(newValue) {
+        this.dialog = newValue
+      }
+    },
     responsive() {return this.windowSize == 'mobile'},
     windowSize() {
       return this.windowWith >= '450' ? 'desktop' : 'mobile'
