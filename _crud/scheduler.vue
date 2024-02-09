@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-btn 
+    <q-btn
       color="primary"
-      label="back to schedule" 
+      label="back to schedule"
       icon="fa-duotone fa-calendar-plus"
       class="tw-my-4"
       @click="getUrlSchedule"
@@ -236,7 +236,7 @@ export default {
       };
 
       const namesOfDays = numbersDays.map(number => daysOfWeek[number]);
-     
+
       return namesOfDays.join(', ');
     },
     getUrlSchedule() {
@@ -246,5 +246,5 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

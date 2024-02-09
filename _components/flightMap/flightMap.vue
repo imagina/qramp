@@ -3,38 +3,38 @@
     <l-map :zoom="zoom" :worldCopyJump="true" :minZoom="2"  :center="center" style="height: 700px; width: 100%">
       <l-tile-layer :url="url" :attribution="attribution" />
 
-      <vRotatedMarker
-        v-for="(item, index) in aircraftList"
-        :key="item.id"
-        :lat-lng="item.coordinates"
-        :icon="icon(item.flightStatusColor)"
-        :rotationAngle="item.lastPositionHeading - 95"
-        @click="selectedflight(item.id)"
-      >
-        <l-tooltip>
-          <p>
-            <span class="tw-font-semibold">
-              {{ $tr('ifly.cms.map.workOrderId') }}:
-            </span>{{ item.id }}
-          </p>
-          <p>
-            <span class="tw-font-semibold">
-              {{ $tr('ifly.cms.map.flightNumber') }}:
-            </span>
-            {{ item.preFlightNumber }}
-          </p>
-          <p>
-            <span class="tw-font-semibold">
-              {{ $tr('ifly.cms.map.aircraftType') }}:
-            </span>
-            {{ item.aircraft_type }}
-          </p>
-          <p>
-            <span class="tw-font-semibold">{{ $tr('ifly.cms.map.estimatedTimeOfArrival') }}:</span>
-            {{ minutesToHours(item.timeTotalEstimated) }}
-          </p>
-        </l-tooltip>
-      </vRotatedMarker>
+<!--[ptc]      <vRotatedMarker-->
+<!--        v-for="(item, index) in aircraftList"-->
+<!--        :key="item.id"-->
+<!--        :lat-lng="item.coordinates"-->
+<!--        :icon="icon(item.flightStatusColor)"-->
+<!--        :rotationAngle="item.lastPositionHeading - 95"-->
+<!--        @click="selectedflight(item.id)"-->
+<!--      >-->
+<!--        <l-tooltip>-->
+<!--          <p>-->
+<!--            <span class="tw-font-semibold">-->
+<!--              {{ $tr('ifly.cms.map.workOrderId') }}:-->
+<!--            </span>{{ item.id }}-->
+<!--          </p>-->
+<!--          <p>-->
+<!--            <span class="tw-font-semibold">-->
+<!--              {{ $tr('ifly.cms.map.flightNumber') }}:-->
+<!--            </span>-->
+<!--            {{ item.preFlightNumber }}-->
+<!--          </p>-->
+<!--          <p>-->
+<!--            <span class="tw-font-semibold">-->
+<!--              {{ $tr('ifly.cms.map.aircraftType') }}:-->
+<!--            </span>-->
+<!--            {{ item.aircraft_type }}-->
+<!--          </p>-->
+<!--          <p>-->
+<!--            <span class="tw-font-semibold">{{ $tr('ifly.cms.map.estimatedTimeOfArrival') }}:</span>-->
+<!--            {{ minutesToHours(item.timeTotalEstimated) }}-->
+<!--          </p>-->
+<!--        </l-tooltip>-->
+<!--      </vRotatedMarker>-->
       <div>
         <l-marker
           v-for="(item, index) in listOfAirports"
@@ -61,14 +61,14 @@
           <l-tooltip>
             <p>
               {{ $tr('ifly.cms.map.airportName') }}:{{  item.airportName }}
-            </p> 
+            </p>
           </l-tooltip>
         </l-marker>
       </div>
     </l-map>
   </div>
 </template>
-  
+
 <script>
 import {
   LMap,
@@ -80,9 +80,9 @@ import {
   LIcon,
   LMarker,
   LTooltip,
-} from "vue2-leaflet";
+} from "@vue-leaflet/vue-leaflet";
 import coordinateModel from "./models/coordinateModel.js";
-import vRotatedMarker from "vue2-leaflet-rotatedmarker";
+//[ptc]import vRotatedMarker from "vue2-leaflet-rotatedmarker";
 import { Icon, LatLng, divIcon } from "leaflet";
 const ico = "https://i.ibb.co/d0bmMTz/black-plane.png";
 import qRampStore from '../../_store/qRampStore.js';
@@ -111,7 +111,7 @@ export default {
     LPolyline,
     LIcon,
     LMarker,
-    vRotatedMarker,
+    //[ptc]vRotatedMarker,
     LTooltip,
   },
   data() {
@@ -144,7 +144,7 @@ export default {
     },
     flightId() {
       return qRampStore().getFlightId();
-    },  
+    },
     dynamicSize() {
       return [this.iconSize, this.iconSize * 1.15];
     },
@@ -154,8 +154,8 @@ export default {
     aircraftList() {
       const flightList = this.flightList.map(item => {
         const flightPosition = item.flightPosition ? item.flightPosition : null;
-        const coordinates = flightPosition 
-          ? [flightPosition.lastPositionLatitude || 0, flightPosition.lastPositionLongitude || 0] 
+        const coordinates = flightPosition
+          ? [flightPosition.lastPositionLatitude || 0, flightPosition.lastPositionLongitude || 0]
           : [0, 0];
           return {
             ...item,
@@ -220,7 +220,7 @@ export default {
         qRampStore().setLoadingModalMap(false);
       }
     },
-    minutesToHours(numberOfMinutes) {  
+    minutesToHours(numberOfMinutes) {
       const duration = this.$moment.duration(numberOfMinutes, 'minutes');
       const hh = (duration.years()*(365*24)) + (duration.months()*(30*24)) + (duration.days()*24) + (duration.hours());
       const mm = duration.minutes();
@@ -230,7 +230,7 @@ export default {
       try {
           const flightList =  this.flightList.map(item => {
           const fligth = item[key] ? item[key] : {};
-          const coordinates = fligth 
+          const coordinates = fligth
           ? [fligth.lat || 0, fligth.lng || 0]
           : [0, 0];
           return {

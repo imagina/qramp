@@ -1,10 +1,10 @@
 <template>
   <div id="formFlyStep" class="tw-mt-6 tw-mb-20">
     <q-form @submit.prevent.stop="saveInfo" ref="myForm" id="rowContainer" class="row q-col-gutter-lg">
-      <table-flight 
-        @cancel="dialog = $event" 
-        :dialog="dialog" 
-        :dataTable="dataTable" 
+      <table-flight
+        @cancel="dialog = $event"
+        :dialog="dialog"
+        :dataTable="dataTable"
         @flightSelect="setDataTable($event)"
         @validateBound="validateBound(flightNumberField)"
       />
@@ -13,7 +13,7 @@
           <label v-if="keyField == 'customerId'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
             <dynamic-field
               v-if="bannerMessage"
-              class="q-mb-md" 
+              class="q-mb-md"
               :field="formFields.banner"
             />
             <dynamic-field
@@ -31,18 +31,18 @@
                 <div class="q-py-md q-px-md" @click="addCustumers">
                   <div class="row cursor-pointer" >
                     <div class="q-pr-md">
-                       <q-btn 
-                          push color="primary" 
-                          round 
-                          icon="fas fa-plus" 
+                       <q-btn
+                          push color="primary"
+                          round
+                          icon="fas fa-plus"
                           size="xs"
-                        /> 
+                        />
                     </div>
                     <div class="q-py-xs">
                       <label class="cursor-pointer">{{ $tr('ifly.cms.label.createNewCustomer') }}</label>
                     </div>
                   </div>
-                </div> 
+                </div>
               </div>
             </dynamic-field>
           </label>
@@ -61,11 +61,11 @@
           <hr v-if="readonly" class="label-container"/>
         </div>
       </div>
-      <div 
+      <div
         class="col-12 col-md-6"
       >
-        <div 
-          v-for="(field, keyField) in formFields.flyFormRight" 
+        <div
+          v-for="(field, keyField) in formFields.flyFormRight"
           :style="`${readonly ? 'height: 50px' : 'padding-bottom: 7px'}`"
         >
         <label :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">
@@ -127,7 +127,7 @@
         </div>
       </div>
       <div
-        v-if="isbound[1]" 
+        v-if="isbound[1]"
         class="col-12 col-md-6"
       >
         <div v-if="isCollapse">
@@ -135,7 +135,7 @@
             :title="$tr('isite.cms.label.outbound')"
             :flightNumber="form.outboundFlightNumber"
             :isComplete="completedFormOutBound"
-          > 
+          >
             <div
               v-for="(field, keyField) in formFields.outboundRight"
               class="tw-px-4"
@@ -206,8 +206,8 @@
 import responsive from '../../_mixins/responsive.js'
 import tableFlight from '../modal/tableFlight.vue'
 import qRampStore from '../../_store/qRampStore.js';
-import { 
-  BUSINESS_UNIT_PASSENGER , 
+import {
+  BUSINESS_UNIT_PASSENGER ,
   BUSINESS_UNIT_RAMP,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
@@ -347,7 +347,7 @@ export default {
         return true
       }
       if(this.readonly && this.responsive ){
-        return false   
+        return false
       }
       return false
     },
@@ -395,7 +395,7 @@ export default {
       return workOrderList()
         .getGatesList()
         .filter(item => {
-          return Number(item.stationId) === Number(this.form.stationId) 
+          return Number(item.stationId) === Number(this.form.stationId)
         })
         .map(item =>
           ({
@@ -407,9 +407,9 @@ export default {
       return workOrderList()
         .getStationList()
         .map(
-          item => ({ 
-            label: item.fullName, 
-            value: item.id 
+          item => ({
+            label: item.fullName,
+            value: item.id
           })
         )
     },
@@ -417,9 +417,9 @@ export default {
       return workOrderList()
         .getACTypesList()
         .map(
-          item => ({ 
-            label: item.model, 
-            value: item.id 
+          item => ({
+            label: item.model,
+            value: item.id
           })
         )
     },
@@ -427,18 +427,18 @@ export default {
       return workOrderList()
         .getAirlinesList()
         .map(
-          item => ({ 
-            label: item.airlineName, 
-            value: item.id 
+          item => ({
+            label: item.airlineName,
+            value: item.id
           })
         )
     },
     filterResponsible() {
       return workOrderList()
         .getResponsible()
-        .map(item => ({ 
-          label: item.fullName, 
-          value: item.id 
+        .map(item => ({
+          label: item.fullName,
+          value: item.id
         }))
     },
     validateRulesBlock() {
@@ -646,12 +646,12 @@ export default {
               'hide-bottom-space': false,
               options: workOrderList().getWorkOrderStatusesList()
               .map(
-                item => ({ 
-                  label: item.statusName, 
-                  value: item.id 
+                item => ({
+                  label: item.statusName,
+                  value: item.id
                 })
               )
-              
+
             },
             label: this.$tr('ifly.cms.form.status'),
           },
@@ -968,8 +968,8 @@ export default {
             }
           }
         }
-        
-        
+
+
         await this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gateId = updateForm.gateId
@@ -978,8 +978,8 @@ export default {
           this.form.date = this.dateFormatterFull(updateForm.date)
           this.update = false
           this.form.responsibleId = updateForm.responsibleId;
-          this.form.inboundFlightNumber = updateForm.inboundFlightNumber 
-          this.form.outboundFlightNumber = updateForm.outboundFlightNumber 
+          this.form.inboundFlightNumber = updateForm.inboundFlightNumber
+          this.form.outboundFlightNumber = updateForm.outboundFlightNumber
           this.form.inboundOriginAirportId = updateForm.inboundOriginAirportId
           this.form.inboundTailNumber = updateForm.inboundTailNumber;
           this.flightBoundFormStatus.boundTailNumber = this.checkIfDataArrives(updateForm.inboundTailNumber);
@@ -1006,7 +1006,7 @@ export default {
           }
           this.completeFormInbound = this.validateInbound('inboundLeft');
           this.completedFormOutBound = this.validateInbound('outboundRight');
-          this.form.cancellationNoticeTime = updateForm.cancellationNoticeTime; 
+          this.form.cancellationNoticeTime = updateForm.cancellationNoticeTime;
           this.form.cancellationType = updateForm.cancellationType;
           this.isCollapse = true;
         },1000)
@@ -1036,7 +1036,7 @@ export default {
     async menssageValidate() {
       let error = false;
       if(
-        this.form.operationTypeId === '3' 
+        this.form.operationTypeId === '3'
         && this.form.inboundFlightNumber
         && this.form.inboundOriginAirportId
         && this.form.inboundTailNumber
@@ -1059,11 +1059,11 @@ export default {
         }
         }
       }
-      
-      return error; 
+
+      return error;
     },
     currentDate() {
-      const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
+      const tzoffset = (new Date()).getTimezoneOffset() * 60000;
       const date = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1)
       this.form.date = this.dateFormatterFull(date)
     },
@@ -1079,7 +1079,7 @@ export default {
       this.timeoutID = setTimeout(function () {
         criteria = name == 'inboundFlightNumber' ?  _this.form.inboundFlightNumber : _this.form.outboundFlightNumber
         if(!criteria || criteria.length < 3) return ;
-        
+
         const params = {
           refresh: true,
           params: {
@@ -1125,7 +1125,7 @@ export default {
           this.$alert.error({message: this.$tr("ifly.cms.message.errorlookingForFlight") });
           console.log('error', error)
         })
-      },1500) 
+      },1500)
     },
     validateBound(name) {
       if(!name) return;
@@ -1155,7 +1155,7 @@ export default {
         this.$set(this.form, "outboundScheduledDeparture",  this.dateFormatterFull(estimatedOff))
         this.$set(this.form, "outboundTailNumber", registration)
         if(this.isPassenger) this.$set(this.form, "inboundGateArrival", gateDestination);
-      } 
+      }
       if(this.isbound[0] && !this.isbound[1]) {
         this.$set(this.form, "inboundFlightNumber", ident)
         const originAirportId = originAirport?.id || null;
@@ -1199,7 +1199,7 @@ export default {
         this.changeDate({
             name: 'outboundBlockOut'
         });
-        
+
       }
       qRampStore().validateStatusSelectedFlight(data);
     },
@@ -1207,7 +1207,7 @@ export default {
       this.dialog = dialog
       this.form.faFlightId = select.faFlightId || null;
       this.setForm(this.mainData.find((item,index) => {
-        return index === select.index 
+        return index === select.index
       }))
     },
     dateFormatterFull(rawDate) {
@@ -1221,7 +1221,7 @@ export default {
         this.dataTable = [];
         console.log(error);
       }
-    }, 
+    },
     validateSpecialCharacters(val) {
       if(/[^a-zA-Z0-9-]/.test(val)) {
         return this.$tr('isite.cms.message.specialCharactersAreNotAllowed');
@@ -1229,18 +1229,18 @@ export default {
       return !!val || this.$tr('isite.cms.message.fieldRequired');
     },
     setCustomerForm() {
-      const selectCustomers = this.selectCustomers === null || 
-      this.selectCustomers === undefined || 
+      const selectCustomers = this.selectCustomers === null ||
+      this.selectCustomers === undefined ||
       this.selectCustomers === '' ? {} : this.selectCustomers;
       this.form.customerId = (isNaN(selectCustomers.id)) ? null : selectCustomers.id;
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId ? null : customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
       qRampStore().setContractId(this.form.contractId);
-      const message = this.form.contractId 
-        ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}` 
+      const message = this.form.contractId
+        ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}`
         : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
-       
+
       this.bannerMessage =  selectCustomers && this.form.customerId !== null && !this.form.contractId ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
@@ -1312,7 +1312,7 @@ export default {
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
     validateDate(dateTime, dateMin = null) {
-        const date = this.form.inboundScheduledArrival 
+        const date = this.form.inboundScheduledArrival
           ? this.$moment(this.form.inboundScheduledArrival) : this.$moment();
         const today = date.format('YYYY/MM/DD');
         const hour = date.format('H');
@@ -1327,22 +1327,22 @@ export default {
         return validateDate ? dateTime <= hour : true;
     },
     validateDateOutboundBlockOut(dateTime, dateMin = null) {
-      const outboundScheduledDepartureDate = this.form.outboundBlockOut 
-          ? this.$moment(this.form.outboundBlockOut) : this.$moment();    
-      const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');  
-      const inboundBlockIn = this.form.inboundBlockIn 
-          ? this.$moment(this.form.inboundBlockIn) : this.$moment();    
-      const todayIn =  inboundBlockIn.format('YYYY/MM/DD')  
+      const outboundScheduledDepartureDate = this.form.outboundBlockOut
+          ? this.$moment(this.form.outboundBlockOut) : this.$moment();
+      const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
+      const inboundBlockIn = this.form.inboundBlockIn
+          ? this.$moment(this.form.inboundBlockIn) : this.$moment();
+      const todayIn =  inboundBlockIn.format('YYYY/MM/DD')
       const hourIn = inboundBlockIn.format('H');
       const minIn = inboundBlockIn.format('mm');
       const validateDate = today === todayIn;
 
-      if (isNaN(dateTime)) {    
+      if (isNaN(dateTime)) {
         if(this.form.inboundBlockIn) {
-          return dateTime <= this.$moment().format('YYYY/MM/DD') 
+          return dateTime <= this.$moment().format('YYYY/MM/DD')
           && dateTime >= todayIn;
         }
-        return dateTime <= this.$moment().format('YYYY/MM/DD') 
+        return dateTime <= this.$moment().format('YYYY/MM/DD')
         && dateTime >= today;
       }
       if(dateMin) {
@@ -1360,7 +1360,7 @@ export default {
     },
     zanetizeData(key) {
         this.completeFormInbound = this.validateInbound('inboundLeft');
-        this.completedFormOutBound = this.validateInbound('outboundRight');  
+        this.completedFormOutBound = this.validateInbound('outboundRight');
         if(key === 'inboundFlightNumber' || key === 'outboundFlightNumber') {
           if(this.form[key]) {
             this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');
@@ -1382,20 +1382,26 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-  #formFlyStep
-    #origin
-      padding-bottom 0px
-    hr.label-container
-      position relative
-      bottom 20px
-      border-top 1px dashed #000D4726
-      z-index 1
-    .span 
-      padding-bottom 10px
-    .spanBottom
-      padding-bottom 15px
-    .card-bound
-      border: 1px solid #f1f4fa;
-      border-radius: 8px 8px 0px 0px; 
+<style lang="scss" scoped>
+#formFlyStep {
+  #origin {
+    padding-bottom: 0px;
+  }
+  hr.label-container {
+    position: relative;
+    bottom: 20px;
+    border-top: 1px dashed #000D4726;
+    z-index: 1;
+  }
+  .span {
+    padding-bottom: 10px;
+  }
+  .spanBottom {
+    padding-bottom: 15px;
+  }
+  .card-bound {
+    border: 1px solid #f1f4fa;
+    border-radius: 8px 8px 0px 0px;
+  }
+}
 </style>

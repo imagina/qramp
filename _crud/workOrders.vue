@@ -178,8 +178,8 @@ export default {
                             action: (item) => {
                                 const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
                                 const workOrder = {
-                                        workOrderId: item.id, 
-                                        faFlightId: item.faFlightId, 
+                                        workOrderId: item.id,
+                                        faFlightId: item.faFlightId,
                                         flightNumber:  flightNumberInbound || item.inboundFlightNumber,
                                         boundScheduleDate: item.inboundScheduleArrival || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                                         type: 'inbound',
@@ -203,10 +203,10 @@ export default {
                             format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
                             action: (item) => {
                                 const flightNumberOutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
-                                
+
                                 const workOrder = {
-                                        workOrderId: item.id, 
-                                        faFlightId: item.outboundFaFlightId, 
+                                        workOrderId: item.id,
+                                        faFlightId: item.outboundFaFlightId,
                                         flightNumber: flightNumberOutbound || item.outboundFlightNumber,
                                         boundScheduleDate: item.outboundScheduledDeparture || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                                         type: 'outbound',
@@ -715,5 +715,5 @@ export default {
     }
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

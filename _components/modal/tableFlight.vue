@@ -17,7 +17,7 @@
           :filter="filter"
           class="my-sticky-header-column-table"
           :selected.sync="selected"
-          
+
         >
           <template v-slot:top-left>
             <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
@@ -27,16 +27,16 @@
             </q-input>
           </template>
           <template v-slot:body="props">
-            <q-tr 
+            <q-tr
               :props="props"
               :class="{
                 'tw-bg-red-500': props.row.cancelled
               }"
             >
               <q-td auto-width>
-                <q-checkbox 
-                  dense 
-                  v-model="props.selected" 
+                <q-checkbox
+                  dense
+                  v-model="props.selected"
                   :label="props.row.name"
                   :disabled="props.row.cancelled"
                 />
@@ -130,14 +130,20 @@ export default {
   },
 }
 </script>
-<style lang="stylus">
-  .cardResponsive
-    overflow-y: scroll;
-    height: 500px;
-  .my-sticky-header-column-table
-    tr th
-      position: sticky
-      z-index: 2
-      background: $primary
-      color: #fff
+<style lang="scss">
+.cardResponsive {
+  overflow-y: scroll;
+  height: 500px;
+
+  .my-sticky-header-column-table {
+    tr {
+      th {
+        position: sticky;
+        z-index: 2;
+        background: $primary;
+        color: #fff;
+      }
+    }
+  }
+}
 </style>
