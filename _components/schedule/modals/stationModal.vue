@@ -95,8 +95,10 @@ export default {
       try {
         this.$refs.formStation.validate().then(async (success) => {
           if (success) {
-            cache.set("stationId", this.stationId);
-            this.$emit("saveFilterStationId", this.stationId);
+            if (this.stationId) {
+              cache.set("stationId", this.stationId);
+              this.$emit("saveFilterStationId", this.stationId);
+            }
             this.hideModal();
           }
         });

@@ -13,6 +13,9 @@ import modalScheduleStore from '../store/modalSchedule.store'
 import showWorkOrder from '../actions/showWorkOrders';
 import openInlineSchedule from '../actions/openInlineSchedule'
 import scheduleTypeModel from "../models/scheduleType.model";
+import selectFlightNumberStore from '../../modal/selectFlightNumber/store/selectFlightNumber'
+import validateOperationType from '../actions/validateOperationType'
+import moment from 'moment';
 
 export default function useKanbanCard(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -69,7 +72,7 @@ export default function useKanbanCard(props: any = {}) {
       openInlineSchedule(props);
       return;
     }
-    modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
+    modalScheduleStore.titleModal = `Edit schedule Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
       const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
@@ -89,6 +92,38 @@ export default function useKanbanCard(props: any = {}) {
     modalScheduleStore.showModal = true;
     modalScheduleStore.form = { ...props.card };
   }
+  function openModalSelectFlightNumber() {
+    let workOrder: any = null;
+    const isbound = validateOperationType(props.card.operationTypeId);
+    if(isbound.inbound && isbound.outbound) {
+      selectFlightNumberStore.showModal = true;
+      selectFlightNumberStore.flightNumbers = props.card;
+      return;
+    }
+    if(isbound.inbound && !isbound.outbound) {
+        const flightNumberInbound = props.card.faFlightId.split('-')[0] || null;
+        workOrder = {
+          workOrderId: props.card.id, 
+          faFlightId: props.card.faFlightId, 
+          flightNumber: flightNumberInbound || props.card.inboundFlightNumber,
+          boundScheduleDate: props.card.inboundScheduleArrival || moment().format('YYYY-MM-DDTHH:mm:ss'),
+          type: 'inbound',
+        }                           
+    }
+    if(!isbound.inbound && isbound.outbound) {
+      const flightNumberoutbound = props.card.outboundFaFlightId.split('-')[0] || null;
+      workOrder = {
+        workOrderId: props.card.id, 
+        faFlightId: props.card.outboundFaFlightId, 
+        flightNumber: flightNumberoutbound || props.card.outboundFlightNumber,
+        boundScheduleDate: props.card.outboundScheduledDeparture || moment().format('YYYY-MM-DDTHH:mm:ss'),
+        type: 'outbound',
+      }
+    }
+    qRampStore().setWorkOrder(workOrder);
+    qRampStore().showVisibleMapModal();
+    
+  }
   return {
     colorCheckSchedule,
     titleStatus,
@@ -97,6 +132,8 @@ export default function useKanbanCard(props: any = {}) {
     gates,
     openModalSchedule,
     isBlank,
-    isPassenger
+    isPassenger,
+    storeKanban,
+    openModalSelectFlightNumber,
   };
 }

@@ -1,25 +1,44 @@
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
-import Vue, { computed} from 'vue';
-import { BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, COMPANY_RAMP } from '../../model/constants.js';
+import Vue from 'vue';
+import { BUSINESS_UNIT_PASSENGER } from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
+import { WorkOrders } from '../contracts/getWorkOrder.contract.js';
+import dataReturnedWorkOrderModel from '../models/dataReturnedWorkOrder.model';
+import saveWorkOrderOffline from './saveWorkOrderOffline';
+import storeKanban from '../store/kanban.store';
 
-export default async function saveSimpleWorkOrders(): Promise<void> {
+export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
     try {
+        const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
+        let response = { ...dataReturnedWorkOrderModel }
+
         const isPassenger = qRampStore().getIsPassenger();
-        const form = {...modalScheduleStore.form, preFlightNumber: modalScheduleStore.form.inboundFlightNumber};
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP
+        const offlineId = new Date().valueOf();
+        const form = { ...modalScheduleStore.form };
         const businessUnitId = isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
-        const response = await Vue.prototype.$crud.create(
-          "apiRoutes.qramp.simpleWorkOrders",
-          {
-            ...form,
-            titleOffline: Vue.prototype.$tr('ifly.cms.form.newWorkOrder'),
-            companyId,
-            ...businessUnitId,
-          }
-        );
+
+        try {
+          response = await Vue.prototype.$crud.create(
+            API_ROUTE,
+            {
+              ...form,
+              offlineId: storeKanban.isAppOffline ? offlineId: null,
+              titleOffline: Vue.prototype.$tr('ifly.cms.form.newWorkOrder'),
+              ...businessUnitId,
+            }
+          );
+        } catch (err) {
+          console.log(err)
+        }
+        modalScheduleStore.form.offlineId = offlineId
+        
+        response = await saveWorkOrderOffline(response);
+        
         return response;
       } catch (error) {
         console.error(error);
+        return {
+          ...dataReturnedWorkOrderModel
+        }
       }
 }

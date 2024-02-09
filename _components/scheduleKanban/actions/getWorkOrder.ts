@@ -3,11 +3,15 @@ import {WorkOrders} from '../contracts/getWorkOrder.contract'
 import filtersStore from '../store/filters.store'
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP } from '../../model/constants';
+import dataReturnedWorkOrder from '../models/dataReturnedWorkOrder.model'
+import getWorkOrderOffline from './getWorkOrderOffline';
+import store from '../store/kanban.store';
 
-export default function getWorkOrders(refresh = false, page = 1, date): WorkOrders {
+export default async function getWorkOrders(refresh = false, page = 1, date): Promise<WorkOrders> {
     try {
         const isPassenger = qRampStore().getIsPassenger();
         const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        
         const params = {
             refresh,
             params: {
@@ -25,25 +29,18 @@ export default function getWorkOrders(refresh = false, page = 1, date): WorkOrde
                 },
             },
         };
-        const response = Vue.prototype.$crud.index(
-            "apiRoutes.qramp.workOrders",
-            params,
+        if (!store.isAppOffline) {
+            return Vue.prototype.$crud.index(
+                "apiRoutes.qramp.workOrders",
+                params,
+            );
+        }
 
-        );
-        return response;
+        return await getWorkOrderOffline(date, page)
     } catch (error) {
         console.log(error);
         return {
-            data: [],
-            meta: {
-                page: {
-                    total: 0,
-                    HasNextPage: false,
-                    HasPreviousPage: false,
-                    currentPage: 1,
-                    perPage: 1
-                }
-            }
+            ...dataReturnedWorkOrder
         }
     }
 }

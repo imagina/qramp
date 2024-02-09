@@ -19,7 +19,7 @@ export default async function setUrlParams(proxy: any): Promise<void>{
       }
 
       modalScheduleStore.stationId = query.stationId;
-      cache.set("stationId", store.form.stationId);
+      if (store.form.stationId) cache.set("stationId", store.form.stationId);
       proxy.$router.push({
         name: proxy.$route.name,
         query

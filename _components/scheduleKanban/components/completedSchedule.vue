@@ -64,7 +64,11 @@
                     flat
                     dense
                     @click="openForm"
-                />
+                >
+                    <q-tooltip>
+                        Create schedule
+                    </q-tooltip>
+                </q-btn>
                 <span class="
                     tw-h-4
                     tw-text-lg
@@ -82,7 +86,11 @@
                     flat
                     dense
                     @click="refresh"
-                />
+                >
+                    <q-tooltip>
+                        {{ $trp('isite.cms.label.refresh') }}
+                    </q-tooltip>
+                </q-btn>
             </div>
             </div>
         </div>

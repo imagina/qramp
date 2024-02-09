@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import {WorkOrders} from '../contracts/getWorkOrder.contract'
+import { WorkOrders } from '../contracts/getWorkOrder.contract'
+import dataReturnedWorkOrderModel from '../models/dataReturnedWorkOrder.model';
 import getWorkOrder from './getWorkOrder'
 import storeFilters from "../store/filters.store";
 
@@ -18,16 +18,7 @@ export default async function getIndividualWorkOrders(refresh = false, page = 1,
     } catch (error) {
         console.log(error);
         return {
-            data: [],
-            meta: {
-                page: {
-                    total: 0,
-                    HasNextPage: false,
-                    HasPreviousPage: false,
-                    currentPage: 1,
-                    perPage: 1
-                }
-            }
+            ...dataReturnedWorkOrderModel
         }
     }
 }

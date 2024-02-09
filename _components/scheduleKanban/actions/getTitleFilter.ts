@@ -11,7 +11,7 @@ export default function getTitleFilter(): void {
     if(storeKanban.scheduleType == scheduleTypeModel[0].value){
       store.titleFilter = `${selectedDate
         .startOf("week")
-        .format("MMMM D")}, ${selectedDate
+        .format("MMMM D")} - ${selectedDate
           .endOf("week")
           .format("MMMM D")}, ${filterTime?.label}`
     } else {

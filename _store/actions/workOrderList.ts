@@ -17,12 +17,11 @@ import {
     StationContract,
     WorkOrderList,
     WorkOrders,
-    WorkOrderStatusesContract
+    WorkOrderStatusesContract,
+    WorkOrderDelays,
 } from './@Contracts/workOrderList.contract';
 import { buildServiceList } from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
-import cache from '@imagina/qsite/_plugins/cache.js';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
 
 const state = reactive<State>({
     operationTypeList: [],
@@ -36,6 +35,8 @@ const state = reactive<State>({
     airlinesList: [],
     actypesList: [],
     airportsList: [],
+    workOrderDelays: [],
+    responsibleList: [],
     /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
     workOrderList: {
         data: [],
@@ -137,6 +138,22 @@ export default function workOrderList(): WorkOrderList {
     }
     function getAirportsList(): any {
         return state.airportsList;
+    }
+
+    function getWorkOrderDelays(): WorkOrderDelays[] {
+        return state.workOrderDelays;
+    }
+
+    function setWorkOrderDelays(data: WorkOrderDelays[]) {
+        state.workOrderDelays = data;
+    }
+
+    function setResponsible(data): void {
+        state.responsibleList = data
+    }
+
+    function getResponsible(): any {
+        return state.responsibleList;
     }
 
     //
@@ -470,7 +487,7 @@ export default function workOrderList(): WorkOrderList {
                             businessUnitId,
                             date: {
                                 field: "created_at",
-                                type: "15DaysAroundToday",
+                                type: "5daysAroundToday",
                                 from: null,
                                 to: null
                             },
@@ -480,7 +497,6 @@ export default function workOrderList(): WorkOrderList {
                             },
                             withoutDefaultInclude: true,
                         },
-                        take: 200,
                         page: 1
                     },
                 }
@@ -508,7 +524,6 @@ export default function workOrderList(): WorkOrderList {
                     params: {
                         filter: {
                             withoutContracts: true,
-                            adHocWorkOrders: true,
                             customerStatusId: 1,
                             companyId,
                         }
@@ -562,6 +577,57 @@ export default function workOrderList(): WorkOrderList {
         }
     }
 
+    async function getListDelays(refresh = false) {
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.work-order-delays.index')) {
+            try {
+                const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    params: {
+                        filter: {
+                            companyId,
+                        },
+                    },
+                };
+                const response = await baseService.index(API_ROUTE, params)
+                const data = response.data || [];    
+                const codeList = data.map((item) => ({
+                    id: item.id,
+                    label: item.name,
+                    value: item.name,
+                }));
+                setWorkOrderDelays(codeList);
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    }
+
+    async function getResponsibleList(refresh = false) {
+        if (Vue.prototype.$auth && (Vue.prototype.$auth.hasAccess('ramp.work-orders.index') || Vue.prototype.$auth.hasAccess('ramp.passenger-work-orders.index'))) {
+            try {
+                const API_ROUTE = 'apiRoutes.quser.users'
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                    refresh,
+                    params: {
+                        filter: {
+                            companyId,
+                        },
+                    },
+                };
+                const response = await baseService.index(API_ROUTE, params)
+                const data = response.data || [];
+                setResponsible(data);
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    }
+
     async function getAirports(refresh = false) {
         if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airport.index')) {
             try {
@@ -587,7 +653,6 @@ export default function workOrderList(): WorkOrderList {
         }
     }
 
-
     /**
      * The function getAllList() returns a Promise that resolves to void.
      */
@@ -603,8 +668,10 @@ export default function workOrderList(): WorkOrderList {
             getGates(refresh),
             getAirlines(refresh),
             getACTypes(refresh),
+            getListDelays(refresh),
+            getResponsibleList(refresh),
             getAirports(refresh),
-            buildServiceList()
+            buildServiceList(),
         ]);
     }
 
@@ -684,6 +751,10 @@ export default function workOrderList(): WorkOrderList {
         setACTypesList,
         getACTypesList,
         setAirportsList,
-        getAirportsList
+        getAirportsList,
+        setWorkOrderDelays,
+        getWorkOrderDelays,
+        setResponsible,
+        getResponsible,
     }
 }

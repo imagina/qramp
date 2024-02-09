@@ -26,5 +26,12 @@ export default {
       permission: 'ramp.dashboard.percentage-work-orders-posted',
       component: () => import('../_components/quick-cards/percentage.vue')
     }
-  ]
+  ],
+  offline: async (refresh=false) => {
+    const module = await import('../_store/actions/workOrderList.ts')
+    const buildKanbanStructure = await import('../_components/scheduleKanban/actions/buildKanbanStructure.ts')
+    
+    await module.default().getAllList(refresh)
+    await buildKanbanStructure?.default(true)
+  }
 }

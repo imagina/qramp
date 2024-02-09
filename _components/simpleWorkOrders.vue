@@ -152,7 +152,7 @@ export default {
   methods: {
     zanetizeData(key) {
       if (key === 'preFlightNumber') {
-        this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');
+        this.form[key] = this.form[key]?.toUpperCase()?.replace(/\s+/g, '');
       }
     },
     addCustumers() {
@@ -288,7 +288,7 @@ export default {
         const params = {
           refresh: true,
           params: {
-            filter: {search: this.form.preFlightNumber.toUpperCase()},
+            filter: {search: this.form?.preFlightNumber?.toUpperCase()},
           },
         };
         this.loadingState = true;
@@ -318,36 +318,45 @@ export default {
     },
     async saveRequestSimpleWorkOrder() {
       try {
+        const CACHE_PATH = 'apiRoutes.qramp.workOrders'
+        const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
+        let response = null
+
         qRampStore().showLoading();
         const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
-        const offlineId = 'work-order-' + this.$uid();
+        const offlineId = new Date().valueOf()
+
         const dataForm = {
-              ...this.form, 
-              offlineId, 
-              titleOffline: qRampStore().getTitleOffline(), 
-              companyId: this.filterCompany,
-              ...businessUnitId,
+          ...this.form, 
+          offlineId: this.isAppOffline ? offlineId : null, 
+          titleOffline: qRampStore().getTitleOffline(),
+          ...businessUnitId,
         };
-        const response = await this.$crud.create(
-            "apiRoutes.qramp.simpleWorkOrders",dataForm,
-        )
-        if(this.isAppOffline) {
-          const offlineWorkOrder = {
-            ...modelWorkOrder,
-            stationId: Number(this.form.stationId),
-            customerId: Number(this.form.customerId),
-            inboundFlightNumber: this.form.preFlightNumber,
-            outboundFlightNumber: this.form.preFlightNumber,
-            offline: this.isAppOffline,
-            id: offlineId
-          };
-          cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", offlineWorkOrder);
-        }else{
-          workOrderList().getWorkOrders(true, true);
+        try {
+          response = await this.$crud.create(
+            API_ROUTE,
+            dataForm,
+          )
+        } catch (err) {
+          console.log(err)
         }
+
+        const offlineWorkOrder = {
+          ...modelWorkOrder,
+          adHoc: this.form.adHoc,
+          stationId: Number(this.form.stationId),
+          customerId: Number(this.form.customerId),
+          inboundFlightNumber: this.form.preFlightNumber,
+          outboundFlightNumber: this.form.preFlightNumber,
+          offline: this.isAppOffline,
+          id: this.isAppOffline ? offlineId : await response?.data?.id
+        };
+        await cacheOffline.addNewRecord(CACHE_PATH, offlineWorkOrder);
+
+        if(!this.isAppOffline) workOrderList().getWorkOrders(true, true)
         qRampStore().hideLoading();
         
-        return this.isAppOffline ? {data: {...modelWorkOrder, ...dataForm, id: offlineId } } : response;
+        return this.isAppOffline ? { data: { ...offlineWorkOrder } } : response;
       } catch (error) {
         qRampStore().hideLoading();
         console.error(error);

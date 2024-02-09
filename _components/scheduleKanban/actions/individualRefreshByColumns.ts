@@ -1,4 +1,5 @@
 import moment from 'moment';
+import _ from 'lodash'
 import kanbanStore from '../store/kanban.store';
 import modalScheduleStore from '../store/modalSchedule.store'
 import getIndividualWorkOrders from './getIndividualWorkOrders';
@@ -14,9 +15,13 @@ export default async function individualRefreshByColumns(): Promise<void> {
     try {
         column.loading = true;
         column.page = 1;
-        const response = await getIndividualWorkOrders(true, column.page, moment(modalScheduleStore.seletedDateColumn));
-        column.cards = response.data;
 
+        const response = await getIndividualWorkOrders(
+            true, 
+            column.page, 
+            moment(modalScheduleStore.seletedDateColumn)
+        );
+        column.cards = response.data;
         const date = moment(modalScheduleStore.seletedDateColumn)
         const startDate = date.startOf('day');
         const endDate = date.endOf('day');
@@ -24,11 +29,20 @@ export default async function individualRefreshByColumns(): Promise<void> {
         const params = {
             field: "schedule_date",
             type: "customRange",
-            from: startDate.set({ hour: filterTime[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss'),
-            to: endDate.set({ hour: filterTime[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss')
+            from: startDate.set({ 
+                hour: filterTime[0], 
+                minute: 0, 
+                second: 0 
+            }).format('YYYY-MM-DD HH:mm:ss'),
+            to: endDate.set({ 
+                hour: filterTime[1], 
+                minute: 59, 
+                second: 59 
+            }).format('YYYY-MM-DD HH:mm:ss')
         }
 
-        const statistics:any = await getWorkOrdersStatistics(true, params)
+        const statistics = await getWorkOrdersStatistics(true, params)
+
         column.completed = statistics.data.completed
         column.uncompleted = statistics.data.uncompleted
         column.loading = false;

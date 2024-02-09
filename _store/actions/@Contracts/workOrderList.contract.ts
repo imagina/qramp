@@ -398,6 +398,28 @@ export interface Page {
     perPage: number;
 }
 
+export interface WorkOrderDelays {
+    createdAt: string | null;
+    createdBy: number | null;
+    defaultInclude: string;
+    deletedAt: string | null;
+    deletedBy: number | null;
+    externalId: string | null;
+    fileFormats: null;
+    forceDelete: boolean;
+    id: number;
+    isReportable: boolean;
+    isRevisionable: boolean;
+    name: string;
+    options: null;
+    restoredAt: string | null;
+    restoredBy: number | null;
+    searchableFields: string;
+    status: boolean;
+    updatedAt: string | null;
+    updatedBy: number | null;
+}
+
 export interface State {
     operationTypeList: OperationType[];
     stationList: StationContract[];
@@ -411,6 +433,8 @@ export interface State {
     airlinesList: any[];
     actypesList: any[];
     airportsList: any[];
+    workOrderDelays: WorkOrderDelays[];
+    responsibleList: any[];
 }
 
 export interface WorkOrderList {
@@ -446,4 +470,8 @@ export interface WorkOrderList {
     getACTypesList: () => any;
     setAirportsList: (data: any) => void;
     getAirportsList: () => any;
+    setWorkOrderDelays: (data: WorkOrderDelays[]) => void;
+    getWorkOrderDelays: () => WorkOrderDelays[];
+    setResponsible: (data: any)  => void;
+    getResponsible: ()  => any;
 }

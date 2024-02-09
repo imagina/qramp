@@ -90,9 +90,13 @@
             tw-px-2
             tw-py-1
             tw-uppercase
+            tw-cursor-pointer
             text-status-tablet"
+            @click="openModalSelectFlightNumber" 
           >
-            <span :class="flightStatuses.color">
+            <span 
+              :class="flightStatuses.color" 
+            >
               <i class="tw-mr-1" :class="flightStatuses.icon"
               />{{ flightStatuses.name}}
             </span>            

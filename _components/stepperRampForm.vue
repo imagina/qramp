@@ -45,10 +45,10 @@ import {
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP, 
   COMPANY_PASSENGER,
-  COMPANY_RAMP
+  COMPANY_RAMP,
+  OPERATION_TYPE_OTHER
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
-import serviceList from './serviceList/index.vue';
 import serviceListStore from './serviceList/store/serviceList.ts';
 import cargoStore from './cargo/store/cargo.ts';
 import {
@@ -61,7 +61,7 @@ import {
 } from './model/constants.js';
 import remarkStore from './remarks/store.ts';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
-
+import workOrderList from '../_store/actions/workOrderList.ts'
 
 export default {
   name: 'stepperRampForm',
@@ -181,12 +181,19 @@ export default {
           adHoc: data.form.adHoc == 1,
           customCustomer: data.form.customCustomer == 1,
           delay: dataCargo.delay,
+          ourDelay: dataCargo.ourDelay,
+          delayComment: dataCargo.delayComment,
           workOrderItems: [
             ...serviceList
           ],
           companyId: this.filterCompany,
           ...businessUnitId,
         }
+
+        if (this.isAppOffline) {
+          formatData.titleOffline = `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${this.data.workOrderId}`;
+        }
+
         if (this.data.update) {
           formatData.id = this.data.workOrderId;
         }
@@ -196,7 +203,13 @@ export default {
             mode: "modal",
             message: 'Surely you want to save the work order without services',
             actions: [
-              {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+              {
+                label: this.$tr('isite.cms.label.cancel'), 
+                color: 'grey-8',
+                handler: async () => {
+                  qRampStore().hideLoading();
+                },
+              },
               {
                 label: this.$tr("isite.cms.label.yes"),
                 color: "primary",
@@ -239,8 +252,26 @@ export default {
     previous() {
       this.$refs.stepper.previous()
     },
+    async updateDataInCache(route, data) {
+      const formatDataOffline = structuredClone(data);
+      formatDataOffline.offline = true;
+      const inboundBlockIn = this.parseDateOfflineWO(formatDataOffline.inboundBlockIn);
+      const inboundScheduledArrival = this.parseDateOfflineWO(formatDataOffline.inboundScheduledArrival);
+      const outboundBlockOut = this.parseDateOfflineWO(formatDataOffline.outboundBlockOut);
+      const outboundScheduledDeparture = this.parseDateOfflineWO(formatDataOffline.outboundScheduledDeparture);
+      const workOrder = {
+        ...formatDataOffline,
+        inboundBlockIn,
+        inboundScheduledArrival,
+        outboundBlockOut,
+        outboundScheduledDeparture
+      };
+      const camelCaseFormatData = Object.values(this.$helper.snakeToCamelCaseKeys(workOrder.workOrderItems));
+      workOrder.workOrderItems = camelCaseFormatData;
+      await cacheOffline.updateRecord(route, workOrder, workOrder?.id);
+    },
     async sendWorkOrder(formatData) {
-      const route = 'apiRoutes.qramp.workOrders';
+      const ROUTE = 'apiRoutes.qramp.workOrders';
       const titleOffline = qRampStore().getTitleOffline();
       const params = {params: {titleOffline}};
       if (this.disabledReadonly) {
@@ -251,8 +282,13 @@ export default {
       if (this.disabled) return;
       this.disabled = true;
       this.$emit('loading', true)
-      const request = this.data.update ? this.$crud.update(route, this.data.workOrderId, formatData, params)
-          : this.$crud.create(route, formatData, params);
+
+      await this.updateDataInCache(ROUTE, formatData)
+
+      const request = this.data.update 
+        ? this.$crud.update(ROUTE, this.data.workOrderId, formatData, params)
+        : this.$crud.create(ROUTE, formatData, params);
+
       await request.then(async res => {
         this.clean()
         this.$emit('close-modal', false)
@@ -264,32 +300,17 @@ export default {
         qRampStore().hideLoading();
         await this.$emit('getWorkOrders', formatData);
       })
-          .catch(async err => {
-            qRampStore().hideLoading();
-            this.disabled = false;
-            this.$emit('loading', false)
-            if (!this.isAppOffline) {
-              this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
-              console.log('SEND INFO ERROR:', err)
-            }else{
-              formatData.offline = true;
-              const inboundBlockIn = this.parseDateOfflineWO(formatData.inboundBlockIn);
-              const inboundScheduledArrival = this.parseDateOfflineWO(formatData.inboundScheduledArrival);
-              const outboundBlockOut = this.parseDateOfflineWO(formatData.outboundBlockOut);
-              const outboundScheduledDeparture = this.parseDateOfflineWO(formatData.outboundScheduledDeparture);
-              formatData = {
-                ...formatData,
-                inboundBlockIn,
-                inboundScheduledArrival,
-                outboundBlockOut,
-                outboundScheduledDeparture
-              };
-              const camelCaseFormatData = Object.values(this.$helper.snakeToCamelCaseKeys(formatData.workOrderItems));
-              formatData.workOrderItems = camelCaseFormatData;
-              await cacheOffline.updateRecord(route, formatData);
-              await this.$emit('close-modal', false)
-            }
-          })
+      .catch(async err => {
+        qRampStore().hideLoading();
+        this.disabled = false;
+        this.$emit('loading', false)
+        this.$emit('close-modal', false);
+        await this.$emit('getWorkOrders', formatData);
+        if (!this.isAppOffline) {
+          this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
+          console.log('SEND INFO ERROR:', err)
+        }
+      })
     },
     validateFulldate() {
       return new Promise(async (resolve) => {
@@ -312,20 +333,38 @@ export default {
       try {
         const flightForm = this.$store.state.qrampApp.form;
         let flightformField = this.isPassenger ? FlightformFieldPassengerModel : FlightformFieldModel;
-        const halfTurnInBount = this.isPassenger ? HalfTurnInBountPassengerModel : HalfTurnInBountModel;
-        const halfTurnOutBount = this.isPassenger ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
-        if (flightForm.operationTypeId == 3) {
-          flightformField = flightformField.concat(halfTurnInBount);
+        const halfTurnInBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        ?  HalfTurnInBountPassengerModel : HalfTurnInBountModel;
+        const halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
+        
+        if(!this.isPassenger && flightForm.operationTypeId != OPERATION_TYPE_OTHER) {
+          flightformField = flightformField.concat(['inboundBlockIn']);
         }
-        if (flightForm.operationTypeId == 4) {
-          flightformField = flightformField.concat(halfTurnOutBount);
+
+        if(!flightForm.customCustomerName) {
+          flightformField = flightformField.concat(['customerId']);
         }
-        if (flightForm.operationTypeId == 2
-            || flightForm.operationTypeId == 1
-            || flightForm.operationTypeId == 6
-            || flightForm.operationTypeId == 5) {
-          const bount = halfTurnInBount.concat(halfTurnOutBount);
-          flightformField = flightformField.concat(bount);
+
+        const operationType = workOrderList().getOperationTypeList()
+          .find(item => item.id === Number(flightForm.operationTypeId));
+        const type = operationType?.options?.type;
+        
+        if(type) {
+          if(type === 'full'){
+            const bount = halfTurnInBount.concat(halfTurnOutBount);
+            flightformField = flightformField.concat(bount);
+          }
+          if(type === 'inbound') {
+            flightformField = flightformField.concat(halfTurnInBount);
+          }
+          if(type === 'outbound') {
+            flightformField = flightformField.concat(halfTurnOutBount);
+          }
+        }
+        const cancellationType =  flightForm.cancellationType;
+        if(cancellationType) {
+          flightformField = flightformField.concat(['cancellationNoticeTime']);
         }
         const validateflightform = flightformField
             .some(item => flightForm[item] === null || flightForm[item] === '')

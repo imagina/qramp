@@ -14,7 +14,7 @@ export default function modelFields() {
         return workOrderList()
           .getGatesList()
           .filter(item => {
-            return item.stationId == Number(store.stationId)
+            return Number(item.stationId) === Number(store.stationId)
           })
           .map(item =>
             ({
@@ -22,6 +22,29 @@ export default function modelFields() {
               label: item.name
             }));
     });
+
+    const filterStation = computed(() => {
+      return workOrderList()
+        .getStationList()
+        .map(
+          item => ({ 
+            label: item.stationName, 
+            value: item.id 
+          })
+        )
+    })
+
+    const filterAcType = computed(() => {
+      return workOrderList()
+        .getACTypesList()
+        .map(
+          item => ({ 
+            label: item.model, 
+            value: item.id 
+          })
+        )
+    })
+
     const flightStatusesList = computed(() => workOrderList().getFlightStatusesList().map((item) =>({
         label: item.name,
         id: item.id,
@@ -58,16 +81,8 @@ export default function modelFields() {
                 ],
                 label: `*${Vue.prototype.$tr('ifly.cms.form.station')}`,
                 clearable: true,
-                color:"primary"
-              },
-              loadOptions: {
-                apiRoute: 'apiRoutes.qsetupagione.setupStations',
-                select: {label: 'stationName', id: 'id'},
-                requestParams: {filter: {
-                  "status": 1,
-                  companyId: companyId.value,
-                  "allTranslations": true
-                }}
+                color:"primary",
+                options: filterStation.value
               },
             },
             gateId: {
@@ -144,10 +159,7 @@ export default function modelFields() {
               type: 'select',
               props: {
                 label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
-                options: workOrderList().getACTypesList().map(item => ({
-                  label: item.model,
-                  value: item.id
-                })),
+                options: filterAcType.value,
               },
             },
           },

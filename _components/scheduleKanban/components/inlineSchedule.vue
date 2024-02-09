@@ -38,13 +38,13 @@
           tw-rounded-lg
           tw-px-2 tw-py-1
           tw-text-white"
-          v-if="card.id"
-        @click.prevent="showModalComments"
-      >
-        <i class="fa-light fa-comment" />
-        <q-tooltip>
-          {{ $tr("isite.cms.label.comment") }}
-        </q-tooltip>
+          v-if="card.id && !storeKanban.isAppOffline"
+          @click.prevent="showModalComments"
+        >
+          <i class="fa-light fa-comment" />
+          <q-tooltip>
+            {{ $tr("isite.cms.label.comment") }}
+          </q-tooltip>
       </button>
       <button
         @click.prevent="hideInline"
@@ -68,6 +68,7 @@ import useModalSchedule from '../uses/useModalSchedule'
 import scheduleFields from './scheduleFields.vue'
 import modalComments from './modalComments.vue'
 import useModalComments from '../uses/useModalComments';
+import storeKanban from '../store/kanban.store';
 
 export default defineComponent({
   components: {

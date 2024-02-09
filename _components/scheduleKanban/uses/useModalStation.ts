@@ -3,7 +3,6 @@ import store from '../store/filters.store'
 import modalStationFields from '../models/modalStation.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
-import checkUrlParams from '../actions/checkUrlParams';
 import cache from '@imagina/qsite/_plugins/cache';
 import getTitleFilter from '../actions/getTitleFilter';
 import storeKanban from '../store/kanban.store';
@@ -44,8 +43,10 @@ export default function useModalStation() {
     try {
       refModalStation.value.validate().then(async (success) => {
         if (success) {
-          await cache.set("stationId", store.stationId);
-          store.form.stationId = store.stationId;
+          if (store.stationId) {
+            await cache.set("stationId", store.stationId);
+            store.form.stationId = store.stationId;
+          }
           //await checkUrlParams(proxy);
           storeKanban.scheduleType = store.scheduleType;
           getTitleFilter();

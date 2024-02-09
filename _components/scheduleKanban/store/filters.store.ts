@@ -5,6 +5,7 @@ import filterModel from '../models/filters.model'
 import moment, { Moment } from 'moment';
 import { State } from '../contracts/filtersStore.contract';
 import getCurrentTime from '../actions/getCurrentTime';
+import storeKanban from '../store/kanban.store';
 
 const state = reactive<State>({
     showModal: false,
@@ -100,7 +101,10 @@ const store = computed(() => ({
     },
     get filterTime(){
       if(state.form.time !== null){
-        return state.form.time.split('-') || [0,0];
+        const TIME_DEFAULT = '0-23';
+        storeKanban.isAppOffline && (state.form.time = TIME_DEFAULT);
+        const filterTime = state.form.time.split('-') || [0,0];
+        return filterTime;
       }
       return state.fullDay.split('-');
     },

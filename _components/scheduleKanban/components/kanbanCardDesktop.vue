@@ -136,7 +136,9 @@
           tw-border-gray-200
             tw-px-2
             tw-py-1
-            text-status-desktop"
+            text-status-desktop
+            tw-cursor-pointer"
+            @click="openModalSelectFlightNumber"
           >
             <span :class="flightStatuses.color">
               <i class="tw-mr-1" :class="flightStatuses.icon"

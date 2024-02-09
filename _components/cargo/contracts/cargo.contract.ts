@@ -16,6 +16,8 @@ export interface CargoStoreContract {
     form: FormContract;
     delayList: DelayListContract[];
     delay: boolean;
+    ourDelay: string | null;
+    delayComment: string | null;
 }
 
 export interface UseCargoStoreContract {
@@ -27,9 +29,15 @@ export interface UseCargoStoreContract {
     setDelay(value: boolean): void;
     payload(): PayloadContract;
     reset(): void;
+    getOurDelay(): string | null;
+    setOurDelay(value: string | null);
+    getDelayComment(): string | null;
+    setDelayComment(value: string | null);
 }
 
 export interface PayloadContract {
     delay: DelayListContract[],
     cargo: FormContract,
+    ourDelay: string | null;
+    delayComment: string | null;
 }

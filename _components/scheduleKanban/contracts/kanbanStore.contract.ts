@@ -15,6 +15,7 @@ export interface State {
   scheduleType: string;
   isDraggingCard: boolean;
   columns: Columns[];
+  statusIdList: number[] | null;
   loading: boolean;
   dragDate: string;
   isBlank: boolean;

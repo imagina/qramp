@@ -1,8 +1,14 @@
 import factoryCustomerWithContracts from '../../_store/actions/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
 import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP } from '../model/constants.js';
+import workOrderList from '../../_store/actions/workOrderList.ts'
+import storeKanban from '../scheduleKanban/store/kanban.store.ts';
+
 export default {
   computed: {
+    isAppOffline() {
+      return storeKanban.isAppOffline
+    },
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
@@ -17,6 +23,23 @@ export default {
     },
     manageResponsiblePermissions() {
       return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
+    },
+    filterStation() {
+      return workOrderList()
+        .getStationList()
+        .map(item => ({ 
+            label: item.fullName, 
+            value: item.id 
+          })
+        )
+    },
+    filterResponsible() {
+      return workOrderList()
+        .getResponsible()
+        .map(item => ({ 
+          label: item.fullName, 
+          value: item.id 
+        }))
     },
     fields() {
       return {
@@ -84,11 +107,7 @@ export default {
               label: `*${this.$tr("ifly.cms.form.station")}`,
               clearable: true,
               color: "primary",
-            },
-            loadOptions: {
-              apiRoute: "apiRoutes.qsetupagione.setupStations",
-              select: { label: "fullName", id: "id" },
-              requestParams: { filter: { status: 1, companyId: this.filterCompany, "allTranslations": true } },
+              options: this.filterStation,
             },
           },
           responsibleId: {
@@ -97,16 +116,21 @@ export default {
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
-              selectByDefault: true,
               label: 'Responsible',
               clearable: true,
               color: "primary",
-              hint: "If you left this field empty, the responsible will be you automatically"
+              hint: "If you left this field empty, the responsible will be you automatically",
+              options: this.isAppOffline ? this.filterResponsible : []
             },
             loadOptions: {
-              apiRoute: "apiRoutes.quser.users",
-              select: { label: "fullName", id: "id" },
-              filterByQuery: true
+              apiRoute: this.isAppOffline ? null : "apiRoutes.quser.users",
+              select: { label: "fullName", id: "id"},
+              filterByQuery: !this.isAppOffline,
+              requestParams: {
+                filter: {
+                  companyId: this.filterCompany
+                }
+              }
             },
           },
         },
@@ -121,7 +145,6 @@ export default {
           params: {
             filter: {
               withoutContracts: true,
-              adHocWorkOrders: true,
               customerStatusId: 1,
               companyId: this.filterCompany,
             },
@@ -149,5 +172,5 @@ export default {
         return resolve(customerList);
       });
     }
-  }
+  },
 };

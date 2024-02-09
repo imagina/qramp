@@ -2,10 +2,8 @@ import Vue, { computed, ref, onMounted, provide, getCurrentInstance } from 'vue'
 import storeKanban from '../store/kanban.store';
 import storeFilters from '../store/filters.store'
 import moment from 'moment'
-import getWorkOrder from '../actions/getWorkOrder'
 import getIndividualWorkOrders from '../actions/getIndividualWorkOrders';
 import updateWorkOrder from '../actions/updateWorkOrder'
-import workOrderList from '../../../_store/actions/workOrderList'
 import validateOperationType from '../actions/validateOperationType'
 import scheduleTypeModel from '../models/scheduleType.model';
 import devicesModel from '../models/devices.model';
@@ -93,7 +91,7 @@ export default function useKanbanColumn(props: any = {}) {
         from: startDate.set({ hour: filterTime[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss'),
         to: endDate.set({ hour: filterTime[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss')
       }
-      const statistics:any = await getWorkOrdersStatistics(true, params)
+      const statistics = await getWorkOrdersStatistics(true, params)
       column.completed = statistics.data.completed
       column.uncompleted = statistics.data.uncompleted
   }
@@ -188,6 +186,7 @@ export default function useKanbanColumn(props: any = {}) {
   })
   return {
     selectedDate,
+    storeKanban,
     isDraggingCard,
     cardHours,
     isLoading,

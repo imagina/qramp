@@ -25,6 +25,7 @@ import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
 import workOrderList from '../_store/actions/workOrderList.ts';
+import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 
 export default {
   name: 'RampCrud',
@@ -53,6 +54,14 @@ export default {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
         this.areaId = this.$filter.values.areaId;
       }
+    },
+    'isAppOffline': {
+      deep: true,
+      handler: async function (newValue) {
+        if (!newValue) {
+          await workOrderList().getWorkOrders(true);
+        }
+      }
     }
   },
   async created() {
@@ -67,6 +76,9 @@ export default {
     qRampStore().setFlightId(null);
   },
   computed: {
+    isAppOffline() {
+      return this.$store.state.qofflineMaster.isAppOffline;
+    },
     permisionCommentsIndex() {
       return this.$auth.hasAccess('ramp.work-orders-comments.index');
     },
@@ -94,6 +106,7 @@ export default {
         permission: 'ramp.passenger-work-orders',
         create: {
           method: async () => {
+            await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
             await qRampStore().setIsPassenger(true);
             this.$refs.formOrders.loadform({
               modalProps: {
@@ -163,14 +176,24 @@ export default {
                   .find(flightStatus => flightStatus.id === item.flightStatusId) || {};
                 return `${response.name || '-'}`;
               },
-              action: (item) => this.getFlightMap(item),
             },
             {
               name: "inboundFlightNumber",
               label: 'Inbound Flight Number',
               field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
               align: "left",
-              format: item => item ? item : '',
+              format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
+              action: (item) => {
+                   const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
+                   const workOrder = {
+                        workOrderId: item.id, 
+                        faFlightId: item.faFlightId, 
+                        flightNumber: flightNumberInbound || item.inboundFlightNumber,
+                        boundScheduleDate: item.inboundScheduleArrival || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+                        type: 'inbound',
+                    }
+                  this.getFlightMap(workOrder)
+              }
             },
             {
               name: "inboundScheduledArrival",
@@ -178,14 +201,25 @@ export default {
               field: "inboundScheduledArrival",
               align: "left",
               format: (val) => (val ? this.$trdT(val) : "-"),
-             sortable: true
+              sortable: true
             },
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
               field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
               align: "left",
-              format: item => item ? item : '',
+              format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
+              action: (item) => {
+                  const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
+                  const workOrder = {
+                    workOrderId: item.id, 
+                    faFlightId: item.outboundFaFlightId, 
+                    flightNumber: flightNumberoutbound || item.outboundFlightNumber,
+                    boundScheduleDate: item.outboundScheduledDeparture || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+                    type: 'outbound',
+                }
+                this.getFlightMap(workOrder)
+              }
             },
             {
               name: "outboundScheduledDeparture",
@@ -343,6 +377,7 @@ export default {
                 'clearable': true
               },
             },
+            businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
           },
           requestParams: {
             include: 'responsible',
@@ -427,7 +462,7 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.permisionCommentsIndex
+                  vIf: this.permisionCommentsIndex && !this.isAppOffline
                 }),
             },
           ],
@@ -498,9 +533,29 @@ export default {
                 format: val => val?.contractLineWorkdayId || '-'
               },
               {
+                name: 'invoiceLineMemo',
+                label: 'Invoice Line Memo',
+                field: 'contractLine',
+                format: val => val?.InvoiceLineMemo || '-'
+              },
+              {
                 name: 'quantity',
                 label: 'Quantity',
                 field: 'quantity'
+              },
+              {
+                name: 'rate',
+                label: 'Rate',
+                field: 'contractLine',
+                format: val => val?.rate || '-'
+              },
+              {
+                label: 'Total',
+                field: val => {
+                    const quantity = val.quantity || 1;
+                    const rate = val.contractLine?.rate || 0;
+                    return quantity * rate;
+                }
               },
               {
                 name: 'transactionId',
@@ -542,26 +597,74 @@ export default {
     }
   },
   methods: {
-    changeStatus(status, itemId) {
+    getOfflineTitleStatus(statusId, itemId) {
+      const statusObj = {
+        1: 'DRAFT',
+        2: 'POSTED',
+        3: 'SUBMITTED',
+        4: 'CLOSED',
+        5: 'SCHEDULE',
+      }
+      return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
+    },
+    async changeStatus(status, itemId) {
+      const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
+      const CACHE_PATH = 'apiRoutes.qramp.workOrders'
 
-      const route = 'apiRoutes.qramp.workOrderChangeStatus';
       const payload = {
         id: itemId,
         statusId: status
       }
+      let customParams = { 
+        params: { 
+          titleOffline: this.getOfflineTitleStatus(status, itemId) || '' 
+        } 
+      }
+
       this.$emit('loading', true)
-      const request = this.$crud.create(route, payload);
-      request.then(res => {
-        this.$root.$emit('crud.data.refresh')
-        this.$emit('loading', false)
-      })
+
+      payload.offline = this.isAppOffline;
+      await cacheOffline.updateRecord(CACHE_PATH, payload, payload?.id);
+
+      const request = this.$crud.update(
+        API_ROUTE,
+        itemId, 
+        payload,
+        customParams
+      )
+      request
         .catch(err => {
           this.$emit('loading', false)
-          this.$alert.error({ message: `${this.$tr('isite.cms.message.recordNoUpdated')}` })
-
+          if (!this.isAppOffline) {
+            this.$alert.error({ 
+              message: `${this.$tr('isite.cms.message.recordNoUpdated')}` 
+            })
+          }
+        })
+        .finally(() => {
+          this.$emit('loading', false)
+          this.$root.$emit('crud.data.refresh')
         })
     },
+    async openModal(item) {
+      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
+      await qRampStore().setIsPassenger(true);
+      await this.$refs.formOrders.loadform({
+        modalProps: {
+          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+          update: true,
+          workOrderId: item.id,
+          width: '90vw',
+        },
+        data: item,
+      })
+      qRampStore().setTitleOffline(titleModal);
+    },
     showWorkOrder(data) {
+      if (this.isAppOffline) {
+        this.openModal(data);
+        return;
+      }
       this.$crud.show('apiRoutes.qramp.workOrders', data.id,
         {
           refresh: true,
@@ -569,38 +672,17 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible",
           }
         }).then(async (item) => {
-          await qRampStore().setIsPassenger(true);
-          this.$refs.formOrders.loadform({
-            modalProps: {
-              title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${data.id}`,
-              update: true,
-              workOrderId: data.id,
-              width: '90vw',
-            },
-            data: item.data,
-          })
+          this.openModal(item.data)
         }).catch((err) => {
           console.log(err);
         });
     },
     async getFlightMap(workOrder) {
-      try{
-          qRampStore().setFlightId(workOrder.id);
-          const response = await qRampStore().getFlights();
-          if(response.status === 204 || !response.data.flightPosition) {
-            this.$alert.warning({message: this.$tr('ifly.cms.message.flightDetails')})
-            return; 
-          }
-          qRampStore().showVisibleMapModal();
-          qRampStore().setLoadingModalMap(true);
-          
-          setTimeout(() => {
-            qRampStore().setLoadingModalMap(false);
-          }, 1000);
+      try {
+        qRampStore().setWorkOrder(workOrder);
+        qRampStore().showVisibleMapModal();
       } catch (error) {
-        qRampStore().setFlightMap(null);
-        qRampStore().setFlightId(null);
-        qRampStore().setLoadingModalMap(false);
+        qRampStore().setWorkOrder(null);
         console.log(error);
       }
     },

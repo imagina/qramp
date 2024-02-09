@@ -1,5 +1,4 @@
 import Vue, {computed} from 'vue';
-import {STATUS_DRAFT, STATUS_SCHEDULE} from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
 import storeKanban from '../store/kanban.store'
 import _ from "lodash";

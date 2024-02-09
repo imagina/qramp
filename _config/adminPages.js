@@ -187,6 +187,81 @@ export default {
       refresh: true,
     }
   },
+  categories: {
+    permission: 'ramp.categories.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/categories/index',
+    name: 'qramp.admin.categories',
+    crud: import('../_crud/categories.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Categories',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  services: {
+    permission: 'ramp.products.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/products/index',
+    name: 'qramp.admin.products',
+    crud: import('../_crud/services.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Workday Services',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  attributes: {
+    permission: 'ramp.attributes.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/attributes/index',
+    name: 'qramp.admin.attributes',
+    crud: import('../_crud/attributes.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Attributes',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  operationType: {
+    permission: 'ramp.operation-types.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/operation-types/index',
+    name: 'qramp.admin.passengerOperationTypes',
+    crud: import('../_crud/operationTypes.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Operation Types',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  operationTypePassenger: {
+    permission: 'ramp.operation-types.manage',
+    activated: true,
+    authenticated: true,
+    path: '/passenger/operation-types/index',
+    name: 'qramp.admin.operationTypesPassenger',
+    crud: import('../_crud/operationTypesPassenger.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Operation Types',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,

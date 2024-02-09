@@ -12,11 +12,14 @@
   >
     <q-form ref="refFormSchedule">
       <div
-        class="tw-grid tw-grid-cols-1 tw-gap-4"
-        :class="{'lg:tw-grid-cols-2': form.id && permisionComments}"
+        class="tw-grid tw-gap-4"
+        :class="{
+          'lg:tw-grid-cols-2': form.id && permisionComments && !storeKanban.isAppOffline,
+          'tw-grid-cols-1': storeKanban.isAppOffline
+        }"
       >
         <scheduleFields />
-        <div v-if="showCommentsComponent">
+        <div v-if="showCommentsComponent && !storeKanban.isAppOffline">
           <comments
             v-if="form.id && permisionComments"
             apiRoute="apiRoutes.qramp.comments"

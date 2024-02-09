@@ -12,10 +12,13 @@
 </template>
 <script>
 import workOrderList from '../_store/actions/workOrderList.ts'
-import { COMPANY_RAMP } from '../_components/model/constants.js'
 import schedulerStore from '../_components/scheduler/store/index.store.ts'
 import schedulerModal from '../_components/scheduler/index.vue';
-import show from '../_components/scheduler/actions/show.ts'
+import show from '../_components/scheduler/actions/show.ts';
+import {
+  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER
+} from "../_components/model/constants"
+import qRampStore from '../_store/qRampStore.js'
 
 export default {
   components: {
@@ -32,6 +35,12 @@ export default {
     })
   },
   computed: {
+    filterBusinessUnit() {
+      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+    },
+    isPassenger() {
+      return qRampStore().getIsPassenger();
+    },
     crudData() {
       return {
         crudId: this.crudId,
@@ -196,6 +205,7 @@ export default {
           requestParams: {
             filter: {
               withoutDefaultInclude: true,
+              businessUnitId: this.filterBusinessUnit,
             },
           }
         },

@@ -89,7 +89,7 @@ export default function useKanbanCardActions(props: any = {}) {
   }
 
   async function openModalSchedule() {
-    modalScheduleStore.titleModal = `Edit schedule Id Id: ${props.card.id}`;
+    modalScheduleStore.titleModal = `Edit schedule Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
       showModalFull()
@@ -110,9 +110,18 @@ export default function useKanbanCardActions(props: any = {}) {
     modalScheduleStore.showInline = false;
   }
 
-  async function deleteWorkOrder(){
-    await deleteWorkOrders(props.card.id);
-    await buildKanbanStructure(true);
+  async function deleteWorkOrder() {
+    try {
+      //TO-DO: Mejorar esto:
+      await Promise.allSettled([
+        deleteWorkOrders(props.card.id),
+        setTimeout(() => {
+          buildKanbanStructure(true)
+        }, 1000),
+      ])
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   async function hideModal() {
@@ -122,6 +131,7 @@ export default function useKanbanCardActions(props: any = {}) {
 
   async function duplicateWorkOrder() {
     modalScheduleStore.seletedDateColumn = props.dateColumn;
+
     const col  = getCurrentColumn();
     const card  = col.cards.find((card) => card.id === props.card.id)
     const index  = col.cards.indexOf(card)

@@ -3,7 +3,7 @@ export default function getListCustomerWithContracts(data, permisition) {
     const contractsList = data[1].data || [];
     const customers = customerList.map((customer) => {
         return {
-            id: customer.id,
+            id: Number(customer.id),
             label: customer.customerName + ' (Ad Hoc)',
             value: customer.customerName + ' (Ad Hoc)'
         }
@@ -11,7 +11,7 @@ export default function getListCustomerWithContracts(data, permisition) {
     contractsList.forEach((contract, index) => {
         const label = permisition ? `${contract.customerName} (${contract.contractName})` : contract.customerName;
         customers.push({
-            id: contract.customerId,
+            id: Number(contract.customerId),
             customerId: contract.customerId,
             label,
             contractId: contract.id,

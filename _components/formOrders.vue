@@ -86,7 +86,7 @@ export default {
       needToBePosted: false,
       STATUS_DRAFT,
       STATUS_POSTED,
-      STATUS_SUBMITTED
+      STATUS_SUBMITTED,
     }
   },
   provide() {
@@ -254,7 +254,7 @@ export default {
             await qRampStore().setStatusId(STATUS_CLOSED);
             await this.$refs.stepper.setData();
             setTimeout(async () => {
-              const formData = await this.$refs.stepper.sendInfo();
+              const formData = await this.$refs.stepper?.sendInfo();
               await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
@@ -334,6 +334,8 @@ export default {
         qRampStore().setResponsible(updateData.data['responsible']);
         cargoStore().setForm(updateData.data);
         cargoStore().setDelayList(updateData.data);
+        cargoStore().setDelayComment(updateData.data.delayComment || null)
+        cargoStore().setOurDelay(updateData.data.ourDelay || null);
         qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
         await serviceListStore().init();
         remarksStore().setForm(updateData.data);

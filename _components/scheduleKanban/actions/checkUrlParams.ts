@@ -5,9 +5,10 @@ import scheduleTypeModel from '../models/scheduleType.model';
 export default async function checkUrlParams(proxy: any): Promise<void>{
   const params = {...proxy.$route.query}
   try{
-    if(store.stationId){
-      store.form.stationId = store.stationId;
+    if(store.stationId) {
       if(Object.keys(params).length !== 0){
+        if (params.stationId) store.form.stationId = params.stationId;
+        if (params.stationId) store.stationId = params.stationId;
         if (params.type) store.form.scheduleType = params.type;
         if (params.carrierId) store.form.carrierId = params.carrierId;
         if (params.statusId) store.form.statusId = params.statusId;

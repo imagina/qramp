@@ -63,6 +63,8 @@
   <modalSchedule />
   <formOrders ref="refFormOrders" @getWorkOrderFilter="individualRefreshByColumns" />
   <modalStation />
+  <selectFlightNumberModal />
+  <flightDetail />
 </div>
 </template>
 
@@ -76,7 +78,8 @@ import filtersBar from "./filtersBar.vue";
 import modalSchedule from './modalSchedule.vue'
 import formOrders from "../../formOrders.vue";
 import modalStation from "./modalStation.vue";
-
+import selectFlightNumberModal from '../../modal/selectFlightNumber/index.vue'
+import flightDetail from '../../modal/flightDetail.vue';
 export default defineComponent({
   components: {
     kanbanColumn,
@@ -85,7 +88,9 @@ export default defineComponent({
     filtersBar,
     modalSchedule,
     formOrders,
-    modalStation
+    modalStation,
+    selectFlightNumberModal,
+    flightDetail
   },
   setup(props) {
     return {...useKanbanBoard(props)}

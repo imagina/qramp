@@ -21,25 +21,30 @@ export const serviceListModel = {
  * @returns An array of categories.
  */
 export const getCategories = async (): Promise<any[]> => {
-    try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP; 
-        let requestParams = {
-            params: {
-                include:
-                    "products,products.attributes,products,products.attributes.values",
-                filter: {
-                    companyId,
-                }    
-            },
-        };
-        const response = await baseService.index(
-            "apiRoutes.qramp.categories",
-            requestParams
-        );
-        return response.data;
-    } catch (error) {
-        console.log(error);
+    if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.categories.index')) {
+        try {
+            const isPassenger = qRampStore().getIsPassenger();
+            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP; 
+            let requestParams = {
+                params: {
+                    include:
+                        "products,products.attributes,products,products.attributes.values",
+                    filter: {
+                        companyId,
+                    }    
+                },
+            };
+            const response = await baseService.index(
+                "apiRoutes.qramp.categories",
+                requestParams
+            );
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    } else {
         return [];
     }
 };
@@ -98,12 +103,13 @@ export async function buildServiceList(): Promise<any[]> {
  */
 export const getIfItIsTypeListOrDynamicField = (product) => {
     try {
+        const products = product || [];
         const data: any = [];
         const dynamicFieldModel: any = {
             icon: "settings",
         };
         const organizeProduct = organizeProducts(product);
-        organizeProduct.forEach((product) => {
+        organizeProduct?.forEach((product) => {
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = product.name;
@@ -126,8 +132,9 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
 function getDynamicField(attributes) {
     try {
         const result = {};
-        for (let i = 0; i < attributes.length; i++) {
-            const currentValue = attributes[i];
+        const att = attributes || [];
+        for (let i = 0; i < att.length; i++) {
+            const currentValue = att[i];
             const props = setProps(
             currentValue.type,
             currentValue.name,
@@ -166,7 +173,6 @@ function setProps(type, name, options, index) {
     if (type == "quantity") {
         return {
             readonly,
-            mask: "###################",
         };
     }
     if (type == "select") {
@@ -246,11 +252,11 @@ export function getListOfSelectedServices(data) {
  */
 function organizeProducts(data: any) {
     const productData = qRampStore().getWorkOrderItems();
-    if (productData.length > 0) {
-        return data.map((product) => {
+    if (productData?.length > 0) {
+        return data?.map((product) => {
             (productData as any).map((sw) => {
-                if (sw.productId == product.id) {
-                    product.attributes.map((att) => {
+                if (sw?.productId == product?.id) {
+                    product?.attributes?.map((att) => {
                         sw.workOrderItemAttributes.map((swatt) => {
                             if (swatt.attributeId == att.id) {
                                 att.value = swatt.value;

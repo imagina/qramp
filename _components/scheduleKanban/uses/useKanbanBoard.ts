@@ -10,7 +10,6 @@ import storeKanban from "../store/kanban.store";
 import storeFilter from "../store/filters.store";
 import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from "./../../../_store/qRampStore.js";
-import filtersStore from "../store/filters.store";
 import _ from "lodash";
 import buildKanbanStructure from "../actions/buildKanbanStructure";
 import individualRefreshByColumns from "../actions/individualRefreshByColumns";
@@ -20,10 +19,12 @@ import getTitleFilter from "../actions/getTitleFilter";
 import cache from "@imagina/qsite/_plugins/cache";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
+import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
 
 export default function useKanbanBoard(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
   const refFormOrders = ref(null);
+  const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
@@ -100,7 +101,6 @@ export default function useKanbanBoard(props) {
       {
         label: "Scheduler",
         vIf:
-          !isPassenger.value &&
           Vue.prototype.$auth.hasAccess("ramp.schedulers.manage"),
         props: {
           label: "Scheduler",
@@ -125,7 +125,7 @@ export default function useKanbanBoard(props) {
           id: "filter-button-crud",
         },
         action: () => {
-          filtersStore.showModal = true;
+          storeFilter.showModal = true;
         },
       },
     ];
@@ -135,7 +135,6 @@ export default function useKanbanBoard(props) {
 
   const init = async () => {
     eventsKanban(proxy).cardRefresh();
-    await setStations();
     await checkUrlParams(proxy);
     storeKanban.scheduleType = storeFilter.scheduleType;
     storeKanban.isAppOffline = proxy.$store.state.qofflineMaster.isAppOffline
@@ -152,17 +151,16 @@ export default function useKanbanBoard(props) {
     storeFilter.stationId =
       getStationAssigned(proxy.$store.state.quserAuth.userData) ||
       params.stationId ||
-      null ||
       localStationId ||
       null;
     storeFilter.form.stationId = storeFilter.stationId;
+
     const station = await workOrderList()
       .getStationList()
-      .find(
-        (item) =>
-          item.id == Number(storeFilter.stationId) &&
-          item.companyId === storeKanban.filterCompany
-      );
+      .find((item) => {
+        return validateMatchCompanyStation(item)
+      });
+
     if (!station) {
       storeFilter.stationId = null;
       storeFilter.showModalStation = true;
@@ -188,14 +186,22 @@ export default function useKanbanBoard(props) {
       console.log(error);
     }
   }
-  onMounted(() => {
-    init();
+  onMounted(async() => {
+    await setStations()
+    await init()
   });
   watch(
     () => proxy.$route,
     async (currentValue, oldValue) => {
-      if(storeFilter.stationId == null) {
+      const newPath = currentValue.path
+      const oldPath = oldValue.path
+      
+      if(storeFilter.stationId === null) {
         storeFilter.showModalStation = true;
+      }
+
+      if (newPath !== oldPath) {
+        await setStations()
       }
 
       if (!storeKanban.loading) {
@@ -204,6 +210,11 @@ export default function useKanbanBoard(props) {
     },
     { deep: true }
   );
+  watch(isAppOffline, async(newValue, oldValue) => {
+    storeKanban.isAppOffline = newValue;
+    await setStations()
+    await init()
+  })
   return {
     selectedDate,
     columns,
@@ -217,6 +228,7 @@ export default function useKanbanBoard(props) {
     buildKanbanStructure,
     refFormOrders,
     individualRefreshByColumns,
-    title
+    title,
+    isAppOffline
   };
 }

@@ -3,11 +3,11 @@ export const STEP_FLIGHT = 1;
 export const STEP_SERVICE = 2;
 export const STEP_REMARKS = 3;
 export const STEP_SIGNATURE = 4;
-export const STATUS_DRAFT = 1;
+export const STATUS_DRAFT = 1; //No completed
 export const STATUS_POSTED = 2;
 export const STATUS_SUBMITTED = 3;
 export const STATUS_CLOSED = 4;
-export const STATUS_SCHEDULE = 5;
+export const STATUS_SCHEDULE = 5; //No completed
 export const CATEGORY_SERVICES = 1;
 export const COLOR_DRAFT = 'tw-text-orange-500';
 export const COLOR_POSTED = 'tw-text-green-500';
@@ -16,8 +16,9 @@ export const COLOR_CLOSED = 'tw-text-blue-300';
 export const COLOR_SCHEDULE = 'tw-text-pink-500';
 export const BUSINESS_UNIT_PASSENGER = 8;
 export const BUSINESS_UNIT_RAMP = { operator: '!=', value: 8};
-export const COMPANY_PASSENGER = 30;
-export const COMPANY_RAMP = 26;
+export const COMPANY_PASSENGER = [30,33,34];
+export const COMPANY_RAMP = [26,34];
+export const OPERATION_TYPE_OTHER = 6;
 
 export const modelDataBound = {
     destinationAirport: {
@@ -39,17 +40,14 @@ export const modelFlightBoundFormStatus = {
 };
 
 export const FlightformFieldModel = [
-    'customerId',
     'stationId',
     'acTypeId',
     'operationTypeId',
     'carrierId',
     'gateId',
     'statusId',
-    'inboundBlockIn',
   ];
   export const FlightformFieldPassengerModel = [
-    'customerId',
     'stationId',
     'acTypeId',
     'operationTypeId',
@@ -72,19 +70,19 @@ export const FlightformFieldModel = [
   ];
 
   export const HalfTurnInBountPassengerModel = [
-    /*'inboundFlightNumber',
-    'inboundOriginAirportId',
+    //'inboundFlightNumber',
+    //'inboundOriginAirportId',
     'inboundTailNumber',
-    'inboundScheduledArrival',
-    'gateDestination',*/
+    //'inboundScheduledArrival',
+    //'gateDestination',
   ];
 
   export const HalfTurnOutBountPassengerModel = [
-    /*'outboundFlightNumber',
-    'outboundDestinationAirportId',
+    //'outboundFlightNumber',
+    //'outboundDestinationAirportId',
     'outboundTailNumber',
-    'outboundScheduledDeparture',
-    'gateOrigin'*/
+    //'outboundScheduledDeparture',
+    //'gateOrigin'
   ];
 
   export const modelWorkOrder = {

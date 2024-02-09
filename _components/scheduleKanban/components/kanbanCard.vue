@@ -55,10 +55,13 @@
               </div>
             </div>
             <div class="tw-flex tw-space-x-1">
-              <div class="ac-type-text">
+              <div class="ac-type-text tw-truncate tw-w-28" v-if="actypes">
                 <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }} 
+                <q-tooltip v-if="actypes">
+                  {{ actypes }} 
+                </q-tooltip>
               </div>
-              <div class="tw-flex tw-items-center" v-if="gates">
+              <div class="tw-flex tw-items-center tw-truncate" v-if="gates">
                 <img v-if="!isPassenger" src="../svg/p-small.svg" class="tw-pr-1" alt="" srcset="">
                 <img v-if="isPassenger" src="../svg/g-small.svg" class="tw-pr-1" alt="" srcset="">
                 {{ gates }}
@@ -74,7 +77,11 @@
               <span class="tw-uppercase tw-font-extrabold text-status">
                 {{ titleStatus }}
               </span>
-              <lastComments :card="card" class="tw-pl-2"/>
+              <lastComments 
+                v-if="!storeKanban.isAppOffline" 
+                :card="card" 
+                class="tw-pl-2"
+              />
             </div>
           </div>
         </div>
@@ -93,28 +100,34 @@
           text-x2
           tw-space-x-1
           tw-font-extrabold
-          tw-rounded-br-lg tw-uppercase" :class="flightStatuses.color">
-        <i :class="flightStatuses.icon" />
-        <span>
-          {{ flightStatuses.name }}
-        </span>
+          tw-rounded-br-lg 
+          tw-uppercase
+          " :class="flightStatuses.color"
+          
+        >
+        <div @click="openModalSelectFlightNumber" class="tw-cursor-pointer">
+          <i :class="flightStatuses.icon" />
+          <span>
+            {{ flightStatuses.name }}
+          </span>
+        </div>
+        <div 
+          class="
+            tw-flex
+            tw-left-0
+            tw-h-7
+            tw-px-2
+            tw--mt-5"
+        >
+          <kanbanCardActions
+            :id="card.id"
+            :key="card.id"
+            :card="card"
+            :dateColumn="dateColumn"
+          />
+        </div>
       </div>
-      <div class="
-        tw-flex
-        tw-absolute
-        tw-bottom-0
-        tw-left-0
-        tw-w-full
-        tw-h-7
-        tw-px-2"
-      >
-      <kanbanCardActions
-        :id="card.id"
-        :key="card.id"
-        :card="card"
-        :dateColumn="dateColumn"
-      />
-      </div>
+      
       <div
        v-if="card.loading"
        class="
@@ -139,7 +152,6 @@ import { defineComponent } from "vue";
 import useKanbanCard from '../uses/useKanbanCard'
 import lastComments from './lastComments.vue'
 import kanbanCardActions from './KanbanCardActions.vue'
-import { is } from "quasar";
 
 export default defineComponent({
   components: {

@@ -10,6 +10,7 @@ const state: State = reactive({
   scheduleType: 'week-agenda',
   isDraggingCard: false,
   columns: [],
+  statusIdList: [],
   loading: false,
   dragDate: '',
   isBlank: false,
@@ -37,6 +38,12 @@ const store: State = computed(() => ({
   set columns(value: Columns[]) {
     state.columns = value;
   },
+  get statusIdList(): number[] | null {
+    return state.statusIdList;
+  },
+  set statusIdList(value: number[] | null) {
+    state.statusIdList = value;
+  },
   get loading(): boolean {
     return state.loading;
   },
@@ -61,7 +68,7 @@ const store: State = computed(() => ({
   set isAppOffline(value: boolean) {
     state.isAppOffline = value;
   },
-  get filterCompany(): number {
+  get filterCompany(): any {
     return isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP;
   },
 })).value;

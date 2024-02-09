@@ -3,6 +3,7 @@ import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 
+
 export default function filterModel() {
   return computed(() => ({
     time: {
@@ -13,6 +14,7 @@ export default function filterModel() {
         format24h: true,
         options: modelHoursFilter,
         alphabeticalSort: false,
+        readonly: kanbanStore.isAppOffline,
       },
     },
     carrierId: {
@@ -26,6 +28,7 @@ export default function filterModel() {
       props: {
         label: "Carrier",
         clearable: true,
+        readonly: kanbanStore.isAppOffline
       },
     },
     stationId: {
@@ -54,6 +57,7 @@ export default function filterModel() {
       props: {
         label: "Status",
         clearable: true,
+        readonly: kanbanStore.isAppOffline,
       },
     },
     adHoc: {
@@ -62,6 +66,7 @@ export default function filterModel() {
       props: {
         label: "Ad Hoc",
         clearable: true,
+        readonly: kanbanStore.isAppOffline,
         options: [
           { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
           { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
@@ -83,6 +88,7 @@ export default function filterModel() {
       props: {
         label: "Flight Status",
         clearable: true,
+        readonly: kanbanStore.isAppOffline,
       },
     },
     areaId: {
@@ -100,6 +106,7 @@ export default function filterModel() {
       props: {
         label: "Areas",
         clearable: true,
+        readonly: kanbanStore.isAppOffline,
       },
     },
     type: {

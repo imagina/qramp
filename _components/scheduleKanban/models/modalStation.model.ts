@@ -1,5 +1,4 @@
 import Vue, { computed } from 'vue';
-import storeKanban from '../store/kanban.store';
 import workOrderList from 'src/modules/qramp/_store/actions/workOrderList';
 
 export default function modalStation() {

@@ -10,6 +10,7 @@ import storeKanban from '../store/kanban.store';
 
 export default function useFilters() {
   const proxy = (getCurrentInstance() as any).proxy as any;
+  const isAppOffline = computed(() => storeKanban.isAppOffline);
   const form = computed(() => store.form);
   /**
    * Computed property indicating whether the application is in a filters state.
@@ -106,6 +107,7 @@ export default function useFilters() {
     scheduleType,
     scheduleTypeOptions,
     buildKanbanStructure,
-    callBuildKanbanStructure
+    callBuildKanbanStructure,
+    isAppOffline
   };
 }

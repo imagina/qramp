@@ -1,5 +1,6 @@
 <template>
   <div class="tw-w-full tw-mb-12">
+    <delayForm />
     <div class="tw-px-6 tw-mb-8">
       <q-toggle
         v-model="delay"
@@ -52,12 +53,16 @@
 <script>
 import Vue, { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
 import cargoStore from "./store/cargo";
+import workOrderList from "../../_store/actions/workOrderList";
 import qRampStore from "../../_store/qRampStore.js";
 import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
+import delayForm from './delayForm.vue';
 
 export default defineComponent({
+  components: {
+    delayForm,
+  },
   setup() {
-    const codeList = ref([]);
     const disabledReadonly = computed(() => qRampStore().disabledReadonly());
     const isPassenger = computed(() => qRampStore().getIsPassenger());
     const delay = computed({
@@ -80,7 +85,7 @@ export default defineComponent({
           value: delay.code,
           type: "select",
           props: {
-            options: codeList.value,
+            options: workOrderList().getWorkOrderDelays(),
             readonly: disabledReadonly.value,
             label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
             clearable: true,
@@ -123,6 +128,7 @@ export default defineComponent({
     }
 
     function getCodeList() {
+      const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
       const params = {
         refresh: true,
         params: {
@@ -132,17 +138,18 @@ export default defineComponent({
         },
       };
       Vue.prototype.$crud
-        .index("apiRoutes.qramp.workOrderDelays", params)
+        .index(API_ROUTE, params)
         .then((res) => {
-          const data = res.data || [];
-          codeList.value = data.map((item) => ({
+          const data = res.data || [];    
+          const codeList = data.map((item) => ({
             id: item.id,
             label: item.name,
             value: item.name,
           }));
+          workOrderList().setWorkOrderDelays(codeList);
         })
         .catch((err) => {
-          codeList.value = [];
+          workOrderList().setWorkOrderDelays([]);
           console.log("ERROR WHILE OBTAINING THE LIST OF CODES:", err);
         });
     }
