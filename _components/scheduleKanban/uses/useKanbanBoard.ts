@@ -1,4 +1,4 @@
-import Vue, {
+import {
   ref,
   computed,
   provide,
@@ -16,13 +16,13 @@ import individualRefreshByColumns from "../actions/individualRefreshByColumns";
 import checkUrlParams from "../actions/checkUrlParams";
 import setUrlParams from "../actions/setUrlParams";
 import getTitleFilter from "../actions/getTitleFilter";
-import cache from "@imagina/qsite/_plugins/cache";
+import cache from "modules/qsite/_plugins/cache";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
 
 export default function useKanbanBoard(props) {
-  const proxy = (getCurrentInstance() as any).proxy as any;
+  const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormOrders = ref(null);
   const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
@@ -58,13 +58,13 @@ export default function useKanbanBoard(props) {
   const scheduleTypeOptions = ref([
     {
       id: 2,
-      label: Vue.prototype.$tr("isite.cms.label.week"),
+      label: proxy.$tr("isite.cms.label.week"),
       value: "week-agenda",
       icon: "fas fa-calendar-week",
     },
     {
       id: 3,
-      label: `${Vue.prototype.$tr("isite.cms.label.day")}`,
+      label: `${proxy.$tr("isite.cms.label.day")}`,
       value: "day-agenda",
       icon: "fas fa-calendar-day",
     },
@@ -83,11 +83,11 @@ export default function useKanbanBoard(props) {
             proxy.$store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/public/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-          Vue.prototype.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
+          proxy.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
         },
       },
       {
-        label: Vue.prototype.$tr("isite.cms.configList.fullScreen", {
+        label: proxy.$tr("isite.cms.configList.fullScreen", {
           capitalize: true,
         }),
         props: {
@@ -101,7 +101,7 @@ export default function useKanbanBoard(props) {
       {
         label: "Scheduler",
         vIf:
-          Vue.prototype.$auth.hasAccess("ramp.schedulers.manage"),
+          proxy.$auth.hasAccess("ramp.schedulers.manage"),
         props: {
           label: "Scheduler",
           icon: "fa-duotone fa-calendar-plus",
@@ -118,7 +118,7 @@ export default function useKanbanBoard(props) {
         },
       },
       {
-        label: Vue.prototype.$tr("isite.cms.label.filter"),
+        label: proxy.$tr("isite.cms.label.filter"),
         vIf: true,
         props: {
           icon: "fa-duotone fa-filter",
@@ -195,7 +195,7 @@ export default function useKanbanBoard(props) {
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
-      
+
       if(storeFilter.stationId === null) {
         storeFilter.showModalStation = true;
       }
