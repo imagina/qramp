@@ -21,7 +21,7 @@ import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
 import workOrderList from '../_store/actions/workOrderList.ts'
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
 
 export default {
     name: 'RampCrud',

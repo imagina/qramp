@@ -16,8 +16,8 @@ import individualRefreshByColumns from "../actions/individualRefreshByColumns";
 import checkUrlParams from "../actions/checkUrlParams";
 import setUrlParams from "../actions/setUrlParams";
 import getTitleFilter from "../actions/getTitleFilter";
-import cache from "@imagina/qsite/_plugins/cache";
-import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
+import cache from "modules/qsite/_plugins/cache";
+import workOrderList from "modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
 
@@ -195,7 +195,7 @@ export default function useKanbanBoard(props) {
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
-      
+
       if(storeFilter.stationId === null) {
         storeFilter.showModalStation = true;
       }

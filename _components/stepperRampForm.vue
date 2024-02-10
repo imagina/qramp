@@ -43,7 +43,7 @@ import {
   STEP_REMARKS,
   STEP_SIGNATURE,
   BUSINESS_UNIT_PASSENGER,
-  BUSINESS_UNIT_RAMP, 
+  BUSINESS_UNIT_RAMP,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
   OPERATION_TYPE_OTHER
@@ -60,7 +60,7 @@ import {
   HalfTurnOutBountPassengerModel
 } from './model/constants.js';
 import remarkStore from './remarks/store.ts';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
 import workOrderList from '../_store/actions/workOrderList.ts'
 
 export default {
@@ -204,7 +204,7 @@ export default {
             message: 'Surely you want to save the work order without services',
             actions: [
               {
-                label: this.$tr('isite.cms.label.cancel'), 
+                label: this.$tr('isite.cms.label.cancel'),
                 color: 'grey-8',
                 handler: async () => {
                   qRampStore().hideLoading();
@@ -285,7 +285,7 @@ export default {
 
       await this.updateDataInCache(ROUTE, formatData)
 
-      const request = this.data.update 
+      const request = this.data.update
         ? this.$crud.update(ROUTE, this.data.workOrderId, formatData, params)
         : this.$crud.create(ROUTE, formatData, params);
 
@@ -333,11 +333,11 @@ export default {
       try {
         const flightForm = this.$store.state.qrampApp.form;
         let flightformField = this.isPassenger ? FlightformFieldPassengerModel : FlightformFieldModel;
-        const halfTurnInBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        const halfTurnInBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER
         ?  HalfTurnInBountPassengerModel : HalfTurnInBountModel;
-        const halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        const halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER
         ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
-        
+
         if(!this.isPassenger && flightForm.operationTypeId != OPERATION_TYPE_OTHER) {
           flightformField = flightformField.concat(['inboundBlockIn']);
         }
@@ -349,7 +349,7 @@ export default {
         const operationType = workOrderList().getOperationTypeList()
           .find(item => item.id === Number(flightForm.operationTypeId));
         const type = operationType?.options?.type;
-        
+
         if(type) {
           if(type === 'full'){
             const bount = halfTurnInBount.concat(halfTurnOutBount);
@@ -386,7 +386,7 @@ export default {
           this.$alert.error({message: this.$tr('Please at least select one service')});
           return true;
         }
-    
+
         if (!validateDateService) {
           this.$alert.error({message: this.$tr('Dates must have this format: MM/DD/YYYY HH:mm')});
           await this.setStep(STEP_SERVICE);

@@ -9,9 +9,9 @@ import {
     COMPANY_RAMP
 } from '../_components/model/constants.js'
 import moment from 'moment';
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from 'modules/qcrud/_services/baseService.js'
 import Vue, {reactive} from "vue";
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
 

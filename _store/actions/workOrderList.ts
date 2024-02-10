@@ -1,5 +1,5 @@
 import Vue, { reactive } from 'vue';
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from 'modules/qcrud/_services/baseService.js'
 import qRampStore from '../qRampStore.js'
 import {
     BUSINESS_UNIT_PASSENGER,
@@ -56,7 +56,7 @@ const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
 
 /**
  * This is a work order list function that returns an object with several functions to
- * interact with OperationType, StationContract, CustomerContract, Contract, 
+ * interact with OperationType, StationContract, CustomerContract, Contract,
  * FlightStatusContract, and WorkOrderStatusesContract.
  * @returns {WorkOrderList} A WorkOrderList object.
 */
@@ -240,7 +240,7 @@ export default function workOrderList(): WorkOrderList {
         return state.gatesList;
     }
 
-    // actions 
+    // actions
     /**
      * The function getOperationType() returns a Promise that resolves to an array of OperationType
      * objects or void.
@@ -592,7 +592,7 @@ export default function workOrderList(): WorkOrderList {
                     },
                 };
                 const response = await baseService.index(API_ROUTE, params)
-                const data = response.data || [];    
+                const data = response.data || [];
                 const codeList = data.map((item) => ({
                     id: item.id,
                     label: item.name,
@@ -676,46 +676,46 @@ export default function workOrderList(): WorkOrderList {
     }
 
     /**
-   * This object consists of functions for getting and setting data for OperationType, 
+   * This object consists of functions for getting and setting data for OperationType,
    * StationContract, CustomerContract, Contract, FlightStatusContract, and WorkOrderStatusesContract.
    * @typedef {Object} WorkOrderList
-   * @property {function(data: OperationType[]): void} setOperationTypeList - Assigns an array of 
+   * @property {function(data: OperationType[]): void} setOperationTypeList - Assigns an array of
    *    OperationType objects to the operationTypeList property of the state object.
-   * @property {function(): OperationType[]} getOperationTypeList - Returns an array of 
+   * @property {function(): OperationType[]} getOperationTypeList - Returns an array of
    *    OperationType objects.
    * @property {async function(): Promise<OperationType[] | void>} getOperationType - Gets an
    *    array of OperationType objects.
-   * @property {function(data: StationContract[]): void} setStationList - Assigns an array of 
+   * @property {function(data: StationContract[]): void} setStationList - Assigns an array of
    *    StationContract objects to the stationList property of the state object.
-   * @property {function(): StationContract[]} getStationList - Returns an array of StationContract 
+   * @property {function(): StationContract[]} getStationList - Returns an array of StationContract
    *    objects.
-   * @property {async function(): Promise<StationContract[] | void>} getStation - Gets an array of 
+   * @property {async function(): Promise<StationContract[] | void>} getStation - Gets an array of
    *    StationContract objects.
-   * @property {function(data: CustomerContract[]): void} setCustomerList - Assigns an array of 
+   * @property {function(data: CustomerContract[]): void} setCustomerList - Assigns an array of
    *    CustomerContract objects to the customerList property of the state object.
-   * @property {function(): CustomerContract[]} getCustomerList - Returns an array of 
+   * @property {function(): CustomerContract[]} getCustomerList - Returns an array of
    *    CustomerContract objects.
-   * @property {async function(): Promise<CustomerContract[] | void>} getCustomer - Gets an array of 
+   * @property {async function(): Promise<CustomerContract[] | void>} getCustomer - Gets an array of
    *    CustomerContract objects.
-   * @property {function(data: Contract[]): void} setContractList - Assigns an array of Contract 
+   * @property {function(data: Contract[]): void} setContractList - Assigns an array of Contract
    *    objects to the contractList property of the state object.
    * @property {function(): Contract[]} getContractList - Returns an array of Contract objects.
    * @property {async function(): Promise<any[] | void>} getContract - Gets an array of objects of any type.
-   * @property {function(): FlightStatusContract[]} getFlightStatusesList - Returns a list of 
+   * @property {function(): FlightStatusContract[]} getFlightStatusesList - Returns a list of
    *    FlightStatusContract objects.
-   * @property {function(data: FlightStatusContract[]): void} setFlightStatusesList - Assigns an 
+   * @property {function(data: FlightStatusContract[]): void} setFlightStatusesList - Assigns an
    *    array of FlightStatusContract objects to the flightStatusesList property of the state object.
-   * @property {async function(): Promise<FlightStatusContract[] | void>} getFlightStatuses - Gets 
+   * @property {async function(): Promise<FlightStatusContract[] | void>} getFlightStatuses - Gets
    *    an array of FlightStatusContract objects.
-   * @property {function(): WorkOrderStatusesContract[]} getWorkOrderStatusesList - Returns 
+   * @property {function(): WorkOrderStatusesContract[]} getWorkOrderStatusesList - Returns
    *    a list of work order statuses.
-   * @property {function(data: WorkOrderStatusesContract[]): void} setWorkOrderStatusesList - 
-   *    Assigns an array of WorkOrderStatusesContract objects to the workOrderStatusesList property 
+   * @property {function(data: WorkOrderStatusesContract[]): void} setWorkOrderStatusesList -
+   *    Assigns an array of WorkOrderStatusesContract objects to the workOrderStatusesList property
    *    of the state object.
-   * @property {async function(): Promise<WorkOrderStatusesContract[] | void>} getWorkOrderStatuses - 
+   * @property {async function(): Promise<WorkOrderStatusesContract[] | void>} getWorkOrderStatuses -
    *    Gets an array of WorkOrderStatusesContract objects.
-   * @property {async function(): Promise<void>} getAllList - Gets all the lists for 
-   *    OperationType, StationContract, CustomerContract, Contract, FlightStatusContract, and 
+   * @property {async function(): Promise<void>} getAllList - Gets all the lists for
+   *    OperationType, StationContract, CustomerContract, Contract, FlightStatusContract, and
    *    WorkOrderStatusesContract.
    */
 

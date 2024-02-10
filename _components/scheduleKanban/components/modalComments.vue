@@ -19,11 +19,11 @@
       />
     </master-modal>
 </template>
-  
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import useModalComment from '../uses/useModalComments';
-import comments from "@imagina/qsite/_components/master/comments/index.vue";
+import comments from "modules/qsite/_components/master/comments/index.vue";
 
 export default defineComponent({
   components: {

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'
 
@@ -41,8 +41,8 @@ export default async function updateWorkOrder(id: number, attributes: any): Prom
         await Promise.allSettled([
             cacheOffline.updateRecord(API_ROUTE, dataUpdate, dataUpdate?.id),
             Vue.prototype.$crud.update(
-                API_ROUTE, 
-                id, 
+                API_ROUTE,
+                id,
                 dataForApi
             )
         ])

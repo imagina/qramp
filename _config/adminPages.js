@@ -6,8 +6,8 @@ export default {
     path: '/ramp/work-orders/index',
     name: 'qramp.admin.workOrders',
     crud: import('../_crud/workOrders'),
-    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
-    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    page: () => import('modules/qcrud/_pages/admin/crudPage'),
+    layout: () => import('modules/qsite/_layouts/master.vue'),
     title: 'ifly.cms.sidebar.workOrders',
     icon: 'fa-light fa-briefcase',
     subHeader: {
@@ -23,7 +23,7 @@ export default {
     page: () => import('../_components/flightMap/index.vue'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'ifly.cms.sidebar.map',
-    icon: 'fa-light fa-map', 
+    icon: 'fa-light fa-map',
     subHeader: {
       refresh: true,
     }
@@ -125,7 +125,7 @@ export default {
     page: () => import('../_components/flightMap/index.vue'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'ifly.cms.sidebar.map',
-    icon: 'fa-light fa-map', 
+    icon: 'fa-light fa-map',
     subHeader: {
       refresh: true,
     }

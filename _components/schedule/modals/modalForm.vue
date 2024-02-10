@@ -11,7 +11,7 @@
     :customClass="`tw-border-l-2 tw-border-${flightStatusComputed() ? flightStatusComputed().color : 'gray-100'}`"
   >
     <q-form ref="formSchedule">
-      <div 
+      <div
         class="tw-grid tw-grid-cols-1 tw-gap-4"
         :class="{'lg:tw-grid-cols-2': form.id && permisionComments}"
       >
@@ -43,7 +43,7 @@
           </div>
         </div>
         <div>
-          <comments 
+          <comments
             v-if="form.id && permisionComments && !isAppOffline"
             apiRoute="apiRoutes.qramp.comments"
             :commentableId="Number(form.id)"
@@ -59,9 +59,9 @@
 <script>
 import scheduleField from "../fields/scheduleField.js";
 import qRampStore from '../../../_store/qRampStore.js';
-import comments from '@imagina/qsite/_components/master/comments/index.vue'
+import comments from 'modules/qsite/_components/master/comments/index.vue'
 import {STATUS_DRAFT , STATUS_SCHEDULE} from '../../model/constants.js'
-import cache from '@imagina/qsite/_plugins/cache';
+import cache from 'modules/qsite/_plugins/cache';
 export default {
   components: {comments},
   mixins: [scheduleField],
@@ -155,7 +155,7 @@ export default {
     async hideModal() {
       this.$emit('setEventComments', this.form.id);
       this.show = false;
-      this.form = {};      
+      this.form = {};
     },
     async openModal(title = null, data = null, date) {
       try {
@@ -221,7 +221,7 @@ export default {
       if (key === "flightNumber") {
         this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, "");
       }
-      if (key === "stationId") {       
+      if (key === "stationId") {
         this.form.gateId = null;
         return;
       }

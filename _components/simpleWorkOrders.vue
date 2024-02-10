@@ -81,14 +81,14 @@ import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
 import {
-  BUSINESS_UNIT_PASSENGER, 
-  BUSINESS_UNIT_RAMP, 
+  BUSINESS_UNIT_PASSENGER,
+  BUSINESS_UNIT_RAMP,
   STATUS_DRAFT,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
   modelWorkOrder
 } from './model/constants.js';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
 import workOrderList from '../_store/actions/workOrderList.ts'
 
 
@@ -180,7 +180,7 @@ export default {
     setCustomerForm(key) {
       if (key !== "customerId") return;
       const selectCustomers =
-        this.selectCustomers === null || 
+        this.selectCustomers === null ||
         this.selectCustomers === undefined ||
         this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
@@ -327,8 +327,8 @@ export default {
         const offlineId = new Date().valueOf()
 
         const dataForm = {
-          ...this.form, 
-          offlineId: this.isAppOffline ? offlineId : null, 
+          ...this.form,
+          offlineId: this.isAppOffline ? offlineId : null,
           titleOffline: qRampStore().getTitleOffline(),
           ...businessUnitId,
         };
@@ -355,7 +355,7 @@ export default {
 
         if(!this.isAppOffline) workOrderList().getWorkOrders(true, true)
         qRampStore().hideLoading();
-        
+
         return this.isAppOffline ? { data: { ...offlineWorkOrder } } : response;
       } catch (error) {
         qRampStore().hideLoading();
