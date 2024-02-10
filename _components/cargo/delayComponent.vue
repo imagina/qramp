@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import Vue, { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
+import { defineComponent, computed, ref, onMounted, onBeforeUnmount, getCurrentInstance } from "vue";
 import cargoStore from "./store/cargo";
 import workOrderList from "../../_store/actions/workOrderList";
 import qRampStore from "../../_store/qRampStore.js";
@@ -62,6 +62,8 @@ export default defineComponent({
     delayForm,
   },
   setup() {
+    const proxy = getCurrentInstance().appContext.config.globalProperties
+
     const disabledReadonly = computed(() => qRampStore().disabledReadonly());
     const isPassenger = computed(() => qRampStore().getIsPassenger());
     const delay = computed({
@@ -86,12 +88,12 @@ export default defineComponent({
           props: {
             options: workOrderList().getWorkOrderDelays(),
             readonly: disabledReadonly.value,
-            label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
+            label: proxy.$tr("icommerce.cms.sidebar.code"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
+          label: proxy.$tr("icommerce.cms.sidebar.code"),
         };
         obj["hours" + index] = {
           value: delay.hours,
@@ -100,12 +102,12 @@ export default defineComponent({
             hint: "Enter the Time in minutes",
             mask: "###################",
             readonly: disabledReadonly.value,
-            label: Vue.prototype.$tr("isite.cms.label.time"),
+            label: proxy.$tr("isite.cms.label.time"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: Vue.prototype.$tr("isite.cms.label.time"),
+          label: proxy.$tr("isite.cms.label.time"),
         };
       });
       return obj;
@@ -136,7 +138,7 @@ export default defineComponent({
           },
         },
       };
-      Vue.prototype.$crud
+      proxy.$crud
         .index(API_ROUTE, params)
         .then((res) => {
           const data = res.data || [];

@@ -1,4 +1,4 @@
-import Vue, { computed, ComputedRef } from 'vue';
+import { computed, ComputedRef, getCurrentInstance } from 'vue';
 import {COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
@@ -6,6 +6,7 @@ import store from '../store/modalSchedule.store'
 import kanbanStore from '../store/kanban.store'
 
 export default function modelFields() {
+    const proxy = getCurrentInstance().appContext.config.globalProperties
     const isPassenger = computed(() =>  qRampStore().getIsPassenger());
     const companyId = computed(() => isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP);
     const isBlank = computed(() => kanbanStore.isBlank);
@@ -27,9 +28,9 @@ export default function modelFields() {
       return workOrderList()
         .getStationList()
         .map(
-          item => ({ 
-            label: item.stationName, 
-            value: item.id 
+          item => ({
+            label: item.stationName,
+            value: item.id
           })
         )
     })
@@ -38,9 +39,9 @@ export default function modelFields() {
       return workOrderList()
         .getACTypesList()
         .map(
-          item => ({ 
-            label: item.model, 
-            value: item.id 
+          item => ({
+            label: item.model,
+            value: item.id
           })
         )
     })
@@ -63,9 +64,9 @@ export default function modelFields() {
               props: {
                 readonly: isBlank.value,
                 rules: [
-                  val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                  val => !!val || proxy.$tr('isite.cms.message.fieldRequired')
                 ],
-                label: `*${Vue.prototype.$tr('ifly.cms.form.flight')}`,
+                label: `*${proxy.$tr('ifly.cms.form.flight')}`,
                 clearable: true,
                 color:"primary"
               },
@@ -77,9 +78,9 @@ export default function modelFields() {
               props: {
                 readonly: isBlank.value,
                 rules: [
-                  val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                  val => !!val || proxy.$tr('isite.cms.message.fieldRequired')
                 ],
-                label: `*${Vue.prototype.$tr('ifly.cms.form.station')}`,
+                label: `*${proxy.$tr('ifly.cms.form.station')}`,
                 clearable: true,
                 color:"primary",
                 options: filterStation.value
@@ -92,12 +93,12 @@ export default function modelFields() {
               props: {
                 vIf: !isPassenger.value,
                 readonly: isBlank.value,
-                label: `${Vue.prototype.$tr('ifly.cms.form.gate')}`,
+                label: `${proxy.$tr('ifly.cms.form.gate')}`,
                 clearable: true,
                 color:"primary",
                 options: filterGates.value
               },
-              label: Vue.prototype.$tr('ifly.cms.form.gate'),
+              label: proxy.$tr('ifly.cms.form.gate'),
             },
             operationTypeId: {
               name:'operationTypeId',
@@ -105,22 +106,22 @@ export default function modelFields() {
               type: 'select',
               props: {
                 rules: [
-                  val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                  val => !!val || proxy.$tr('isite.cms.message.fieldRequired')
                 ],
-                label: `*${Vue.prototype.$tr('ifly.cms.form.operation')}`,
+                label: `*${proxy.$tr('ifly.cms.form.operation')}`,
                 clearable: true,
                 color:"primary",
                 'hide-bottom-space': false,
                 options: operationTypeList.value
               },
-              label: Vue.prototype.$tr('ifly.cms.form.operation'),
+              label: proxy.$tr('ifly.cms.form.operation'),
             },
             sta: {
               value: null,
               type: 'hour',
               props: {
                 rules: [
-                  val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                  val => !!val || proxy.$tr('isite.cms.message.fieldRequired')
                 ],
                 readonly: isBlank.value,
                 label: 'STA',
@@ -132,7 +133,7 @@ export default function modelFields() {
               type: 'fullDate',
               props: {
                 rules: [
-                  val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                  val => !!val || proxy.$tr('isite.cms.message.fieldRequired')
                 ],
                 mask:'MM/DD/YYYY HH:mm',
                 hint:'Format: MM/DD/YYYY HH:mm',
@@ -158,7 +159,7 @@ export default function modelFields() {
               value: null,
               type: 'select',
               props: {
-                label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
+                label: proxy.$tr('ifly.cms.sidebar.aircraftType'),
                 options: filterAcType.value,
               },
             },

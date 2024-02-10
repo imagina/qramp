@@ -38,7 +38,7 @@
                 tw-mx-1"
               />STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
             </span>
-          </div> 
+          </div>
         </div>
         <div class="
           tw-flex
@@ -85,21 +85,21 @@
         >
           <div class="
             tw-rounded-lg
-            tw-border-2                
+            tw-border-2
           tw-border-gray-200
             tw-px-2
             tw-py-1
             tw-uppercase
             tw-cursor-pointer
             text-status-tablet"
-            @click="openModalSelectFlightNumber" 
+            @click="openModalSelectFlightNumber"
           >
-            <span 
-              :class="flightStatuses.color" 
+            <span
+              :class="flightStatuses.color"
             >
               <i class="tw-mr-1" :class="flightStatuses.icon"
               />{{ flightStatuses.name}}
-            </span>            
+            </span>
           </div>
         </div>
         <!--card actions-->
@@ -109,11 +109,11 @@
           :card="card"
           :dateColumn="dateColumn"
         />
-    </div>    
+    </div>
   </div>
 </template>
 <script lang="ts">
-import Vue, {defineComponent} from 'vue';
+import {defineComponent} from 'vue';
 import kanbanCardActions from './KanbanCardActions.vue'
 import useKanbanCard from '../uses/useKanbanCard';
 import lastComments from './lastComments.vue'
@@ -140,7 +140,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .icons {
-  color: #1F294F99  
+  color: #1F294F99
 }
 .h-200 {
     height: 60vh;
@@ -178,7 +178,7 @@ export default defineComponent({
   line-height: normal;
   letter-spacing: 0.36px;
 }
-.text-status-tablet {  
+.text-status-tablet {
   font-family: Manrope;
   font-size: 12px;
   font-style: normal;

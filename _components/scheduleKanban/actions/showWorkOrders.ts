@@ -1,14 +1,15 @@
-import Vue from 'vue';
+import { getCurrentInstance } from 'vue';
 import storeKanban from '../store/kanban.store';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
 import { DataWorkOrder } from '../contracts/getWorkOrder.contract';
 
 export default async function showWorkOrder(workOrderId: number): Promise<{data: DataWorkOrder | any}> {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
 
         if (!storeKanban.isAppOffline) {
-            return await Vue.prototype.$crud.show(API_ROUTE, workOrderId, {
+            return await proxy.$crud.show(API_ROUTE, workOrderId, {
                 refresh: true,
                 include:
                     "customer,workOrderStatus,operationType,station,contract,responsible,flightStatus,scheduleStatus,gate",
@@ -19,7 +20,7 @@ export default async function showWorkOrder(workOrderId: number): Promise<{data:
         return {
             data: cacheData
         }
-        
+
     } catch (error) {
         console.log(error);
         return { data: {} }
