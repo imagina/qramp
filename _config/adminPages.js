@@ -23,7 +23,7 @@ export default {
     page: () => import('../_components/flightMap/index.vue'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'ifly.cms.sidebar.map',
-    icon: 'fa-light fa-map',
+    icon: 'fa-light fa-map', 
     subHeader: {
       refresh: true,
     }
@@ -125,7 +125,7 @@ export default {
     page: () => import('../_components/flightMap/index.vue'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'ifly.cms.sidebar.map',
-    icon: 'fa-light fa-map',
+    icon: 'fa-light fa-map', 
     subHeader: {
       refresh: true,
     }
