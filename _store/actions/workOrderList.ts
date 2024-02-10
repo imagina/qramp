@@ -1,5 +1,5 @@
-import Vue, { reactive } from 'vue';
 import baseService from 'modules/qcrud/_services/baseService.js'
+import { reactive, getCurrentInstance } from 'vue';
 import qRampStore from '../qRampStore.js'
 import {
     BUSINESS_UNIT_PASSENGER,
@@ -53,6 +53,7 @@ const state = reactive<State>({
 });
 const cacheTimeForm24Hour: number = 60 * 60 * 24;
 const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
+const proxy = getCurrentInstance().appContext.config.globalProperties
 
 /**
  * This is a work order list function that returns an object with several functions to
@@ -247,7 +248,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getOperationType(refresh = false): Promise<OperationType[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.operation-types.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('ramp.operation-types.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -276,7 +277,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getStation(refresh = false): Promise<StationContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.stations.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('setup.stations.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -302,7 +303,7 @@ export default function workOrderList(): WorkOrderList {
     }
     //"status":1,"companyId":26,"allTranslations":true
     async function getAirlines(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airline.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('iflight.airline.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -326,7 +327,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns A promise that will resolve with the array of CustomerContract objects or void if there's an error
      */
     async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.customers.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('setup.customers.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -356,7 +357,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getContract(refresh = false): Promise<any[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.operation-types.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('ramp.operation-types.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -386,7 +387,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a promise.
      */
     async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.flight-statuses.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('iflight.flight-statuses.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -414,7 +415,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned.
      */
     async function getWorkOrderStatuses(refresh = false): Promise<WorkOrderStatusesContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.work-order-statuses.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('ramp.work-order-statuses.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -444,7 +445,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getGates(refresh = false): Promise<Gates[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.gates.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('setup.gates.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -474,7 +475,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
-        if (Vue.prototype.$auth && (Vue.prototype.$auth.hasAccess('ramp.work-orders.index') || Vue.prototype.$auth.hasAccess('ramp.passenger-work-orders.index'))){
+        if (proxy.$auth && (proxy.$auth.hasAccess('ramp.work-orders.index') || proxy.$auth.hasAccess('ramp.passenger-work-orders.index'))){
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
@@ -513,9 +514,9 @@ export default function workOrderList(): WorkOrderList {
     function getCustomerWithContract(refresh = false): Promise<any[] | void> {
 
             return new Promise(async (resolve) => {
-                if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.contracts.index') && Vue.prototype.$auth.hasAccess('setup.customers.index')) {
+                if (proxy.$auth && proxy.$auth.hasAccess('setup.contracts.index') && proxy.$auth.hasAccess('setup.customers.index')) {
 
-                const allowContractName = Vue.prototype.$auth ? Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
+                const allowContractName = proxy.$auth ? proxy.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
                 const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
@@ -553,7 +554,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getACTypes(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.aircrafttype.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('iflight.aircrafttype.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -578,7 +579,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getListDelays(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.work-order-delays.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('setup.work-order-delays.index')) {
             try {
                 const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
                 const isPassenger = qRampStore().getIsPassenger();
@@ -606,7 +607,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getResponsibleList(refresh = false) {
-        if (Vue.prototype.$auth && (Vue.prototype.$auth.hasAccess('ramp.work-orders.index') || Vue.prototype.$auth.hasAccess('ramp.passenger-work-orders.index'))) {
+        if (proxy.$auth && (proxy.$auth.hasAccess('ramp.work-orders.index') || proxy.$auth.hasAccess('ramp.passenger-work-orders.index'))) {
             try {
                 const API_ROUTE = 'apiRoutes.quser.users'
                 const isPassenger = qRampStore().getIsPassenger();
@@ -629,7 +630,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getAirports(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airport.index')) {
+        if (proxy.$auth && proxy.$auth.hasAccess('iflight.airport.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;

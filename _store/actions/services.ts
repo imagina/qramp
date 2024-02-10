@@ -1,7 +1,7 @@
 /* Importing the baseService, qRampStore, and Vue. */
 import baseService from "modules/qcrud/_services/baseService.js";
 import qRampStore from "../qRampStore.js";
-import Vue from 'vue';
+import { getCurrentInstance } from 'vue';
 import {
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
@@ -21,7 +21,8 @@ export const serviceListModel = {
  * @returns An array of categories.
  */
 export const getCategories = async (): Promise<any[]> => {
-    if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.categories.index')) {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
+    if (proxy.$auth && proxy.$auth.hasAccess('ramp.categories.index')) {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -230,7 +231,8 @@ function setProps(type, name, options, index) {
  */
 export function getListOfSelectedServices(data) {
     try {
-        const service = Vue.prototype.$clone(data.filter((items) => {
+      const proxy = getCurrentInstance().appContext.config.globalProperties
+        const service = proxy.$clone(data.filter((items) => {
             for (let item in items.formField) {
                 for (let key in items.formField[item]) {
                     if (key == "value") {

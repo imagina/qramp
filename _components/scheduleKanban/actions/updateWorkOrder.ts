@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
+import { getCurrentInstance } from 'vue';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'
 
 export default async function updateWorkOrder(id: number, attributes: any): Promise<void> {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
         const FORMAT_DATE = 'YYYY-MM-DDTHH:mm:ss'
@@ -11,7 +13,7 @@ export default async function updateWorkOrder(id: number, attributes: any): Prom
         const dataForApi = { ...attributes }
 
         if (storeKanban.isAppOffline) {
-            dataForApi.titleOffline = `${Vue.prototype.$tr("ifly.cms.form.updateWorkOrder")} Id: ${dataForApi.id}`;
+            dataForApi.titleOffline = `${proxy.$tr("ifly.cms.form.updateWorkOrder")} Id: ${dataForApi.id}`;
         }
 
         if (dataUpdate.inboundFlightNumber) {
@@ -40,7 +42,7 @@ export default async function updateWorkOrder(id: number, attributes: any): Prom
 
         await Promise.allSettled([
             cacheOffline.updateRecord(API_ROUTE, dataUpdate, dataUpdate?.id),
-            Vue.prototype.$crud.update(
+            proxy.$crud.update(
                 API_ROUTE,
                 id,
                 dataForApi

@@ -1,10 +1,11 @@
-import Vue, { computed } from "vue";
+import { computed, getCurrentInstance } from "vue";
 import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 
 
 export default function filterModel() {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
   return computed(() => ({
     time: {
       value: null,
@@ -68,8 +69,8 @@ export default function filterModel() {
         clearable: true,
         readonly: kanbanStore.isAppOffline,
         options: [
-          { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
-          { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
+          { label: proxy.$tr("isite.cms.label.yes"), value: true },
+          { label: proxy.$tr("isite.cms.label.no"), value: false },
         ],
       },
     },

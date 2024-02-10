@@ -1,13 +1,15 @@
 import Vue from 'vue';
 import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
+import { getCurrentInstance } from 'vue';
 
 export default async function deleteWorkOrders(workOrderId: number): Promise<void> {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
 
         await Promise.allSettled([
             cacheOffline.deleteItem(workOrderId, API_ROUTE),
-            Vue.prototype.$crud.delete(
+            proxy.$crud.delete(
                 API_ROUTE,
                 workOrderId,
                 {
@@ -18,7 +20,7 @@ export default async function deleteWorkOrders(workOrderId: number): Promise<voi
             )
         ])
 
-        Vue.prototype.$alert.info('workOrders was deleted correctly');
+        proxy.$alert.info('workOrders was deleted correctly');
     } catch (error) {
         console.log(error);
     }
