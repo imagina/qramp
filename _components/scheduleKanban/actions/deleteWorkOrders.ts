@@ -1,24 +1,25 @@
-import Vue from 'vue';
+import { getCurrentInstance } from 'vue';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
 
 export default async function deleteWorkOrders(workOrderId: number): Promise<void> {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
 
         await Promise.allSettled([
             cacheOffline.deleteItem(workOrderId, API_ROUTE),
-            Vue.prototype.$crud.delete(
-                API_ROUTE, 
-                workOrderId, 
-                { 
-                    params: { 
-                        titleOffline: `Delete Work Order - Id: ${workOrderId}` 
-                    } 
+            proxy.$crud.delete(
+                API_ROUTE,
+                workOrderId,
+                {
+                    params: {
+                        titleOffline: `Delete Work Order - Id: ${workOrderId}`
+                    }
                 }
             )
         ])
 
-        Vue.prototype.$alert.info('workOrders was deleted correctly');
+        proxy.$alert.info('workOrders was deleted correctly');
     } catch (error) {
         console.log(error);
     }

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import Vue, {defineComponent} from 'vue';
+import {defineComponent} from 'vue';
 import useKanbanCardActions from '../uses/useKanbanCardActions';
 
 export default defineComponent({
@@ -45,6 +45,6 @@ export default defineComponent({
 
 <style scoped>
 .action-icon {
-  color: #1F294F99  
+  color: #1F294F99
 }
 </style>

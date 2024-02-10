@@ -1,4 +1,4 @@
-import Vue, {computed, inject } from 'vue';
+import { computed, getCurrentInstance, inject } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
@@ -21,6 +21,7 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 import openInlineSchedule from '../actions/openInlineSchedule'
 
 export default function useKanbanCardActions(props: any = {}) {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormOrders: any = inject('refFormOrders');
   const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -59,7 +60,7 @@ export default function useKanbanCardActions(props: any = {}) {
     {
       vIf: showCardActions.value,
       icon: 'fa-light fa-pen-to-square',
-      toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
+      toolttip: proxy.$tr('isite.cms.label.edit'),
       action: () => {
         (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) ? openInlineSchedule(props) : openModalSchedule()
       },
@@ -67,15 +68,15 @@ export default function useKanbanCardActions(props: any = {}) {
     {
       vIf: showCardActions.value,
       icon: 'fa-light fa-trash',
-      toolttip: Vue.prototype.$tr('isite.cms.label.delete'),
+      toolttip: proxy.$tr('isite.cms.label.delete'),
       action: () => {
         deleteWorkOrder()
       },
     }
   ])
-  
+
   async function showModalFull() {
-    const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
+    const titleModal = proxy.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
     const response = await showWorkOrder(props.card.id);
     await refFormOrders.value.loadform({
       modalProps: {
