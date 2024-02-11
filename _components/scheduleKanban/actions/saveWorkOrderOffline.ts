@@ -1,18 +1,18 @@
 import { STATUS_SCHEDULE } from '../../model/constants';
 import modalScheduleStore from '../store/modalSchedule.store'
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
 import moment from 'moment'
 
 export default async function saveWorkOrderOffline(requestResponse) {
     const FORMAT_DATE = 'YYYY-MM-DDTHH:mm:ss'
     const form = { ...modalScheduleStore.form };
-    
-    form.outboundScheduledDeparture = form.outboundScheduledDeparture 
-        ? moment(form.outboundScheduledDeparture).format(FORMAT_DATE) 
+
+    form.outboundScheduledDeparture = form.outboundScheduledDeparture
+        ? moment(form.outboundScheduledDeparture).format(FORMAT_DATE)
         : null
 
-    form.inboundScheduledArrival = form.inboundScheduledArrival 
-        ? moment(form.inboundScheduledArrival).format(FORMAT_DATE) 
+    form.inboundScheduledArrival = form.inboundScheduledArrival
+        ? moment(form.inboundScheduledArrival).format(FORMAT_DATE)
         : null
 
     form.scheduleDate = form.inboundScheduledArrival || form.outboundScheduledDeparture

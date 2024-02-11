@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import comments from "@imagina/qsite/_components/master/comments/index.vue";
+import comments from "modules/qsite/_components/master/comments/index.vue";
 
 export default {
   components: { comments },

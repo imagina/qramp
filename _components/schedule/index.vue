@@ -1,66 +1,66 @@
 <template>
-  <div 
-    class="schedule-ctn" 
+  <div
+    class="schedule-ctn"
     :class="{ 'fullscreen tw-bg-white tw-p-3 tw-overflow-x-scroll': fullscreen }"
   >
     <div class="box box-auto-height q-mb-md">
-      <page-actions 
-        ref="pageActions" 
-        :title="$t('ifly.cms.sidebar.schedule')" 
+      <page-actions
+        ref="pageActions"
+        :title="$t('ifly.cms.sidebar.schedule')"
         multipleRefresh
-        :extra-actions="extraPageActions" 
+        :extra-actions="extraPageActions"
         :excludeActions="fullscreen ? ['filter'] : []"
-        @refresh="refreshWorkOrder" 
-        class="q-mb-md" 
+        @refresh="refreshWorkOrder"
+        class="q-mb-md"
       />
     </div>
-    <q-btn-toggle 
-      v-model="scheduleTypeComputed" 
-      rounded 
-      no-caps 
-      unelevated 
+    <q-btn-toggle
+      v-model="scheduleTypeComputed"
+      rounded
+      no-caps
+      unelevated
       toggle-color="blue-grey" color="grey-2"
       text-color="blue-grey" :options="scheduleTypeOptions" id="btnCalendarType" size="14px" padding="md sm" spread />
-    <div 
+    <div
       class="
-       tw-btn-nav 
-       tw-flex 
-       tw-my-2 
-       tw-justify-center 
+       tw-btn-nav
+       tw-flex
+       tw-my-2
+       tw-justify-center
        tw-items-center"
       >
-      <q-btn 
-        dense 
-        rounded 
-        unelevated 
-        color="grey-1" 
-        text-color="blue-grey" 
-        label="Prev" 
-        @click="schedulePrev" 
-        icon="fa-regular fa-chevron-left" 
-        class="tw-w-1/2 tw-mr-1" 
+      <q-btn
+        dense
+        rounded
+        unelevated
+        color="grey-1"
+        text-color="blue-grey"
+        label="Prev"
+        @click="schedulePrev"
+        icon="fa-regular fa-chevron-left"
+        class="tw-w-1/2 tw-mr-1"
        />
-      <q-btn 
-        dense 
-        rounded 
-        unelevated 
-        color="grey-1" 
-        text-color="blue-grey" 
-        label="Next" 
-        @click="scheduleNext" 
-        icon-right="fa-regular fa-chevron-right" 
-        class="tw-w-1/2 tw-ml-1" 
+      <q-btn
+        dense
+        rounded
+        unelevated
+        color="grey-1"
+        text-color="blue-grey"
+        label="Next"
+        @click="scheduleNext"
+        icon-right="fa-regular fa-chevron-right"
+        class="tw-w-1/2 tw-ml-1"
       />
     </div>
     <q-calendar
       v-show="scheduleTypeComputed"
-      bordered 
-      ref="schedule" 
-      v-model="selectedDate" 
-      :view="scheduleType" 
+      bordered
+      ref="schedule"
+      v-model="selectedDate"
+      :view="scheduleType"
       locale="en-us"
-      hour24Format 
-      @click:day2="eventSchedule" 
+      hour24Format
+      @click:day2="eventSchedule"
       @click:date2="event => eventSchedule(event, true)"
       @click:day:header2="eventSchedule" :class="scheduleType"
     >
@@ -69,7 +69,7 @@
           <div class="tw-container">
             <div class="tw-inline-block tw-w-4/5">
               <dynamic-field
-                v-model="multiFilterDate[timestamp.date]" 
+                v-model="multiFilterDate[timestamp.date]"
                 :field="fields.time"
                 @input="getWorkOrderDateTime($event, timestamp.date, false)"
                 class="tw-px-2"
@@ -84,39 +84,39 @@
                 @click="getWorkOrderDateTime(multiFilterDate[timestamp.date], timestamp.date)"
                 class="tw--mt-3"
             >
-              <q-tooltip> 
-                  {{ $trp('isite.cms.label.refresh') }} 
+              <q-tooltip>
+                  {{ $trp('isite.cms.label.refresh') }}
               </q-tooltip>
             </q-btn>
             </div>
           </div>
           <template v-for="[hours, eventArr] in Object.entries(getEvents(timestamp.date).data).sort()">
-            <div 
+            <div
               class="
                tw-mb-0"
             >
-            <div 
+            <div
               class="
                 tw-border-b-2
-                tw-border-gray-300 
-                tw-py-3-2 
+                tw-border-gray-300
+                tw-py-3-2
                 tw-mb-6"
             >
-              <div 
+              <div
                   class="
-                    tw-inline-flex 
-                    tw-items-center 
-                    tw-justify-center 
+                    tw-inline-flex
+                    tw-items-center
+                    tw-justify-center
                     tw-p-1
-                    tw-mr-2 
-                    tw-text-xs 
-                    tw-font-bold 
-                    tw-leading-none 
+                    tw-mr-2
+                    tw-text-xs
+                    tw-font-bold
+                    tw-leading-none
                     tw-absolute
                     tw-bg-white">
                   <i class="
-                    fa-sharp 
-                    fa-light 
+                    fa-sharp
+                    fa-light
                     fa-clock
                     tw-px-1" />
                   {{ hours }} h
@@ -142,18 +142,18 @@
                   "
                   @click.stop.prevent="editSchedule(event)"
                 >
-                  <div 
+                  <div
                     class="tw-font-semibold"
                     :class="{'tw-mb-2 sm:tw-mb-0 sm:tw-w-1/2': event.id && scheduleType === 'day-agenda'}"
                   >
                     <badgeComment
                       v-if="!isAppOffline"
                       :event="event"
-                      mainClass="tw-mr-2" 
+                      mainClass="tw-mr-2"
                     />
                     <i
                       class="
-                      fa-solid 
+                      fa-solid
                       fa-circle-check" :class="colorCheckSchedule(event)">
                       <q-tooltip>
                         {{ titleStatus(event.statusId) }}
@@ -164,13 +164,13 @@
                   <div class="tw-text-right sm:tw-w-1/2 tw-space-x-2" v-if="event.id && scheduleType === 'day-agenda'">
                     <button v-if="!isBlank && !events.some(item => item.isUpdate) && !isPassenger" class="
                         tw-rounded-lg
-                        tw-text-gray-400 
-                        tw-px-2 tw-py-1 lg:tw-py-0  
-                        tw-border 
-                        tw-border-gray-200 
-                        hover:tw-text-white 
-                        hover:tw-bg-green-500 
-                        hover:tw-opacity-75" 
+                        tw-text-gray-400
+                        tw-px-2 tw-py-1 lg:tw-py-0
+                        tw-border
+                        tw-border-gray-200
+                        hover:tw-text-white
+                        hover:tw-bg-green-500
+                        hover:tw-opacity-75"
                         @click.stop.prevent="startWorkOrders(STATUS_DRAFT, event)"
                       >
                       <i class="fa-sharp fa-regular fa-bring-forward" />
@@ -180,12 +180,12 @@
                     </button>
                     <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
                         tw-rounded-lg
-                        tw-text-gray-400 
-                        tw-px-2 tw-py-1 lg:tw-py-0  
-                        tw-border tw-border-gray-200 
-                        hover:tw-text-white 
-                        hover:tw-bg-blue-500 
-                        hover:tw-opacity-75" 
+                        tw-text-gray-400
+                        tw-px-2 tw-py-1 lg:tw-py-0
+                        tw-border tw-border-gray-200
+                        hover:tw-text-white
+                        hover:tw-bg-blue-500
+                        hover:tw-opacity-75"
                         @click.stop.prevent="duplicateSchedule(event)"
                     >
                       <i class="fa-thin fa-clone" />
@@ -196,7 +196,7 @@
                     <button v-if="!events.some(item => item.isUpdate)" @click.stop.prevent="editSchedule(event, 'day')"
                       class="
                         tw-rounded-lg
-                        tw-text-gray-400 
+                        tw-text-gray-400
                         tw-px-2 tw-py-1 lg:tw-py-0
                         tw-border tw-border-gray-200 hover:tw-text-white hover:tw-bg-blue-500 hover:tw-opacity-75">
                       <i class="fa-light" :class="{
@@ -214,11 +214,11 @@
                     </button>
                     <button v-if="!isBlank && !events.some(item => item.isUpdate)" class="
                         tw-rounded-lg
-                        tw-text-gray-400 
-                        tw-px-2 tw-py-1 lg:tw-py-0  
-                        tw-border tw-border-gray-200 hover:tw-text-white 
-                        hover:tw-bg-red-500 
-                        hover:tw-opacity-75" 
+                        tw-text-gray-400
+                        tw-px-2 tw-py-1 lg:tw-py-0
+                        tw-border tw-border-gray-200 hover:tw-text-white
+                        hover:tw-bg-red-500
+                        hover:tw-opacity-75"
                         @click.stop.prevent="deleteSchedule(event.id)"
                       >
                       <i class="fa-light fa-trash-can" />
@@ -236,19 +236,19 @@
         </template>
       </template>
       <template #day-header="{ timestamp }">
-        <div 
-          class="tw-mx-3 tw-py-2 tw-block" 
+        <div
+          class="tw-mx-3 tw-py-2 tw-block"
           v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
         >
           <button class="
               tw-w-full
               tw-bg-gray-100
               hover:tw-bg-gray-200
-              tw-rounded-lg 
-              tw-p-1" 
-              @click="addNewDayToSchedule(timestamp)" 
+              tw-rounded-lg
+              tw-p-1"
+              @click="addNewDayToSchedule(timestamp)"
               :disabled="events.some(item => item.isUpdate)">
-            <i class="fa-light fa-plus"></i> 
+            <i class="fa-light fa-plus"></i>
             <span v-if="scheduleType === 'day-agenda' && !isBlank"> {{ $tr('isite.cms.label.new')
             }}</span>
             <q-tooltip v-if="scheduleType === 'week-agenda'">
@@ -261,11 +261,11 @@
               'tw-grid-cols-2': scheduleType === 'day-agenda',
             }">
               <div>
-                <completedSchedule 
-                  :getEvents="getEvents" 
-                  :scheduleType="scheduleType" 
+                <completedSchedule
+                  :getEvents="getEvents"
+                  :scheduleType="scheduleType"
                   :timestamp="timestamp"
-                  v-if="Object.entries(getEvents(timestamp.date, false).data).length > 0" 
+                  v-if="Object.entries(getEvents(timestamp.date, false).data).length > 0"
                 />
               </div>
               <!--<div v-if="scheduleType === 'day-agenda'">
@@ -290,11 +290,11 @@
       ">
       <div>
         <i class="
-            fa-duotone 
-            fa-loader 
-            fa-spin 
+            fa-duotone
+            fa-loader
+            fa-spin
             fa-pulse
-            tw-text-7xl 
+            tw-text-7xl
             tw-text-blue-800
           " />
       </div>
@@ -328,11 +328,11 @@ import {
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
-import cache from '@imagina/qsite/_plugins/cache';
+import cache from 'modules/qsite/_plugins/cache';
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import completedSchedule from './completedSchedule.vue'
 import modelHoursFilter from './models/modelHoursFilter.js'
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
 import scheduler from '../scheduler/index.vue';
 import storeScheduler from '../scheduler/store/index.store.ts';
 export default {
@@ -400,7 +400,7 @@ export default {
       await qRampStore().setIsPassenger(currentRouteName !== -1);
       await workOrderList().getAllList();
       await workOrderList().getCustomerWithContract();
-      
+
     });
   },
   mounted() {
@@ -692,7 +692,7 @@ export default {
       }
       if (obj.dateStart) {
         this.selectedDate = this.$moment(obj.dateStart, 'YYYYMMDD').format('YYYY-MM-DD');
-        
+
       }
       if (obj.dateEnd) {
         this.selectedDateEnd = this.$moment(obj.dateEnd, 'YYYYMMDD').format('YYYY-MM-DD');
@@ -822,8 +822,8 @@ export default {
           const cloneSchedule = this.$clone(
             {
             ...modelWorkOrder,
-            ...data, 
-            id: offlineId, 
+            ...data,
+            id: offlineId,
             calendarTitle: `${data.preFlightNumber} STA ${data.sta} STD ${data.std}`,
             inboundScheduledArrival: `${this.$moment(data.inboundScheduledArrival).format('YYYY-MM-DD')}T23:59:59`,
             scheduleDate: `${this.$moment(data.scheduleDate).format('YYYY-MM-DD')}T23:59:59`,
@@ -833,7 +833,7 @@ export default {
             },
             flightStatus: {
               color: flightStatusColor || 'gray-200',
-            },  
+            },
           });
           this.events.push(cloneSchedule);
           await cacheOffline.addNewRecord("apiRoutes.qramp.workOrders", cloneSchedule);
@@ -841,7 +841,7 @@ export default {
         await this.saveRequestSimpleWorkOrder(data);
         await this.$refs.modalForm.setLoading(false);
         await this.$refs.modalForm.hideModal();
-        
+
         if(!this.isAppOffline) {
           await this.getWorkOrderFilter(true, this.selectedDateStart, this.selectedDateEnd);
           if (this.scheduleTypeComputed === 'day-agenda' && !isClone) {
@@ -849,7 +849,7 @@ export default {
           }
           await workOrderList().getWorkOrders(true, true);
         }
-        
+
         this.$alert.success('workOrders was added correctly');
       } catch (error) {
         console.log(error);
@@ -1013,7 +1013,7 @@ export default {
         customDatesArray.push(customDateObject);
         startDateM.add(1, 'days');
       }
-      
+
       return customDatesArray;
     },
     getMultiDate(startDate, endDate) {
@@ -1028,19 +1028,19 @@ export default {
       while (startDateM.isSameOrBefore(endDateM, 'day')) {
         this.multiFilterDate[startDateM.format('YYYY-MM-DD')] = filterTime;
         startDateM.add(1, 'days');
-      } 
+      }
     },
     async getWorkOrders(refresh = false, filter) {
       try {
         const businessUnitId = this.filterBusinessUnit;
         const weekDates = this.generateCustomDatesArray(filter.dateStart, filter.dateEnd)
         .filter(item => {
-          return this.selectedFilterDate 
+          return this.selectedFilterDate
            ? this.$moment(item.from)
             .startOf('day')
             .format('YYYY-MM-DD HH:mm:ss') === this.$moment(this.selectedFilterDate)
             .startOf('day')
-            .format('YYYY-MM-DD HH:mm:ss') 
+            .format('YYYY-MM-DD HH:mm:ss')
            : true
         });
         const filterClone = this.$clone(filter);
@@ -1077,13 +1077,13 @@ export default {
               params,
               this.isAppOffline
             );
-            const responseData = response.data.map((item) => ({ 
-              ...item, 
-              isUpdate: false, 
+            const responseData = response.data.map((item) => ({
+              ...item,
+              isUpdate: false,
               isClone: false,
             }));
             this.events.push(...responseData);
-            
+
           }, Promise.resolve());
           this.loading = false;
       } catch (error) {
@@ -1316,8 +1316,8 @@ export default {
         const outboundBlockOut = qRampStore().parseDateOfflineWO(data.outboundBlockOut);
         const outboundScheduledDeparture = qRampStore().parseDateOfflineWO(data.outboundScheduledDeparture);
         const eventParset = {
-          ...event, 
-          calendarTitle, 
+          ...event,
+          calendarTitle,
           ...data,
           inboundBlockIn,
           inboundScheduledArrival,
@@ -1326,11 +1326,11 @@ export default {
           scheduleDate,
           workOrderItems: Object.values(this.$helper.snakeToCamelCaseKeys(data.workOrderItems)),
         };
-        
+
         this.events = this.$clone(this.events.map(item => {
           return item.id == data.id ? { ...eventParset } : { ...item };
         }));
-        
+
         await cacheOffline.updateRecord('apiRoutes.qramp.workOrders', eventParset);
       }
     },
@@ -1359,7 +1359,7 @@ export default {
   padding-bottom: 0.6rem;
 }
 
-@media (max-width: 640px) { 
+@media (max-width: 640px) {
   #btnCalendarType > button i {
     @apply tw-block tw-w-full tw-mx-0 tw-mb-0;
   }
@@ -1393,7 +1393,7 @@ export default {
   font-size: 10px;
 }
 .q-calendar.month, .q-calendar.week-agenda {
-  width: 100%;  
+  width: 100%;
   overflow-x: scroll;
 }
 .q-calendar.day-agenda .tw-label-not {

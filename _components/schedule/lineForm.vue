@@ -3,15 +3,15 @@
     <q-form ref="lineForm">
       <div
         class="
-          tw-border 
-          tw-rounded-lg 
-          tw-py-3 
-          tw-px-4 
-          tw-mx-2 
+          tw-border
+          tw-rounded-lg
+          tw-py-3
+          tw-px-4
+          tw-mx-2
           tw-my-1
-          lg:tw-flex 
-          lg:tw-space-x-2 
-          lg:tw-flex-wrap 
+          lg:tw-flex
+          lg:tw-space-x-2
+          lg:tw-flex-wrap
           md:tw-flex-wrap
         "
       >
@@ -42,9 +42,9 @@
           <button
             v-if="form.isUpdate && !isBlank"
             class="
-             tw-bg-blue-800 
-             tw-rounded-lg 
-             tw-px-2 tw-py-1 
+             tw-bg-blue-800
+             tw-rounded-lg
+             tw-px-2 tw-py-1
              tw-text-white"
             @click.prevent="save()"
           >
@@ -56,9 +56,9 @@
           <button
             v-if="!isNaN(form.id) && form.isUpdate && !isBlank && permisionComments"
             class="
-             tw-bg-blue-800 
+             tw-bg-blue-800
              tw-rounded-lg
-             tw-px-2 tw-py-1 
+             tw-px-2 tw-py-1
              tw-text-white"
             @click.prevent="openCommentsModal"
           >
@@ -71,10 +71,10 @@
             v-if="form.isUpdate"
             @click.prevent="$emit('dismissEvent', form)"
             class="
-             tw-bg-blue-800 
-             tw-rounded-lg 
-             tw-px-2 
-             tw-py-1 
+             tw-bg-blue-800
+             tw-rounded-lg
+             tw-px-2
+             tw-py-1
              tw-text-white"
           >
             <i class="fa-light fa-xmark"></i>
@@ -96,7 +96,7 @@ import scheduleField from "./fields/scheduleField.js";
 import qRampStore from "../../_store/qRampStore.js";
 import commentsModal from "./modals/commentsModal.vue";
 import {STATUS_DRAFT} from '../model/constants.js';
-import cache from '@imagina/qsite/_plugins/cache';
+import cache from 'modules/qsite/_plugins/cache';
 export default {
   components: { commentsModal },
   mixins: [scheduleField],
@@ -124,7 +124,7 @@ export default {
   mounted() {
     this.form = this.event;
     this.form.sta = this.form.inboundScheduledArrival ? this.$moment(this.form.inboundScheduledArrival).format('HH:mm'): null;
-    this.form.outboundScheduledDeparture = typeof this.form.id !== 'string'  
+    this.form.outboundScheduledDeparture = typeof this.form.id !== 'string'
     ? this.$moment(this.form.outboundScheduledDeparture).format(`MM/DD/YYYY HH:mm`)
     : this.$moment(this.form.inboundScheduledArrival).format('MM/DD/YYYY 00:00');
   },

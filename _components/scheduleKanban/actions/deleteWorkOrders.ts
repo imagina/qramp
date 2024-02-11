@@ -1,5 +1,6 @@
+import Vue from 'vue';
+import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
 import { getCurrentInstance } from 'vue';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
 
 export default async function deleteWorkOrders(workOrderId: number): Promise<void> {
   const proxy = getCurrentInstance().appContext.config.globalProperties

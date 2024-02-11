@@ -1,4 +1,4 @@
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from 'modules/qcrud/_services/baseService.js'
 import store from '../store/index.store'
 import _ from 'lodash'
 

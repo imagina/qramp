@@ -1,4 +1,4 @@
-import baseService from '@imagina/qcrud/_services/baseService.js';
+import baseService from 'modules/qcrud/_services/baseService.js';
 import {reactive} from 'vue';
 
 interface StateComment {
@@ -8,7 +8,7 @@ interface StateComment {
 
 const state = reactive<StateComment>({
     lastComment: '',
-    loading: false, 
+    loading: false,
 });
 
 export async function getCommentsFilter(commentableId: number): Promise<void> {

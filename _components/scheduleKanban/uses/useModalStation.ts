@@ -3,7 +3,7 @@ import store from '../store/filters.store'
 import modalStationFields from '../models/modalStation.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
-import cache from '@imagina/qsite/_plugins/cache';
+import cache from 'modules/qsite/_plugins/cache';
 import getTitleFilter from '../actions/getTitleFilter';
 import storeKanban from '../store/kanban.store';
 
@@ -19,12 +19,12 @@ export default function useModalStation() {
     get: () => store.showModalStation,
     set: (value) => (store.showModalStation = value),
   });
-  
+
   const stationId = computed({
     get: () => store.stationId,
     set: (value) => (store.stationId = value),
-  });  
-  
+  });
+
   const actions = computed(()=> {
     return [
       {
@@ -32,14 +32,14 @@ export default function useModalStation() {
           color: "primary",
           label: "filters",
         },
-        action: async () => {          
+        action: async () => {
           saveStationId();
         },
       },
     ];
-  }) 
+  })
 
-  async function saveStationId() {    
+  async function saveStationId() {
     try {
       refModalStation.value.validate().then(async (success) => {
         if (success) {
@@ -59,8 +59,8 @@ export default function useModalStation() {
       console.log(error);
     }
   }
-  
-  return {    
+
+  return {
     loading,
     showModalStation,
     stationId,
