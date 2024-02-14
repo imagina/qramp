@@ -21,14 +21,14 @@
                 v-if="keyField !== 'sta' && keyField !== 'outboundScheduledDeparture'"
                 :field="field"
                 v-model="form[keyField]"
-                @input="zanetizeData(keyField)"
+                @update:modelValue="zanetizeData(keyField)"
                 :class="{ 'tw-hidden': keyField === 'stationId' }"
               />
               <div v-if="isbound[0] && keyField === 'sta'">
                 <dynamic-field
                   :field="field"
                   v-model="form[keyField]"
-                  @input="zanetizeData(keyField)"
+                  @update:modelValue="zanetizeData(keyField)"
                   :class="{ 'tw-hidden': keyField === 'stationId' }"
                 />
               </div>
@@ -36,7 +36,7 @@
                 <dynamic-field
                     :field="field"
                     v-model="form[keyField]"
-                    @input="zanetizeData(keyField)"
+                    @update:modelValue="zanetizeData(keyField)"
                     :class="{ 'tw-hidden': keyField === 'stationId' }"
                   />
               </div>
@@ -61,9 +61,10 @@ import scheduleField from "../fields/scheduleField.js";
 import qRampStore from '../../../_store/qRampStore.js';
 import comments from 'modules/qsite/_components/master/comments/index.vue'
 import {STATUS_DRAFT , STATUS_SCHEDULE} from '../../model/constants.js'
-import cache from 'modules/qsite/_plugins/cache';
+import { cache } from 'src/plugins/utils';
 export default {
   components: {comments},
+  emits: ['deleteSchedule','setEventComments','updateSchedule','addSchedule'],
   mixins: [scheduleField],
   data() {
     return {

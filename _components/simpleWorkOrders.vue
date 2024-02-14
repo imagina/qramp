@@ -36,7 +36,7 @@
           <dynamic-field
               :field="field"
               v-model="selectCustomerComputed"
-              @input="setCustomerForm(keyField)"
+              @update:modelValue="setCustomerForm(keyField)"
               @filter="setCustomerName"
               ref="customerId"
           >
@@ -69,7 +69,7 @@
               :field="field"
               v-model="form[keyField]"
               @enter="search(field)"
-              @input="zanetizeData(keyField)"
+              @update:modelValue="zanetizeData(keyField)"
           />
         </div>
       </div>
@@ -88,7 +88,7 @@ import {
   COMPANY_RAMP,
   modelWorkOrder
 } from './model/constants.js';
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
+import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
 
 
@@ -96,6 +96,7 @@ export default {
   components: {
     tableFlight,
   },
+  emits: ['isError','loading'],
   data() {
     return {
       newCustumerAdHoc: [],

@@ -35,6 +35,7 @@ export default {
       default: () => false,
     },
   },
+  emits: ['getWorkOrders'],
   data: () => ({
     visible: false,
     loading: false,

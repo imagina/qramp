@@ -54,7 +54,7 @@
         tooltipComments: true,
         'tw-text-center': loadingComment,
       }"
-      @input="changeLastComment(event)"
+      @update:modelValue="changeLastComment(event)"
       :offset="[10, 10]"
     >
       <div v-if="loadingComment" class="tw-py-2">

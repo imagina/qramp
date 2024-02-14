@@ -1,30 +1,30 @@
 <template>
   <div>
-    <master-modal 
-      id="formRampComponent" 
-      v-model="show" 
-      v-bind="modalProps" 
-      :persistent="true" 
+    <master-modal
+      id="formRampComponent"
+      v-model="show"
+      v-bind="modalProps"
+      :persistent="true"
       :loading="loading"
-      @hide="clear" 
-      :actions="actions" 
-      :width="modalProps.width" 
+      @hide="clear"
+      :actions="actions"
+      :width="modalProps.width"
       :maximized="$q.screen.lt.md"
     >
-    <stepper-ramp-form 
-      v-if="modalProps.update" 
-      @sp="sp = $event" 
-      @loading="setLoading" 
-      ref="stepper" 
+    <stepper-ramp-form
+      v-if="modalProps.update"
+      @sp="sp = $event"
+      @loading="setLoading"
+      ref="stepper"
       :steps="steppers"
-      :data="modalProps" 
+      :data="modalProps"
       @close-modal="close($event)"
-      @getWorkOrders="getWorkOrders" 
+      @getWorkOrders="getWorkOrders"
     />
-    <simpleWorkOrders 
-      v-if="!modalProps.update" 
+    <simpleWorkOrders
+      v-if="!modalProps.update"
       ref="simpleWorkOrder"
-      @loading="setLoading" 
+      @loading="setLoading"
     />
   </master-modal>
     <commentsModal
@@ -67,6 +67,7 @@ import delayComponent from '../_components/cargo/delayComponent';
 import commentsModal from "../_components/schedule/modals/commentsModal.vue";
 
 export default {
+  emits: ['getWorkOrderFilter'],
   components: {
     stepperRampForm,
     simpleWorkOrders,

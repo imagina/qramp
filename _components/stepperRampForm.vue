@@ -60,7 +60,7 @@ import {
   HalfTurnOutBountPassengerModel
 } from './model/constants.js';
 import remarkStore from './remarks/store.ts';
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
 
 export default {
@@ -71,6 +71,7 @@ export default {
     steps: {},
     data: {},
   },
+  emits: ['sp', 'close','close-modal','loading','getWorkOrders'],
   data() {
     return {
       readonly: false,

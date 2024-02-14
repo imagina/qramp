@@ -8,7 +8,7 @@ import {
     COMPANY_PASSENGER,
     COMPANY_RAMP,
 } from '../../_components/model/constants.js';
-import pluginsArray from 'modules/qsite/_plugins/array.js';
+import pluginsArray from 'src/plugins/array.js';
 
 /* A model for the service list. */
 export const serviceListModel = {

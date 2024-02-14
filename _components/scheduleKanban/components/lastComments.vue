@@ -3,12 +3,12 @@
     <div
       v-if="permisionComments && card.comments && card.comments > 0"
       class="
-       tw-flex 
-       tw-items-center 
-       tw-space-x-1 
-       tw-border-l 
-       tw-border-gray-200 
-       tw-px-2 
+       tw-flex
+       tw-items-center
+       tw-space-x-1
+       tw-border-l
+       tw-border-gray-200
+       tw-px-2
        tw-text-gray-400"
     >
       <i class="fa-solid fa-comment"></i>
@@ -19,7 +19,7 @@
           tooltipComments: true,
           'tw-text-center': loadingComment,
         }"
-        @input="changeLastComment(card)"
+        @update:modelValue="changeLastComment(card)"
         :offset="[10, 10]"
       >
         <div v-if="loadingComment" class="tw-py-2">

@@ -1,5 +1,4 @@
-import Vue from 'vue';
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
+import { cacheOffline } from 'src/plugins/utils';
 import { getCurrentInstance } from 'vue';
 
 export default async function deleteWorkOrders(workOrderId: number): Promise<void> {
