@@ -22,6 +22,7 @@
 
 <script>
 import comments from "modules/qsite/_components/master/comments/index.vue";
+import { eventBus } from 'src/plugins/utils'
 
 export default {
   components: { comments },
@@ -53,7 +54,7 @@ export default {
     hideModal() {
       this.visible = false;
       if(this.isCrud) {
-        this.$root.$emit('crud.data.refresh')
+        eventBus.emit('crud.data.refresh')
         this.$emit('getWorkOrders');
       }
     },

@@ -22,6 +22,7 @@ import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
 import workOrderList from '../_store/actions/workOrderList.ts'
 import { cacheOffline } from 'src/plugins/utils';
+import { eventBus } from 'src/plugins/utils'
 
 export default {
     name: 'RampCrud',
@@ -652,7 +653,7 @@ export default {
 
             payload.offline = true;
             await cacheOffline.updateRecord(CACHE_PATH, payload, payload?.id);
-            this.$root.$emit('crud.data.refresh')
+            eventBus.emit('crud.data.refresh')
 
             const request = this.$crud.update(
                 API_ROUTE,
@@ -661,7 +662,7 @@ export default {
                 customParams
             );
             request.then(res => {
-                this.$root.$emit('crud.data.refresh')
+                eventBus.emit('crud.data.refresh')
                 this.$emit('loading', false)
             })
                 .catch(async err => {
