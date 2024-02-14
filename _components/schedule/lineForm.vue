@@ -106,6 +106,7 @@ export default {
       default: () => {},
     },
   },
+  emits: ['dismissEvent','addSchedule','updateSchedule'],
   data() {
     return {
       STATUS_DRAFT,

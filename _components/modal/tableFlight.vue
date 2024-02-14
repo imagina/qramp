@@ -95,6 +95,7 @@ export default {
       default: true,
     }
   },
+  emits: ['validateBound','cancel','flightSelect'],
   data(){
     return{
       selected:[],

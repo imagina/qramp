@@ -64,6 +64,7 @@ import {STATUS_DRAFT , STATUS_SCHEDULE} from '../../model/constants.js'
 import cache from 'modules/qsite/_plugins/cache';
 export default {
   components: {comments},
+  emits: ['deleteSchedule','setEventComments','updateSchedule','addSchedule'],
   mixins: [scheduleField],
   data() {
     return {

@@ -21,6 +21,7 @@ import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_
 import cache from 'modules/qsite/_plugins/cache';
 
 export default {
+  emits: ['saveFilterStationId'],
   data: () => ({
     visible: false,
     loading: false,

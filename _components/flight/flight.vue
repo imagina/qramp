@@ -227,6 +227,7 @@ export default {
       default:()=>{}
     }
   },
+  emits: ['isError'],
   components:{tableFlight, collapse},
   mixins:[responsive],
   created() {

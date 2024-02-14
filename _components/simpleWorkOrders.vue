@@ -96,6 +96,7 @@ export default {
   components: {
     tableFlight,
   },
+  emits: ['isError','loading'],
   data() {
     return {
       newCustumerAdHoc: [],

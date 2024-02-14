@@ -71,6 +71,7 @@ export default {
     steps: {},
     data: {},
   },
+  emits: ['sp', 'close','close-modal','loading','getWorkOrders'],
   data() {
     return {
       readonly: false,

@@ -25,6 +25,7 @@ import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
 
 export default {
     name: 'RampCrud',
+    emits: ['loading'],
     components: {
         formOrders,
         flightDetail,
