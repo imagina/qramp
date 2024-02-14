@@ -61,7 +61,7 @@ import scheduleField from "../fields/scheduleField.js";
 import qRampStore from '../../../_store/qRampStore.js';
 import comments from 'modules/qsite/_components/master/comments/index.vue'
 import {STATUS_DRAFT , STATUS_SCHEDULE} from '../../model/constants.js'
-import cache from 'modules/qsite/_plugins/cache';
+import { cache } from 'src/plugins/utils';
 export default {
   components: {comments},
   mixins: [scheduleField],

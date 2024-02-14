@@ -328,11 +328,10 @@ import {
 import lineForm from './lineForm.vue';
 import '@quasar/quasar-ui-qcalendar/dist/index.css';
 import badgeComment from './badgeComment.vue';
-import cache from 'modules/qsite/_plugins/cache';
+import { cache, cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import completedSchedule from './completedSchedule.vue'
 import modelHoursFilter from './models/modelHoursFilter.js'
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
 import scheduler from '../scheduler/index.vue';
 import storeScheduler from '../scheduler/store/index.store.ts';
 export default {

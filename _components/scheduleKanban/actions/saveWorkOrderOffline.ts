@@ -1,6 +1,6 @@
 import { STATUS_SCHEDULE } from '../../model/constants';
 import modalScheduleStore from '../store/modalSchedule.store'
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 import moment from 'moment'
 
 export default async function saveWorkOrderOffline(requestResponse) {

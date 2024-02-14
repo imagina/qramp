@@ -1,6 +1,6 @@
 import moment from 'moment';
 import store from '../store/filters.store';
-import cache from 'modules/qsite/_plugins/cache';
+import { cache } from 'src/plugins/utils';
 import modalScheduleStore from '../store/modalSchedule.store'
 import scheduleTypeModel from '../models/scheduleType.model';
 

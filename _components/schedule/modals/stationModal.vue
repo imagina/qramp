@@ -18,7 +18,7 @@
 <script>
 import qRampStore from '../../../_store/qRampStore.js';
 import {BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js';
-import cache from 'modules/qsite/_plugins/cache';
+import { cache } from 'src/plugins/utils';
 
 export default {
   data: () => ({
