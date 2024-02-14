@@ -1,19 +1,19 @@
 <template>
-  <div 
+  <div
     class="tw-relative  columnCtn q-col tw-w-full"
     :class="{'columnCtnFull' : !isWeekAgenda }"
   >
-    <div 
-      class="tw-py-3" 
+    <div
+      class="tw-py-3"
       :class="`cardCtn-${date}`"
       @dragover.prevent="setDrag(true)"
       @drop.prevent="setDrag(false)"
     >
-      <div 
+      <div
        class="
-        tw-border-b-2 
-        tw-border-gray-200 
-        tw-pb-1 
+        tw-border-b-2
+        tw-border-gray-200
+        tw-pb-1
         tw-text-sm"
       >
         <div class="tw-flex tw-items-center tw-space-x-2 tw-justify-center">
@@ -22,10 +22,10 @@
           </p>
           <button
             class="
-             tw-rounded-full 
-             tw-w-7 
-             tw-h-7 
-             tw--mt-4 
+             tw-rounded-full
+             tw-w-7
+             tw-h-7
+             tw--mt-4
              tw-text-blueGray-500
              dayGray"
             :class="{
@@ -48,13 +48,13 @@
       <div
         v-if="column.loading"
         class="
-         tw-flex 
-         tw-justify-center 
-         tw-absolute 
-         tw-inset-0 
-         tw-pt-48 
-         tw-bg-white 
-         tw-bg-opacity-75 
+         tw-flex
+         tw-justify-center
+         tw-absolute
+         tw-inset-0
+         tw-pt-48
+         tw-bg-white
+         tw-bg-opacity-75
          tw-z-20"
       >
         <q-spinner color="primary" size="2em" />
@@ -66,13 +66,13 @@
           'h-201-black': isBlank
         }"
       >
-        <div 
+        <div
           v-if="column.isDrag"
           class="
-           tw-flex 
-           tw-absolute 
-           tw-justify-center  
-           tw-inset-0 
+           tw-flex
+           tw-absolute
+           tw-justify-center
+           tw-inset-0
            tw-mt-80"
         >
             <i class="fa-thin fa-cards-blank tw-text-7xl tw-text-gray-300" />
@@ -89,17 +89,19 @@
           handle=".dot-vertical"
           @end="changeDate"
           :disabled="isBlank && isWeekAgenda"
+          item-key="name"
         >
-          <component
-            v-for="(card, index) in cards"
-            :is="card.editable? 'inlineSchedule': cardComponentName"
-            :isWeekAgenda="isWeekAgenda"
-            :id="card.id"
-            :key="card.id"
-            :card="card"
-            :dateColumn="column.date.format('YYYY-MM-DD')"
-            :class="{ hidden: column.isDrag  }"
-          />
+          <template #item="{ card }">
+            <component
+              :is="card.editable? 'inlineSchedule': cardComponentName"
+              :isWeekAgenda="isWeekAgenda"
+              :id="card.id"
+              :key="card.id"
+              :card="card"
+              :dateColumn="column.date.format('YYYY-MM-DD')"
+              :class="{ hidden: column.isDrag  }"
+            />
+          </template>
           <div
             v-show="!column.isDrag"
             class="tw-text-center tw-h-5 tw-flex tw-justify-center"
