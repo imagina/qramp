@@ -1,6 +1,6 @@
 import { getCurrentInstance } from 'vue';
 import storeKanban from '../store/kanban.store';
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
+import { cacheOffline } from 'src/plugins/utils';
 import { DataWorkOrder } from '../contracts/getWorkOrder.contract';
 
 export default async function showWorkOrder(workOrderId: number): Promise<{data: DataWorkOrder | any}> {

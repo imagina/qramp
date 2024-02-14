@@ -96,7 +96,7 @@ import scheduleField from "./fields/scheduleField.js";
 import qRampStore from "../../_store/qRampStore.js";
 import commentsModal from "./modals/commentsModal.vue";
 import {STATUS_DRAFT} from '../model/constants.js';
-import cache from 'modules/qsite/_plugins/cache';
+import { cache } from 'src/plugins/utils';
 export default {
   components: { commentsModal },
   mixins: [scheduleField],

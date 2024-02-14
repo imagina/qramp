@@ -3,7 +3,7 @@ import store from '../store/filters.store'
 import modalStationFields from '../models/modalStation.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
-import cache from 'modules/qsite/_plugins/cache';
+import { cache } from 'src/plugins/utils';
 import getTitleFilter from '../actions/getTitleFilter';
 import storeKanban from '../store/kanban.store';
 

@@ -88,7 +88,7 @@ import {
   COMPANY_RAMP,
   modelWorkOrder
 } from './model/constants.js';
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
+import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
 
 

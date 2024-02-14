@@ -10,7 +10,7 @@ import {
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 import { reactive, getCurrentInstance } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";

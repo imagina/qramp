@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline.js';
+import { cacheOffline } from 'src/plugins/utils';
 import { getCurrentInstance } from 'vue';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'

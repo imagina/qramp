@@ -60,7 +60,7 @@ import {
   HalfTurnOutBountPassengerModel
 } from './model/constants.js';
 import remarkStore from './remarks/store.ts';
-import cacheOffline from 'modules/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
 
 export default {
