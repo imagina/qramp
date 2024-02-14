@@ -65,6 +65,7 @@ import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
 import commentsModal from "../_components/schedule/modals/commentsModal.vue";
+import { eventBus } from 'src/plugins/utils'
 
 export default {
   emits: ['getWorkOrderFilter'],
@@ -297,7 +298,7 @@ export default {
      */
     close(show) {
       this.show = show
-      this.$root.$emit('crud.data.refresh')
+      eventBus.emit('crud.data.refresh')
       this.services = [];
     },
     /**

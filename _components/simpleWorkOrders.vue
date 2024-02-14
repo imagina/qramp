@@ -90,6 +90,7 @@ import {
 } from './model/constants.js';
 import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
+import { eventBus } from 'src/plugins/utils'
 
 
 export default {
@@ -265,7 +266,7 @@ export default {
             handler: async () => {
               await this.showWorkOrder(response.data);
               this.acceptSchedule = false;
-              this.$root.$emit('crud.data.refresh');
+              eventBus.emit('crud.data.refresh');
             },
           },
           {
