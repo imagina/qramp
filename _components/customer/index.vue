@@ -8,7 +8,7 @@
     <dynamic-field
       :field="fields.customerId"
       v-model="state.selectCustomers"
-      @input="setCustomer"
+      @update:modelValue="setCustomer"
       @filter="setCustomerName"
     >
       <div slot="before-options" v-if="addNewOptions">
@@ -42,11 +42,11 @@ export default defineComponent({
     addNewOptions: {
       type: Boolean,
       default: () => true,
-    }, 
+    },
     readonly: {
       type: Boolean,
       default: () => false,
-    }, 
+    },
   },
   setup(props) {
     return { ...useCustomerField(props) };

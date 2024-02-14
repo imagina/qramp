@@ -6,7 +6,7 @@
         v-model="delay"
         color="primary"
         label="Delay"
-        @input="resetDelayList"
+        @update:modelValue="resetDelayList"
       />
       <q-btn
         v-if="delay"

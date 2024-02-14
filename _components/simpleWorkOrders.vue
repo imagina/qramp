@@ -36,7 +36,7 @@
           <dynamic-field
               :field="field"
               v-model="selectCustomerComputed"
-              @input="setCustomerForm(keyField)"
+              @update:modelValue="setCustomerForm(keyField)"
               @filter="setCustomerName"
               ref="customerId"
           >
@@ -69,7 +69,7 @@
               :field="field"
               v-model="form[keyField]"
               @enter="search(field)"
-              @input="zanetizeData(keyField)"
+              @update:modelValue="zanetizeData(keyField)"
           />
         </div>
       </div>

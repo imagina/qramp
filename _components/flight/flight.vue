@@ -23,7 +23,7 @@
               :class="`${readonly ? 'col-7': ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
               v-model="selectCustomers"
-              @input="setCustomerForm"
+              @update:modelValue="setCustomerForm"
               @filter="setCustomerName"
               ref="customerId"
             >
@@ -55,7 +55,7 @@
               :class="`${readonly ? 'col-7': ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:7px' : 'padding-bottom:0px'}`"
               v-model="form[keyField]"
-              @input="resetField(keyField)"
+              @update:modelValue="resetField(keyField)"
             />
           </label>
           <hr v-if="readonly" class="label-container"/>
@@ -78,7 +78,7 @@
             :class="`${readonly ? 'col-7': ''}`"
             :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:1px' : 'padding-bottom:0px'}`"
             v-model="form[keyField]"
-            @input="resetField()"
+            @update:modelValue="resetField()"
           />
         </label>
         <div v-if="keyField === 'responsibleId'">

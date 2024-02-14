@@ -71,7 +71,7 @@
               <dynamic-field
                 v-model="multiFilterDate[timestamp.date]"
                 :field="fields.time"
-                @input="getWorkOrderDateTime($event, timestamp.date, false)"
+                @update:modelValue="getWorkOrderDateTime($event, timestamp.date, false)"
                 class="tw-px-2"
               />
             </div>
