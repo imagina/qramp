@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, getCurrentInstance } from 'vue';
+import { computed, defineComponent } from 'vue';
 import {
   getCommentsFilter,
   getLastComment,
@@ -96,13 +96,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const proxy = getCurrentInstance().appContext.config.globalProperties
     const loadingComment = computed(() => getLoading());
     const event = computed(() => props.event);
     const sizeBadge = computed(() => props.sizeBadge);
     const iconClass = computed(() => props.iconClass);
     const permisionComments = computed(() =>
-      proxy.$auth.hasAccess(`ramp.work-orders-comments.index`)
+      this.$auth.hasAccess(`ramp.work-orders-comments.index`)
     );
     const lastComment = computed(() => getLastComment());
     async function changeLastComment(event) {

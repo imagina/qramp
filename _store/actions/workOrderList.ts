@@ -1,5 +1,5 @@
 import baseService from 'modules/qcrud/_services/baseService.js'
-import { reactive, getCurrentInstance } from 'vue';
+import { reactive } from 'vue';
 import qRampStore from '../qRampStore.js'
 import {
     BUSINESS_UNIT_PASSENGER,
@@ -22,6 +22,8 @@ import {
 } from './@Contracts/workOrderList.contract';
 import { buildServiceList } from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
+import { globalStore } from 'src/plugins/utils'
+const { hasAccess } = globalStore.store
 
 const state = reactive<State>({
     operationTypeList: [],
@@ -53,7 +55,6 @@ const state = reactive<State>({
 });
 const cacheTimeForm24Hour: number = 60 * 60 * 24;
 const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
-const proxy = getCurrentInstance().appContext.config.globalProperties
 
 /**
  * This is a work order list function that returns an object with several functions to
@@ -248,7 +249,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getOperationType(refresh = false): Promise<OperationType[] | void> {
-        if (proxy.$auth && proxy.$auth.hasAccess('ramp.operation-types.index')) {
+        if (hasAccess('ramp.operation-types.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -277,7 +278,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getStation(refresh = false): Promise<StationContract[] | void> {
-        if (proxy.$auth && proxy.$auth.hasAccess('setup.stations.index')) {
+        if (hasAccess('setup.stations.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -303,7 +304,7 @@ export default function workOrderList(): WorkOrderList {
     }
     //"status":1,"companyId":26,"allTranslations":true
     async function getAirlines(refresh = false) {
-        if (proxy.$auth && proxy.$auth.hasAccess('iflight.airline.index')) {
+        if (hasAccess('iflight.airline.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -327,7 +328,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns A promise that will resolve with the array of CustomerContract objects or void if there's an error
      */
     async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
-        if (proxy.$auth && proxy.$auth.hasAccess('setup.customers.index')) {
+        if (hasAccess('setup.customers.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -357,7 +358,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getContract(refresh = false): Promise<any[] | void> {
-        if (proxy.$auth && proxy.$auth.hasAccess('ramp.operation-types.index')) {
+        if (hasAccess('ramp.operation-types.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -387,7 +388,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a promise.
      */
     async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
-        if (proxy.$auth && proxy.$auth.hasAccess('iflight.flight-statuses.index')) {
+        if (hasAccess('iflight.flight-statuses.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -415,7 +416,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned.
      */
     async function getWorkOrderStatuses(refresh = false): Promise<WorkOrderStatusesContract[] | void> {
-        if (proxy.$auth && proxy.$auth.hasAccess('ramp.work-order-statuses.index')) {
+        if (hasAccess('ramp.work-order-statuses.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -445,7 +446,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getGates(refresh = false): Promise<Gates[] | void> {
-        if (proxy.$auth && proxy.$auth.hasAccess('setup.gates.index')) {
+        if (hasAccess('setup.gates.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -475,7 +476,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
-        if (proxy.$auth && (proxy.$auth.hasAccess('ramp.work-orders.index') || proxy.$auth.hasAccess('ramp.passenger-work-orders.index'))){
+        if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')){
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
@@ -514,9 +515,9 @@ export default function workOrderList(): WorkOrderList {
     function getCustomerWithContract(refresh = false): Promise<any[] | void> {
 
             return new Promise(async (resolve) => {
-                if (proxy.$auth && proxy.$auth.hasAccess('setup.contracts.index') && proxy.$auth.hasAccess('setup.customers.index')) {
+                if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
 
-                const allowContractName = proxy.$auth ? proxy.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
+                const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
                 const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
@@ -554,7 +555,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getACTypes(refresh = false) {
-        if (proxy.$auth && proxy.$auth.hasAccess('iflight.aircrafttype.index')) {
+        if (hasAccess('iflight.aircrafttype.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -579,7 +580,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getListDelays(refresh = false) {
-        if (proxy.$auth && proxy.$auth.hasAccess('setup.work-order-delays.index')) {
+        if (hasAccess('setup.work-order-delays.index')) {
             try {
                 const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
                 const isPassenger = qRampStore().getIsPassenger();
@@ -607,7 +608,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getResponsibleList(refresh = false) {
-        if (proxy.$auth && (proxy.$auth.hasAccess('ramp.work-orders.index') || proxy.$auth.hasAccess('ramp.passenger-work-orders.index'))) {
+        if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
             try {
                 const API_ROUTE = 'apiRoutes.quser.users'
                 const isPassenger = qRampStore().getIsPassenger();
@@ -630,7 +631,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getAirports(refresh = false) {
-        if (proxy.$auth && proxy.$auth.hasAccess('iflight.airport.index')) {
+        if (hasAccess('iflight.airport.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;

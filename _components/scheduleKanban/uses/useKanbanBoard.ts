@@ -20,11 +20,14 @@ import { cache } from "src/plugins/utils";
 import workOrderList from "modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
+import { globalStore, i18n, helper } from 'src/plugins/utils'
+const { hasAccess, store } = globalStore.store
+const { tr } = i18n.trans
 
 export default function useKanbanBoard(props) {
   const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormOrders = ref(null);
-  const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
+  const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
@@ -58,13 +61,13 @@ export default function useKanbanBoard(props) {
   const scheduleTypeOptions = ref([
     {
       id: 2,
-      label: proxy.$tr("isite.cms.label.week"),
+      label: tr("isite.cms.label.week"),
       value: "week-agenda",
       icon: "fas fa-calendar-week",
     },
     {
       id: 3,
-      label: `${proxy.$tr("isite.cms.label.day")}`,
+      label: `${tr("isite.cms.label.day")}`,
       value: "day-agenda",
       icon: "fas fa-calendar-day",
     },
@@ -80,14 +83,14 @@ export default function useKanbanBoard(props) {
           const routeName = isPassenger.value ? "passenger" : "ramp";
           let hrefSplit = window.location.href.split("?");
           let tinyUrl =
-            proxy.$store.state.qsiteApp.originURL +
+            store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/public/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-          proxy.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
+          helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
         },
       },
       {
-        label: proxy.$tr("isite.cms.configList.fullScreen", {
+        label: tr("isite.cms.configList.fullScreen", {
           capitalize: true,
         }),
         props: {
@@ -101,7 +104,7 @@ export default function useKanbanBoard(props) {
       {
         label: "Scheduler",
         vIf:
-          proxy.$auth.hasAccess("ramp.schedulers.manage"),
+          hasAccess("ramp.schedulers.manage"),
         props: {
           label: "Scheduler",
           icon: "fa-duotone fa-calendar-plus",
@@ -110,7 +113,7 @@ export default function useKanbanBoard(props) {
           const routeName = isPassenger.value ? "passenger" : "ramp";
           let hrefSplit = window.location.href.split("?");
           let tinyUrl =
-            proxy.$store.state.qsiteApp.originURL +
+            store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
           localStorage.setItem("urlSchedule", tinyUrl);
@@ -118,7 +121,7 @@ export default function useKanbanBoard(props) {
         },
       },
       {
-        label: proxy.$tr("isite.cms.label.filter"),
+        label: tr("isite.cms.label.filter"),
         vIf: true,
         props: {
           icon: "fa-duotone fa-filter",
@@ -137,7 +140,7 @@ export default function useKanbanBoard(props) {
     eventsKanban(proxy).cardRefresh();
     await checkUrlParams(proxy);
     storeKanban.scheduleType = storeFilter.scheduleType;
-    storeKanban.isAppOffline = proxy.$store.state.qofflineMaster.isAppOffline
+    storeKanban.isAppOffline = store.state.qofflineMaster.isAppOffline
     getTitleFilter();
     await setUrlParams(proxy);
     await buildKanbanStructure();
@@ -149,7 +152,7 @@ export default function useKanbanBoard(props) {
         ? await cache.get.item("stationId")
         : null;
     storeFilter.stationId =
-      getStationAssigned(proxy.$store.state.quserAuth.userData) ||
+      getStationAssigned(store.state.quserAuth.userData) ||
       params.stationId ||
       localStationId ||
       null;
