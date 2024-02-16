@@ -22,7 +22,6 @@ import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
 import { globalStore, i18n, helper } from 'src/plugins/utils'
 const { hasAccess, store } = globalStore.store
-const { tr } = i18n.trans
 
 export default function useKanbanBoard(props) {
   const proxy = getCurrentInstance().appContext.config.globalProperties
@@ -61,13 +60,13 @@ export default function useKanbanBoard(props) {
   const scheduleTypeOptions = ref([
     {
       id: 2,
-      label: tr("isite.cms.label.week"),
+      label: i18n.tr("isite.cms.label.week"),
       value: "week-agenda",
       icon: "fas fa-calendar-week",
     },
     {
       id: 3,
-      label: `${tr("isite.cms.label.day")}`,
+      label: `${i18n.tr("isite.cms.label.day")}`,
       value: "day-agenda",
       icon: "fas fa-calendar-day",
     },
@@ -90,7 +89,7 @@ export default function useKanbanBoard(props) {
         },
       },
       {
-        label: tr("isite.cms.configList.fullScreen", {
+        label: i18n.tr("isite.cms.configList.fullScreen", {
           capitalize: true,
         }),
         props: {
@@ -121,7 +120,7 @@ export default function useKanbanBoard(props) {
         },
       },
       {
-        label: tr("isite.cms.label.filter"),
+        label: i18n.tr("isite.cms.label.filter"),
         vIf: true,
         props: {
           icon: "fa-duotone fa-filter",

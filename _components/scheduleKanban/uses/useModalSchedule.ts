@@ -17,7 +17,6 @@ import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
 import { globalStore, i18n } from 'src/plugins/utils'
 const { hasAccess } = globalStore.store
-const { tr } = i18n.trans
 import _ from 'lodash'
 
 export default function useModalSchedule(props: any, emit: any) {
@@ -54,8 +53,8 @@ export default function useModalSchedule(props: any, emit: any) {
         color: 'primary',
         icon: 'fa-light fa-pen-to-square',
         label: store.isEdit
-          ? tr("isite.cms.label.update")
-          : tr("isite.cms.label.save"),
+          ? i18n.tr("isite.cms.label.update")
+          : i18n.tr("isite.cms.label.save"),
       },
       action: async () => {
         await saveForm()
@@ -66,7 +65,7 @@ export default function useModalSchedule(props: any, emit: any) {
         vIf: store.isEdit && !kanbanStore.isBlank,
         color: "red",
         icon: 'fa-light fa-trash',
-        label: tr("isite.cms.label.delete"),
+        label: i18n.tr("isite.cms.label.delete"),
       },
       action: async () => {
         try {
@@ -174,7 +173,7 @@ export default function useModalSchedule(props: any, emit: any) {
     store.showInline = false;
   }
   async function showModalFull() {
-    const titleModal = tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
+    const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
     const response = await showWorkOrder(form.value.id);
     await refFormOrders.value.loadform({
       modalProps: {

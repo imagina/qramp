@@ -14,8 +14,6 @@ import { cacheOffline, i18n, globalStore } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
-
-const { tr } = i18n.trans
 const { hasAccess } = globalStore.store
 
 const state = reactive({
@@ -479,7 +477,7 @@ export default function qRampStore() {
             }
 
             if (storeKanban.isAppOffline) {
-                payload.titleOffline = `${tr("ifly.cms.form.updateWorkOrder")} Id: ${workOrderId}`;
+                payload.titleOffline = `${i18n.tr("ifly.cms.form.updateWorkOrder")} Id: ${workOrderId}`;
             }
 
             await cacheOffline.updateRecord(CACHE_PATH, payload, payload ?.id
