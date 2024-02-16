@@ -1,4 +1,4 @@
-import { computed, ComputedRef, ref, onBeforeUnmount, inject, getCurrentInstance } from 'vue';
+import { computed, ComputedRef, ref, onBeforeUnmount, inject } from 'vue';
 import store from '../store/modalSchedule.store'
 import fieldsSchedule from '../models/fieldsSchedule.model'
 import validateOperationType from '../actions/validateOperationType'
@@ -15,10 +15,12 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
+import { globalStore, i18n } from 'src/plugins/utils'
+const { hasAccess } = globalStore.store
+const { tr } = i18n.trans
 import _ from 'lodash'
 
 export default function useModalSchedule(props: any, emit: any) {
-  const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormSchedule: any = ref(null);
   const refFormOrders: any = inject('refFormOrders');
   const showModal = computed({
@@ -52,8 +54,8 @@ export default function useModalSchedule(props: any, emit: any) {
         color: 'primary',
         icon: 'fa-light fa-pen-to-square',
         label: store.isEdit
-          ? proxy.$tr("isite.cms.label.update")
-          : proxy.$tr("isite.cms.label.save"),
+          ? tr("isite.cms.label.update")
+          : tr("isite.cms.label.save"),
       },
       action: async () => {
         await saveForm()
@@ -64,7 +66,7 @@ export default function useModalSchedule(props: any, emit: any) {
         vIf: store.isEdit && !kanbanStore.isBlank,
         color: "red",
         icon: 'fa-light fa-trash',
-        label: proxy.$tr("isite.cms.label.delete"),
+        label: tr("isite.cms.label.delete"),
       },
       action: async () => {
         try {
@@ -84,7 +86,7 @@ export default function useModalSchedule(props: any, emit: any) {
       },
     },
   ]);
-  const permisionComments = computed(() => proxy.$auth.hasAccess(`ramp.work-orders-comments.index`))
+  const permisionComments = computed(() => hasAccess(`ramp.work-orders-comments.index`))
   const flightStatus = computed(() => fieldsSchedule().flightStatus.value);
   const isbound = computed(() => validateOperationType(form.value.operationTypeId));
   const fields = computed(() => fieldsSchedule().fields.value);
@@ -172,7 +174,7 @@ export default function useModalSchedule(props: any, emit: any) {
     store.showInline = false;
   }
   async function showModalFull() {
-    const titleModal = proxy.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
+    const titleModal = tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
     const response = await showWorkOrder(form.value.id);
     await refFormOrders.value.loadform({
       modalProps: {

@@ -10,10 +10,13 @@ import {
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
-import { cacheOffline } from 'src/plugins/utils';
-import { reactive, getCurrentInstance } from "vue";
+import { cacheOffline, i18n, globalStore } from 'src/plugins/utils';
+import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
+
+const { tr } = i18n.trans
+const { hasAccess } = globalStore.store
 
 const state = reactive({
     titleOffline: '',
@@ -40,7 +43,6 @@ const state = reactive({
     isPassenger: false,
     workOrder: {},
 });
-const proxy = getCurrentInstance().appContext.config.globalProperties
 
 export default function qRampStore() {
     function setIsPassenger(value) {
@@ -370,7 +372,7 @@ export default function qRampStore() {
     }
 
     function editPermissionseSubmitted() {
-        return proxy.$auth.hasAccess('ramp.work-orders.edit-when-submitted');
+        return hasAccess('ramp.work-orders.edit-when-submitted');
     }
 
     function setAttr(obj) {
@@ -477,7 +479,7 @@ export default function qRampStore() {
             }
 
             if (storeKanban.isAppOffline) {
-                payload.titleOffline = `${proxy.$tr("ifly.cms.form.updateWorkOrder")} Id: ${workOrderId}`;
+                payload.titleOffline = `${tr("ifly.cms.form.updateWorkOrder")} Id: ${workOrderId}`;
             }
 
             await cacheOffline.updateRecord(CACHE_PATH, payload, payload ?.id
