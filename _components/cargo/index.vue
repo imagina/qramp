@@ -101,7 +101,7 @@ export default {
       return cargoStore().getForm();
     },
     showKilosFiels() {
-      const contractsWithKilosFiels = this.$store.getters['qsiteApp/getSettingValueByName']('setup::contractsWithKilosFiels');
+      const contractsWithKilosFiels = this.$getSetting('setup::contractsWithKilosFiels');
       return contractsWithKilosFiels.some((item) => item === qRampStore().getContractId());
     },
     formFields() {
