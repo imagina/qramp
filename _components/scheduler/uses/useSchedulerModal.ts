@@ -54,7 +54,7 @@ export default function useSchedulerModal(): SchedulerModalComposition {
         store.reset();
     }
 
-    const { actions } = modelActionsModal() as ModelActionsModalResult;
+    const { actions } = modelActionsModal(refFormFields.value) as ModelActionsModalResult;
 
     return {
         showModal,
