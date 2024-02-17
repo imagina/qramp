@@ -78,7 +78,7 @@ export default {
             return this.$store.state.qofflineMaster.isAppOffline;
         },
         permisionCommentsIndex() {
-            return this.$auth.hasAccess('ramp.work-orders-comments.index');
+            return this.$hasAccess('ramp.work-orders-comments.index');
         },
         filter() {
             return this.$filter;
@@ -446,7 +446,7 @@ export default {
 
                                 return {
                                     //must have the submit permission and the work order can't be submited or posted
-                                    vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
+                                    vIf: this.$hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
                                 }
                             },
                             action: (item) => {
@@ -461,7 +461,7 @@ export default {
                                 this.changeStatus(STATUS_POSTED, item.id)
                             },
                             format: item => ({
-                                vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted && ![STATUS_POSTED].includes(item.statusId),
+                                vIf: this.$hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted && ![STATUS_POSTED].includes(item.statusId),
                                 label: this.$tr('isite.cms.label.post')
                             }),
                         },
@@ -475,7 +475,7 @@ export default {
                             format: item => (
                                 {
                                     //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
-                                    vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
+                                    vIf: this.$hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                                 }),
                         },
                         {

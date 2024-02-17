@@ -5,7 +5,7 @@ import {
   setLastComment,
   getLoading,
 } from "../../../_store/actions/comments";
-import { globalStore } from 'src/plugins/utils'
+import { store } from 'src/plugins/utils'
 
 export default function useLastComments(props: any) {
   const showTooltip = ref(false);
@@ -14,7 +14,7 @@ export default function useLastComments(props: any) {
   const sizeBadge = computed(() => props.sizeBadge);
   const iconClass = computed(() => props.iconClass);
   const permisionComments = computed(() =>
-    globalStore.hasAccess(`ramp.work-orders-comments.index`)
+    store.hasAccess(`ramp.work-orders-comments.index`)
   );
   const lastComment = computed(() => getLastComment());
   async function changeLastComment(card) {

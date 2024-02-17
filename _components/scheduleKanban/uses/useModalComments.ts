@@ -1,9 +1,9 @@
 import { computed } from 'vue';
+import { store as pluginStore, alert } from 'src/plugins/utils'
 import store from '../store/modalSchedule.store'
 import getCurrentColumn from '../actions/getCurrentColumn';
 import storeKanban from '../store/kanban.store'
 import crud from 'modules/qcrud/_services/baseService'
-import {globalStore, alert} from 'src/plugins/utils'
 
 export default function useModalComment(props) {
   const visible = computed({
@@ -17,7 +17,7 @@ export default function useModalComment(props) {
   });
 
   const isAppOffline = computed(() => storeKanban.isAppOffline)
-  const permisionCommentsIndex = computed(() => globalStore.hasAccess(`ramp.work-orders-comments.index`))
+  const permisionCommentsIndex = computed(() => pluginStore.hasAccess(`ramp.work-orders-comments.index`))
 
   function showModalComments() {
     if(!permisionCommentsIndex.value) {
