@@ -16,7 +16,6 @@ import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
 import { globalStore, i18n } from 'src/plugins/utils'
-const { hasAccess } = globalStore.store
 import _ from 'lodash'
 
 export default function useModalSchedule(props: any, emit: any) {
@@ -85,7 +84,7 @@ export default function useModalSchedule(props: any, emit: any) {
       },
     },
   ]);
-  const permisionComments = computed(() => hasAccess(`ramp.work-orders-comments.index`))
+  const permisionComments = computed(() => globalStore.hasAccess(`ramp.work-orders-comments.index`))
   const flightStatus = computed(() => fieldsSchedule().flightStatus.value);
   const isbound = computed(() => validateOperationType(form.value.operationTypeId));
   const fields = computed(() => fieldsSchedule().fields.value);

@@ -5,8 +5,6 @@ import storeKanban from '../store/kanban.store'
 import crud from 'modules/qcrud/_services/baseService'
 import {globalStore, alert} from 'src/plugins/utils'
 
-const {hasAccess} = globalStore.store
-
 export default function useModalComment(props) {
   const visible = computed({
     get: () => store.showModalComments,
@@ -19,7 +17,7 @@ export default function useModalComment(props) {
   });
 
   const isAppOffline = computed(() => storeKanban.isAppOffline)
-  const permisionCommentsIndex = computed(() => hasAccess(`ramp.work-orders-comments.index`))
+  const permisionCommentsIndex = computed(() => globalStore.hasAccess(`ramp.work-orders-comments.index`))
 
   function showModalComments() {
     if(!permisionCommentsIndex.value) {

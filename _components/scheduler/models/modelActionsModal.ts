@@ -1,4 +1,4 @@
-import Vue, { computed, getCurrentInstance, ComputedRef } from 'vue';
+import { computed, getCurrentInstance, ComputedRef } from 'vue';
 import save from '../actions/save'
 import update from '../actions/update'
 import store from '../store/index.store'
@@ -6,7 +6,9 @@ import {
     ModelActionsModalResult,
     Action,
     Proxy
-} from '../contracts/modelActionsModal.contract';
+} from '../contracts/modelActionsModal.contract'
+import { i18n } from 'src/plugins/utils'
+
 
 export default function modelActionsModal(): ModelActionsModalResult {
     const proxy = getCurrentInstance().appContext.config.globalProperties
@@ -16,7 +18,7 @@ export default function modelActionsModal(): ModelActionsModalResult {
                 loading: store.loading,
                 color: 'primary',
                 'icon-right': 'fa-thin fa-floppy-disk',
-                label: proxy.$tr('isite.cms.label.save'),
+                label: i18n.tr('isite.cms.label.save'),
             },
             action: () => {
                 const refFormScheduler = proxy.$refs.refFormFields.$refs.refFormScheduler;
