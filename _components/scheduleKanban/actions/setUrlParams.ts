@@ -6,7 +6,8 @@ import scheduleTypeModel from '../models/scheduleType.model';
 
 export default async function setUrlParams(proxy: any): Promise<void>{
     try {
-      const selectedDate = moment(store.selectedDate);
+      const DATE_FORMAT = 'YYYY/MM/DD'
+      const selectedDate = moment(store.selectedDate, DATE_FORMAT);
       const query = store.payload;
       query.type = store.scheduleType;
 

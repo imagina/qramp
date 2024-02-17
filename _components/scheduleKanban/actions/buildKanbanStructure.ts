@@ -7,7 +7,7 @@ import storeFilters from "../store/filters.store";
 import scheduleTypeModel from '../models/scheduleType.model';
 import modalScheduleStore from '../store/modalSchedule.store'
 import _ from 'lodash'
- 
+
 export async function getColumns(): Promise<Columns[]> {
   try {
     const  weekAgenda = scheduleTypeModel[0].value;
@@ -17,7 +17,8 @@ export async function getColumns(): Promise<Columns[]> {
     const FULL_WEEK = 7
     const days = isWeek ? FULL_WEEK : ONE_DAY //full week | one day
     const type = isWeek ? 'week' : 'day'
-    const startOfWeek: Moment = moment(storeFilters.selectedDate).startOf(type);
+    const DATE_FORMAT = 'YYYY/MM/DD'
+    const startOfWeek: Moment = moment(storeFilters.selectedDate, DATE_FORMAT).startOf(type);
 
     return [...Array(days)].map((_, i) => ({
       date: moment(startOfWeek).add(i, "days"),
@@ -45,14 +46,14 @@ export async function getCards(refresh = false): Promise<void> {
       const params = {
         field: "schedule_date",
         type: "customRange",
-        from: startDate.set({ 
-          hour: filterTime[0], 
-          minute: 0, second: 0 
+        from: startDate.set({
+          hour: filterTime[0],
+          minute: 0, second: 0
         }).format('YYYY-MM-DD HH:mm:ss'),
-        to: endDate.set({ 
-          hour: filterTime[1], 
-          minute: 59, 
-          second: 59 
+        to: endDate.set({
+          hour: filterTime[1],
+          minute: 59,
+          second: 59
         }).format('YYYY-MM-DD HH:mm:ss')
       }
 
@@ -80,7 +81,7 @@ export default async function buildKanbanStructure(refresh = false): Promise<voi
   try {
     modalScheduleStore.showInline = false; // forces to close the scheduleForm
     storeKanban.loading = true;
-    storeKanban.columns = await getColumns();
+    //storeKanban.columns = await getColumns();
     if(!storeFilters.stationId) return;
     await getCards(refresh);
     storeKanban.loading = false;
