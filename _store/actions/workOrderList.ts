@@ -23,7 +23,6 @@ import {
 import { buildServiceList } from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
 import { globalStore } from 'src/plugins/utils'
-const { hasAccess } = globalStore.store
 
 const state = reactive<State>({
     operationTypeList: [],
@@ -63,6 +62,7 @@ const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
  * @returns {WorkOrderList} A WorkOrderList object.
 */
 export default function workOrderList(): WorkOrderList {
+    const { hasAccess } = globalStore
     /**
      * This function returns the workOrderList property of the state object.
      * @returns the state.workOrderList.

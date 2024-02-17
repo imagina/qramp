@@ -14,7 +14,7 @@ import { cacheOffline, i18n, globalStore } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
-const { hasAccess } = globalStore.store
+
 
 const state = reactive({
     titleOffline: '',
@@ -370,7 +370,7 @@ export default function qRampStore() {
     }
 
     function editPermissionseSubmitted() {
-        return hasAccess('ramp.work-orders.edit-when-submitted');
+        return globalStore.hasAccess('ramp.work-orders.edit-when-submitted');
     }
 
     function setAttr(obj) {

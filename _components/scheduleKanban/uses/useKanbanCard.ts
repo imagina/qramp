@@ -1,4 +1,4 @@
-import {computed, inject, getCurrentInstance } from 'vue';
+import {computed, inject } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
@@ -16,9 +16,9 @@ import scheduleTypeModel from "../models/scheduleType.model";
 import selectFlightNumberStore from '../../modal/selectFlightNumber/store/selectFlightNumber'
 import validateOperationType from '../actions/validateOperationType'
 import moment from 'moment';
+import { i18n } from 'src/plugins/utils'
 
 export default function useKanbanCard(props: any = {}) {
-  const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormOrders: any = inject('refFormOrders');
   const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -76,7 +76,7 @@ export default function useKanbanCard(props: any = {}) {
     modalScheduleStore.titleModal = `Edit schedule Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
-      const titleModal = proxy.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
+      const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
       const response = await showWorkOrder(props.card.id);
       await refFormOrders.value.loadform({
         modalProps: {

@@ -1,6 +1,7 @@
-import { ref, computed, getCurrentInstance } from 'vue';
+import { ref, computed } from 'vue';
 import serviceListStore from "./store/serviceList";
 import { ServiceModelContract } from './contracts/index.contract';
+import { i18n } from 'src/plugins/utils'
 
 
 /**
@@ -23,8 +24,7 @@ export default function useServiceList(props = {}, emit = null) {
      * @constant {any} trans - computed
      * component variable list
      */
-    const proxy = getCurrentInstance().appContext.config.globalProperties
-    const trans = computed((): any => proxy.$tr);
+    const trans = computed((): any => i18n.tr);
     const loading = computed((): Boolean => serviceListStore().getLoading());
     const serviceListModel = computed((): ServiceModelContract[] =>
         serviceListStore().getServiceList()

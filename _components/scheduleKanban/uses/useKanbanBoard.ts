@@ -21,9 +21,9 @@ import workOrderList from "modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
 import { globalStore, i18n, helper } from 'src/plugins/utils'
-const { hasAccess, store } = globalStore.store
 
 export default function useKanbanBoard(props) {
+  const { hasAccess, store } = globalStore
   const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormOrders = ref(null);
   const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)

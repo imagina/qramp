@@ -1,8 +1,8 @@
-import { computed, getCurrentInstance } from 'vue';
+import { computed } from 'vue';
 import workOrderList from 'src/modules/qramp/_store/actions/workOrderList';
+import { i18n } from 'src/plugins/utils'
 
 export default function modalStation() {
-  const proxy = getCurrentInstance().appContext.config.globalProperties
       const fields = computed(() => ({
         banner: {
             type: 'banner',
@@ -18,7 +18,7 @@ export default function modalStation() {
             props: {
               label: "Station",
               rules: [
-                (val) => !!val || proxy.$tr("isite.cms.message.fieldRequired"),
+                (val) => !!val || i18n.tr("isite.cms.message.fieldRequired"),
               ],
               clearable: true,
               options: workOrderList().getStationList().map(item => ({

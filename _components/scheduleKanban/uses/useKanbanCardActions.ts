@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance, inject } from 'vue';
+import { computed, inject } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
@@ -19,9 +19,9 @@ import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setEditableCard from '../actions/setEditableCard';
 import getCurrentColumn from '../actions/getCurrentColumn';
 import openInlineSchedule from '../actions/openInlineSchedule'
+import { i18n } from 'src/plugins/utils'
 
 export default function useKanbanCardActions(props: any = {}) {
-  const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormOrders: any = inject('refFormOrders');
   const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -60,7 +60,7 @@ export default function useKanbanCardActions(props: any = {}) {
     {
       vIf: showCardActions.value,
       icon: 'fa-light fa-pen-to-square',
-      toolttip: proxy.$tr('isite.cms.label.edit'),
+      toolttip: i18n.tr('isite.cms.label.edit'),
       action: () => {
         (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) ? openInlineSchedule(props) : openModalSchedule()
       },
@@ -68,7 +68,7 @@ export default function useKanbanCardActions(props: any = {}) {
     {
       vIf: showCardActions.value,
       icon: 'fa-light fa-trash',
-      toolttip: proxy.$tr('isite.cms.label.delete'),
+      toolttip: i18n.tr('isite.cms.label.delete'),
       action: () => {
         deleteWorkOrder()
       },
@@ -76,7 +76,7 @@ export default function useKanbanCardActions(props: any = {}) {
   ])
 
   async function showModalFull() {
-    const titleModal = proxy.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
+    const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
     const response = await showWorkOrder(props.card.id);
     await refFormOrders.value.loadform({
       modalProps: {
