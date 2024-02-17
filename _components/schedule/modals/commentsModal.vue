@@ -47,7 +47,7 @@ export default {
       return this.$store.state.qofflineMaster.isAppOffline;
     },
     permisionCommentsIndex() {
-      return this.$auth.hasAccess('ramp.work-orders-comments.index');
+      return this.$hasAccess('ramp.work-orders-comments.index');
     },
   },
   methods: {

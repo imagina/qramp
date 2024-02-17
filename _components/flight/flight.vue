@@ -375,13 +375,13 @@ export default {
       return this.form.cancellationType ? true : false;
     },
     readStatus(){
-      return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly || this.disabledReadonly
+      return  !this.$hasAccess('ramp.work-orders.edit-status') || this.readonly || this.disabledReadonly
     },
     allowContractName() {
-      return this.$auth.hasAccess('ramp.work-orders.see-contract-name');
+      return this.$hasAccess('ramp.work-orders.see-contract-name');
     },
     manageResponsiblePermissions() {
-      return this.$auth.hasAccess('ramp.work-orders.manage-responsible') && !this.isPassenger;
+      return this.$hasAccess('ramp.work-orders.manage-responsible') && !this.isPassenger;
     },
     isPassenger() {
      return qRampStore().getIsPassenger();

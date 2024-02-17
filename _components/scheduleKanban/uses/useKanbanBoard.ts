@@ -16,14 +16,13 @@ import individualRefreshByColumns from "../actions/individualRefreshByColumns";
 import checkUrlParams from "../actions/checkUrlParams";
 import setUrlParams from "../actions/setUrlParams";
 import getTitleFilter from "../actions/getTitleFilter";
-import { cache } from "src/plugins/utils";
 import workOrderList from "modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
-import { globalStore, i18n, helper } from 'src/plugins/utils'
+import { store, i18n, helper, cache } from 'src/plugins/utils'
 
 export default function useKanbanBoard(props) {
-  const { hasAccess, store } = globalStore
+  const { hasAccess } = store
   const proxy = getCurrentInstance().appContext.config.globalProperties
   const refFormOrders = ref(null);
   const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)

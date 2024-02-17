@@ -105,7 +105,7 @@ export default {
       return qRampStore().getIsPassenger();
     },
     permisionCommentsIndex() {
-      return this.$auth.hasAccess('ramp.work-orders-comments.index');
+      return this.$hasAccess('ramp.work-orders-comments.index');
     },
     steppers() {
       let stepps = [
