@@ -1,4 +1,4 @@
-import { computed, ComputedRef } from 'vue';
+import { computed, getCurrentInstance, ComputedRef } from 'vue';
 import save from '../actions/save'
 import update from '../actions/update'
 import store from '../store/index.store'
@@ -6,8 +6,9 @@ import {
     ModelActionsModalResult,
     Action,
     Proxy
-} from '../contracts/modelActionsModal.contract';
+} from '../contracts/modelActionsModal.contract'
 import { i18n, eventBus } from 'src/plugins/utils'
+
 
 export default function modelActionsModal(refFormFields): ModelActionsModalResult {
     const { tr } = i18n
@@ -17,7 +18,7 @@ export default function modelActionsModal(refFormFields): ModelActionsModalResul
                 loading: store.loading,
                 color: 'primary',
                 'icon-right': 'fa-thin fa-floppy-disk',
-                label: tr('isite.cms.label.save'),
+                label: i18n.tr('isite.cms.label.save'),
             },
             action: () => {
                 const refFormScheduler = refFormFields.$refs.refFormScheduler;

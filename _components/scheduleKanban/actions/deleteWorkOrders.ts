@@ -1,14 +1,15 @@
 import { cacheOffline } from 'src/plugins/utils';
 import { getCurrentInstance } from 'vue';
+import { alert } from 'src/plugins/utils'
+import crud from 'src/modules/qcrud/_services/baseService'
 
 export default async function deleteWorkOrders(workOrderId: number): Promise<void> {
-  const proxy = getCurrentInstance().appContext.config.globalProperties
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
 
         await Promise.allSettled([
             cacheOffline.deleteItem(workOrderId, API_ROUTE),
-            proxy.$crud.delete(
+            crud.delete(
                 API_ROUTE,
                 workOrderId,
                 {
@@ -19,7 +20,7 @@ export default async function deleteWorkOrders(workOrderId: number): Promise<voi
             )
         ])
 
-        proxy.$alert.info('workOrders was deleted correctly');
+        alert.info('workOrders was deleted correctly');
     } catch (error) {
         console.log(error);
     }

@@ -50,20 +50,20 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref, onMounted, onBeforeUnmount, getCurrentInstance } from "vue";
+import { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
 import cargoStore from "./store/cargo";
 import workOrderList from "../../_store/actions/workOrderList";
 import qRampStore from "../../_store/qRampStore.js";
 import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
 import delayForm from './delayForm.vue';
+import { i18n } from 'src/plugins/utils'
+import crud from 'src/modules/qcrud/_services/baseService'
 
 export default defineComponent({
   components: {
     delayForm,
   },
   setup() {
-    const proxy = getCurrentInstance().appContext.config.globalProperties
-
     const disabledReadonly = computed(() => qRampStore().disabledReadonly());
     const isPassenger = computed(() => qRampStore().getIsPassenger());
     const delay = computed({
@@ -88,12 +88,12 @@ export default defineComponent({
           props: {
             options: workOrderList().getWorkOrderDelays(),
             readonly: disabledReadonly.value,
-            label: proxy.$tr("icommerce.cms.sidebar.code"),
+            label: i18n.tr("icommerce.cms.sidebar.code"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: proxy.$tr("icommerce.cms.sidebar.code"),
+          label: i18n.tr("icommerce.cms.sidebar.code"),
         };
         obj["hours" + index] = {
           value: delay.hours,
@@ -102,12 +102,12 @@ export default defineComponent({
             hint: "Enter the Time in minutes",
             mask: "###################",
             readonly: disabledReadonly.value,
-            label: proxy.$tr("isite.cms.label.time"),
+            label: i18n.tr("isite.cms.label.time"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: proxy.$tr("isite.cms.label.time"),
+          label: i18n.tr("isite.cms.label.time"),
         };
       });
       return obj;
@@ -138,7 +138,7 @@ export default defineComponent({
           },
         },
       };
-      proxy.$crud
+      crud
         .index(API_ROUTE, params)
         .then((res) => {
           const data = res.data || [];

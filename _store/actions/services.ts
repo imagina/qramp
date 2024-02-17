@@ -10,7 +10,6 @@ import {
 } from '../../_components/model/constants.js';
 import pluginsArray from 'src/plugins/array.js';
 import { globalStore } from 'src/plugins/utils'
-const { hasAccess } = globalStore.store
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -23,7 +22,7 @@ export const serviceListModel = {
  * @returns An array of categories.
  */
 export const getCategories = async (): Promise<any[]> => {
-    if (hasAccess('ramp.categories.index')) {
+    if (globalStore.hasAccess('ramp.categories.index')) {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
