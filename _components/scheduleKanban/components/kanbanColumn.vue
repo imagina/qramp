@@ -4,6 +4,7 @@
     :class="{'columnCtnFull' : !isWeekAgenda }"
   >
     <div
+      ref="refKanbanColumn"
       class="tw-py-3"
       :class="`cardCtn-${date}`"
       @dragover.prevent="setDrag(true)"
@@ -103,6 +104,7 @@
             />
           </template>
           <div
+            ref="refTrigger"
             v-show="!column.isDrag"
             class="tw-text-center tw-h-5 tw-flex tw-justify-center"
             :class="`trigger-${date}`"

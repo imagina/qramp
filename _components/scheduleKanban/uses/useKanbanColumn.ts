@@ -1,4 +1,4 @@
-import Vue, { computed, ref, onMounted, provide, getCurrentInstance } from 'vue';
+import { computed, ref, onMounted, provide, getCurrentInstance } from 'vue';
 import storeKanban from '../store/kanban.store';
 import storeFilters from '../store/filters.store'
 import moment from 'moment'
@@ -17,6 +17,8 @@ export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
   const proxy = (getCurrentInstance() as any).proxy as any;
   const isLoading = ref(false);
+  const refKanbanColumn = ref(null);
+  const refTrigger = ref(null);
   const cards: any = computed({
     get: () => props.column.cards,
     set: (value) => (props.column.cards = value),
@@ -174,10 +176,14 @@ export default function useKanbanColumn(props: any = {}) {
     }
   }
   onMounted(() => {
+    console.log('refKanbanColumn', refKanbanColumn.value);
+    console.log('refTrigger', refTrigger.value);
     const observerOptions = {
-      root: document.querySelector(`.cardCtn-${date.value}`),
+      // root: document.querySelector(`.cardCtn-${date.value}`),
+      root: refKanbanColumn.value,
     };
-    const target: any = document.querySelector(`.trigger-${date.value}`);
+    // const target: any = document.querySelector(`.trigger-${date.value}`);
+    const target: any = refTrigger.value;
     const observer = new IntersectionObserver(
       observerCallback,
       observerOptions
@@ -198,6 +204,8 @@ export default function useKanbanColumn(props: any = {}) {
     isBlank,
     isWeekAgenda,
     showKanbanDay,
-    cardComponentName
+    cardComponentName,
+    refKanbanColumn,
+    refTrigger,
   }
 }

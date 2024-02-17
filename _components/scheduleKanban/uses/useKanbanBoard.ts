@@ -23,7 +23,7 @@ import { store, i18n, helper, cache } from 'src/plugins/utils'
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
-  const proxy = getCurrentInstance().appContext.config.globalProperties
+  const proxy = getCurrentInstance()?.appContext.config.globalProperties
   const refFormOrders = ref(null);
   const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);

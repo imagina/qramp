@@ -22,7 +22,8 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const proxy = (getCurrentInstance() as any).proxy as any;
+    const app = getCurrentInstance()
+    const proxy = app.appContext.config.globalProperties;
     init();
     watch(() => proxy.$route, (currentValue, oldValue) => {
         init();
@@ -31,7 +32,7 @@ export default defineComponent({
     );
     function init() {
       new Promise(async (resolve, reject) => {
-        const currentRouteName = proxy.$router.currentRoute.path.indexOf('passenger');
+        const currentRouteName = proxy.$router?.currentRoute?.path?.indexOf('passenger');
         await workOrderList().setStationList([]);
         await qRampStore().setIsPassenger(currentRouteName !== -1);
         await workOrderList().getAllList();
