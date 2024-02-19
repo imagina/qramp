@@ -30,7 +30,7 @@ export default defineComponent({
   >
     <q-breadcrumbs>
       <q-breadcrumbs-el
-          icon="widgets"
+          icon="fa-light fa-grid-2"
           label="Service list"
           @click="setBreadcrumbs(null)"
           class="tw-cursor-pointer tw-text-blue-900"

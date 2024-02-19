@@ -13,7 +13,7 @@
         class="q-ml-sm"
         flat
         round
-        icon="add"
+        icon="fa-light fa-plus"
         color="primary"
         @click="addDelay()"
       />
@@ -37,7 +37,7 @@
             style="width: 40px; height: 38px"
             class="col-12 btn-stick col-md-1"
             round
-            icon="delete"
+            icon="fa-light fa-trash-can"
             flat
             size="12px"
             color="primary"
