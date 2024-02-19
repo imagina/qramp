@@ -9,7 +9,8 @@ import scheduleTypeModel from "../models/scheduleType.model";
 
 export default function useActionsBar(props: any) {
   const proxy = (getCurrentInstance() as any).proxy as any;
-  const selectedDate = computed(() => moment(storeFilters.selectedDate));
+  const DATE_FORMAT = 'YYYY/MM/DD'
+  const selectedDate = computed(() => moment(storeFilters.selectedDate, DATE_FORMAT));
   const titleFilter = computed(() => storeFilters.titleFilter);
   const isWeekAgenda = computed(() => storeKanban.scheduleType == scheduleTypeModel[0].value );
   async function changeDate(offset: number): Promise<void> {

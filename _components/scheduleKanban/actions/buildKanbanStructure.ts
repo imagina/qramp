@@ -81,7 +81,7 @@ export default async function buildKanbanStructure(refresh = false): Promise<voi
   try {
     modalScheduleStore.showInline = false; // forces to close the scheduleForm
     storeKanban.loading = true;
-    //storeKanban.columns = await getColumns();
+    storeKanban.columns = await getColumns();
     if(!storeFilters.stationId) return;
     await getCards(refresh);
     storeKanban.loading = false;

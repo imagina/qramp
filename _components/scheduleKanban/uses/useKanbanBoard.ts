@@ -96,7 +96,7 @@ export default function useKanbanBoard(props) {
         },
         action: () => {
           fullscreen.value = !fullscreen.value;
-          proxy.$q.fullscreen.toggle();
+          proxy?.$q.fullscreen.toggle();
         },
       },
       {
@@ -115,7 +115,7 @@ export default function useKanbanBoard(props) {
             `/#/${routeName}/schedule/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
           localStorage.setItem("urlSchedule", tinyUrl);
-          proxy.$router.push({ name: "qramp.admin.scheduler" });
+          proxy?.$router.push({ name: "qramp.admin.scheduler" });
         },
       },
       {
@@ -144,7 +144,7 @@ export default function useKanbanBoard(props) {
     await buildKanbanStructure();
   };
   async function setStations() {
-    const params = { ...proxy.$route.query };
+    const params = { ...proxy?.$route.query };
     const localStationId =
       (await cache.get.item("stationId")) !== "null"
         ? await cache.get.item("stationId")
@@ -192,10 +192,10 @@ export default function useKanbanBoard(props) {
     await init()
   });
   watch(
-    () => proxy.$route,
+    () => proxy?.$route,
     async (currentValue, oldValue) => {
-      const newPath = currentValue.path
-      const oldPath = oldValue.path
+      const newPath = currentValue?.path
+      const oldPath = oldValue?.path
 
       if(storeFilter.stationId === null) {
         storeFilter.showModalStation = true;

@@ -2,6 +2,8 @@ import moment from 'moment';
 import store from '../store/filters.store';
 import scheduleTypeModel from '../models/scheduleType.model';
 
+const DATE_FORMAT = 'YYYY/MM/DD'
+
 export default async function checkUrlParams(proxy: any): Promise<void>{
   const params = {...proxy.$route.query}
   try{
@@ -21,7 +23,7 @@ export default async function checkUrlParams(proxy: any): Promise<void>{
         /* defaults */
         store.form.scheduleType = scheduleTypeModel[1].value;
         store.scheduleType = scheduleTypeModel[1].value
-        store.selectedDate = moment().format('YYYY/MM/DD');
+        store.selectedDate = moment().format(DATE_FORMAT);
       }
     }
   } catch(err) {
@@ -32,12 +34,10 @@ export default async function checkUrlParams(proxy: any): Promise<void>{
 function getSelectedDay(params: any): string {
   const isWeek = store.scheduleType == scheduleTypeModel[0].value
   if(isWeek){
-    const DATE_FORMAT = 'YYYY/MM/DD'
-    console.log('store.selectedDate', store.selectedDate)
-    const dateStart = moment(params.dateStart).format('YYYY/MM/DD');
+    const dateStart = moment(params.dateStart).format(DATE_FORMAT);
     const dayOfweek = moment(store.selectedDate, DATE_FORMAT).day();
-    return moment(dateStart).day(dayOfweek).format('YYYY/MM/DD');
+    return moment(dateStart, DATE_FORMAT).day(dayOfweek).format(DATE_FORMAT);
     } else {
-    return moment(params.dateStart).format('YYYY/MM/DD');
+    return moment(params.dateStart, DATE_FORMAT).format(DATE_FORMAT);
   }
 }
