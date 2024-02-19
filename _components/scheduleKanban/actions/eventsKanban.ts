@@ -1,9 +1,11 @@
 import setIndividualCards from './setIndividualCards';
 import storeKanban from '../store/kanban.store'
-export default function eventsKanban(proxy: any) {
+import { eventBus } from 'src/plugins/utils'
+
+export default function eventsKanban() {
     function cardRefresh(): void {
         try {
-            proxy.$eventBus.$on('ramp.workOrders.cardRefresh', async (response) => {
+            eventBus.on('ramp.workOrders.cardRefresh', async (response) => {
                 const foundCard = storeKanban.columns
                     .flatMap(column => column.cards)
                     .find(card => card.id === response.data.id);

@@ -1,4 +1,4 @@
-import Vue, { computed, ref, onMounted, provide, getCurrentInstance } from 'vue';
+import { computed, ref, onMounted, provide } from 'vue';
 import storeKanban from '../store/kanban.store';
 import storeFilters from '../store/filters.store'
 import moment from 'moment'
@@ -15,7 +15,6 @@ import getWorkOrdersStatistics from '../actions/getWorkOrderStatistics';
 
 export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const isLoading = ref(false);
   const cards: any = computed({
     get: () => props.column.cards,
@@ -56,7 +55,7 @@ export default function useKanbanColumn(props: any = {}) {
       storeKanban.scheduleType = storeFilters.scheduleType;
       await buildKanbanStructure;
       props.column.loading = false;
-      setUrlParams(proxy);
+      setUrlParams();
     }
   }
 
@@ -120,7 +119,7 @@ export default function useKanbanColumn(props: any = {}) {
       } else {
         item.isDrag = false
       }
-      
+
     })
   }
   async function changeDate(event) {
@@ -138,7 +137,7 @@ export default function useKanbanColumn(props: any = {}) {
       await updateWorkOrder(event.item.id, attributes);
       column.page = 1;
       const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
-      const previousColumn:any = storeKanban.columns.find((element) => element.date.format('YYYY-MM-DD') == event.from.id)      
+      const previousColumn:any = storeKanban.columns.find((element) => element.date.format('YYYY-MM-DD') == event.from.id)
       await updateColumnStatistics( previousColumn.date, previousColumn)
       await updateColumnStatistics( column.date, column)
       column.cards = response.data;

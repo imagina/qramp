@@ -1,7 +1,6 @@
 /* Importing the baseService, qRampStore, and Vue. */
-import baseService from "modules/qcrud/_services/baseService.js";
+import baseService from "src/modules/qcrud/_services/baseService.js";
 import qRampStore from "../qRampStore.js";
-import { getCurrentInstance } from 'vue';
 import {
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
@@ -9,7 +8,7 @@ import {
     COMPANY_RAMP,
 } from '../../_components/model/constants.js';
 import pluginsArray from 'src/plugins/array.js';
-import { store } from 'src/plugins/utils'
+import { store, clone } from 'src/plugins/utils'
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -231,8 +230,7 @@ function setProps(type, name, options, index) {
  */
 export function getListOfSelectedServices(data) {
     try {
-      const proxy = getCurrentInstance().appContext.config.globalProperties
-        const service = proxy.$clone(data.filter((items) => {
+        const service = clone(data.filter((items) => {
             for (let item in items.formField) {
                 for (let key in items.formField[item]) {
                     if (key == "value") {

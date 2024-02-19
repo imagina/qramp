@@ -5,11 +5,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance, watch, onMounted } from "vue";
+import { defineComponent, watch, onMounted } from "vue";
 import kanbanBoard from "./components/kanbanBoard.vue";
 import workOrderList from '../../_store/actions/workOrderList'
 import qRampStore from "../../_store/qRampStore";
 import kanbanStore from './store/kanban.store'
+import { router } from 'src/plugins/utils'
 
 export default defineComponent({
   components: {
@@ -22,16 +23,15 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const proxy = (getCurrentInstance() as any).proxy as any;
     init();
-    watch(() => proxy.$route, (currentValue, oldValue) => {
+    watch(() => router.route, (currentValue, oldValue) => {
         init();
       },
       { deep: true }
     );
     function init() {
       new Promise(async (resolve, reject) => {
-        const currentRouteName = proxy.$router.currentRoute.path.indexOf('passenger');
+        const currentRouteName = router.route.path.indexOf('passenger');
         await workOrderList().setStationList([]);
         await qRampStore().setIsPassenger(currentRouteName !== -1);
         await workOrderList().getAllList();
