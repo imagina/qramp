@@ -1,10 +1,10 @@
 import moment from 'moment';
 import store from '../store/filters.store';
-import { cache } from 'src/plugins/utils';
+import { cache, router } from 'src/plugins/utils';
 import modalScheduleStore from '../store/modalSchedule.store'
 import scheduleTypeModel from '../models/scheduleType.model';
 
-export default async function setUrlParams(proxy: any): Promise<void>{
+export default async function setUrlParams(): Promise<void>{
     try {
       const selectedDate = moment(store.selectedDate);
       const query = store.payload;
@@ -20,8 +20,8 @@ export default async function setUrlParams(proxy: any): Promise<void>{
 
       modalScheduleStore.stationId = query.stationId;
       if (store.form.stationId) cache.set("stationId", store.form.stationId);
-      proxy.$router.push({
-        name: proxy.$route.name,
+      router.push({
+        name: router.route.name,
         query
       }).catch((error) => {
         if(error.name != ('NavigationDuplicated')) console.log(error);

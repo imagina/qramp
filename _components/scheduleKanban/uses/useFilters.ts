@@ -1,4 +1,4 @@
-import Vue, { ref, computed, ComputedRef, WritableComputedRef, getCurrentInstance } from 'vue';
+import { computed, ComputedRef, WritableComputedRef } from 'vue';
 import store from '../store/filters.store'
 import actionsModal from '../models/actionsModal.model'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract';
@@ -9,7 +9,6 @@ import getTitleFilter from '../actions/getTitleFilter';
 import storeKanban from '../store/kanban.store';
 
 export default function useFilters() {
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const isAppOffline = computed(() => storeKanban.isAppOffline);
   const form = computed(() => store.form);
   /**
@@ -92,7 +91,7 @@ export default function useFilters() {
     storeKanban.columns = [];
     storeKanban.scheduleType = store.scheduleType;
     getTitleFilter();
-    await setUrlParams(proxy)
+    await setUrlParams()
     await buildKanbanStructure(true)
     store.showModal = false;
   }

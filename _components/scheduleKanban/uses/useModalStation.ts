@@ -1,4 +1,4 @@
-import Vue, { ref, computed, ComputedRef, getCurrentInstance } from 'vue';
+import { ref, computed, ComputedRef } from 'vue';
 import store from '../store/filters.store'
 import modalStationFields from '../models/modalStation.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
@@ -8,7 +8,6 @@ import getTitleFilter from '../actions/getTitleFilter';
 import storeKanban from '../store/kanban.store';
 
 export default function useModalStation() {
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const refModalStation: any = ref(null);
   const fields = computed(() => {
     return modalStationFields().fields.value
@@ -47,10 +46,10 @@ export default function useModalStation() {
             await cache.set("stationId", store.stationId);
             store.form.stationId = store.stationId;
           }
-          //await checkUrlParams(proxy);
+          //await checkUrlParams();
           storeKanban.scheduleType = store.scheduleType;
           getTitleFilter();
-          await setUrlParams(proxy);
+          await setUrlParams();
           await buildKanbanStructure();
           store.showModalStation = false;
         }
