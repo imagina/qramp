@@ -1,4 +1,4 @@
-import { computed, ref, onMounted, provide, getCurrentInstance } from 'vue';
+import { computed, ref, onMounted, provide } from 'vue';
 import storeKanban from '../store/kanban.store';
 import storeFilters from '../store/filters.store'
 import moment from 'moment'
@@ -15,10 +15,7 @@ import getWorkOrdersStatistics from '../actions/getWorkOrderStatistics';
 
 export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const isLoading = ref(false);
-  const refKanbanColumn = ref(null);
-  const refTrigger = ref(null);
   const cards: any = computed({
     get: () => props.column.cards,
     set: (value) => (props.column.cards = value),
@@ -58,7 +55,7 @@ export default function useKanbanColumn(props: any = {}) {
       storeKanban.scheduleType = storeFilters.scheduleType;
       await buildKanbanStructure;
       props.column.loading = false;
-      setUrlParams(proxy);
+      setUrlParams();
     }
   }
 
@@ -122,7 +119,7 @@ export default function useKanbanColumn(props: any = {}) {
       } else {
         item.isDrag = false
       }
-      
+
     })
   }
   async function changeDate(event) {
@@ -140,7 +137,7 @@ export default function useKanbanColumn(props: any = {}) {
       await updateWorkOrder(event.item.id, attributes);
       column.page = 1;
       const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
-      const previousColumn:any = storeKanban.columns.find((element) => element.date.format('YYYY-MM-DD') == event.from.id)      
+      const previousColumn:any = storeKanban.columns.find((element) => element.date.format('YYYY-MM-DD') == event.from.id)
       await updateColumnStatistics( previousColumn.date, previousColumn)
       await updateColumnStatistics( column.date, column)
       column.cards = response.data;
@@ -176,8 +173,6 @@ export default function useKanbanColumn(props: any = {}) {
     }
   }
   onMounted(() => {
-    console.log('refKanbanColumn', refKanbanColumn.value);
-    console.log('refTrigger', refTrigger.value);
     const observerOptions = {
       // root: document.querySelector(`.cardCtn-${date.value}`),
       root: refKanbanColumn.value,

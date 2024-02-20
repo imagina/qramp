@@ -1,6 +1,9 @@
 import setIndividualCards from './setIndividualCards';
 import storeKanban from '../store/kanban.store'
 import { eventBus } from 'src/plugins/utils'
+
+export default function eventsKanban() {
+import { eventBus } from 'src/plugins/utils'
 export default function eventsKanban(proxy: any) {
     function cardRefresh(): void {
         try {

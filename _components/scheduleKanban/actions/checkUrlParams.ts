@@ -1,7 +1,10 @@
 import moment from 'moment';
 import store from '../store/filters.store';
 import scheduleTypeModel from '../models/scheduleType.model';
+import { router } from 'src/plugins/utils'
 
+export default async function checkUrlParams(): Promise<void>{
+  const params = {...router.route.query}
 const DATE_FORMAT = 'YYYY/MM/DD'
 
 export default async function checkUrlParams(proxy: any): Promise<void>{

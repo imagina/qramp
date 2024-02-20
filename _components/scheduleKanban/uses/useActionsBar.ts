@@ -1,4 +1,4 @@
-import Vue, { computed, ref, getCurrentInstance } from "vue";
+import { computed } from "vue";
 import buildKanbanStructure from "../actions/buildKanbanStructure";
 import storeFilters from "../store/filters.store";
 import moment from "moment";
@@ -8,9 +8,7 @@ import storeKanban from "../store/kanban.store";
 import scheduleTypeModel from "../models/scheduleType.model";
 
 export default function useActionsBar(props: any) {
-  const proxy = (getCurrentInstance() as any).proxy as any;
-  const DATE_FORMAT = 'YYYY/MM/DD'
-  const selectedDate = computed(() => moment(storeFilters.selectedDate, DATE_FORMAT));
+  const selectedDate = computed(() => moment(storeFilters.selectedDate));
   const titleFilter = computed(() => storeFilters.titleFilter);
   const isWeekAgenda = computed(() => storeKanban.scheduleType == scheduleTypeModel[0].value );
   async function changeDate(offset: number): Promise<void> {
@@ -20,7 +18,7 @@ export default function useActionsBar(props: any) {
     storeFilters.selectedDate = selectedDate.value
       .add(adjustedOffset, "days")
       .format("YYYY/MM/DD");
-    await setUrlParams(proxy);
+    await setUrlParams();
     await buildKanbanStructure();
   }
 
@@ -41,7 +39,7 @@ export default function useActionsBar(props: any) {
     storeKanban.columns = [];
     storeKanban.scheduleType = scheduleType
     storeFilters.scheduleType = scheduleType
-    await setUrlParams(proxy);
+    await setUrlParams();
     await buildKanbanStructure();
     getTitleFilter()
   }

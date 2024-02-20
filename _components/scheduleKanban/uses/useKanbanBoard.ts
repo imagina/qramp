@@ -2,7 +2,6 @@ import {
   ref,
   computed,
   provide,
-  getCurrentInstance,
   watch,
   onMounted,
 } from "vue";
@@ -19,11 +18,12 @@ import getTitleFilter from "../actions/getTitleFilter";
 import workOrderList from "modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
-import { store, i18n, helper, cache } from 'src/plugins/utils'
+import { store, i18n, helper, cache, router } from 'src/plugins/utils'
+import { useQuasar } from 'quasar';
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
-  const proxy = getCurrentInstance()?.appContext.config.globalProperties
+  const $q = useQuasar()
   const refFormOrders = ref(null);
   const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
@@ -92,11 +92,11 @@ export default function useKanbanBoard(props) {
           capitalize: true,
         }),
         props: {
-          icon: fullscreen.value ? "fullscreen_exit" : "fullscreen",
+          icon: fullscreen.value ? "fa-light fa-compress" : "fa-light fa-expand",
         },
         action: () => {
           fullscreen.value = !fullscreen.value;
-          proxy?.$q.fullscreen.toggle();
+          $q.fullscreen.toggle();
         },
       },
       {
@@ -115,7 +115,7 @@ export default function useKanbanBoard(props) {
             `/#/${routeName}/schedule/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
           localStorage.setItem("urlSchedule", tinyUrl);
-          proxy?.$router.push({ name: "qramp.admin.scheduler" });
+          router.push({ name: "qramp.admin.scheduler" });
         },
       },
       {
@@ -135,16 +135,16 @@ export default function useKanbanBoard(props) {
   });
 
   const init = async () => {
-    eventsKanban(proxy).cardRefresh();
-    await checkUrlParams(proxy);
+    eventsKanban().cardRefresh();
+    await checkUrlParams();
     storeKanban.scheduleType = storeFilter.scheduleType;
     storeKanban.isAppOffline = store.state.qofflineMaster.isAppOffline
     getTitleFilter();
-    await setUrlParams(proxy);
+    await setUrlParams();
     await buildKanbanStructure();
   };
   async function setStations() {
-    const params = { ...proxy?.$route.query };
+    const params = { ...router.route.query };
     const localStationId =
       (await cache.get.item("stationId")) !== "null"
         ? await cache.get.item("stationId")
@@ -192,10 +192,10 @@ export default function useKanbanBoard(props) {
     await init()
   });
   watch(
-    () => proxy?.$route,
+    () => router.route,
     async (currentValue, oldValue) => {
-      const newPath = currentValue?.path
-      const oldPath = oldValue?.path
+      const newPath = currentValue.path
+      const oldPath = oldValue.path
 
       if(storeFilter.stationId === null) {
         storeFilter.showModalStation = true;
