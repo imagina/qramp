@@ -69,6 +69,7 @@
       >
         <div
           v-if="column.isDrag"
+          ref="refTrigger"
           class="
            tw-flex
            tw-absolute
@@ -90,19 +91,19 @@
           handle=".dot-vertical"
           @end="changeDate"
           :disabled="isBlank && isWeekAgenda"
-          item-key="name"
+          item-key="id"
         >
-          <template #item="{ card }">
+        <template #item="{ element }">
+          <div :id="element?.id" :key="element?.id">
             <component
-              :is="card.editable? 'inlineSchedule': cardComponentName"
+              :is="element?.editable ? 'inlineSchedule': cardComponentName"
               :isWeekAgenda="isWeekAgenda"
-              :id="card.id"
-              :key="card.id"
-              :card="card"
+              :card="element"
               :dateColumn="column.date.format('YYYY-MM-DD')"
-              :class="{ hidden: column.isDrag  }"
+              :class="{ hidden: column?.isDrag  }"
             />
-          </template>
+          </div>
+        </template>
           <div
             ref="refTrigger"
             v-show="!column.isDrag"

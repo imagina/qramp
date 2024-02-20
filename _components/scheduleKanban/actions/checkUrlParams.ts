@@ -3,12 +3,11 @@ import store from '../store/filters.store';
 import scheduleTypeModel from '../models/scheduleType.model';
 import { router } from 'src/plugins/utils'
 
-export default async function checkUrlParams(): Promise<void>{
-  const params = {...router.route.query}
 const DATE_FORMAT = 'YYYY/MM/DD'
 
-export default async function checkUrlParams(proxy: any): Promise<void>{
-  const params = {...proxy.$route.query}
+export default async function checkUrlParams(): Promise<void>{
+  const params = {...router.route.query}
+
   try{
     if(store.stationId) {
       if(Object.keys(params).length !== 0){
@@ -37,7 +36,7 @@ export default async function checkUrlParams(proxy: any): Promise<void>{
 function getSelectedDay(params: any): string {
   const isWeek = store.scheduleType == scheduleTypeModel[0].value
   if(isWeek){
-    const dateStart = moment(params.dateStart).format(DATE_FORMAT);
+    const dateStart = moment(params.dateStart, DATE_FORMAT).format(DATE_FORMAT);
     const dayOfweek = moment(store.selectedDate, DATE_FORMAT).day();
     return moment(dateStart, DATE_FORMAT).day(dayOfweek).format(DATE_FORMAT);
     } else {
