@@ -53,7 +53,7 @@ export default {
         const formatData = this.formatData(data, id)
         formatData.forEach(item => {
           this.services.push({
-            icon: "settings",
+            icon: "fa-solid fa-gear",
             title: item.name,
             id: item.id,
             categoryId: item.categoryId,
