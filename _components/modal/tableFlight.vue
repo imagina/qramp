@@ -9,14 +9,14 @@
     <q-card flat>
       <q-card-section :class="{'cardResponsive': responsive}">
         <q-table
-          :data="dataTable"
+          :rows="dataTable"
           :columns="columns"
           row-key="index"
           selection="single"
           :grid="responsive"
           :filter="filter"
           class="my-sticky-header-column-table"
-          :selected.sync="selected"
+          v-model:selected="selected"
 
         >
           <template v-slot:top-left>
