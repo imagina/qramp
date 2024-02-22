@@ -123,9 +123,14 @@ export default function useModalSchedule(props: any, emit: any) {
   }
 
   async function tranformData() {
-    form.value.inboundScheduledArrival = `${moment(form.value.inboundScheduledArrival || store.seletedDateColumn).format('MM/DD/YYYY')} ${form.value.sta || '00:00'}`;
+    const DEFAULT_DATE_FORMAT = 'MM/DD/YYYY HH:mm'
+    form.value.inboundScheduledArrival = `${moment(
+      form.value.inboundScheduledArrival || store.seletedDateColumn
+    ).format('MM/DD/YYYY')} ${form.value.sta || '00:00'}`;
     form.value.outboundScheduledDeparture = form.value.outboundScheduledDeparture;
-    form.value.std = form.value.outboundScheduledDeparture ? moment(form.value.outboundScheduledDeparture).format('HH:mm') : null;
+    form.value.std = form.value.outboundScheduledDeparture
+      ? moment(form.value.outboundScheduledDeparture, DEFAULT_DATE_FORMAT).format('HH:mm')
+      : null;
     form.value.preFlightNumber = form.value.inboundFlightNumber;
     const isbound = validateOperationType(form.value.operationTypeId);
     if (isbound.inbound && isbound.outbound) {

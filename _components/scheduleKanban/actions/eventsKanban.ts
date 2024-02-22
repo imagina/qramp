@@ -7,8 +7,8 @@ export default function eventsKanban() {
         try {
             eventBus.on('ramp.workOrders.cardRefresh', async (response) => {
                 const foundCard = storeKanban.columns
-                    .flatMap(column => column.cards)
-                    .find(card => card.id === response.data.id);
+                    .flatMap(column => column?.cards)
+                    .find(card => card.id === response.data?.id);
                 if (!foundCard) return;
                 if(foundCard.loading) return;
                 await setIndividualCards(response.data.id || 0)

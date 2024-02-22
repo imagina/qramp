@@ -27,23 +27,23 @@
               @filter="setCustomerName"
               ref="customerId"
             >
-              <div slot="before-options">
+              <template #before-options>
                 <div class="q-py-md q-px-md" @click="addCustumers">
                   <div class="row cursor-pointer" >
                     <div class="q-pr-md">
-                       <q-btn
-                          push color="primary"
-                          round
-                          icon="fas fa-plus"
-                          size="xs"
-                        />
+                      <q-btn
+                        push color="primary"
+                        round
+                        icon="fas fa-plus"
+                        size="xs"
+                      />
                     </div>
                     <div class="q-py-xs">
                       <label class="cursor-pointer">{{ $tr('ifly.cms.label.createNewCustomer') }}</label>
                     </div>
                   </div>
                 </div>
-              </div>
+              </template>
             </dynamic-field>
           </label>
           <label v-if="keyField != 'customerId' && keyField != 'customCustomerName'" :class="`${readonly ? `${responsive ? 'no-wrap' : 'justify-end'} row items-center`: '' }`">

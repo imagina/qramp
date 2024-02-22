@@ -30,7 +30,7 @@
                     <span class="tw-text-orange-400">
                         <i class="fa-solid fa-circle-exclamation" />
                     </span>
-                    <span class="tw-text-sm" >
+                    <span class="tw-text-sm tw-ml-1.5" >
                         {{ uncompleted }} Not completed
                     </span>
                 </div>

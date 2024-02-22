@@ -8,17 +8,18 @@
         :class="{ 'tw-mr-5' : isDesktop, 'tw-mr-2' : isTablet }"
         v-if="showKanbanCardsActions"
     >
-        <q-btn v-for="(button, index) in cardActions"
-          flat
-          dense
-          size="sm"
-          :key="index"
-          :icon="button.icon"
-          @click="button.action"
-          v-if="button.vIf"
+      <template v-for="(button, index) in cardActions" :key="index">
+        <q-btn
+            flat
+            dense
+            size="sm"
+            :icon="button.icon"
+            @click="button.action"
+            v-if="button.vIf"
         >
-            <q-tooltip> {{ button.toolttip }}</q-tooltip>
+          <q-tooltip> {{ button.toolttip }}</q-tooltip>
         </q-btn>
+      </template>
     </div>
 </template>
 

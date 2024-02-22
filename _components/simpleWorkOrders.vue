@@ -40,7 +40,7 @@
               @filter="setCustomerName"
               ref="customerId"
           >
-            <div slot="before-options">
+            <template #before-options>
               <div class="q-py-md q-px-md" @click="addCustumers">
                 <div class="row cursor-pointer">
                   <div class="q-pr-md">
@@ -59,7 +59,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </template>
           </dynamic-field>
         </div>
         <div v-else>

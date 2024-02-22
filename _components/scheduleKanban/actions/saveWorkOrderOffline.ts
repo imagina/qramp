@@ -5,14 +5,15 @@ import moment from 'moment'
 
 export default async function saveWorkOrderOffline(requestResponse) {
     const FORMAT_DATE = 'YYYY-MM-DDTHH:mm:ss'
+    const DEFAULT_DATE_FORMAT = 'MM/DD/YYYY HH:mm'
     const form = { ...modalScheduleStore.form };
 
     form.outboundScheduledDeparture = form.outboundScheduledDeparture
-        ? moment(form.outboundScheduledDeparture).format(FORMAT_DATE)
+        ? moment(form.outboundScheduledDeparture, DEFAULT_DATE_FORMAT).format(FORMAT_DATE)
         : null
 
     form.inboundScheduledArrival = form.inboundScheduledArrival
-        ? moment(form.inboundScheduledArrival).format(FORMAT_DATE)
+        ? moment(form.inboundScheduledArrival, DEFAULT_DATE_FORMAT).format(FORMAT_DATE)
         : null
 
     form.scheduleDate = form.inboundScheduledArrival || form.outboundScheduledDeparture

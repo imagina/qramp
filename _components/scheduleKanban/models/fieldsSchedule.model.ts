@@ -97,8 +97,7 @@ export default function modelFields() {
                 clearable: true,
                 color:"primary",
                 options: filterGates.value
-              },
-              label: i18n.tr('ifly.cms.form.gate'),
+              }
             },
             operationTypeId: {
               name:'operationTypeId',
@@ -113,8 +112,7 @@ export default function modelFields() {
                 color:"primary",
                 'hide-bottom-space': false,
                 options: operationTypeList.value
-              },
-              label: i18n.tr('ifly.cms.form.operation'),
+              }
             },
             sta: {
               value: null,

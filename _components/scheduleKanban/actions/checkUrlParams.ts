@@ -3,8 +3,11 @@ import store from '../store/filters.store';
 import scheduleTypeModel from '../models/scheduleType.model';
 import { router } from 'src/plugins/utils'
 
+const DATE_FORMAT = 'YYYY/MM/DD'
+
 export default async function checkUrlParams(): Promise<void>{
   const params = {...router.route.query}
+
   try{
     if(store.stationId) {
       if(Object.keys(params).length !== 0){
@@ -22,7 +25,7 @@ export default async function checkUrlParams(): Promise<void>{
         /* defaults */
         store.form.scheduleType = scheduleTypeModel[1].value;
         store.scheduleType = scheduleTypeModel[1].value
-        store.selectedDate = moment().format('YYYY/MM/DD');
+        store.selectedDate = moment().format(DATE_FORMAT);
       }
     }
   } catch(err) {
@@ -33,10 +36,10 @@ export default async function checkUrlParams(): Promise<void>{
 function getSelectedDay(params: any): string {
   const isWeek = store.scheduleType == scheduleTypeModel[0].value
   if(isWeek){
-    const dateStart = moment(params.dateStart).format('YYYY/MM/DD');
-    const dayOfweek = moment(store.selectedDate).day();
-    return moment(dateStart).day(dayOfweek).format('YYYY/MM/DD');
+    const dateStart = moment(params.dateStart, DATE_FORMAT).format(DATE_FORMAT);
+    const dayOfweek = moment(store.selectedDate, DATE_FORMAT).day();
+    return moment(dateStart, DATE_FORMAT).day(dayOfweek).format(DATE_FORMAT);
     } else {
-    return moment(params.dateStart).format('YYYY/MM/DD');
+    return moment(params.dateStart, DATE_FORMAT).format(DATE_FORMAT);
   }
 }
