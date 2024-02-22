@@ -63,15 +63,26 @@ export default function useKanbanColumn(props: any = {}) {
   function observerCallback(entries) {
     entries.forEach(({ isIntersecting }) => {
       if (isIntersecting) {
-        infiniteHandler();
+       // infiniteHandler();
       }
     });
   }
+
+  function callInfiniteHandler(e){
+    if(props.column.total <= 10) return
+    if(props.column.total === cards.value.length) return
+    let { scrollTop, clientHeight, scrollHeight } = e.target;
+    if (scrollTop + clientHeight >= scrollHeight*4/5) {
+      console.log('callInifiniteHandler')
+    }
+  }
+
   async function infiniteHandler() {
     try {
       if(props.column.loading || props.column.total === cards.value.length) return;
       isLoading.value = true;
       props.column.page = props.column.page + 1;
+      console.count('more cards!')
       const response = await getIndividualWorkOrders(true, props.column.page, date.value);
       cards.value.push(...response.data);
       isLoading.value = false;
@@ -184,6 +195,7 @@ export default function useKanbanColumn(props: any = {}) {
     );
     observer.observe(target);
   })
+
   return {
     selectedDate,
     storeKanban,
@@ -198,6 +210,7 @@ export default function useKanbanColumn(props: any = {}) {
     isBlank,
     isWeekAgenda,
     showKanbanDay,
-    cardComponentName
+    cardComponentName,
+    callInfiniteHandler
   }
 }
