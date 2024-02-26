@@ -8,7 +8,10 @@ import storeKanban from "../store/kanban.store";
 import scheduleTypeModel from "../models/scheduleType.model";
 
 export default function useActionsBar(props: any) {
-  const selectedDate = computed(() => moment(storeFilters.selectedDate));
+  const DATE_FORMAT = "YYYY/MM/DD";
+  const selectedDate = computed(
+    () => moment(storeFilters.selectedDate, DATE_FORMAT)
+  );
   const titleFilter = computed(() => storeFilters.titleFilter);
   const isWeekAgenda = computed(() => storeKanban.scheduleType == scheduleTypeModel[0].value );
   async function changeDate(offset: number): Promise<void> {
@@ -17,7 +20,7 @@ export default function useActionsBar(props: any) {
 
     storeFilters.selectedDate = selectedDate.value
       .add(adjustedOffset, "days")
-      .format("YYYY/MM/DD");
+      .format(DATE_FORMAT);
     await setUrlParams();
     await buildKanbanStructure();
   }
@@ -49,7 +52,7 @@ export default function useActionsBar(props: any) {
   }
 
   async function today(){
-    storeFilters.selectedDate = moment().format('YYYY/MM/DD');
+    storeFilters.selectedDate = moment().format(DATE_FORMAT);
     await changeAgenda(scheduleTypeModel[1].value) //day view
   }
 

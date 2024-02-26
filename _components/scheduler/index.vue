@@ -1,19 +1,17 @@
 <template>
-  <div>
-    <master-modal
-      v-model="showModal"
-      :title="titleModal"
-      :persistent="true"
-      custom-position
-      :actions="actions"
-      :loading="loading"
-      @hide="clear"
-    >
-      <div class="tw-px-4">
-        <formFields ref="refFormFields" />
-      </div>
-    </master-modal>
-  </div>
+  <master-modal
+    v-model="showModal"
+    :title="titleModal"
+    :persistent="true"
+    custom-position
+    :actions="actions"
+    :loading="loading"
+    @hide="clear"
+  >
+    <div class="tw-px-4">
+      <formFields ref="refFormFields" />
+    </div>
+  </master-modal>
 </template>
 
 <script lang="ts">

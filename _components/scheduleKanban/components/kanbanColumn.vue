@@ -104,6 +104,7 @@
             />
           </div>
         </template>
+        <template #footer>
           <div
             ref="refTrigger"
             v-show="!column.isDrag"
@@ -112,6 +113,7 @@
           >
             <q-spinner v-if="isLoading" color="primary" size="1.3em" />
           </div>
+        </template>
         </draggable>
       </div>
     </div>

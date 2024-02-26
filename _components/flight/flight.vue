@@ -466,7 +466,7 @@ export default {
         flyFormLeft:{
           customerId: {
             name:'customerId',
-            value: '',
+            value: null,
             type: this.readonly ? 'inputStandard': 'select',
             help: {
                 description: 'You can add a new customer to the list if it\'s not available. Type the Customer Name and click on "Create new customer". The Work Order will be created as Ad-Hoc.'
@@ -493,7 +493,7 @@ export default {
           },
           customCustomerName: {
             name:'customCustomerName',
-            value: '',
+            value: null,
             type: this.readonly ? 'inputStandard': 'input',
             props: {
               rules: [
@@ -511,7 +511,7 @@ export default {
           },
           stationId: {
             name:'stationId',
-            value: '',
+            value: null,
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
@@ -529,7 +529,7 @@ export default {
           },
           acTypeId: {
             name:'acTypeId',
-            value: '',
+            value: null,
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
@@ -548,7 +548,7 @@ export default {
           },
           operationTypeId: {
             name:'operationTypeId',
-            value: '',
+            value: null,
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
@@ -594,7 +594,7 @@ export default {
         flyFormRight:{
           carrierId: {
             name:'carrierId',
-            value: '',
+            value: null,
             type: this.readonly ? 'inputStandard':'select',
             props: {
               rules: [
@@ -613,7 +613,7 @@ export default {
           },
           gateId: {
             name:'gateId',
-            value: '',
+            value: null,
             type: this.readonly ? 'inputStandard':'select',
             props: {
               vIf: !this.isPassenger,
@@ -658,7 +658,7 @@ export default {
           },
           responsibleId: {
             name: "responsibleId",
-            value: '',
+            value: null,
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
