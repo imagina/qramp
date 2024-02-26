@@ -22,10 +22,12 @@ export interface State {
     loading: boolean;
     titleModal: string;
     updateModal: boolean;
+    refFormScheduler: any;
 }
 
 export interface Store {
     showModal: boolean;
+    refFormScheduler: any;
     form: Form;
     loading: boolean;
     titleModal: string;

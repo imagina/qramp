@@ -1,4 +1,10 @@
-import { ref, computed, WritableComputedRef, ComputedRef, Ref } from 'vue';
+import {
+    ref, 
+    computed, 
+    WritableComputedRef, 
+    ComputedRef, 
+    Ref,
+} from 'vue';
 import store from '../store/index.store';
 import modelActionsModal from '../models/modelActionsModal';
 import { SchedulerModalComposition } from '../contracts/useSchedulerModal.contract'
@@ -54,7 +60,7 @@ export default function useSchedulerModal(): SchedulerModalComposition {
         store.reset();
     }
 
-    const { actions } = modelActionsModal(refFormFields.value) as ModelActionsModalResult;
+    const { actions } = modelActionsModal() as ModelActionsModalResult;
 
     return {
         showModal,
@@ -62,6 +68,6 @@ export default function useSchedulerModal(): SchedulerModalComposition {
         refFormFields,
         clear,
         loading,
-        titleModal,
+        titleModal
     };
 }

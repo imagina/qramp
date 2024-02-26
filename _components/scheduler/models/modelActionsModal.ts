@@ -1,4 +1,4 @@
-import { computed, ComputedRef } from 'vue';
+import { computed, ComputedRef, ref } from 'vue';
 import save from '../actions/save'
 import update from '../actions/update'
 import store from '../store/index.store'
@@ -10,8 +10,7 @@ import {
 import { i18n, eventBus } from 'src/plugins/utils'
 
 
-export default function modelActionsModal(refFormFields): ModelActionsModalResult {
-    const { tr } = i18n
+export default function modelActionsModal(): ModelActionsModalResult {
     const actions: ComputedRef<Action[]> = computed(() => ([
         {
             props: {
@@ -21,9 +20,8 @@ export default function modelActionsModal(refFormFields): ModelActionsModalResul
                 label: i18n.tr('isite.cms.label.save'),
             },
             action: () => {
-                const refFormScheduler = refFormFields.$refs.refFormScheduler;
-                if (refFormScheduler) {
-                    refFormScheduler
+                if (store.refFormScheduler) {
+                    store.refFormScheduler
                         .validate()
                         .then(async (success) => {
                             if (success) {
