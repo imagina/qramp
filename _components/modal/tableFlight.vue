@@ -38,7 +38,7 @@
                   dense
                   v-model="props.selected"
                   :label="props.row.name"
-                  :disabled="props.row.cancelled"
+                  :disable="props.row.cancelled"
                 />
               </q-td>
               <q-td
