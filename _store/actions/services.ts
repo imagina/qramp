@@ -106,7 +106,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         const products = product || [];
         const data: any = [];
         const dynamicFieldModel: any = {
-            icon: "settings",
+            icon: "fa-solid fa-gear",
         };
         const organizeProduct = organizeProducts(product);
         organizeProduct?.forEach((product) => {

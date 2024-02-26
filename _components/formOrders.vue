@@ -135,7 +135,7 @@ export default {
         {
           ref: "signature",
           title: this.$tr('ifly.cms.label.signature'),
-          icon: 'draw',
+          icon: 'fa-solid fa-pen-line',
           step: STEP_SIGNATURE,
           form: this.signature,
           component: iSignature,
