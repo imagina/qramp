@@ -27,7 +27,7 @@
              tw-w-7
              tw-h-7
              tw--mt-4
-             tw-text-blueGray-500
+             tw-text-slate-500
              dayGray"
             :class="{
               'buttom-day': selectedDate === date.format('YYYY/MM/DD'),
