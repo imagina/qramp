@@ -13,8 +13,11 @@ export default async function deleteWorkOrders(workOrderId: number): Promise<voi
                 API_ROUTE,
                 workOrderId,
                 {
-                    params: {
-                        titleOffline: `Delete Work Order - Id: ${workOrderId}`
+                    data: {
+                      attributes: {
+                        id: workOrderId,
+                        titleOffline: 'Delete Work Order'
+                      }
                     }
                 }
             )
