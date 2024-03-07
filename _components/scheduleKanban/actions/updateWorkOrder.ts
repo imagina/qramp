@@ -12,7 +12,7 @@ export default async function updateWorkOrder(id: number, attributes: any): Prom
         const dataForApi = { ...attributes }
 
         if (storeKanban.isAppOffline) {
-            dataForApi.titleOffline = `${i18n.tr("ifly.cms.form.updateWorkOrder")} Id: ${dataForApi.id}`;
+            dataForApi.titleOffline = `${i18n.tr("ifly.cms.form.updateWorkOrder")}`;
         }
 
         if (dataUpdate.inboundFlightNumber) {

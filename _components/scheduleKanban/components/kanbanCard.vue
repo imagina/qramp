@@ -107,7 +107,7 @@
         >
         <div @click="openModalSelectFlightNumber" class="tw-cursor-pointer">
           <i :class="flightStatuses.icon" />
-          <span>
+          <span class="tw-ml-1">
             {{ flightStatuses.name }}
           </span>
         </div>
