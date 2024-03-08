@@ -1,5 +1,5 @@
 import { computed, ComputedRef, getCurrentInstance } from 'vue';
-import { COMPANY_RAMP } from '../../model/constants.js';
+import { COMPANY_RAMP, COMPANY_PASSENGER } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
 import { modelWeek } from './constants'
 import store from '../store/index.store'
@@ -9,6 +9,10 @@ import { i18n } from 'src/plugins/utils'
 
 export default function modelFields(): ModelFields {
     const updateModal: ComputedRef<boolean> = computed(() => store.updateModal);
+    const isPassenger = computed(() => qRampStore().getIsPassenger());
+    const filterCompany = computed(() =>
+      isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP
+    );
     const formFields: ComputedRef<FormFields> = computed(() => ({
         left: {
             carrierId: {
@@ -37,7 +41,7 @@ export default function modelFields(): ModelFields {
                     select: { 'label': 'fullName', 'id': 'id' },
                     requestParams: {
                         filter: {
-                            companyId: COMPANY_RAMP,
+                            companyId: filterCompany.value,
                         },
                     },
                 },

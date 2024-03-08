@@ -1,24 +1,24 @@
 <template>
   <div>
     <div class="
-      tw-relative 
-      tw-rounded-lg 
-      card-h 
-      tw-my-2 
-      tw-border-l-8  
+      tw-relative
+      tw-rounded-lg
+      card-h
+      tw-my-2
+      tw-border-l-8
       showCard
       tw-bg-white" :class="colorCheckSchedule"
-      v-if="!card.editable"      
+      v-if="!card.editable"
     >
       <div>
         <div class="tw-py-3 tw-pl-2 tw-w-full">
           <div class="tw-flex tw-pb-1">
             <div class="tw-w-10/12">
-              <p 
+              <p
               class="
-                text-kanban-card 
-                tw--mt-0.5 
-                tw-cursor-pointer 
+                text-kanban-card
+                tw--mt-0.5
+                tw-cursor-pointer
                 tw-truncate"
               @click="openModalSchedule"
               >
@@ -26,13 +26,14 @@
               </p>
             </div>
             <div class="
-              tw-flex 
-              tw-items-center 
+              tw-flex
+              tw-items-center
               tw-space-x-2
               tw-px-3
-              tw--mt-2 
+              tw--mt-2
               tw-text-gray-500
-              dot-vertical 
+              dot-vertical
+              tw-hidden
               "
               :class="{
                 'tw-cursor-move': !isBlank
@@ -43,8 +44,8 @@
             </div>
           </div>
           <div class="
-            tw-font-semibold 
-            tw-text-xs 
+            tw-font-semibold
+            tw-text-xs
             tw-space-y-1">
             <div class="tw-flex tw-space-x-2 arrival-text">
               <div v-if="card.calendar.sta">
@@ -56,9 +57,9 @@
             </div>
             <div class="tw-flex tw-space-x-1">
               <div class="ac-type-text tw-truncate tw-w-28" v-if="actypes">
-                <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }} 
+                <i class="fa-solid fa-plane"></i> A/C#: {{ actypes }}
                 <q-tooltip v-if="actypes">
-                  {{ actypes }} 
+                  {{ actypes }}
                 </q-tooltip>
               </div>
               <div class="tw-flex tw-items-center tw-truncate" v-if="gates">
@@ -67,19 +68,19 @@
                 {{ gates }}
               </div>
             </div>
-            <div 
+            <div
               class="
-              tw-py-1 
-              tw-flex 
-              tw-items-center 
+              tw-py-1
+              tw-flex
+              tw-items-center
               tw-pr-3"
             >
               <span class="tw-uppercase tw-font-extrabold text-status">
                 {{ titleStatus }}
               </span>
-              <lastComments 
-                v-if="!storeKanban.isAppOffline" 
-                :card="card" 
+              <lastComments
+                v-if="!storeKanban.isAppOffline"
+                :card="card"
                 class="tw-pl-2"
               />
             </div>
@@ -87,23 +88,23 @@
         </div>
       </div>
       <div
-        v-if="flightStatuses" 
+        v-if="flightStatuses"
         class="
-          bg-gray-c-100 
-          tw-absolute 
-          tw-bottom-0 
+          bg-gray-c-100
+          tw-absolute
+          tw-bottom-0
           tw-left-0
           tw-w-full
           tw-h-7
           tw-py-1
-          tw-px-2 
+          tw-px-2
           text-x2
           tw-space-x-1
           tw-font-extrabold
-          tw-rounded-br-lg 
+          tw-rounded-br-lg
           tw-uppercase
           " :class="flightStatuses.color"
-          
+
         >
         <div @click="openModalSelectFlightNumber" class="tw-cursor-pointer">
           <i :class="flightStatuses.icon" />
@@ -111,7 +112,7 @@
             {{ flightStatuses.name }}
           </span>
         </div>
-        <div 
+        <div
           class="
             tw-flex
             tw-left-0
@@ -127,16 +128,16 @@
           />
         </div>
       </div>
-      
+
       <div
        v-if="card.loading"
        class="
-        tw-absolute 
-        tw-inset-0 
-        tw-bg-opacity-75 
-        tw-pt-12 
-        tw-bg-white 
-        tw-flex 
+        tw-absolute
+        tw-inset-0
+        tw-bg-opacity-75
+        tw-pt-12
+        tw-bg-white
+        tw-flex
         tw-justify-center"
       >
          <q-spinner color="primary" size="2em" />

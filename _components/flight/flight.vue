@@ -703,13 +703,10 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              rules: [
-                val => this.validateRulesField(val)
-              ],
               readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.origin')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.origin')}`,
               clearable: true,
               color:"primary"
             },
@@ -725,13 +722,10 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
               readonly:  this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.tail')}`,
               clearable: true,
               color:"primary"
             },
@@ -798,13 +792,10 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              rules: [
-                val => this.validateRulesField(val)
-              ],
               readonly: this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.destination')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.destination')}`,
               clearable: true,
               color:"primary"
             },
@@ -820,13 +811,10 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
               readonly: this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.tail')}`,
               clearable: true,
               color:"primary"
             },
@@ -860,7 +848,7 @@ export default {
             props: {
               vIf: this.isPassenger,
               readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
-              label: '*Outbound Gate Departure',
+              label: 'Outbound Gate Departure',
               clearable: true,
               color:"primary"
             },

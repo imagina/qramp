@@ -57,15 +57,15 @@ export const FlightformFieldModel = [
 
   export const HalfTurnInBountModel = [
     'inboundFlightNumber',
-    'inboundOriginAirportId',
-    'inboundTailNumber',
+    //'inboundOriginAirportId',
+    //'inboundTailNumber',
     'inboundScheduledArrival',
   ];
 
   export const HalfTurnOutBountModel = [
     'outboundFlightNumber',
-    'outboundDestinationAirportId',
-    'outboundTailNumber',
+    //'outboundDestinationAirportId',
+    //'outboundTailNumber',
     'outboundScheduledDeparture',
   ];
 
