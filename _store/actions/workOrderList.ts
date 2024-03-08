@@ -664,7 +664,6 @@ export default function workOrderList(): WorkOrderList {
             getStation(refresh),
             getOperationType(refresh),
             getCustomerWithContract(refresh),
-            getCustomer(refresh),
             getFlightStatuses(refresh),
             getWorkOrderStatuses(refresh),
             getGates(refresh),
