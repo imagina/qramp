@@ -76,7 +76,6 @@ export default {
             loadOptions: {
               delayed: this.getCustomerList,
             },
-            label: this.$tr("ifly.cms.form.customer"),
           },
           preFlightNumber: {
             name: "preFlightNumber",

@@ -1,7 +1,8 @@
-import { ref, computed } from 'vue';
+import { ref, computed, shallowRef } from 'vue';
 import serviceListStore from "./store/serviceList";
 import { ServiceModelContract } from './contracts/index.contract';
 import { i18n } from 'src/plugins/utils'
+import cloneDeep from 'lodash.clonedeep';
 
 
 /**
@@ -30,7 +31,7 @@ export default function useServiceList(props = {}, emit = null) {
         serviceListStore().getServiceList()
     );
     const search = ref<string>("");
-    const selectService = ref<ServiceModelContract>({});
+    const selectService = shallowRef<ServiceModelContract>({});
     const breadcrumbs = ref<ServiceModelContract[]>([]);
     const showServiceList = computed(
         (): boolean =>
@@ -82,7 +83,8 @@ export default function useServiceList(props = {}, emit = null) {
             breadcrumbs.value = [];
             return;
         }
-        selectService.value = service;
+        const serviceRaw = cloneDeep(service)
+        selectService.value = serviceRaw
         if (index !== null) {
             breadcrumbs.value = breadcrumbs.value.filter(
                 (breadcrumb, indexBr) => indexBr <= index
