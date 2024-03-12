@@ -5,6 +5,7 @@ import { modelWeek } from './constants'
 import store from '../store/index.store'
 import {ModelFields, FormFields} from '../contracts/formFields.contract'
 import { i18n } from 'src/plugins/utils'
+import qRampStore from 'modules/qramp/_store/qRampStore'
 
 
 export default function modelFields(): ModelFields {

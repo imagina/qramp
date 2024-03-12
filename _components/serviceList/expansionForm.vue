@@ -2,6 +2,7 @@
 import { defineComponent, computed, toRefs, ref, watch } from 'vue';
 import serviceListStore from './store/serviceList';
 import { DynamicField } from './contracts/index.contract';
+import { clone } from 'src/plugins/utils.ts';
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -19,7 +20,7 @@ export default defineComponent({
     const { data, selectService } = toRefs(props)
     
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
-    const newData = ref([ ...data.value ])
+    const newData = ref(clone(data.value))
 
     function showValue(data: any) {
       if (data) {
@@ -28,7 +29,8 @@ export default defineComponent({
     }
 
     watch(newData, (newVal) => {
-      const services = [ ...serviceListStore().getServiceList() ]
+      const services = clone(serviceListStore().getServiceList())
+
       services.map(service => {
         if (service.id === selectService.value.id) {
           service.dynamicField = newVal as DynamicField[]
@@ -49,7 +51,7 @@ export default defineComponent({
 <template>
   <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
     <div v-if="!isDesktop">
-      <q-list v-for="(item, index) in data" :key="index">
+      <q-list v-for="(item, index) in newData" :key="index">
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
             <q-item-section avatar class="q-pr-none " style="min-width: 45px;">
@@ -82,7 +84,7 @@ export default defineComponent({
         <!-- <q-separator color="red" />-->
       </q-list>
     </div>
-    <q-list v-for="(item, index) in data" :key="index" v-else>
+    <q-list v-for="(item, index) in newData" :key="index" v-else>
       <div class="q-py-sm row">
         <div class="row q-py-md">
           <div class="q-py-sm" style="width: 220px; display: flex;">
