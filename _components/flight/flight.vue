@@ -945,7 +945,7 @@ export default {
           this.newCustumerAdHoc = [{...objData}];
           this.selectCustomerComputed = {...objData};
         } else {
-          const customer = workOrderList().getCustomerWithContractLists().find(item => {
+          const customer = await workOrderList().getCustomerWithContractLists().find(item => {
             if(updateForm.customerId && updateForm.contractId) {
               return item.id == updateForm.customerId && item.contractId == updateForm.contractId
             }
