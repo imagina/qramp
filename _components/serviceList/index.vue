@@ -85,11 +85,12 @@ export default defineComponent({
           </div>
         </q-item>
       </q-list>
-
+      
       <expansionForm
           v-if="!loading &&
           selectService.dynamicField &&
           selectService.dynamicField.length > 0"
+          :selectService="selectService"
           :data="filterService"
       />
       <component

@@ -230,6 +230,7 @@ export default function useKanbanBoard(props) {
     refFormOrders,
     individualRefreshByColumns,
     title,
-    isAppOffline
+    isAppOffline,
+    storeFilter,
   };
 }

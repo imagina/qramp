@@ -1,5 +1,7 @@
 <script lang="ts">
-import {defineComponent, computed} from 'vue';
+import { defineComponent, computed, toRefs, ref, watch } from 'vue';
+import serviceListStore from './store/serviceList';
+import { DynamicField } from './contracts/index.contract';
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -7,11 +9,17 @@ export default defineComponent({
     data: {
       type: Array,
       default: () => [],
-    }
+    },
+    selectService: {
+      type: Object,
+      default: () => {},
+    },
   },
   setup(props) {
-    const data: any = computed(() => props.data);
+    const { data, selectService } = toRefs(props)
+    
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
+    const newData = ref([ ...data.value ])
 
     function showValue(data: any) {
       if (data) {
@@ -19,10 +27,21 @@ export default defineComponent({
       }
     }
 
+    watch(newData, (newVal) => {
+      const services = [ ...serviceListStore().getServiceList() ]
+      services.map(service => {
+        if (service.id === selectService.value.id) {
+          service.dynamicField = newVal as DynamicField[]
+        }
+      })
+      serviceListStore().setServiceList(services)
+    }, { deep: true })
+
     return {
       isDesktop,
       showValue,
-      data
+      data,
+      newData,
     }
   },
 })
@@ -45,9 +64,10 @@ export default defineComponent({
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
                 <dynamic-field
-                    class="marginzero tw-w-full"
-                    v-model="data[index]['formField'][keyfield]['value']"
-                    :field="field"></dynamic-field>
+                  class="marginzero tw-w-full"
+                  v-model="newData[index]['formField'][keyfield]['value']"
+                  :field="field" 
+                />
               </label>
               <div
                   class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden"
@@ -79,7 +99,7 @@ export default defineComponent({
             <div class="flex no-wrap items-center">
               <dynamic-field
                   class="q-ml-sm marginzero"
-                  v-model="data[index]['formField'][keyfield]['value']"
+                  v-model="newData[index]['formField'][keyfield]['value']"
                   :field="field"
               />
               <div
