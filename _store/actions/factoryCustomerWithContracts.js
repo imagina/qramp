@@ -5,7 +5,10 @@ export default function getListCustomerWithContracts(data, permisition) {
         return {
             id: Number(customer.id),
             label: customer.customerName + ' (Ad Hoc)',
-            value: customer.customerName + ' (Ad Hoc)'
+            value: customer.customerName + ' (Ad Hoc)',
+            customerId: customer.id,
+            contractId: null,
+            contractName: null
         }
     });
     contractsList.forEach((contract, index) => {
@@ -17,7 +20,7 @@ export default function getListCustomerWithContracts(data, permisition) {
             contractId: contract.id,
             value: `${contract.customerName}-${contract.contractName}-${index}`,
             contractName: contract.contractName
-        }) 
-    }); 
+        })
+    });
     return customers;
 }
