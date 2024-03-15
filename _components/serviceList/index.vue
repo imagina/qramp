@@ -58,7 +58,7 @@ export default defineComponent({
           v-model="search"
       >
         <template v-slot:prepend>
-          <q-icon color="primary" class="q-pl-sm" name="fas fa-search"/>
+          <q-icon color="primary" class="q-pl-sm" name="fas fa-search" size="xs"/>
         </template>
       </q-input>
       <q-list
@@ -85,7 +85,7 @@ export default defineComponent({
           </div>
         </q-item>
       </q-list>
-      
+
       <expansionForm
           v-if="!loading &&
           selectService.dynamicField &&

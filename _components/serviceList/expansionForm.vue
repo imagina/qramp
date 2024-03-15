@@ -18,7 +18,7 @@ export default defineComponent({
   },
   setup(props) {
     const { data, selectService } = toRefs(props)
-    
+
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
     const newData = ref(clone(data.value))
 
@@ -68,12 +68,12 @@ export default defineComponent({
                 <dynamic-field
                   class="marginzero tw-w-full"
                   v-model="newData[index]['formField'][keyfield]['value']"
-                  :field="field" 
+                  :field="field"
                 />
               </label>
               <div
                   class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden"
-                  v-if="field.type === 'fullDate' 
+                  v-if="field.type === 'fullDate'
                   && field.props.typeIndexDate === 1"
               >
                 Difference (hours): {{ 1 }}
@@ -87,7 +87,7 @@ export default defineComponent({
     <q-list v-for="(item, index) in newData" :key="index" v-else>
       <div class="q-py-sm row">
         <div class="row q-py-md">
-          <div class="q-py-sm" style="width: 220px; display: flex;">
+          <div class="q-py-sm tw-items-center" style="width: 220px; display: flex;">
             <div class="q-px-sm">
               <q-avatar size="32px" font-size="18px" :icon="item.icon" color="primary" text-color="white"/>
             </div>
@@ -106,7 +106,7 @@ export default defineComponent({
               />
               <div
                   class="tw--mt-4 tw-px-3 tw-font-semibold tw-hidden"
-                  v-if="field.type === 'fullDate' 
+                  v-if="field.type === 'fullDate'
                   && field.props.typeIndexDate === 1"
               >
                 Difference (hours): {{ 1 }}
