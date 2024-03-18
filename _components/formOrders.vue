@@ -65,10 +65,9 @@ import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
 import commentsModal from "../_components/schedule/modals/commentsModal.vue";
-import { eventBus } from 'src/plugins/utils'
 
 export default {
-  emits: ['getWorkOrderFilter'],
+  emits: ['getWorkOrderFilter', 'refresh-data'],
   components: {
     stepperRampForm,
     simpleWorkOrders,
@@ -199,7 +198,7 @@ export default {
             await this.getWorkOrders();
             this.clear()
             //[ptc]
-            eventBus.emit('crud.data.refresh')
+            this.$emit('refresh-data')
             await qRampStore().hideLoading();
           }
         },
@@ -314,7 +313,7 @@ export default {
      */
     close(show) {
       this.show = show
-      eventBus.emit('crud.data.refresh')
+      this.$emit('refresh-data')
       this.services = [];
     },
     /**

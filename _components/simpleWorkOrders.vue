@@ -202,7 +202,7 @@ export default {
     setCustomerName(query) {
       this.customerName = query || "";
     },
-    saveSimpleWorkOrder() {
+    async saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
           if (this.isAppOffline || this.acceptSchedule || this.form.faFlightId) {
@@ -355,7 +355,7 @@ export default {
         };
         await cacheOffline.addNewRecord(CACHE_PATH, offlineWorkOrder);
 
-        if(!this.isAppOffline) workOrderList().getWorkOrders(true, true)
+        if(!this.isAppOffline) await workOrderList().getWorkOrders(true)
         qRampStore().hideLoading();
 
         return this.isAppOffline ? { data: { ...offlineWorkOrder } } : response;
