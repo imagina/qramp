@@ -240,8 +240,8 @@ export default {
     path: '/ramp/fueling/index',
     name: 'qramp.admin.fueling',
     crud: import('../_crud/fueling.vue'),
-    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
-    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    page: () => import('modules/qcrud/_pages/admin/crudPage'),
+    layout: () => import('layouts/master.vue'),
     title: 'Fueling',
     icon: 'fa-light fa-briefcase',
     subHeader: {
