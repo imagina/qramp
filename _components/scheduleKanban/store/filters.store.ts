@@ -4,7 +4,6 @@ import scheduleTypeModel from '../models/scheduleType.model';
 import filterModel from '../models/filters.model'
 import moment, { Moment } from 'moment';
 import { State } from '../contracts/filtersStore.contract';
-import getCurrentTime from '../actions/getCurrentTime';
 import storeKanban from '../store/kanban.store';
 
 const state = reactive<State>({
@@ -12,7 +11,7 @@ const state = reactive<State>({
     titleModal: '',
     filters: filterModel(),
     form: {
-      time: getCurrentTime()
+      time: '0-23'
     },
     loading: false,
     updateModal: false,

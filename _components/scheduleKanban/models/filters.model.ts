@@ -17,6 +17,25 @@ export default function filterModel() {
         readonly: kanbanStore.isAppOffline,
       },
     },
+    customerId: {
+      value: null,
+      type: 'select',
+
+      quickFilter: true,
+      loadOptions: {
+          apiRoute: 'apiRoutes.qramp.setupCustomers',
+          select: {'label': 'customerName', 'id': 'id'},
+          requestParams: {
+              filter: {
+                  companyId: kanbanStore.filterCompany,
+              },
+          },
+      },
+      props: {
+          label: 'Customer',
+          'clearable': true
+      },
+    },
     carrierId: {
       value: null,
       type: "select",

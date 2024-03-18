@@ -541,7 +541,7 @@ export default function workOrderList(): WorkOrderList {
                     baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
                     baseService.index('apiRoutes.qramp.setupContracts', contractParams)
                 ]);
-
+                setCustomerList(customersData[0].data);
                 const customerList = factoryCustomerWithContracts(customersData, allowContractName);
                 setCustomerWithContractLists(customerList);
                 return resolve(customerList);
@@ -662,7 +662,7 @@ export default function workOrderList(): WorkOrderList {
             getStation(refresh),
             getOperationType(refresh),
             getCustomerWithContract(refresh),
-            getCustomer(refresh),
+            //getCustomer(refresh),
             getFlightStatuses(refresh),
             getWorkOrderStatuses(refresh),
             getGates(refresh),

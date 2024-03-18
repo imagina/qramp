@@ -32,7 +32,8 @@
               tw-px-3
               tw--mt-2 
               tw-text-gray-500
-              dot-vertical 
+              dot-vertical
+              tw-hidden 
               "
               :class="{
                 'tw-cursor-move': !isBlank

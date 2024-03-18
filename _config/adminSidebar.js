@@ -13,7 +13,8 @@ export default [
       pages.qramp.categories,
       pages.qramp.services,
       pages.qramp.attributes,
-      pages.qramp.operationType
+      pages.qramp.operationType,
+      pages.qramp.fueling,
     ]
   },
   {

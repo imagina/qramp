@@ -38,7 +38,6 @@ export const getCategories = async (): Promise<any[]> => {
                 "apiRoutes.qramp.categories",
                 requestParams
             );
-            console.log(response.data);
             return response.data;
         } catch (error) {
             console.log(error);

@@ -16,7 +16,7 @@ import schedulerStore from '../_components/scheduler/store/index.store.ts'
 import schedulerModal from '../_components/scheduler/index.vue';
 import show from '../_components/scheduler/actions/show.ts';
 import {
-  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER
+  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, COMPANY_RAMP
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
@@ -40,6 +40,9 @@ export default {
     },
     isPassenger() {
       return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
     crudData() {
       return {
@@ -191,7 +194,78 @@ export default {
             },
             { name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left' },
           ],
-          filters: {},
+          filters: {
+            stationId: {
+              value: null,
+              type: "select",
+              props: {
+                label: "Station",
+                options: workOrderList().getStationList().map(item => ({
+                  label: item.fullName,
+                  value: item.id
+                })),
+                clearable: true,
+              },
+            },
+            carrierId: {
+              value: null,
+              type: 'select',
+              props: {
+                vIf: false,
+                label: 'Carrier',
+                options: workOrderList().getAirlinesList().map(item => ({
+                  label: item.airlineName,
+                  value: item.id
+                })),
+                clearable: true,
+              },
+            },
+            customerId: {
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              loadOptions: {
+                  apiRoute: 'apiRoutes.qramp.setupCustomers',
+                  select: {'label': 'customerName', 'id': 'id'},
+                  requestParams: {
+                      filter: {
+                          companyId: this.filterCompany,
+                      },
+                  },
+              },
+              props: {
+                  label: 'Customer',
+                  'clearable': true
+              },
+            },
+            acTypeId: {
+              value: null,
+              type: 'select',
+              props: {
+                label: this.$tr('ifly.cms.sidebar.aircraftType'),
+                options: workOrderList().getACTypesList().map(item => ({
+                  label: item.model,
+                  value: item.id
+                })),
+                clearable: true,
+              },
+            },
+            operationTypeId: {
+              value: null,
+              type: 'select',
+              props: {
+                label: this.$tr('ifly.cms.form.operation'),
+                clearable: true,
+                color:"primary",
+                'hide-bottom-space': false,
+                options: workOrderList().getOperationTypeList().map(item => ({
+                  label: item.operationName,
+                  value: item.id
+                }))
+              },
+              label: this.$tr('ifly.cms.form.operation'),
+            },
+          },
           actions: [
             {
               name: 'edit',
