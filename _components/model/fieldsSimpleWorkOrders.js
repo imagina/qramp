@@ -19,26 +19,26 @@ export default {
       return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
     },
     allowContractName() {
-      return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
+      return this.$hasAccess("ramp.work-orders.see-contract-name");
     },
     manageResponsiblePermissions() {
-      return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
+      return this.$hasAccess('ramp.work-orders.manage-responsible');
     },
     filterStation() {
       return workOrderList()
         .getStationList()
-        .map(item => ({ 
-            label: item.fullName, 
-            value: item.id 
+        .map(item => ({
+            label: item.fullName,
+            value: item.id
           })
         )
     },
     filterResponsible() {
       return workOrderList()
         .getResponsible()
-        .map(item => ({ 
-          label: item.fullName, 
-          value: item.id 
+        .map(item => ({
+          label: item.fullName,
+          value: item.id
         }))
     },
     fields() {
@@ -76,7 +76,6 @@ export default {
             loadOptions: {
               delayed: this.getCustomerList,
             },
-            label: this.$tr("ifly.cms.form.customer"),
           },
           preFlightNumber: {
             name: "preFlightNumber",

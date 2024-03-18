@@ -1,12 +1,13 @@
 import moment from 'moment';
 import store from '../store/filters.store';
-import cache from '@imagina/qsite/_plugins/cache';
+import { cache, router } from 'src/plugins/utils';
 import modalScheduleStore from '../store/modalSchedule.store'
 import scheduleTypeModel from '../models/scheduleType.model';
 
-export default async function setUrlParams(proxy: any): Promise<void>{
+export default async function setUrlParams(): Promise<void>{
     try {
-      const selectedDate = moment(store.selectedDate);
+      const DATE_FORMAT = 'YYYY/MM/DD'
+      const selectedDate = moment(store.selectedDate, DATE_FORMAT);
       const query = store.payload;
       query.type = store.scheduleType;
 
@@ -20,8 +21,8 @@ export default async function setUrlParams(proxy: any): Promise<void>{
 
       modalScheduleStore.stationId = query.stationId;
       if (store.form.stationId) cache.set("stationId", store.form.stationId);
-      proxy.$router.push({
-        name: proxy.$route.name,
+      router.push({
+        name: router.route.name,
         query
       }).catch((error) => {
         if(error.name != ('NavigationDuplicated')) console.log(error);

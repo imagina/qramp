@@ -5,54 +5,70 @@
       <div class="row">
         <div class="col-12 col-md-6">
           <div class="row">
-            <dynamic-field
-                id="sig1"
+            <template
+              v-for="(field, keyField) in formField.customer"
+              :key="keyField"
+            >
+              <dynamic-field
                 v-if="field.type === 'signature'"
+                id="sig1"
+                :field="field"
                 class="col-12 q-px-sm"
-                v-for="(field, keyField) in formField.customer"
-                :key="keyField" :field="field"
                 v-model="form[field.name || keyField]"
                 @fullscreenAction="isFull ? cancelFullScreen('sig1') : launchFullScreen('sig1')"
-            />
+              />
+            </template>
           </div>
           <div class="row">
-            <dynamic-field
+            <template
+              v-for="(field, keyField) in formField.customer"
+              :key="keyField"
+            >
+              <dynamic-field
                 v-if="field.type !== 'signature'"
+                :field="field"
                 class="q-mt-sm q-pa-sm"
                 :class="{
                   'col-12': !isDesktop,
                   'col-6': isDesktop
                 }"
-                v-for="(field, keyField) in formField.customer"
-                :key="keyField" :field="field"
                 v-model="form[field.name || keyField]"
-            />
+              />
+            </template>
           </div>
         </div>
         <div class="col-12 col-md-6">
           <div class="row">
-            <dynamic-field
+            <template
+              v-for="(field, keyField) in formField.representative"
+              :key="keyField"
+            >
+              <dynamic-field
                 id="sig2"
                 v-if="field.type === 'signature'"
                 class="col-12 q-px-sm"
-                v-for="(field, keyField) in formField.representative"
-                :key="keyField" :field="field"
+                :field="field"
                 v-model="form[field.name || keyField]"
                 @fullscreenAction="isFull ? cancelFullScreen('sig2') : launchFullScreen('sig2')"
-            />
+              />
+            </template>
           </div>
           <div class="row">
-            <dynamic-field
+            <template
+              v-for="(field, keyField) in formField.representative"
+              :key="keyField"
+            >
+              <dynamic-field
                 v-if="field.type !== 'signature'"
+                :field="field"
                 class="q-mt-sm q-pa-sm"
                 :class="{
                   'col-12': !isDesktop,
                   'col-6': isDesktop
                 }"
-                v-for="(field, keyField) in formField.representative"
-                :key="keyField" :field="field"
                 v-model="form[field.name || keyField]"
-            />
+              />
+            </template>
           </div>
         </div>
       </div>

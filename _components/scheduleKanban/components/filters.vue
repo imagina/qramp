@@ -6,7 +6,7 @@
     bordered
     :width="300"
     :breakpoint="500"
-    class="bg-grey-3"
+    class="tw-bg-white"
   >
     <!--Title-->
     <div class="

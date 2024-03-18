@@ -1,4 +1,10 @@
-import { computed, ref, Ref, ComputedRef } from "vue";
+import { 
+  computed, 
+  ref, 
+  Ref, 
+  ComputedRef, 
+  onMounted 
+} from "vue";
 import store from "../store/index.store";
 import modelFormFields from "../models/formFields";
 import workOrderList from "../../../_store/actions/workOrderList";
@@ -55,6 +61,10 @@ export default function useForm(): UseForm {
       }
       return { inbound: false, outbound: false };
   });
+
+  onMounted(() => {
+    store.refFormScheduler = refFormScheduler.value;
+  })
 
   return {
     formFields,

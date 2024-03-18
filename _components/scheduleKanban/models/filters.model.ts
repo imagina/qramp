@@ -1,7 +1,8 @@
-import Vue, { computed } from "vue";
+import { computed } from "vue";
 import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
+import { i18n } from 'src/plugins/utils'
 
 
 export default function filterModel() {
@@ -87,8 +88,8 @@ export default function filterModel() {
         clearable: true,
         readonly: kanbanStore.isAppOffline,
         options: [
-          { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
-          { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
+          { label: i18n.tr("isite.cms.label.yes"), value: true },
+          { label: i18n.tr("isite.cms.label.no"), value: false },
         ],
       },
     },
@@ -126,6 +127,24 @@ export default function filterModel() {
         label: "Areas",
         clearable: true,
         readonly: kanbanStore.isAppOffline,
+      },
+    },
+    customerId: {
+      value: null,
+      type: 'select',
+      quickFilter: true,
+      loadOptions: {
+        apiRoute: 'apiRoutes.qramp.setupCustomers',
+        select: {'label': 'customerName', 'id': 'id'},
+        requestParams: {
+          filter: {
+            companyId: kanbanStore.filterCompany,
+          },
+        },
+      },
+      props: {
+        label: 'Customer',
+        'clearable': true
       },
     },
     type: {

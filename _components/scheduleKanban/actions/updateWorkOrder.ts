@@ -1,17 +1,18 @@
-import Vue from 'vue';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
+import { cacheOffline, i18n } from 'src/plugins/utils';
 import storeKanban from '../store/kanban.store';
 import moment from 'moment'
+import crud from 'src/modules/qcrud/_services/baseService'
 
 export default async function updateWorkOrder(id: number, attributes: any): Promise<void> {
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
+        const DEFAULT_DATE_FORMAT = 'MM/DD/YYYY HH:mm'
         const FORMAT_DATE = 'YYYY-MM-DDTHH:mm:ss'
         const dataUpdate = { ...attributes }
         const dataForApi = { ...attributes }
 
         if (storeKanban.isAppOffline) {
-            dataForApi.titleOffline = `${Vue.prototype.$tr("ifly.cms.form.updateWorkOrder")} Id: ${dataForApi.id}`;
+            dataForApi.titleOffline = `${i18n.tr("ifly.cms.form.updateWorkOrder")}`;
         }
 
         if (dataUpdate.inboundFlightNumber) {
@@ -21,28 +22,40 @@ export default async function updateWorkOrder(id: number, attributes: any): Prom
         }
 
         if (attributes.inboundScheduledArrival) {
-            const inboundScheduledArrival = moment(attributes.inboundScheduledArrival).format(FORMAT_DATE)
+            const inboundScheduledArrival = moment(
+                attributes.inboundScheduledArrival,
+                DEFAULT_DATE_FORMAT
+            ).format(FORMAT_DATE)
             dataUpdate.scheduleDate = inboundScheduledArrival
         } else if (attributes.outboundScheduledDeparture) {
-            const outboundScheduledDeparture = moment(attributes.outboundScheduledDeparture).format(FORMAT_DATE)
+            const outboundScheduledDeparture = moment(
+                attributes.outboundScheduledDeparture,
+                DEFAULT_DATE_FORMAT
+            ).format(FORMAT_DATE)
             dataUpdate.scheduleDate = outboundScheduledDeparture
         }
 
         if (attributes.inboundScheduledArrival) {
-            const inboundScheduledArrival = moment(attributes.inboundScheduledArrival).format(FORMAT_DATE)
+            const inboundScheduledArrival = moment(
+                attributes.inboundScheduledArrival,
+                DEFAULT_DATE_FORMAT
+            ).format(FORMAT_DATE)
             dataUpdate.inboundScheduledArrival = inboundScheduledArrival
         }
 
         if (attributes.outboundScheduledDeparture) {
-            const outboundScheduledDeparture = moment(attributes.outboundScheduledDeparture).format(FORMAT_DATE)
+            const outboundScheduledDeparture = moment(
+                attributes.outboundScheduledDeparture,
+                DEFAULT_DATE_FORMAT
+            ).format(FORMAT_DATE)
             dataUpdate.outboundScheduledDeparture = outboundScheduledDeparture
         }
 
         await Promise.allSettled([
             cacheOffline.updateRecord(API_ROUTE, dataUpdate, dataUpdate?.id),
-            Vue.prototype.$crud.update(
-                API_ROUTE, 
-                id, 
+            crud.update(
+                API_ROUTE,
+                id,
                 dataForApi
             )
         ])

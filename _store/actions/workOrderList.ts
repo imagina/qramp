@@ -1,5 +1,5 @@
-import Vue, { reactive } from 'vue';
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from 'modules/qcrud/_services/baseService.js'
+import { reactive } from 'vue';
 import qRampStore from '../qRampStore.js'
 import {
     BUSINESS_UNIT_PASSENGER,
@@ -22,6 +22,7 @@ import {
 } from './@Contracts/workOrderList.contract';
 import { buildServiceList } from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
+import { store } from 'src/plugins/utils'
 
 const state = reactive<State>({
     operationTypeList: [],
@@ -56,11 +57,12 @@ const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
 
 /**
  * This is a work order list function that returns an object with several functions to
- * interact with OperationType, StationContract, CustomerContract, Contract, 
+ * interact with OperationType, StationContract, CustomerContract, Contract,
  * FlightStatusContract, and WorkOrderStatusesContract.
  * @returns {WorkOrderList} A WorkOrderList object.
 */
 export default function workOrderList(): WorkOrderList {
+    const { hasAccess } = store
     /**
      * This function returns the workOrderList property of the state object.
      * @returns the state.workOrderList.
@@ -240,14 +242,14 @@ export default function workOrderList(): WorkOrderList {
         return state.gatesList;
     }
 
-    // actions 
+    // actions
     /**
      * The function getOperationType() returns a Promise that resolves to an array of OperationType
      * objects or void.
      * @returns a Promise.
      */
     async function getOperationType(refresh = false): Promise<OperationType[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.operation-types.index')) {
+        if (hasAccess('ramp.operation-types.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -276,7 +278,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getStation(refresh = false): Promise<StationContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.stations.index')) {
+        if (hasAccess('setup.stations.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -302,7 +304,7 @@ export default function workOrderList(): WorkOrderList {
     }
     //"status":1,"companyId":26,"allTranslations":true
     async function getAirlines(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airline.index')) {
+        if (hasAccess('iflight.airline.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -326,7 +328,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns A promise that will resolve with the array of CustomerContract objects or void if there's an error
      */
     async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.customers.index')) {
+        if (hasAccess('setup.customers.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -356,7 +358,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getContract(refresh = false): Promise<any[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.operation-types.index')) {
+        if (hasAccess('ramp.operation-types.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -386,7 +388,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns a promise.
      */
     async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.flight-statuses.index')) {
+        if (hasAccess('iflight.flight-statuses.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -414,7 +416,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned.
      */
     async function getWorkOrderStatuses(refresh = false): Promise<WorkOrderStatusesContract[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.work-order-statuses.index')) {
+        if (hasAccess('ramp.work-order-statuses.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -444,7 +446,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getGates(refresh = false): Promise<Gates[] | void> {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.gates.index')) {
+        if (hasAccess('setup.gates.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -474,7 +476,7 @@ export default function workOrderList(): WorkOrderList {
      * @returns The data is being returned as an array of objects.
      */
     async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
-        if (Vue.prototype.$auth && (Vue.prototype.$auth.hasAccess('ramp.work-orders.index') || Vue.prototype.$auth.hasAccess('ramp.passenger-work-orders.index'))){
+        if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')){
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
@@ -513,9 +515,9 @@ export default function workOrderList(): WorkOrderList {
     function getCustomerWithContract(refresh = false): Promise<any[] | void> {
 
             return new Promise(async (resolve) => {
-                if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.contracts.index') && Vue.prototype.$auth.hasAccess('setup.customers.index')) {
+                if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
 
-                const allowContractName = Vue.prototype.$auth ? Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
+                const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
                 const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
@@ -553,7 +555,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getACTypes(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.aircrafttype.index')) {
+        if (hasAccess('iflight.aircrafttype.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -578,7 +580,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getListDelays(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('setup.work-order-delays.index')) {
+        if (hasAccess('setup.work-order-delays.index')) {
             try {
                 const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
                 const isPassenger = qRampStore().getIsPassenger();
@@ -592,7 +594,7 @@ export default function workOrderList(): WorkOrderList {
                     },
                 };
                 const response = await baseService.index(API_ROUTE, params)
-                const data = response.data || [];    
+                const data = response.data || [];
                 const codeList = data.map((item) => ({
                     id: item.id,
                     label: item.name,
@@ -606,7 +608,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getResponsibleList(refresh = false) {
-        if (Vue.prototype.$auth && (Vue.prototype.$auth.hasAccess('ramp.work-orders.index') || Vue.prototype.$auth.hasAccess('ramp.passenger-work-orders.index'))) {
+        if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
             try {
                 const API_ROUTE = 'apiRoutes.quser.users'
                 const isPassenger = qRampStore().getIsPassenger();
@@ -629,7 +631,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getAirports(refresh = false) {
-        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airport.index')) {
+        if (hasAccess('iflight.airport.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -662,7 +664,6 @@ export default function workOrderList(): WorkOrderList {
             getStation(refresh),
             getOperationType(refresh),
             getCustomerWithContract(refresh),
-            //getCustomer(refresh),
             getFlightStatuses(refresh),
             getWorkOrderStatuses(refresh),
             getGates(refresh),
@@ -676,46 +677,46 @@ export default function workOrderList(): WorkOrderList {
     }
 
     /**
-   * This object consists of functions for getting and setting data for OperationType, 
+   * This object consists of functions for getting and setting data for OperationType,
    * StationContract, CustomerContract, Contract, FlightStatusContract, and WorkOrderStatusesContract.
    * @typedef {Object} WorkOrderList
-   * @property {function(data: OperationType[]): void} setOperationTypeList - Assigns an array of 
+   * @property {function(data: OperationType[]): void} setOperationTypeList - Assigns an array of
    *    OperationType objects to the operationTypeList property of the state object.
-   * @property {function(): OperationType[]} getOperationTypeList - Returns an array of 
+   * @property {function(): OperationType[]} getOperationTypeList - Returns an array of
    *    OperationType objects.
    * @property {async function(): Promise<OperationType[] | void>} getOperationType - Gets an
    *    array of OperationType objects.
-   * @property {function(data: StationContract[]): void} setStationList - Assigns an array of 
+   * @property {function(data: StationContract[]): void} setStationList - Assigns an array of
    *    StationContract objects to the stationList property of the state object.
-   * @property {function(): StationContract[]} getStationList - Returns an array of StationContract 
+   * @property {function(): StationContract[]} getStationList - Returns an array of StationContract
    *    objects.
-   * @property {async function(): Promise<StationContract[] | void>} getStation - Gets an array of 
+   * @property {async function(): Promise<StationContract[] | void>} getStation - Gets an array of
    *    StationContract objects.
-   * @property {function(data: CustomerContract[]): void} setCustomerList - Assigns an array of 
+   * @property {function(data: CustomerContract[]): void} setCustomerList - Assigns an array of
    *    CustomerContract objects to the customerList property of the state object.
-   * @property {function(): CustomerContract[]} getCustomerList - Returns an array of 
+   * @property {function(): CustomerContract[]} getCustomerList - Returns an array of
    *    CustomerContract objects.
-   * @property {async function(): Promise<CustomerContract[] | void>} getCustomer - Gets an array of 
+   * @property {async function(): Promise<CustomerContract[] | void>} getCustomer - Gets an array of
    *    CustomerContract objects.
-   * @property {function(data: Contract[]): void} setContractList - Assigns an array of Contract 
+   * @property {function(data: Contract[]): void} setContractList - Assigns an array of Contract
    *    objects to the contractList property of the state object.
    * @property {function(): Contract[]} getContractList - Returns an array of Contract objects.
    * @property {async function(): Promise<any[] | void>} getContract - Gets an array of objects of any type.
-   * @property {function(): FlightStatusContract[]} getFlightStatusesList - Returns a list of 
+   * @property {function(): FlightStatusContract[]} getFlightStatusesList - Returns a list of
    *    FlightStatusContract objects.
-   * @property {function(data: FlightStatusContract[]): void} setFlightStatusesList - Assigns an 
+   * @property {function(data: FlightStatusContract[]): void} setFlightStatusesList - Assigns an
    *    array of FlightStatusContract objects to the flightStatusesList property of the state object.
-   * @property {async function(): Promise<FlightStatusContract[] | void>} getFlightStatuses - Gets 
+   * @property {async function(): Promise<FlightStatusContract[] | void>} getFlightStatuses - Gets
    *    an array of FlightStatusContract objects.
-   * @property {function(): WorkOrderStatusesContract[]} getWorkOrderStatusesList - Returns 
+   * @property {function(): WorkOrderStatusesContract[]} getWorkOrderStatusesList - Returns
    *    a list of work order statuses.
-   * @property {function(data: WorkOrderStatusesContract[]): void} setWorkOrderStatusesList - 
-   *    Assigns an array of WorkOrderStatusesContract objects to the workOrderStatusesList property 
+   * @property {function(data: WorkOrderStatusesContract[]): void} setWorkOrderStatusesList -
+   *    Assigns an array of WorkOrderStatusesContract objects to the workOrderStatusesList property
    *    of the state object.
-   * @property {async function(): Promise<WorkOrderStatusesContract[] | void>} getWorkOrderStatuses - 
+   * @property {async function(): Promise<WorkOrderStatusesContract[] | void>} getWorkOrderStatuses -
    *    Gets an array of WorkOrderStatusesContract objects.
-   * @property {async function(): Promise<void>} getAllList - Gets all the lists for 
-   *    OperationType, StationContract, CustomerContract, Contract, FlightStatusContract, and 
+   * @property {async function(): Promise<void>} getAllList - Gets all the lists for
+   *    OperationType, StationContract, CustomerContract, Contract, FlightStatusContract, and
    *    WorkOrderStatusesContract.
    */
 

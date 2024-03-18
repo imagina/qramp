@@ -36,11 +36,11 @@
           <dynamic-field
               :field="field"
               v-model="selectCustomerComputed"
-              @input="setCustomerForm(keyField)"
+              @update:modelValue="setCustomerForm(keyField)"
               @filter="setCustomerName"
               ref="customerId"
           >
-            <div slot="before-options">
+            <template #before-options>
               <div class="q-py-md q-px-md" @click="addCustumers">
                 <div class="row cursor-pointer">
                   <div class="q-pr-md">
@@ -59,7 +59,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </template>
           </dynamic-field>
         </div>
         <div v-else>
@@ -69,7 +69,7 @@
               :field="field"
               v-model="form[keyField]"
               @enter="search(field)"
-              @input="zanetizeData(keyField)"
+              @update:modelValue="zanetizeData(keyField)"
           />
         </div>
       </div>
@@ -81,21 +81,23 @@ import qRampStore from "../_store/qRampStore.js";
 import tableFlight from "../_components/modal/tableFlight.vue";
 import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
 import {
-  BUSINESS_UNIT_PASSENGER, 
-  BUSINESS_UNIT_RAMP, 
+  BUSINESS_UNIT_PASSENGER,
+  BUSINESS_UNIT_RAMP,
   STATUS_DRAFT,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
   modelWorkOrder
 } from './model/constants.js';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
+import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
+import { eventBus } from 'src/plugins/utils'
 
 
 export default {
   components: {
     tableFlight,
   },
+  emits: ['isError','loading'],
   data() {
     return {
       newCustumerAdHoc: [],
@@ -180,7 +182,7 @@ export default {
     setCustomerForm(key) {
       if (key !== "customerId") return;
       const selectCustomers =
-        this.selectCustomers === null || 
+        this.selectCustomers === null ||
         this.selectCustomers === undefined ||
         this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
@@ -200,7 +202,7 @@ export default {
     setCustomerName(query) {
       this.customerName = query || "";
     },
-    saveSimpleWorkOrder() {
+    async saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
           if (this.isAppOffline || this.acceptSchedule || this.form.faFlightId) {
@@ -264,7 +266,7 @@ export default {
             handler: async () => {
               await this.showWorkOrder(response.data);
               this.acceptSchedule = false;
-              this.$root.$emit('crud.data.refresh');
+              eventBus.emit('crud.data.refresh');
             },
           },
           {
@@ -327,8 +329,8 @@ export default {
         const offlineId = new Date().valueOf()
 
         const dataForm = {
-          ...this.form, 
-          offlineId: this.isAppOffline ? offlineId : null, 
+          ...this.form,
+          offlineId: this.isAppOffline ? offlineId : null,
           titleOffline: qRampStore().getTitleOffline(),
           ...businessUnitId,
         };
@@ -353,9 +355,9 @@ export default {
         };
         await cacheOffline.addNewRecord(CACHE_PATH, offlineWorkOrder);
 
-        if(!this.isAppOffline) workOrderList().getWorkOrders(true, true)
+        if(!this.isAppOffline) await workOrderList().getWorkOrders(true)
         qRampStore().hideLoading();
-        
+
         return this.isAppOffline ? { data: { ...offlineWorkOrder } } : response;
       } catch (error) {
         qRampStore().hideLoading();

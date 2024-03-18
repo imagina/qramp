@@ -1,6 +1,7 @@
 import qRampStore from '../_store/qRampStore.js'
 
 export default {
+  emits: ['isError'],
   mounted() {
     this.$nextTick(function () {
       const _this = this;
@@ -26,7 +27,7 @@ export default {
           return this.services.filter((service) => {
               return conditions.every((condition) => {
                   return condition(service)
-              })  
+              })
           })
       }
       return this.services
@@ -52,7 +53,7 @@ export default {
         const formatData = this.formatData(data, id)
         formatData.forEach(item => {
           this.services.push({
-            icon: "settings",
+            icon: "fa-solid fa-gear",
             title: item.name,
             id: item.id,
             categoryId: item.categoryId,
@@ -130,7 +131,7 @@ export default {
       this.services.forEach(item => {
        Object.keys(item.formField).forEach(key => {
           Object.keys(item.formField[key]).forEach(type => {
-            if(item.formField[key][type] === 'fullDate' 
+            if(item.formField[key][type] === 'fullDate'
               && item.formField[key].value !== null
             ) {
               if(!this.$moment(item.formField[key].value, 'MM/DD/YYYY HH:mm', true).isValid()) {
@@ -141,7 +142,7 @@ export default {
           })
         })
       })
-      return validate; 
+      return validate;
     },
     setProps(type, name, options, index) {
       if (type == 'quantity') {

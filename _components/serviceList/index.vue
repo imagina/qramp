@@ -30,7 +30,7 @@ export default defineComponent({
   >
     <q-breadcrumbs>
       <q-breadcrumbs-el
-          icon="widgets"
+          icon="fa-light fa-grid-2"
           label="Service list"
           @click="setBreadcrumbs(null)"
           class="tw-cursor-pointer tw-text-blue-900"
@@ -58,7 +58,7 @@ export default defineComponent({
           v-model="search"
       >
         <template v-slot:prepend>
-          <q-icon color="primary" class="q-pl-sm" name="search"/>
+          <q-icon color="primary" class="q-pl-sm" name="fas fa-search" size="xs"/>
         </template>
       </q-input>
       <q-list
@@ -87,9 +87,10 @@ export default defineComponent({
       </q-list>
 
       <expansionForm
-          v-if="!loading && 
-          selectService.dynamicField && 
+          v-if="!loading &&
+          selectService.dynamicField &&
           selectService.dynamicField.length > 0"
+          :selectService="selectService"
           :data="filterService"
       />
       <component

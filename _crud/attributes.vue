@@ -50,10 +50,10 @@ export default {
               align: 'left',
               format: (val) => (val ? this.$trd(val) : '-'),
             },
-            { 
-              name: 'actions', 
-              label: this.$tr('isite.cms.form.actions'), 
-              align: 'left' 
+            {
+              name: 'actions',
+              label: this.$tr('isite.cms.form.actions'),
+              align: 'left'
             },
           ],
         },
@@ -80,27 +80,27 @@ export default {
               rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
               options:[
                 {
-                  label: 'Input', 
+                  label: 'Input',
                   value: 'input'
                 },
                 {
-                  label: 'Select', 
+                  label: 'Select',
                   value: 'select'
                 },
                 {
-                  label: 'Quantity', 
+                  label: 'Quantity',
                   value: 'quantity'
                 },
                 {
-                  label: 'Quantity Float', 
+                  label: 'Quantity Float',
                   value: 'quantityFloat'
                 },
                 {
-                  label: 'Hour', 
+                  label: 'Hour',
                   value: 'hour'
                 },
                 {
-                  label: 'Full Date', 
+                  label: 'Full Date',
                   value: 'fullDate'
                 },
               ],
@@ -119,5 +119,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

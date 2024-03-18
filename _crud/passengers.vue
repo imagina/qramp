@@ -15,7 +15,7 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_CLOSED,
-  STATUS_DRAFT, 
+  STATUS_DRAFT,
   STATUS_SCHEDULE,
   BUSINESS_UNIT_PASSENGER,
   COMPANY_PASSENGER
@@ -25,10 +25,12 @@ import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components//model/htmlComment.js';
 import workOrderList from '../_store/actions/workOrderList.ts';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
+import { eventBus } from 'src/plugins/utils'
 
 export default {
   name: 'RampCrud',
+  emits: ['loading'],
   components: {
     formOrders,
     flightDetail,
@@ -80,7 +82,7 @@ export default {
       return this.$store.state.qofflineMaster.isAppOffline;
     },
     permisionCommentsIndex() {
-      return this.$auth.hasAccess('ramp.work-orders-comments.index');
+      return this.$hasAccess('ramp.work-orders-comments.index');
     },
     filter() {
       console.log(this.$filter);
@@ -186,8 +188,8 @@ export default {
               action: (item) => {
                    const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
                    const workOrder = {
-                        workOrderId: item.id, 
-                        faFlightId: item.faFlightId, 
+                        workOrderId: item.id,
+                        faFlightId: item.faFlightId,
                         flightNumber: flightNumberInbound || item.inboundFlightNumber,
                         boundScheduleDate: item.inboundScheduleArrival || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                         type: 'inbound',
@@ -212,8 +214,8 @@ export default {
               action: (item) => {
                   const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
                   const workOrder = {
-                    workOrderId: item.id, 
-                    faFlightId: item.outboundFaFlightId, 
+                    workOrderId: item.id,
+                    faFlightId: item.outboundFaFlightId,
                     flightNumber: flightNumberoutbound || item.outboundFlightNumber,
                     boundScheduleDate: item.outboundScheduledDeparture || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                     type: 'outbound',
@@ -417,7 +419,7 @@ export default {
               label: this.$tr('isite.cms.label.submit'),
               format: item => ({
                 //must have the submit permission and the work order can't be submited or posted
-                vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
+                vIf: this.$hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
               }),
               action: (item) => {
                 this.changeStatus(STATUS_SUBMITTED, item.id)
@@ -432,7 +434,7 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted  && ![STATUS_POSTED].includes(item.statusId),
+                  vIf: this.$hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted  && ![STATUS_POSTED].includes(item.statusId),
                   label: this.$tr('isite.cms.label.post')
 
                 }),
@@ -447,7 +449,7 @@ export default {
               format: item => (
                 {
                   //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
-                  vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
+                  vIf: this.$hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                 }),
             },
             {
@@ -636,10 +638,10 @@ export default {
         id: itemId,
         statusId: status
       }
-      let customParams = { 
-        params: { 
-          titleOffline: this.getOfflineTitleStatus(status, itemId) || '' 
-        } 
+      let customParams = {
+        params: {
+          titleOffline: this.getOfflineTitleStatus(status, itemId) || ''
+        }
       }
 
       this.$emit('loading', true)
@@ -649,7 +651,7 @@ export default {
 
       const request = this.$crud.update(
         API_ROUTE,
-        itemId, 
+        itemId,
         payload,
         customParams
       )
@@ -657,14 +659,14 @@ export default {
         .catch(err => {
           this.$emit('loading', false)
           if (!this.isAppOffline) {
-            this.$alert.error({ 
-              message: `${this.$tr('isite.cms.message.recordNoUpdated')}` 
+            this.$alert.error({
+              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
             })
           }
         })
         .finally(() => {
           this.$emit('loading', false)
-          this.$root.$emit('crud.data.refresh')
+          eventBus.emit('crud.data.refresh')
         })
     },
     async openModal(item) {
@@ -710,5 +712,5 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

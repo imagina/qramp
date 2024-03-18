@@ -1,28 +1,28 @@
 <template>
     <div>
-        <div 
+        <div
             v-if="['day-agenda', 'week-agenda'].includes(scheduleType)"
             :class="{
                 'h-43': cards.length === 0,
-            }" 
+            }"
             class="
-              tw-inline-flex 
+              tw-inline-flex
               tw-items-center
               tw-w-full
               tw-px-4
               tw-py-2
               tw-mt-1
-              tw-text-xs 
+              tw-text-xs
               lg:tw-text-base
-              tw-leading-none 
+              tw-leading-none
               tw-bg-white
               tw-rounded-lg
               tw-label-not
               tw-h-12"
             >
-            <div 
+            <div
               class="
-                tw-text-blueGray-500
+                tw-text-slate-500
                 "
                 v-if="cards.length > 0"
             >
@@ -30,7 +30,7 @@
                     <span class="tw-text-orange-400">
                         <i class="fa-solid fa-circle-exclamation" />
                     </span>
-                    <span class="tw-text-sm" >
+                    <span class="tw-text-sm tw-ml-1.5" >
                         {{ uncompleted }} Not completed
                     </span>
                 </div>
@@ -44,7 +44,7 @@
                 </div>
             </div>
 
-            <div 
+            <div
                 class="tw-absolute tw-right-5"
                 :class="{
                     'tw-mt-1': cards.length === 0

@@ -6,24 +6,23 @@
         v-model="delay"
         color="primary"
         label="Delay"
-        @input="resetDelayList"
+        @update:modelValue="resetDelayList"
       />
       <q-btn
         v-if="delay"
         class="q-ml-sm"
         flat
         round
-        icon="add"
+        icon="fa-light fa-plus"
         color="primary"
         @click="addDelay()"
       />
     </div>
     <div v-if="delay" class="tw-px-6">
       <div class="row">
-        <template v-for="(field, keyField) in delayFields">
+        <template v-for="(field, keyField) in delayFields" :key="keyField">
           <dynamic-field
             class="col-12 col-md-5 q-pr-sm"
-            :key="keyField"
             :field="field"
             v-model="
               delayList[
@@ -38,7 +37,7 @@
             style="width: 40px; height: 38px"
             class="col-12 btn-stick col-md-1"
             round
-            icon="delete"
+            icon="fa-light fa-trash-can"
             flat
             size="12px"
             color="primary"
@@ -51,12 +50,14 @@
 </template>
 
 <script>
-import Vue, { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
+import { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
 import cargoStore from "./store/cargo";
 import workOrderList from "../../_store/actions/workOrderList";
 import qRampStore from "../../_store/qRampStore.js";
 import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
 import delayForm from './delayForm.vue';
+import { i18n } from 'src/plugins/utils'
+import crud from 'src/modules/qcrud/_services/baseService'
 
 export default defineComponent({
   components: {
@@ -87,12 +88,12 @@ export default defineComponent({
           props: {
             options: workOrderList().getWorkOrderDelays(),
             readonly: disabledReadonly.value,
-            label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
+            label: i18n.tr("icommerce.cms.sidebar.code"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
+          label: i18n.tr("icommerce.cms.sidebar.code"),
         };
         obj["hours" + index] = {
           value: delay.hours,
@@ -101,12 +102,12 @@ export default defineComponent({
             hint: "Enter the Time in minutes",
             mask: "###################",
             readonly: disabledReadonly.value,
-            label: Vue.prototype.$tr("isite.cms.label.time"),
+            label: i18n.tr("isite.cms.label.time"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: Vue.prototype.$tr("isite.cms.label.time"),
+          label: i18n.tr("isite.cms.label.time"),
         };
       });
       return obj;
@@ -137,10 +138,10 @@ export default defineComponent({
           },
         },
       };
-      Vue.prototype.$crud
+      crud
         .index(API_ROUTE, params)
         .then((res) => {
-          const data = res.data || [];    
+          const data = res.data || [];
           const codeList = data.map((item) => ({
             id: item.id,
             label: item.name,

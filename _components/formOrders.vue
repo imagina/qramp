@@ -1,30 +1,30 @@
 <template>
   <div>
-    <master-modal 
-      id="formRampComponent" 
-      v-model="show" 
-      v-bind="modalProps" 
-      :persistent="true" 
+    <master-modal
+      id="formRampComponent"
+      v-model="show"
+      v-bind="modalProps"
+      :persistent="true"
       :loading="loading"
-      @hide="clear" 
-      :actions="actions" 
-      :width="modalProps.width" 
+      @hide="clear"
+      :actions="actions"
+      :width="modalProps.width"
       :maximized="$q.screen.lt.md"
     >
-    <stepper-ramp-form 
-      v-if="modalProps.update" 
-      @sp="sp = $event" 
-      @loading="setLoading" 
-      ref="stepper" 
+    <stepper-ramp-form
+      v-if="modalProps.update"
+      @sp="sp = $event"
+      @loading="setLoading"
+      ref="stepper"
       :steps="steppers"
-      :data="modalProps" 
+      :data="modalProps"
       @close-modal="close($event)"
-      @getWorkOrders="getWorkOrders" 
+      @getWorkOrders="getWorkOrders"
     />
-    <simpleWorkOrders 
-      v-if="!modalProps.update" 
+    <simpleWorkOrders
+      v-if="!modalProps.update"
       ref="simpleWorkOrder"
-      @loading="setLoading" 
+      @loading="setLoading"
     />
   </master-modal>
     <commentsModal
@@ -67,6 +67,7 @@ import delayComponent from '../_components/cargo/delayComponent';
 import commentsModal from "../_components/schedule/modals/commentsModal.vue";
 
 export default {
+  emits: ['getWorkOrderFilter', 'refresh-data'],
   components: {
     stepperRampForm,
     simpleWorkOrders,
@@ -103,7 +104,7 @@ export default {
       return qRampStore().getIsPassenger();
     },
     permisionCommentsIndex() {
-      return this.$auth.hasAccess('ramp.work-orders-comments.index');
+      return this.$hasAccess('ramp.work-orders-comments.index');
     },
     steppers() {
       let stepps = [
@@ -133,7 +134,7 @@ export default {
         {
           ref: "signature",
           title: this.$tr('ifly.cms.label.signature'),
-          icon: 'draw',
+          icon: 'fa-solid fa-pen-line',
           step: STEP_SIGNATURE,
           form: this.signature,
           component: iSignature,
@@ -187,7 +188,7 @@ export default {
       const actions = [
         {
           props: {
-            vIf: this.$auth.hasAccess('ramp.work-orders.destroy'),
+            vIf: this.$hasAccess('ramp.work-orders.destroy'),
             color: 'red',
             icon: 'fa-light fa-trash',
             label: this.$tr('isite.cms.label.delete'),
@@ -196,7 +197,8 @@ export default {
             await this.$crud.delete('apiRoutes.qramp.workOrders', this.modalProps.workOrderId)
             await this.getWorkOrders();
             this.clear()
-            this.$root.$emit('crud.data.refresh')
+            //[ptc]
+            this.$emit('refresh-data')
             await qRampStore().hideLoading();
           }
         },
@@ -311,7 +313,7 @@ export default {
      */
     close(show) {
       this.show = show
-      this.$root.$emit('crud.data.refresh')
+      this.$emit('refresh-data')
       this.services = [];
     },
     /**

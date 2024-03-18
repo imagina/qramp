@@ -1,5 +1,8 @@
 <script lang="ts">
-import {defineComponent, computed} from 'vue';
+import { defineComponent, computed, toRefs, ref, watch } from 'vue';
+import serviceListStore from './store/serviceList';
+import { DynamicField } from './contracts/index.contract';
+import { clone } from 'src/plugins/utils.ts';
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -7,11 +10,17 @@ export default defineComponent({
     data: {
       type: Array,
       default: () => [],
-    }
+    },
+    selectService: {
+      type: Object,
+      default: () => {},
+    },
   },
   setup(props) {
-    const data: any = computed(() => props.data);
+    const { data, selectService } = toRefs(props)
+
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
+    const newData = ref(clone(data.value))
 
     function showValue(data: any) {
       if (data) {
@@ -19,10 +28,22 @@ export default defineComponent({
       }
     }
 
+    watch(newData, (newVal) => {
+      const services = clone(serviceListStore().getServiceList())
+
+      services.map(service => {
+        if (service.id === selectService.value.id) {
+          service.dynamicField = newVal as DynamicField[]
+        }
+      })
+      serviceListStore().setServiceList(services)
+    }, { deep: true })
+
     return {
       isDesktop,
       showValue,
-      data
+      data,
+      newData,
     }
   },
 })
@@ -30,7 +51,7 @@ export default defineComponent({
 <template>
   <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
     <div v-if="!isDesktop">
-      <q-list v-for="(item, index) in data" :key="index">
+      <q-list v-for="(item, index) in newData" :key="index">
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
             <q-item-section avatar class="q-pr-none " style="min-width: 45px;">
@@ -45,13 +66,14 @@ export default defineComponent({
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
                 <dynamic-field
-                    class="marginzero tw-w-full"
-                    v-model="data[index]['formField'][keyfield]['value']"
-                    :field="field"></dynamic-field>
+                  class="marginzero tw-w-full"
+                  v-model="newData[index]['formField'][keyfield]['value']"
+                  :field="field"
+                />
               </label>
               <div
                   class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden"
-                  v-if="field.type === 'fullDate' 
+                  v-if="field.type === 'fullDate'
                   && field.props.typeIndexDate === 1"
               >
                 Difference (hours): {{ 1 }}
@@ -62,10 +84,10 @@ export default defineComponent({
         <!-- <q-separator color="red" />-->
       </q-list>
     </div>
-    <q-list v-for="(item, index) in data" :key="index" v-else>
+    <q-list v-for="(item, index) in newData" :key="index" v-else>
       <div class="q-py-sm row">
         <div class="row q-py-md">
-          <div class="q-py-sm" style="width: 220px; display: flex;">
+          <div class="q-py-sm tw-items-center" style="width: 220px; display: flex;">
             <div class="q-px-sm">
               <q-avatar size="32px" font-size="18px" :icon="item.icon" color="primary" text-color="white"/>
             </div>
@@ -79,12 +101,12 @@ export default defineComponent({
             <div class="flex no-wrap items-center">
               <dynamic-field
                   class="q-ml-sm marginzero"
-                  v-model="data[index]['formField'][keyfield]['value']"
+                  v-model="newData[index]['formField'][keyfield]['value']"
                   :field="field"
               />
               <div
                   class="tw--mt-4 tw-px-3 tw-font-semibold tw-hidden"
-                  v-if="field.type === 'fullDate' 
+                  v-if="field.type === 'fullDate'
                   && field.props.typeIndexDate === 1"
               >
                 Difference (hours): {{ 1 }}
