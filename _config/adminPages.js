@@ -13,20 +13,6 @@ export default {
       refresh: true,
     }
   },
-  flightMap: {
-    permission: 'ramp.map.manage',
-    activated: true,
-    authenticated: true,
-    path: '/ramp/flight-map/index',
-    name: 'qramp.admin.flightMap',
-    page: () => import('../_components/flightMap/index.vue'),
-    layout: () => import('layouts/master.vue'),
-    title: 'ifly.cms.sidebar.map',
-    icon: 'fa-light fa-map',
-    subHeader: {
-      refresh: true,
-    }
-  },
   schedule: {
     permission: 'ramp.work-order-schedules.manage',
     activated: true,
@@ -111,20 +97,6 @@ export default {
     layout: () => import('layouts/master.vue'),
     title: 'ifly.cms.sidebar.workOrders',
     icon: 'fa-light fa-briefcase',
-    subHeader: {
-      refresh: true,
-    }
-  },
-  passengerFlightMap: {
-    //permission: 'ramp.passenger-work-orders.manage',
-    activated: false,
-    authenticated: true,
-    path: '/passenger/flight-map/index',
-    name: 'qramp.admin.passengerFlightMap',
-    page: () => import('../_components/flightMap/index.vue'),
-    layout: () => import('layouts/master.vue'),
-    title: 'ifly.cms.sidebar.map',
-    icon: 'fa-light fa-map',
     subHeader: {
       refresh: true,
     }

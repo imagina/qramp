@@ -7,7 +7,6 @@ export default [
     icon: 'fa-light fa-arrows-up-down-left-right',
     children: [
       pages.qramp.workOrders,
-      pages.qramp.flightMap,
       pages.qramp.schedule,
       pages.qramp.workOrderStatuses,
       pages.qramp.categories,
@@ -21,7 +20,6 @@ export default [
     icon: 'fa-light fa-tickets-airline',
     children: [
       pages.qramp.passenger,
-      pages.qramp.passengerFlightMap,
       pages.qramp.passengerSchedule,
       pages.qramp.operationTypePassenger
     ]
