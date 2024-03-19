@@ -33,7 +33,7 @@
               tw--mt-2
               tw-text-gray-500
               dot-vertical
-              tw-hidden
+              tw-hidden 
               "
               :class="{
                 'tw-cursor-move': !isBlank

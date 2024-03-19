@@ -233,6 +233,21 @@ export default {
       refresh: true,
     }
   },
+  fueling: {
+    permission: 'ramp.fueling.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/fueling/index',
+    name: 'qramp.admin.fueling',
+    crud: import('../_crud/fueling.vue'),
+    page: () => import('modules/qcrud/_pages/admin/crudPage'),
+    layout: () => import('layouts/master.vue'),
+    title: 'Fueling',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,

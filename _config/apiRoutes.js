@@ -34,5 +34,6 @@ export default {
   workOrdersByStatusLines: `${urlBase}/dashboard/work-orders-by-status-lines`,
   comments: `${urlBase}/comments`,
   categories: `${urlBase}/categories`,
-  schedulers: `${urlBase}/schedulers`
+  schedulers: `${urlBase}/schedulers`,
+  reloadTransactions: `${urlBase}/work-orders/reload-transactions`
 }

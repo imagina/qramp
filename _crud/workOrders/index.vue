@@ -618,6 +618,17 @@ import {
                     vIf: this.permisionCommentsIndex && !this.isAppOffline
                   }),
                 },
+                {
+                  name: 'Reload Transactions',
+                  icon: 'fa-light fa-download',
+                  label: 'Reload Transactions',
+                  action: (item) => {
+                    this.postReloadTransactions(item.id);
+                  },
+                  format: item => ({
+                    vIf: this.$hasAccess('ramp.work-orders.reload-transactions')
+                  })
+                },
               ],
               bulkActions: [
                 {
@@ -654,6 +665,15 @@ import {
                   props: {
                     icon: "fas fa-download",
                     label: "Bulk(CSV)"
+                  }
+                },
+                {
+                  apiRoute: "/ramp/v1/work-orders/bulk-reload-transactions",
+                  permission: "ramp.work-orders.bulk-reload-transactions",
+                  criteria: "id",
+                  props: {
+                    icon: "fas fa-download",
+                    label: "Reload Transactions"
                   }
                 }
               ],
@@ -747,6 +767,12 @@ import {
       crudInfo() {
           return this.$store.state.qcrudComponent.component[this.crudId] || {}
       }
+    }, 
+    methods: {
+      async postReloadTransactions(id) {
+            await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
+            await this.getDataTable(true);
+      },
     }
   }
   </script>
