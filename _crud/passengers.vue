@@ -467,6 +467,14 @@ export default {
                   vIf: this.permisionCommentsIndex && !this.isAppOffline
                 }),
             },
+            {
+              name: 'Reload Transactions',
+              icon: 'fa-light fa-download',
+              label: 'Reload Transactions',
+              action: (item) => {
+                this.postReloadTransactions(item.id);
+              },
+            },
           ],
           bulkActions: [
             {
@@ -503,6 +511,15 @@ export default {
               props: {
                 icon: "fas fa-download",
                 label: "Bulk(CSV)"
+              }
+            },
+            {
+              apiRoute: "/ramp/v1/work-orders/bulk-reload-transactions",
+              permission: "ramp.work-orders.bulk-reload-transactions",
+              criteria: "id",
+              props: {
+                icon: "fas fa-download",
+                label: "Reload Transactions"
               }
             }
           ],
@@ -599,6 +616,10 @@ export default {
     }
   },
   methods: {
+    async postReloadTransactions(id) {
+      await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
+      await this.$root.$emit('crud.data.refresh');
+    },
     getOfflineTitleStatus(statusId, itemId) {
       const statusObj = {
         1: 'DRAFT',
