@@ -266,8 +266,9 @@ export default function qRampStore() {
 
     function getDifferenceInHours(start, end) {
         if (start) {
-            const dateStart = moment(start);
-            const dateEnd = moment(end);
+            const DATE_FORMAT = 'MM/DD/YYYY HH:mm';
+            const dateStart = moment(start, DATE_FORMAT);
+            const dateEnd = moment(end, DATE_FORMAT);
             const hour = dateEnd.diff(dateStart, 'minutes') / 60;
             return Math.round(hour * 100) / 100;
         }
