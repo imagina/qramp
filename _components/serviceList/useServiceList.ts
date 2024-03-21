@@ -84,7 +84,7 @@ export default function useServiceList(props = {}, emit = null) {
             return;
         }
 
-        selectService.value = service
+        selectService.value = cloneDeep(service)
         if (index !== null) {
             breadcrumbs.value = breadcrumbs.value.filter(
                 (breadcrumb, indexBr) => indexBr <= index
