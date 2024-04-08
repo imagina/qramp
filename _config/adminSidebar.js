@@ -8,11 +8,8 @@ export default [
     children: [
       pages.qramp.workOrders,
       pages.qramp.schedule,
-      pages.qramp.workOrderStatuses,
-      pages.qramp.categories,
-      pages.qramp.services,
-      pages.qramp.attributes,
       pages.qramp.operationType,
+      pages.qramp.flightMap,
       pages.qramp.fueling,
     ]
   },
@@ -22,7 +19,9 @@ export default [
     children: [
       pages.qramp.passenger,
       pages.qramp.passengerSchedule,
-      pages.qramp.operationTypePassenger
+      pages.qramp.operationTypePassenger,
+      pages.qramp.passengerFlightMap,
+      
     ]
   },
   {

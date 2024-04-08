@@ -182,7 +182,7 @@ export default {
     crud: import('../_crud/services.vue'),
     page: () => import('modules/qcrud/_pages/admin/crudPage'),
     layout: () => import('layouts/master.vue'),
-    title: 'Workday Services',
+    title: 'Sales Line Items',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,

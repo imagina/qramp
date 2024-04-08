@@ -19,7 +19,7 @@ import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setEditableCard from '../actions/setEditableCard';
 import getCurrentColumn from '../actions/getCurrentColumn';
 import openInlineSchedule from '../actions/openInlineSchedule'
-import { i18n } from 'src/plugins/utils'
+import { i18n, store, alert } from 'src/plugins/utils'
 
 export default function useKanbanCardActions(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -50,7 +50,7 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: showCardActions.value,
+      vIf: store.hasAccess(`ramp.work-orders.create`) && showCardActions.value,
       icon: 'fa-light fa-copy',
       toolttip: 'Duplicate',
       action: () => {
@@ -58,7 +58,7 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: showCardActions.value,
+      vIf: store.hasAccess(`ramp.work-orders.edit`) && showCardActions.value,
       icon: 'fa-light fa-pen-to-square',
       toolttip: i18n.tr('isite.cms.label.edit'),
       action: () => {
@@ -66,11 +66,29 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: showCardActions.value,
+      vIf: store.hasAccess(`ramp.work-orders.destroy`) && showCardActions.value,
       icon: 'fa-light fa-trash',
       toolttip: i18n.tr('isite.cms.label.delete'),
       action: () => {
-        deleteWorkOrder()
+        alert.error({
+          mode: "modal",
+          title: `${props.card.calendar.title}`,
+          message: i18n.tr('isite.cms.message.deleteRecord'),
+          actions: [
+            {
+              label: i18n.tr('isite.cms.label.cancel'),
+              color: 'grey',
+            },
+            {
+              label: i18n.tr('isite.cms.label.delete'),
+              color: 'red',
+              handler: () => {
+                deleteWorkOrder()
+              }
+            },
+          ],
+        });
+        
       },
     }
   ])

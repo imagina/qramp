@@ -15,7 +15,7 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
-import { store as pluginStore, i18n } from 'src/plugins/utils'
+import { store as pluginStore, i18n, alert } from 'src/plugins/utils'
 import _ from 'lodash'
 
 export default function useModalSchedule(props: any, emit: any) {
@@ -61,22 +61,39 @@ export default function useModalSchedule(props: any, emit: any) {
     },
     {
       props: {
-        vIf: store.isEdit && !kanbanStore.isBlank,
+        vIf: pluginStore.hasAccess(`ramp.work-orders.destroy`) && store.isEdit && !kanbanStore.isBlank,
         color: "red",
         icon: 'fa-light fa-trash',
         label: i18n.tr("isite.cms.label.delete"),
       },
       action: async () => {
         try {
-          store.loading = true;
-          await Promise.allSettled([
-            deleteWorkOrders(form.value.id),
-            setTimeout(() => {
-              individualRefreshByColumns()
-              hideModal()
-            }, 1000),
-          ])
-          store.loading = false;
+          alert.error({
+            mode: "modal",
+            title: `${form.value.preFlightNumber}`,
+            message: i18n.$tr('isite.cms.message.deleteRecord'),
+            actions: [
+              {
+                label: i18n.$tr('isite.cms.label.cancel'),
+                color: 'grey',
+              },
+              {
+                label: i18n.$tr('isite.cms.label.delete'),
+                color: 'red',
+                handler: async () => {
+                  store.loading = true;
+                  await Promise.allSettled([
+                    deleteWorkOrders(form.value.id),
+                    setTimeout(() => {
+                      individualRefreshByColumns()
+                      hideModal()
+                    }, 1000),
+                  ])
+                  store.loading = false;
+                }
+              },
+            ],
+          });
         } catch (err) {
           store.loading = false;
           console.log(err)

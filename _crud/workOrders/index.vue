@@ -9,6 +9,7 @@
       ref="crudComponent"
       :title="$route.meta.title"
     />
+    <inner-loading :visible="loadingBulk" />
     </div>
   </template>
   <script>
@@ -74,6 +75,7 @@ import {
         crudId: this.$uid(),
         areaId: null,
         commentableId: null,
+        loadingBulk: false,
       }
     },
     methods: {
@@ -725,7 +727,7 @@ import {
                     {
                       label: 'Total',
                       field: val => {
-                        const quantity = val.quantity || 1;
+                        const quantity = val.quantity || 0;
                         const rate = val.contractLine?.rate || 0;
                         return quantity * rate;
                       }
@@ -770,8 +772,14 @@ import {
     }, 
     methods: {
       async postReloadTransactions(id) {
-            await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
-            await this.getDataTable(true);
+            try {
+                this.loadingBulk = true;
+                await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
+                await this.$root.$emit('crud.data.refresh');
+                this.loadingBulk = false;
+            } catch (error) {
+                this.loadingBulk = false;
+            }
       },
     }
   }
