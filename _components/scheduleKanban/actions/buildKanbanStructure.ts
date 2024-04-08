@@ -57,8 +57,11 @@ export async function getCards(refresh = false): Promise<void> {
         }).format('YYYY-MM-DD HH:mm:ss')
       }
 
-      const cardsData = await getWorkOrder(refresh, item.page, params);
-      const statistics = await getWorkOrdersStatistics(refresh, params)
+      const [cardsData, statistics] = await Promise.all([
+        getWorkOrder(refresh, item.page, params),
+        getWorkOrdersStatistics(refresh, params)
+      ]);
+
       item.cards = cardsData.data;
 
       item.completed = statistics.data.completed

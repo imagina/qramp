@@ -24,6 +24,7 @@ import { useQuasar } from 'quasar';
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
   const $q = useQuasar()
+  const loadingMain = ref(true);
   const refFormOrders = ref(null);
   const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
@@ -190,6 +191,7 @@ export default function useKanbanBoard(props) {
   onMounted(async() => {
     await setStations()
     await init()
+    loadingMain.value = false;
   });
   watch(
     () => router.route,
@@ -232,5 +234,6 @@ export default function useKanbanBoard(props) {
     title,
     isAppOffline,
     storeFilter,
+    loadingMain
   };
 }

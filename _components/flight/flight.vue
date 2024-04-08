@@ -592,6 +592,9 @@ export default {
             value: null,
             type: 'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               label: 'Cancellation Notice Time',
               vIf: this.validateCancellationNoticeTime,
               type:'number',
@@ -711,7 +714,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
+              readonly: this.isPassenger ? false : (this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId),
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `${this.$tr('ifly.cms.form.origin')}`,
@@ -800,7 +803,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport,
+              readonly: this.isPassenger ? false : (this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport),
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `${this.$tr('ifly.cms.form.destination')}`,

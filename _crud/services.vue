@@ -34,9 +34,16 @@ export default {
               align: 'left',
             },
             {
-              name: 'status', 
-              label: this.$tr('isite.cms.form.status'), 
-              field: 'status', 
+              name: 'status',
+              label: this.$tr('isite.cms.form.status'),
+              field: 'status',
+              align: 'left'
+            },
+            {
+              name: 'type',
+              label: 'Type',
+              field: 'type',
+              format: val => (val == 1) ? 'Full Date' : ((val == 2) ?'Delay with Headcounts' : '-'),
               align: 'left'
             },
             {
@@ -72,7 +79,7 @@ export default {
         },
         create: false,
         update: { 
-          title: 'Update Workday Service',
+          title: 'Update Sales Line Items',
           requestParams: {
             include:"categories,attributes"
           }
@@ -148,6 +155,17 @@ export default {
                 id: 'id'
               },
             }
+          },
+          type: {
+            value: null,
+            type: "select",
+            props: {
+              label: 'Type (AGIONE)',
+              options:[
+                {label: 'Full Date', value: 1},
+                {label: 'Delay with Headcounts', value: 2}
+              ]
+            },
           },
         },
         formRight: {},

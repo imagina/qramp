@@ -474,4 +474,5 @@ export interface WorkOrderList {
     getWorkOrderDelays: () => WorkOrderDelays[];
     setResponsible: (data: any)  => void;
     getResponsible: ()  => any;
+    getACTypes: () => any;
 }

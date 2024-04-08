@@ -35,5 +35,7 @@ export default {
   comments: `${urlBase}/comments`,
   categories: `${urlBase}/categories`,
   schedulers: `${urlBase}/schedulers`,
-  reloadTransactions: `${urlBase}/work-orders/reload-transactions`
+  reloadTransactions: `${urlBase}/work-orders/reload-transactions`,
+  passengerContractRules: `${urlBase}/passenger-contract-rules`,
+  passengerContractRulesUpsert: `${urlBase}/passenger-contract-rules/upsert`
 }
