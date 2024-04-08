@@ -23,6 +23,7 @@ import validateMatchCompanyStation from "../actions/validateMatchCompanyStation"
 
 export default function useKanbanBoard(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
+  const loadingMain = ref(true);
   const refFormOrders = ref(null);
   const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
@@ -189,6 +190,7 @@ export default function useKanbanBoard(props) {
   onMounted(async() => {
     await setStations()
     await init()
+    loadingMain.value = false;
   });
   watch(
     () => proxy.$route,
@@ -229,6 +231,7 @@ export default function useKanbanBoard(props) {
     refFormOrders,
     individualRefreshByColumns,
     title,
-    isAppOffline
+    isAppOffline,
+    loadingMain
   };
 }

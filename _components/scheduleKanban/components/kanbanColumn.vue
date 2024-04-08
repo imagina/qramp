@@ -88,7 +88,7 @@
           class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-h-full tw-px-2"
           handle=".dot-vertical"
           @end="changeDate"
-          :disabled="isBlank && isWeekAgenda"
+          :disabled="true"
         >
           <component
             v-for="(card, index) in cards"

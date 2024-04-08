@@ -30,8 +30,9 @@ export default {
   offline: async (refresh=false) => {
     const module = await import('../_store/actions/workOrderList.ts')
     const buildKanbanStructure = await import('../_components/scheduleKanban/actions/buildKanbanStructure.ts')
-    
-    await module.default().getAllList(refresh)
-    await buildKanbanStructure?.default(true)
+    await Promise.all([
+      module.default().getAllList(refresh),
+      buildKanbanStructure?.default(refresh),
+    ]);
   }
 }

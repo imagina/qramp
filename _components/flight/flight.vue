@@ -217,6 +217,7 @@ import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
 import moment from 'moment';
 import store from '../scheduleKanban/store/modalSchedule.store';
+import momentTimezone from "moment-timezone";
 
 export default {
   props:{
@@ -452,6 +453,12 @@ export default {
     validateRulesField() {
       return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
     },
+    timezoneAirport() {
+      const station = workOrderList().getStationList().find(item => item.id == this.form.stationId); 
+      const airportId = station?.airportId;
+      const airport = workOrderList().getAirportsList().find(item => item.id == airportId) || null
+      return airport ? momentTimezone.tz(airport.timezone).format("z") : '';
+    },
     formFields() {
       return {
         banner: {
@@ -523,7 +530,8 @@ export default {
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.station')}`,
               clearable: true,
               color:"primary",
-              options: this.filterStation
+              options: this.filterStation,
+              suffix: this.timezoneAirport,
             },
           },
           acTypeId: {
@@ -583,6 +591,9 @@ export default {
             value: null,
             type: 'input',
             props: {
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
               label: 'Cancellation Notice Time',
               vIf: this.validateCancellationNoticeTime,
               type:'number',
@@ -702,15 +713,12 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              rules: [
-                val => this.validateRulesField(val)
-              ],
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId,
+              readonly: this.isPassenger ? false : (this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId),
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.origin')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.origin')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
@@ -724,13 +732,10 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
               readonly:  this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.tail')}`,
               clearable: true,
               color:"primary"
             },
@@ -747,13 +752,13 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundScheduled,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
               clearable: true,
               color:"primary",
               format24h: true,
+              suffix: this.timezoneAirport,
             },
             label: this.$tr('ifly.cms.form.scheduledArrival'),
           },
@@ -763,8 +768,7 @@ export default {
             type: 'input',
             props: {
               vIf: this.isPassenger,
-              readonly:  this.disabledReadonly || this.flightBoundFormStatus.inboundGateArrival,
-              label: '*Inbound Gate Arrival',
+              label: 'Inbound Gate Arrival',
               clearable: true,
               color:"primary"
             },
@@ -797,15 +801,12 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'select',
             props: {
-              rules: [
-                val => this.validateRulesField(val)
-              ],
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport,
+              readonly: this.isPassenger ? false : (this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport),
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.destination')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.destination')}`,
               clearable: true,
-              color:"primary"
+              color:"primary",
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qfly.airports',
@@ -819,13 +820,10 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard':'input',
             props: {
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
               readonly: this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.tail')}`,
+              label: this.readonly ? '' : `${this.$tr('ifly.cms.form.tail')}`,
               clearable: true,
               color:"primary"
             },
@@ -842,13 +840,13 @@ export default {
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.disabledReadonly || this.flightBoundFormStatus.boundScheduledDeparture,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
               clearable: true,
               color:"primary",
               format24h: true,
+              suffix: this.timezoneAirport,
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
@@ -858,8 +856,7 @@ export default {
             type: 'input',
             props: {
               vIf: this.isPassenger,
-              readonly:  this.disabledReadonly || this.flightBoundFormStatus.outboundGateDeparture,
-              label: '*Outbound Gate Departure',
+              label: 'Outbound Gate Departure',
               clearable: true,
               color:"primary"
             },
@@ -884,6 +881,7 @@ export default {
               color:"primary",
               format24h: true,
               options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundBlockIn),
+              suffix: this.timezoneAirport,
             },
             label: `${this.isPassenger ? 'Actual In': `${this.$tr('ifly.cms.form.blockIn')}`}`,
           },
@@ -903,6 +901,7 @@ export default {
               color:"primary",
               format24h: true,
               options: this.validateDateOutboundBlockOut,
+              suffix: this.timezoneAirport,
             },
             label: `${this.isPassenger ? 'Actual Out': `${this.$tr('ifly.cms.form.blockOut')}`}`,
           },
@@ -1290,6 +1289,7 @@ export default {
     },
     resetField(key = '') {
       if(key === 'stationId') {
+        this.timezoneAirport;
         this.form.gateId = null;
         return;
       }

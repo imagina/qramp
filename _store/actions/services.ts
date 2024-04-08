@@ -9,6 +9,7 @@ import {
     COMPANY_RAMP,
 } from '../../_components/model/constants.js';
 import pluginsArray from '@imagina/qsite/_plugins/array.js';
+import _ from 'lodash';
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -38,7 +39,6 @@ export const getCategories = async (): Promise<any[]> => {
                 "apiRoutes.qramp.categories",
                 requestParams
             );
-            console.log(response.data);
             return response.data;
         } catch (error) {
             console.log(error);
@@ -110,10 +110,11 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         };
         const organizeProduct = organizeProducts(product);
         organizeProduct?.forEach((product) => {
+            const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
-            dynamicFieldModel.title = product.name;
-            dynamicFieldModel.formField = getDynamicField(product.attributes);
+            dynamicFieldModel.title = productName;
+            dynamicFieldModel.formField = getDynamicField(product);
             data.push({ ...dynamicFieldModel });
         });
         return data;
@@ -129,12 +130,14 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  * @returns {dynamicField}
  *  
  */
-function getDynamicField(attributes) {
+function getDynamicField(product) {
     try {
+        const att = product.attributes || [];
+        const optionAtt = product.options?.attributes || [];
         const result = {};
-        const att = attributes || [];
-        for (let i = 0; i < att.length; i++) {
-            const currentValue = att[i];
+        const organizedData = optionAtt.length > 0 ? _.sortBy(att, item => optionAtt.indexOf(String(item.id))) : att;
+        for (let i = 0; i < organizedData.length; i++) {
+            const currentValue = organizedData[i];
             const props = setProps(
             currentValue.type,
             currentValue.name,
@@ -145,11 +148,11 @@ function getDynamicField(attributes) {
             const type = currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
 
             result[key] = {
-            name: currentValue.name,
-            value: currentValue.value ? currentValue.value : null,
-            type,
-            id: currentValue.id,
-            props: { ...props },
+                name: currentValue.name,
+                value: currentValue.value ? currentValue.value : null,
+                type,
+                id: currentValue.id,
+                props: { ...props },
             };
         }
 
@@ -172,7 +175,11 @@ function setProps(type, name, options, index) {
     const readonly = qRampStore().disabledReadonly();
     if (type == "quantity") {
         return {
+            label: name,
             readonly,
+            type: "number",
+            step: "0.1",
+            mask: "###################",
         };
     }
     if (type == "select") {
@@ -201,6 +208,7 @@ function setProps(type, name, options, index) {
             readonly,
             type: "number",
             step: "0.1",
+            label: name
         };
     }
     return {
@@ -230,15 +238,14 @@ function setProps(type, name, options, index) {
  */
 export function getListOfSelectedServices(data) {
     try {
-        const service = Vue.prototype.$clone(data.filter((items) => {
-            for (let item in items.formField) {
-                for (let key in items.formField[item]) {
-                    if (key == "value") {
-                        return items.formField[item][key];
-                    }
+        const service = data.filter(item => {
+            for (let key in item.formField) {
+                if (item.formField[key].value) {
+                    return true;
                 }
             }
-        }));
+            return false;
+        });
         return productDataTransformation(service) || [];
     } catch (error) {
         console.log(error);

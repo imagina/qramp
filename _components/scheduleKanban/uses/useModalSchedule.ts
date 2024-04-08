@@ -60,22 +60,39 @@ export default function useModalSchedule(props: any, emit: any) {
     },
     {
       props: {
-        vIf: store.isEdit && !kanbanStore.isBlank,
+        vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.destroy`) && store.isEdit && !kanbanStore.isBlank,
         color: "red",
         icon: 'fa-light fa-trash',
         label: Vue.prototype.$tr("isite.cms.label.delete"),
       },
       action: async () => {
         try {
-          store.loading = true;
-          await Promise.allSettled([
-            deleteWorkOrders(form.value.id),
-            setTimeout(() => {
-              individualRefreshByColumns()
-              hideModal()
-            }, 1000),
-          ])
-          store.loading = false;
+          Vue.prototype.$alert.error({
+            mode: "modal",
+            title: `${form.value.preFlightNumber}`,
+            message: Vue.prototype.$tr('isite.cms.message.deleteRecord'),
+            actions: [
+              {
+                label: Vue.prototype.$tr('isite.cms.label.cancel'),
+                color: 'grey',
+              },
+              {
+                label: Vue.prototype.$tr('isite.cms.label.delete'),
+                color: 'red',
+                handler: async () => {
+                  store.loading = true;
+                  await Promise.allSettled([
+                    deleteWorkOrders(form.value.id),
+                    setTimeout(() => {
+                      individualRefreshByColumns()
+                      hideModal()
+                    }, 1000),
+                  ])
+                  store.loading = false;
+                }
+              },
+            ],
+          });
         } catch (err) {
           store.loading = false;
           console.log(err)

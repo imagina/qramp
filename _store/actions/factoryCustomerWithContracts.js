@@ -5,7 +5,10 @@ export default function getListCustomerWithContracts(data, permisition) {
         return {
             id: Number(customer.id),
             label: customer.customerName + ' (Ad Hoc)',
-            value: customer.customerName + ' (Ad Hoc)'
+            value: customer.customerName + ' (Ad Hoc)',
+            customerId: Number(customer.id),
+            contractId: null,
+            contractName: null,
         }
     });
     contractsList.forEach((contract, index) => {

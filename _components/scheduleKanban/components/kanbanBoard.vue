@@ -65,6 +65,7 @@
   <modalStation />
   <selectFlightNumberModal />
   <flightDetail />
+  <inner-loading :visible="loadingMain"/>
 </div>
 </template>
 

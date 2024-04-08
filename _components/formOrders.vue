@@ -187,6 +187,21 @@ export default {
       const actions = [
         {
           props: {
+            vIf: this.$auth.hasAccess('ramp.work-orders.destroy'),
+            color: 'red',
+            icon: 'fa-light fa-trash',
+            label: this.$tr('isite.cms.label.delete'),
+          },
+          action: async() => {
+            await this.$crud.delete('apiRoutes.qramp.workOrders', this.modalProps.workOrderId)
+            await this.getWorkOrders();
+            this.clear()
+            this.$root.$emit('crud.data.refresh')
+            await qRampStore().hideLoading();
+          }
+        },
+        {
+          props: {
             vIf: !this.isAppOffline && this.permisionCommentsIndex,
             color: 'primary',
             icon: 'fa-light fa-comment',

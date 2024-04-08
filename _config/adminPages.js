@@ -211,7 +211,7 @@ export default {
     crud: import('../_crud/services.vue'),
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
-    title: 'Workday Services',
+    title: 'Sales Line Items',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,
@@ -257,6 +257,21 @@ export default {
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
     title: 'Operation Types',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  fueling: {
+    permission: 'ramp.fueling.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/fueling/index',
+    name: 'qramp.admin.fueling',
+    crud: import('../_crud/fueling.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Fueling',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,

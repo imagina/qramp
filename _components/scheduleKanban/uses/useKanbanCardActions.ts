@@ -49,7 +49,7 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: showCardActions.value,
+      vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.create`) && showCardActions.value,
       icon: 'fa-light fa-copy',
       toolttip: 'Duplicate',
       action: () => {
@@ -57,7 +57,7 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: showCardActions.value,
+      vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.edit`) && showCardActions.value,
       icon: 'fa-light fa-pen-to-square',
       toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
       action: () => {
@@ -65,11 +65,29 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: showCardActions.value,
+      vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.destroy`) && showCardActions.value,
       icon: 'fa-light fa-trash',
       toolttip: Vue.prototype.$tr('isite.cms.label.delete'),
       action: () => {
-        deleteWorkOrder()
+        Vue.prototype.$alert.error({
+          mode: "modal",
+          title: `${props.card.calendar.title}`,
+          message: Vue.prototype.$tr('isite.cms.message.deleteRecord'),
+          actions: [
+            {
+              label: Vue.prototype.$tr('isite.cms.label.cancel'),
+              color: 'grey',
+            },
+            {
+              label: Vue.prototype.$tr('isite.cms.label.delete'),
+              color: 'red',
+              handler: () => {
+                deleteWorkOrder()
+              }
+            },
+          ],
+        });
+        
       },
     }
   ])

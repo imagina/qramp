@@ -147,7 +147,9 @@ export default {
       if (type == 'quantity') {
         return {
           readonly: this.readonly || this.disabledReadonly,
+          type: 'number',
           mask:'###################',
+          label: name
         }
       }else if(type == 'select') {
         return {
@@ -176,6 +178,7 @@ export default {
         return {
           readonly: this.readonly || this.disabledReadonly,
           type: 'number',
+          label: name,
           step:"0.1"
         }
       } else {

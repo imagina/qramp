@@ -3,6 +3,7 @@
         <form-orders ref="formOrders"/>
         <flightDetail/>
         <commentsModal ref="commentsModal" :commentableId="commentableId" isCrud/>
+        <inner-loading :visible="loadingBulk" />
     </div>
 </template>
 <script>
@@ -35,6 +36,7 @@ export default {
             crudId: this.$uid(),
             areaId: null,
             commentableId: null,
+            loadingBulk: false,
         }
     },
     provide() {
@@ -290,7 +292,6 @@ export default {
                     ],
                     filters: {
                         date: {
-
                             props: {
                                 label: "Block-in/out Date"
                             },
@@ -491,6 +492,17 @@ export default {
                                     vIf: this.permisionCommentsIndex && !this.isAppOffline
                                 }),
                         },
+                        {
+                            name: 'Reload Transactions',
+                            icon: 'fa-light fa-download',
+                            label: 'Reload Transactions',
+                            action: (item) => {
+                                this.postReloadTransactions(item.id);
+                            },
+                            format: item => ({
+                                vIf: this.$auth.hasAccess('ramp.work-orders.reload-transactions') && !this.isAppOffline
+                            })
+                        },
                     ],
                     bulkActions: [
                         {
@@ -527,6 +539,15 @@ export default {
                             props: {
                                 icon: "fas fa-download",
                                 label: "Bulk(CSV)"
+                            }
+                        },
+                        {
+                            apiRoute: "/ramp/v1/work-orders/bulk-reload-transactions",
+                            permission: "ramp.work-orders.bulk-reload-transactions",
+                            criteria: "id",
+                            props: {
+                                icon: "fas fa-download",
+                                label: "Reload Transactions"
                             }
                         }
                     ],
@@ -578,7 +599,7 @@ export default {
                             {
                                 label: 'Total',
                                 field: val => {
-                                    const quantity = val.quantity || 1;
+                                    const quantity = val.quantity || 0;
                                     const rate = val.contractLine?.rate || 0;
                                     return quantity * rate;
                                 }
@@ -623,6 +644,16 @@ export default {
         }
     },
     methods: {
+        async postReloadTransactions(id) {
+            try {
+                this.loadingBulk = true;
+                await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
+                await this.$root.$emit('crud.data.refresh');
+                this.loadingBulk = false;
+            } catch (error) {
+                this.loadingBulk = false;
+            }
+        },
         getOfflineTitleStatus(statusId, itemId) {
             const statusObj = {
                 1: 'DRAFT',

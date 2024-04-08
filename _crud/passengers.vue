@@ -7,6 +7,7 @@
       :commentableId="commentableId"
       isCrud
     />
+    <inner-loading :visible="loadingBulk" />
   </div>
 </template>
 <script>
@@ -39,6 +40,7 @@ export default {
       crudId: this.$uid(),
       areaId: null,
       commentableId: null,
+      loadingBulk: false,
     }
   },
   provide() {
@@ -287,10 +289,10 @@ export default {
           filters: {
             date: {
               props:{
-                label: "Block-in/out Date"
+                label: "Scheduled date"
               },
-              name: "blockInBlockOut",
-              field: {value: 'blockInBlockOut'},
+              name: "scheduleDate",
+              field: {value: 'schedule_date'},
               quickFilter: true
             },
             customerId: {
@@ -309,6 +311,25 @@ export default {
               props: {
                 label: 'Customer',
                 'clearable': true
+              },
+            },
+            contractId: {
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              loadOptions: {
+                  apiRoute: 'apiRoutes.qramp.setupContracts',
+                  select: {'label': 'contractName', 'id': 'id'},
+                  requestParams: {
+                  filter: {
+                    contractStatusId: 1,
+                    businessUnitId: BUSINESS_UNIT_PASSENGER
+                  },
+                },
+              },
+              props: {
+                  label: 'Contract',
+                  'clearable': true,
               },
             },
             statusId: {
@@ -357,24 +378,6 @@ export default {
                 {label: this.$tr('isite.cms.label.yes'), value: true,},
                 {label: this.$tr('isite.cms.label.no'), value: false,},
               ],
-              },
-            },
-            flightStatusId: {
-              value: null,
-              type: 'select',
-              quickFilter: true,
-              loadOptions: {
-                apiRoute: 'apiRoutes.qfly.flightStatuses',
-                select: {'label': 'name', 'id': 'id'},
-                requestParams: {
-                  filter: {
-                    companyId: COMPANY_PASSENGER,
-                  },
-                },
-              },
-              props: {
-                label: 'Flight Status',
-                'clearable': true
               },
             },
             businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
@@ -465,6 +468,17 @@ export default {
                   vIf: this.permisionCommentsIndex && !this.isAppOffline
                 }),
             },
+            {
+              name: 'Reload Transactions',
+              icon: 'fa-light fa-download',
+              label: 'Reload Transactions',
+              action: (item) => {
+                this.postReloadTransactions(item.id);
+              },
+              format: item => ({
+                  vIf: this.$auth.hasAccess('ramp.work-orders.reload-transactions') && !this.isAppOffline
+              }),
+            },
           ],
           bulkActions: [
             {
@@ -501,6 +515,15 @@ export default {
               props: {
                 icon: "fas fa-download",
                 label: "Bulk(CSV)"
+              }
+            },
+            {
+              apiRoute: "/ramp/v1/work-orders/bulk-reload-transactions",
+              permission: "ramp.work-orders.bulk-reload-transactions",
+              criteria: "id",
+              props: {
+                icon: "fas fa-download",
+                label: "Reload Transactions"
               }
             }
           ],
@@ -552,7 +575,7 @@ export default {
               {
                 label: 'Total',
                 field: val => {
-                    const quantity = val.quantity || 1;
+                    const quantity = val.quantity || 0;
                     const rate = val.contractLine?.rate || 0;
                     return quantity * rate;
                 }
@@ -597,6 +620,16 @@ export default {
     }
   },
   methods: {
+    async postReloadTransactions(id) {
+      try {
+        this.loadingBulk = true;
+        await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
+        await this.$root.$emit('crud.data.refresh');
+        this.loadingBulk = false;
+      } catch (error) {
+        this.loadingBulk = false;
+      }
+    },
     getOfflineTitleStatus(statusId, itemId) {
       const statusObj = {
         1: 'DRAFT',
