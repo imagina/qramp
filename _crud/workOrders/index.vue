@@ -78,114 +78,6 @@ import {
         loadingBulk: false,
       }
     },
-    methods: {
-      init() {
-        //Reset page ID
-        this.pageId = this.$uid()
-
-        //Handle edit and create url action
-        this.handlerUrlCrudAction()
-
-        qRampStore().setRefCrudIndex(this.$refs.crudComponent)
-      },
-      handlerUrlCrudAction() {
-        setTimeout(() => {
-          let urlQuery = this.$route.query
-          if (urlQuery.edit) this.$refs.crudComponent.update({id: urlQuery.edit})
-          if (urlQuery.create) this.$refs.crudComponent.create()
-        }, 500)
-      },
-      getDataTable() {
-        this.$refs.crudComponent.getDataTable()
-      },
-      getOfflineTitleStatus(statusId, itemId) {
-        const statusObj = {
-          1: 'DRAFT',
-          2: 'POSTED',
-          3: 'SUBMITTED',
-          4: 'CLOSED',
-          5: 'SCHEDULE',
-        }
-        return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
-      },
-      async changeStatus(status, itemId) {
-        const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
-        const CACHE_PATH = 'apiRoutes.qramp.workOrders'
-
-        const payload = {
-            id: itemId,
-            statusId: status
-        }
-        let customParams = {
-            params: {
-                titleOffline: this.getOfflineTitleStatus(status, itemId) || ''
-            }
-        }
-
-        this.$emit('loading', true)
-
-        payload.offline = true;
-        await cacheOffline.updateRecord(CACHE_PATH, payload, payload?.id);
-        this.getDataTable();
-
-        const request = this.$crud.update(
-            API_ROUTE,
-            itemId,
-            payload,
-            customParams
-        );
-        request.then(res => {
-          this.getDataTable();
-          this.$emit('loading', false)
-        }).catch(async err => {
-          this.$emit('loading', false)
-          if (!this.isAppOffline) {
-            this.$alert.error({
-              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
-            })
-          }
-        })
-      },
-      async openModal(item) {
-        const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
-        await qRampStore().setIsPassenger(false);
-        await this.$refs.formOrders.loadform({
-          modalProps: {
-            title: titleModal,
-            update: true,
-            workOrderId: item.id,
-            width: '90vw'
-          },
-          data: item,
-        })
-        qRampStore().setTitleOffline(titleModal);
-      },
-      showWorkOrder(data) {
-        if (this.isAppOffline) {
-            this.openModal(data);
-            return;
-        }
-        this.$crud.show('apiRoutes.qramp.workOrders', data.id, {
-          refresh: true,
-          params: {
-              include: "customer,workOrderStatus,operationType,station,contract,responsible"
-          }
-        }).then(async (item) => {
-            this.openModal(item.data);
-        }).catch((err) => {
-            console.log(err);
-        });
-      },
-      async getFlightMap(workOrder) {
-        try {
-          qRampStore().setWorkOrder(workOrder);
-          qRampStore().showVisibleMapModal();
-        } catch (error) {
-          qRampStore().setWorkOrder(null);
-          console.log(error);
-        }
-      },
-    },
     provide() {
       return {
         showWorkOrder: this.showWorkOrder,
@@ -769,7 +661,7 @@ import {
       crudInfo() {
           return this.$store.state.qcrudComponent.component[this.crudId] || {}
       }
-    }, 
+    },
     methods: {
       async postReloadTransactions(id) {
             try {
@@ -781,6 +673,112 @@ import {
                 this.loadingBulk = false;
             }
       },
-    }
+      init() {
+        //Reset page ID
+        this.pageId = this.$uid()
+
+        //Handle edit and create url action
+        this.handlerUrlCrudAction()
+
+        qRampStore().setRefCrudIndex(this.$refs.crudComponent)
+      },
+      handlerUrlCrudAction() {
+        setTimeout(() => {
+          let urlQuery = this.$route.query
+          if (urlQuery.edit) this.$refs.crudComponent.update({id: urlQuery.edit})
+          if (urlQuery.create) this.$refs.crudComponent.create()
+        }, 500)
+      },
+      getDataTable() {
+        this.$refs.crudComponent.getDataTable()
+      },
+      getOfflineTitleStatus(statusId, itemId) {
+        const statusObj = {
+          1: 'DRAFT',
+          2: 'POSTED',
+          3: 'SUBMITTED',
+          4: 'CLOSED',
+          5: 'SCHEDULE',
+        }
+        return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
+      },
+      async changeStatus(status, itemId) {
+        const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
+        const CACHE_PATH = 'apiRoutes.qramp.workOrders'
+
+        const payload = {
+            id: itemId,
+            statusId: status
+        }
+        let customParams = {
+            params: {
+                titleOffline: this.getOfflineTitleStatus(status, itemId) || ''
+            }
+        }
+
+        this.$emit('loading', true)
+
+        payload.offline = true;
+        await cacheOffline.updateRecord(CACHE_PATH, payload, payload?.id);
+        this.getDataTable();
+
+        const request = this.$crud.update(
+            API_ROUTE,
+            itemId,
+            payload,
+            customParams
+        );
+        request.then(res => {
+          this.getDataTable();
+          this.$emit('loading', false)
+        }).catch(async err => {
+          this.$emit('loading', false)
+          if (!this.isAppOffline) {
+            this.$alert.error({
+              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
+            })
+          }
+        })
+      },
+      async openModal(item) {
+        const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
+        await qRampStore().setIsPassenger(false);
+        await this.$refs.formOrders.loadform({
+          modalProps: {
+            title: titleModal,
+            update: true,
+            workOrderId: item.id,
+            width: '90vw'
+          },
+          data: item,
+        })
+        qRampStore().setTitleOffline(titleModal);
+      },
+      showWorkOrder(data) {
+        if (this.isAppOffline) {
+            this.openModal(data);
+            return;
+        }
+        this.$crud.show('apiRoutes.qramp.workOrders', data.id, {
+          refresh: true,
+          params: {
+              include: "customer,workOrderStatus,operationType,station,contract,responsible"
+          }
+        }).then(async (item) => {
+            this.openModal(item.data);
+        }).catch((err) => {
+            console.log(err);
+        });
+      },
+      async getFlightMap(workOrder) {
+        try {
+          qRampStore().setWorkOrder(workOrder);
+          qRampStore().showVisibleMapModal();
+        } catch (error) {
+          qRampStore().setWorkOrder(null);
+          console.log(error);
+        }
+      },
+    },
   }
   </script>
