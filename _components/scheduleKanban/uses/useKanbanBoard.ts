@@ -4,7 +4,7 @@ import {
   provide,
   watch,
   onMounted,
-  onBeforeUnmount
+  onUnmounted
 } from "vue";
 import storeKanban from "../store/kanban.store";
 import storeFilter from "../store/filters.store";
@@ -219,7 +219,7 @@ export default function useKanbanBoard(props) {
     await setStations()
     await init()
   })
-  onBeforeUnmount(() => {
+  onUnmounted(() => {
     storeKanban.columns = [];
   })
   return {
