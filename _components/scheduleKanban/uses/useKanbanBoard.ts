@@ -4,6 +4,7 @@ import {
   provide,
   watch,
   onMounted,
+  onBeforeUnmount
 } from "vue";
 import storeKanban from "../store/kanban.store";
 import storeFilter from "../store/filters.store";
@@ -217,6 +218,9 @@ export default function useKanbanBoard(props) {
     storeKanban.isAppOffline = newValue;
     await setStations()
     await init()
+  })
+  onBeforeUnmount(() => {
+    storeKanban.columns = [];
   })
   return {
     selectedDate,
