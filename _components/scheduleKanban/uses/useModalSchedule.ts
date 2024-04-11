@@ -71,14 +71,14 @@ export default function useModalSchedule(props: any, emit: any) {
           alert.error({
             mode: "modal",
             title: `${form.value.preFlightNumber}`,
-            message: i18n.$tr('isite.cms.message.deleteRecord'),
+            message: i18n.tr('isite.cms.message.deleteRecord'),
             actions: [
               {
-                label: i18n.$tr('isite.cms.label.cancel'),
+                label: i18n.tr('isite.cms.label.cancel'),
                 color: 'grey',
               },
               {
-                label: i18n.$tr('isite.cms.label.delete'),
+                label: i18n.tr('isite.cms.label.delete'),
                 color: 'red',
                 handler: async () => {
                   store.loading = true;
