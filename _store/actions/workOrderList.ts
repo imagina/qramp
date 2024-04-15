@@ -1,56 +1,56 @@
 import baseService from 'modules/qcrud/_services/baseService.js'
-import { reactive } from 'vue';
+import {reactive} from 'vue';
 import qRampStore from '../qRampStore.js'
 import {
-    BUSINESS_UNIT_PASSENGER,
-    BUSINESS_UNIT_RAMP,
-    COMPANY_PASSENGER,
-    COMPANY_RAMP
+  BUSINESS_UNIT_PASSENGER,
+  BUSINESS_UNIT_RAMP,
+  COMPANY_PASSENGER,
+  COMPANY_RAMP
 } from '../../_components/model/constants.js';
 import {
-    Contract,
-    CustomerContract,
-    FlightStatusContract,
-    Gates,
-    OperationType,
-    State,
-    StationContract,
-    WorkOrderList,
-    WorkOrders,
-    WorkOrderStatusesContract,
-    WorkOrderDelays,
+  Contract,
+  CustomerContract,
+  FlightStatusContract,
+  Gates,
+  OperationType,
+  State,
+  StationContract,
+  WorkOrderList,
+  WorkOrders,
+  WorkOrderStatusesContract,
+  WorkOrderDelays,
 } from './@Contracts/workOrderList.contract';
-import { buildServiceList } from './services';
+import {buildServiceList} from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
-import { store } from 'src/plugins/utils'
+import {store} from 'src/plugins/utils'
 
 const state = reactive<State>({
-    operationTypeList: [],
-    stationList: [],
-    customerList: [],
-    contractList: [],
-    flightStatusesList: [],
-    workOrderStatusesList: [],
-    gatesList: [],
-    customerWithContractList: [],
-    airlinesList: [],
-    actypesList: [],
-    airportsList: [],
-    workOrderDelays: [],
-    responsibleList: [],
-    /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
-    workOrderList: {
-        data: [],
-        meta: {
-            page: {
-                total: 0,
-                hasNextPage: false,
-                hasPreviousPage: false,
-                currentPage: 1,
-                perPage: 1,
-            },
-        }
-    },
+  operationTypeList: [],
+  stationList: [],
+  customerList: [],
+  contractList: [],
+  flightStatusesList: [],
+  workOrderStatusesList: [],
+  gatesList: [],
+  customerWithContractList: [],
+  airlinesList: [],
+  actypesList: [],
+  airportsList: [],
+  workOrderDelays: [],
+  responsibleList: [],
+  /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
+  workOrderList: {
+    data: [],
+    meta: {
+      page: {
+        total: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+        currentPage: 1,
+        perPage: 1,
+      },
+    }
+  },
 });
 const cacheTimeForm24Hour: number = 60 * 60 * 24;
 const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
@@ -60,624 +60,636 @@ const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
  * interact with OperationType, StationContract, CustomerContract, Contract,
  * FlightStatusContract, and WorkOrderStatusesContract.
  * @returns {WorkOrderList} A WorkOrderList object.
-*/
+ */
 export default function workOrderList(): WorkOrderList {
-    const { hasAccess } = store
-    /**
-     * This function returns the workOrderList property of the state object.
-     * @returns the state.workOrderList.
-     */
-    function getCustomerWithContractLists() {
-        return state.customerWithContractList;
-    }
+  const {hasAccess} = store
 
-    function setCustomerWithContractLists(data: any) {
-        return state.customerWithContractList = data;
-    }
+  /**
+   * This function returns the workOrderList property of the state object.
+   * @returns the state.workOrderList.
+   */
+  function getCustomerWithContractLists() {
+    return state.customerWithContractList;
+  }
 
-    function getDataWorkOrderList(): WorkOrders {
-        return state.workOrderList;
-    }
+  function setCustomerWithContractLists(data: any) {
+    return state.customerWithContractList = data;
+  }
 
-    /**
-     * This function takes a parameter of type WorkOrders and sets the state.workOrderList to the value
-     * of the parameter.
-     * @param {WorkOrders} data - WorkOrders
-     */
-    function setDataWorkOrderList(data: WorkOrders): void {
-        state.workOrderList = data;
-    }
-    /**
-     * This function takes an array of OperationType objects and assigns it to the operationTypeList
-     * property of the state object.
-     * @param {OperationType[]} data - OperationType[] - this is the data that is being passed in from
-     * the component.
-     */
+  function getDataWorkOrderList(): WorkOrders {
+    return state.workOrderList;
+  }
 
-    function setOperationTypeList(data: OperationType[]): void {
-        state.operationTypeList = data;
-    }
-    /**
-     * It returns a list of OperationType objects.
-     * @returns The operationTypeList array.
-     */
-    function getOperationTypeList(): OperationType[] {
-        return state.operationTypeList;
-    }
-    /**
-     * This function takes an array of StationContract objects and assigns it to the stationList
-     * property of the state object.
-     * @param {StationContract[]} data - StationContract[]
-     */
-    function setStationList(data: StationContract[]): void {
-        state.stationList = data;
-    }
-    /**
-     * This function returns an array of StationContract objects.
-     * @returns The stationList array.
-     */
-    function getStationList(): StationContract[] {
-        return state.stationList;
-    }
+  /**
+   * This function takes a parameter of type WorkOrders and sets the state.workOrderList to the value
+   * of the parameter.
+   * @param {WorkOrders} data - WorkOrders
+   */
+  function setDataWorkOrderList(data: WorkOrders): void {
+    state.workOrderList = data;
+  }
 
-    //
-    function setAirlinesList(data): void {
-        state.airlinesList = data;
-    }
-    function getAirlinesList(): any {
-        return state.airlinesList;
-    }
+  /**
+   * This function takes an array of OperationType objects and assigns it to the operationTypeList
+   * property of the state object.
+   * @param {OperationType[]} data - OperationType[] - this is the data that is being passed in from
+   * the component.
+   */
 
-    function setACTypesList(data): void {
-        state.actypesList = data;
-    }
-    function getACTypesList(): any {
-        return state.actypesList;
-    }
+  function setOperationTypeList(data: OperationType[]): void {
+    state.operationTypeList = data;
+  }
 
-    function setAirportsList(data): void {
-        state.airportsList = data;
-    }
-    function getAirportsList(): any {
-        return state.airportsList;
-    }
+  /**
+   * It returns a list of OperationType objects.
+   * @returns The operationTypeList array.
+   */
+  function getOperationTypeList(): OperationType[] {
+    return state.operationTypeList;
+  }
 
-    function getWorkOrderDelays(): WorkOrderDelays[] {
-        return state.workOrderDelays;
-    }
+  /**
+   * This function takes an array of StationContract objects and assigns it to the stationList
+   * property of the state object.
+   * @param {StationContract[]} data - StationContract[]
+   */
+  function setStationList(data: StationContract[]): void {
+    state.stationList = data;
+  }
 
-    function setWorkOrderDelays(data: WorkOrderDelays[]) {
-        state.workOrderDelays = data;
-    }
+  /**
+   * This function returns an array of StationContract objects.
+   * @returns The stationList array.
+   */
+  function getStationList(): StationContract[] {
+    return state.stationList;
+  }
 
-    function setResponsible(data): void {
-        state.responsibleList = data
-    }
+  //
+  function setAirlinesList(data): void {
+    state.airlinesList = data;
+  }
 
-    function getResponsible(): any {
-        return state.responsibleList;
-    }
+  function getAirlinesList(): any {
+    return state.airlinesList;
+  }
 
-    //
+  function setACTypesList(data): void {
+    state.actypesList = data;
+  }
 
-    /**
-     * This function takes an array of CustomerContract objects and assigns it to the customerList
-     * property of the state object.
-     * @param {CustomerContract[]} data - CustomerContract[] - This is the data that is being passed
-     * in.
-     */
-    function setCustomerList(data: CustomerContract[]): void {
-        state.customerList = data;
-    }
-    /**
-     * This function returns an array of CustomerContract objects.
-     * @returns An array of CustomerContract objects.
-     */
-    function getCustomerList(): CustomerContract[] {
-        return state.customerList;
-    }
+  function getACTypesList(): any {
+    return state.actypesList;
+  }
 
-    /**
-     * This function takes an array of Contract objects and assigns it to the contractList property of
-     * the state object.
-     * @param {Contract[]} data - Contract[]
-     */
-    function setContractList(data: Contract[]): void {
-        state.contractList = data;
-    }
-    /**
-     * The function getContractList returns an array of Contract objects.
-     * @returns The contractList array.
-     */
-    function getContractList(): Contract[] {
-        return state.contractList;
-    }
+  function setAirportsList(data): void {
+    state.airportsList = data;
+  }
 
-    /**
-     * This function takes an array of FlightStatusContract objects and assigns it to the
-     * flightStatusesList property of the state object.
-     * @param {FlightStatusContract[]} data - FlightStatusContract[]
-     */
-    function setFlightStatusesList(data: FlightStatusContract[]): void {
-        state.flightStatusesList = data;
-    }
-    /**
-     * It returns a list of FlightStatusContract objects.
-     * @returns the value of the state.flightStatusesList property.
-     */
-    function getFlightStatusesList(): FlightStatusContract[] {
-        return state.flightStatusesList;
-    }
+  function getAirportsList(): any {
+    return state.airportsList;
+  }
 
-    /**
-     * This function takes an array of WorkOrderStatusesContract objects and sets the
-     * state.workOrderStatusesList property to that array.
-     * @param {WorkOrderStatusesContract[]} data - WorkOrderStatusesContract[]
-     */
-    function setWorkOrderStatusesList(data: WorkOrderStatusesContract[]): void {
-        state.workOrderStatusesList = data;
-    }
-    /**
-     * This function returns a list of work order statuses.
-     * @returns An array of WorkOrderStatusesContract objects.
-     */
-    function getWorkOrderStatusesList(): WorkOrderStatusesContract[] {
-        return state.workOrderStatusesList;
-    }
+  function getWorkOrderDelays(): WorkOrderDelays[] {
+    return state.workOrderDelays;
+  }
 
-    /**
-     * This function takes an array of Gates objects and sets the gatesList property of the state
-     * object to that array.
-     * @param {Gates[]} data - Gates[] - this is the data that is being passed in from the API call.
-     */
-    function setGatesList(data: Gates[]): void {
-        state.gatesList = data;
-    }
+  function setWorkOrderDelays(data: WorkOrderDelays[]) {
+    state.workOrderDelays = data;
+  }
 
-    /**
-     * The function getGatesList() returns an array of Gates objects.
-     * @returns The gatesList array.
-     */
-    function getGatesList(): Gates[] {
-        return state.gatesList;
-    }
+  function setResponsible(data): void {
+    state.responsibleList = data
+  }
 
-    // actions
-    /**
-     * The function getOperationType() returns a Promise that resolves to an array of OperationType
-     * objects or void.
-     * @returns a Promise.
-     */
-    async function getOperationType(refresh = false): Promise<OperationType[] | void> {
-        if (hasAccess('ramp.operation-types.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    cacheTime: cacheTimeForThirtyDays,
-                    params: {
-                        filter: {
-                            companyId,
-                        }
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qramp.operationTypes', params);
-                const data = response.data.map(item => ({label: item.operationName, ...item, value: item.id}))
-                setOperationTypeList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
+  function getResponsible(): any {
+    return state.responsibleList;
+  }
+
+  //
+
+  /**
+   * This function takes an array of CustomerContract objects and assigns it to the customerList
+   * property of the state object.
+   * @param {CustomerContract[]} data - CustomerContract[] - This is the data that is being passed
+   * in.
+   */
+  function setCustomerList(data: CustomerContract[]): void {
+    state.customerList = data;
+  }
+
+  /**
+   * This function returns an array of CustomerContract objects.
+   * @returns An array of CustomerContract objects.
+   */
+  function getCustomerList(): CustomerContract[] {
+    return state.customerList;
+  }
+
+  /**
+   * This function takes an array of Contract objects and assigns it to the contractList property of
+   * the state object.
+   * @param {Contract[]} data - Contract[]
+   */
+  function setContractList(data: Contract[]): void {
+    state.contractList = data;
+  }
+
+  /**
+   * The function getContractList returns an array of Contract objects.
+   * @returns The contractList array.
+   */
+  function getContractList(): Contract[] {
+    return state.contractList;
+  }
+
+  /**
+   * This function takes an array of FlightStatusContract objects and assigns it to the
+   * flightStatusesList property of the state object.
+   * @param {FlightStatusContract[]} data - FlightStatusContract[]
+   */
+  function setFlightStatusesList(data: FlightStatusContract[]): void {
+    state.flightStatusesList = data;
+  }
+
+  /**
+   * It returns a list of FlightStatusContract objects.
+   * @returns the value of the state.flightStatusesList property.
+   */
+  function getFlightStatusesList(): FlightStatusContract[] {
+    return state.flightStatusesList;
+  }
+
+  /**
+   * This function takes an array of WorkOrderStatusesContract objects and sets the
+   * state.workOrderStatusesList property to that array.
+   * @param {WorkOrderStatusesContract[]} data - WorkOrderStatusesContract[]
+   */
+  function setWorkOrderStatusesList(data: WorkOrderStatusesContract[]): void {
+    state.workOrderStatusesList = data;
+  }
+
+  /**
+   * This function returns a list of work order statuses.
+   * @returns An array of WorkOrderStatusesContract objects.
+   */
+  function getWorkOrderStatusesList(): WorkOrderStatusesContract[] {
+    return state.workOrderStatusesList;
+  }
+
+  /**
+   * This function takes an array of Gates objects and sets the gatesList property of the state
+   * object to that array.
+   * @param {Gates[]} data - Gates[] - this is the data that is being passed in from the API call.
+   */
+  function setGatesList(data: Gates[]): void {
+    state.gatesList = data;
+  }
+
+  /**
+   * The function getGatesList() returns an array of Gates objects.
+   * @returns The gatesList array.
+   */
+  function getGatesList(): Gates[] {
+    return state.gatesList;
+  }
+
+  // actions
+  /**
+   * The function getOperationType() returns a Promise that resolves to an array of OperationType
+   * objects or void.
+   * @returns a Promise.
+   */
+  async function getOperationType(refresh = false): Promise<OperationType[] | void> {
+    if (hasAccess('ramp.operation-types.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          cacheTime: cacheTimeForThirtyDays,
+          params: {
+            filter: {
+              companyId,
             }
+          },
         }
+        const response = await baseService.index('apiRoutes.qramp.operationTypes', params);
+        const data = response.data.map(item => ({label: item.operationName, ...item, value: item.id}))
+        setOperationTypeList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
     }
+  }
 
-    /**
-     * This function is an async function that returns a promise of an array of StationContract objects
-     * or void.
-     * @returns a Promise.
-     */
-    async function getStation(refresh = false): Promise<StationContract[] | void> {
-      console.log(hasAccess('setup.stations.index'));
-      if (hasAccess('setup.stations.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const filterRamp = isPassenger ? {companyId} : {
-                    companyId,
-                    "allTranslations": true
-                };
-                const params = {
-                    refresh,
-                    cacheTime: cacheTimeForThirtyDays,
-                    params: {
-                        filter: {...filterRamp}
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qsetupagione.setupStations', params);
-                const data = response.data;
-                setStationList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
+  /**
+   * This function is an async function that returns a promise of an array of StationContract objects
+   * or void.
+   * @returns a Promise.
+   */
+  async function getStation(refresh = false): Promise<StationContract[] | void> {
+    if (hasAccess('setup.stations.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const filterRamp = isPassenger ? {companyId} : {
+          companyId,
+          "allTranslations": true
+        };
+        const params = {
+          refresh,
+          cacheTime: cacheTimeForThirtyDays,
+          params: {
+            filter: {...filterRamp}
+          },
+        }
+        const response = await baseService.index('apiRoutes.qsetupagione.setupStations', params);
+        const data = response.data;
+        setStationList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  //"status":1,"companyId":26,"allTranslations":true
+  async function getAirlines(refresh = false) {
+    if (hasAccess('iflight.airline.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          params: {
+            filter: {status: 1, companyId, "allTranslations": true}
+          },
+        }
+        const response = await baseService.index('apiRoutes.qfly.airlines', params);
+        const data = response.data;
+        setAirlinesList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  /**
+   * Requests a list of customers from the server based on user type.
+   * @returns A promise that will resolve with the array of CustomerContract objects or void if there's an error
+   */
+  async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
+    if (hasAccess('setup.customers.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const filterRamp = isPassenger ? {} : {};
+        const params = {
+          refresh,
+          cacheTime: cacheTimeForThirtyDays,
+          params: {
+            filter: {
+              companyId,
             }
+          },
         }
+        const response = await baseService.index('apiRoutes.qramp.setupCustomers', params);
+        const data = response.data;
+        setCustomerList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
     }
-    //"status":1,"companyId":26,"allTranslations":true
-    async function getAirlines(refresh = false) {
-        if (hasAccess('iflight.airline.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    params: {
-                        filter: {status: 1, companyId, "allTranslations": true}
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qfly.airlines', params);
-                const data = response.data;
-                setAirlinesList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
+  }
+
+  /**
+   * The function getContract() is an async function that returns a promise of an array of any type
+   * or void.
+   * @returns The data is being returned as an array of objects.
+   */
+  async function getContract(refresh = false): Promise<any[] | void> {
+    if (hasAccess('ramp.operation-types.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          cacheTime: cacheTimeForThirtyDays,
+          params: {
+            filter: {
+              "contractStatusId": 1,
+              companyId,
             }
+          },
         }
+        const response = await baseService.index('apiRoutes.qramp.setupContracts', params);
+        const data = response.data;
+        setContractList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
     }
-    /**
-     * Requests a list of customers from the server based on user type.
-     * @returns A promise that will resolve with the array of CustomerContract objects or void if there's an error
-     */
-    async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
-        if (hasAccess('setup.customers.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const filterRamp = isPassenger ? {} : {};
-                const params = {
-                    refresh,
-                    cacheTime: cacheTimeForThirtyDays,
-                    params: {
-                        filter: {
-                            companyId,
-                        }
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qramp.setupCustomers', params);
-                const data = response.data;
-                setCustomerList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
+  }
+
+  /**
+   * This function gets the flight statuses from the server and sets the flight statuses list in the
+   * store.
+   * @returns a promise.
+   */
+  async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
+    if (hasAccess('iflight.flight-statuses.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          params: {
+            filter: {
+              companyId,
             }
+          },
         }
+        const response = await baseService.index('apiRoutes.qfly.flightStatuses', params);
+        const data = response.data;
+        setFlightStatusesList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
     }
+  }
 
-    /**
-     * The function getContract() is an async function that returns a promise of an array of any type
-     * or void.
-     * @returns The data is being returned as an array of objects.
-     */
-    async function getContract(refresh = false): Promise<any[] | void> {
-        if (hasAccess('ramp.operation-types.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    cacheTime: cacheTimeForThirtyDays,
-                    params: {
-                        filter: {
-                            "contractStatusId": 1,
-                            companyId,
-                        }
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qramp.setupContracts', params);
-                const data = response.data;
-                setContractList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
+  /**
+   * This function gets the work order statuses from the API and sets the work order statuses list in
+   * the store.
+   * @returns The data is being returned.
+   */
+  async function getWorkOrderStatuses(refresh = false): Promise<WorkOrderStatusesContract[] | void> {
+    if (hasAccess('ramp.work-order-statuses.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const filterRamp = isPassenger ? {companyId} : {
+          companyId,
+          "allTranslations": true
+        }
+        const params = {
+          refresh,
+          cacheTime: cacheTimeForThirtyDays,
+          params: {
+            filter: {...filterRamp}
+          },
+        }
+        const response = await baseService.index('apiRoutes.qramp.workOrderStatuses', params);
+        const data = response.data;
+        setWorkOrderStatusesList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  /**
+   * "getGates() is an async function that returns a Promise of Gates[] or void"</code>
+   * @returns The data is being returned as an array of objects.
+   */
+  async function getGates(refresh = false): Promise<Gates[] | void> {
+    if (hasAccess('setup.gates.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          cacheTime: cacheTimeForThirtyDays,
+          params: {
+            filter: {
+              companyId,
             }
+          },
         }
+        const response = await baseService.index('apiRoutes.qsetupagione.gates', params);
+        const data = response.data;
+        setGatesList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
     }
+  }
 
-    /**
-     * This function gets the flight statuses from the server and sets the flight statuses list in the
-     * store.
-     * @returns a promise.
-     */
-    async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
-        if (hasAccess('iflight.flight-statuses.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    params: {
-                        filter: {
-                            companyId,
-                        }
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qfly.flightStatuses', params);
-                const data = response.data;
-                setFlightStatusesList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
+  /**
+   * This function is an async function that returns a promise of type WorkOrders or void. It calls a
+   * function called baseService.index() which returns a promise of type WorkOrders. The function
+   * then sets the dataWorkOrderList to the response and returns the data.
+   * @returns The data is being returned as an array of objects.
+   */
+  async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
+    if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        const params = {
+          refresh: refresh,
+          cacheTime: cacheTimeForThirtyDays,
+          params: {
+            include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
+            filter: {
+              businessUnitId,
+              date: {
+                field: "created_at",
+                type: "5daysAroundToday",
+                from: null,
+                to: null
+              },
+              order: {
+                field: "id",
+                way: "desc"
+              },
+              withoutDefaultInclude: true,
+            },
+            page: 1
+          },
+        }
+        const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
+        const data = response;
+        setDataWorkOrderList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  function getCustomerWithContract(refresh = false): Promise<any[] | void> {
+    return new Promise(async (resolve) => {
+      if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
+
+        const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
+        const custemerParams = {
+          refresh,
+          params: {
+            filter: {
+              withoutContracts: true,
+              customerStatusId: 1,
+              companyId,
             }
+          },
         }
-    }
-
-    /**
-     * This function gets the work order statuses from the API and sets the work order statuses list in
-     * the store.
-     * @returns The data is being returned.
-     */
-    async function getWorkOrderStatuses(refresh = false): Promise<WorkOrderStatusesContract[] | void> {
-        if (hasAccess('ramp.work-order-statuses.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const filterRamp = isPassenger ? {companyId} : {
-                    companyId,
-                    "allTranslations": true
-                }
-                const params = {
-                    refresh,
-                    cacheTime: cacheTimeForThirtyDays,
-                    params: {
-                        filter: {...filterRamp}
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qramp.workOrderStatuses', params);
-                const data = response.data;
-                setWorkOrderStatusesList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
+        const contractParams = {
+          params: {
+            filter: {
+              contractStatusId: 1,
+              ...businessUnitId,
             }
+          },
         }
-    }
-
-    /**
-     * "getGates() is an async function that returns a Promise of Gates[] or void"</code>
-     * @returns The data is being returned as an array of objects.
-     */
-    async function getGates(refresh = false): Promise<Gates[] | void> {
-        if (hasAccess('setup.gates.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    cacheTime: cacheTimeForThirtyDays,
-                    params: {
-                        filter: {
-                            companyId,
-                        }
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qsetupagione.gates', params);
-                const data = response.data;
-                setGatesList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
-
-    /**
-     * This function is an async function that returns a promise of type WorkOrders or void. It calls a
-     * function called baseService.index() which returns a promise of type WorkOrders. The function
-     * then sets the dataWorkOrderList to the response and returns the data.
-     * @returns The data is being returned as an array of objects.
-     */
-    async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
-        if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')){
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-                const params = {
-                    refresh: refresh,
-                    cacheTime: cacheTimeForThirtyDays,
-                    params: {
-                        include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
-                        filter: {
-                            businessUnitId,
-                            date: {
-                                field: "created_at",
-                                type: "5daysAroundToday",
-                                from: null,
-                                to: null
-                            },
-                            order: {
-                                field: "id",
-                                way: "desc"
-                            },
-                            withoutDefaultInclude: true,
-                        },
-                        page: 1
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
-                const data = response;
-                setDataWorkOrderList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
-
-    function getCustomerWithContract(refresh = false): Promise<any[] | void> {
-
-            return new Promise(async (resolve) => {
-                if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
-
-                const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
-                const custemerParams = {
-                    refresh,
-                    params: {
-                        filter: {
-                            withoutContracts: true,
-                            customerStatusId: 1,
-                            companyId,
-                        }
-                    },
-                }
-                const contractParams = {
-                    params: {
-                        filter: {
-                            contractStatusId: 1,
-                            ...businessUnitId,
-                        }
-                    },
-                }
-                const customersData = await Promise.all([
-                    baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
-                    baseService.index('apiRoutes.qramp.setupContracts', contractParams)
-                ]);
-                const customerList = factoryCustomerWithContracts(customersData, allowContractName);
-                setCustomerWithContractLists(customerList);
-                return resolve(customerList);
-                }else{
-                    resolve();
-                }
-            })
-
-    }
-
-    async function getACTypes(refresh = false) {
-        if (hasAccess('iflight.aircrafttype.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    params: {
-                        filter: {
-                            "status": 1,
-                            companyId,
-                            "allTranslations": true
-                        },
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qfly.aircraftTypes', params);
-                const data = response.data;
-                setACTypesList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
-
-    async function getListDelays(refresh = false) {
-        if (hasAccess('setup.work-order-delays.index')) {
-            try {
-                const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    params: {
-                        filter: {
-                            companyId,
-                        },
-                    },
-                };
-                const response = await baseService.index(API_ROUTE, params)
-                const data = response.data || [];
-                const codeList = data.map((item) => ({
-                    id: item.id,
-                    label: item.name,
-                    value: item.name,
-                }));
-                setWorkOrderDelays(codeList);
-            } catch (err) {
-                console.log(err)
-            }
-        }
-    }
-
-    async function getResponsibleList(refresh = false) {
-        if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
-            try {
-                const API_ROUTE = 'apiRoutes.quser.users'
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    params: {
-                        filter: {
-                            companyId,
-                        },
-                    },
-                };
-                const response = await baseService.index(API_ROUTE, params)
-                const data = response.data || [];
-                setResponsible(data);
-            } catch (err) {
-                console.log(err)
-            }
-        }
-    }
-
-    async function getAirports(refresh = false) {
-        if (hasAccess('iflight.airport.index')) {
-            try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const params = {
-                    refresh,
-                    params: {
-                        filter: {
-                            "status": 1,
-                            companyId,
-                            "allTranslations": true
-                        },
-                    },
-                }
-                const response = await baseService.index('apiRoutes.qfly.airports', params);
-                const data = response.data;
-                setAirportsList(data);
-                return data;
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
-
-    /**
-     * The function getAllList() returns a Promise that resolves to void.
-     */
-    async function getAllList(refresh = false): Promise<void> {
-        Promise.all([
-            getWorkOrders(refresh),
-            getStation(refresh),
-            getOperationType(refresh),
-            getCustomerWithContract(refresh),
-            getCustomer(refresh),
-            getFlightStatuses(refresh),
-            getWorkOrderStatuses(refresh),
-            getGates(refresh),
-            getAirlines(refresh),
-            getACTypes(refresh),
-            getListDelays(refresh),
-            getResponsibleList(refresh),
-            getAirports(refresh),
-            buildServiceList(),
+        const customersData = await Promise.all([
+          baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
+          baseService.index('apiRoutes.qramp.setupContracts', contractParams)
         ]);
-    }
+        const customerList = factoryCustomerWithContracts(customersData, allowContractName);
+        setCustomerWithContractLists(customerList);
+        return resolve(customerList);
+      } else {
+        resolve();
+      }
+    })
 
-    /**
+  }
+
+  async function getACTypes(refresh = false) {
+    if (hasAccess('iflight.aircrafttype.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          params: {
+            filter: {
+              "status": 1,
+              companyId,
+              "allTranslations": true
+            },
+          },
+        }
+        const response = await baseService.index('apiRoutes.qfly.aircraftTypes', params);
+        const data = response.data;
+        setACTypesList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  async function getListDelays(refresh = false) {
+    if (hasAccess('setup.work-order-delays.index')) {
+      try {
+        const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          params: {
+            filter: {
+              companyId,
+            },
+          },
+        };
+        const response = await baseService.index(API_ROUTE, params)
+        const data = response.data || [];
+        const codeList = data.map((item) => ({
+          id: item.id,
+          label: item.name,
+          value: item.name,
+        }));
+        setWorkOrderDelays(codeList);
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
+  async function getResponsibleList(refresh = false) {
+    if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
+      try {
+        const API_ROUTE = 'apiRoutes.quser.users'
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          params: {
+            filter: {
+              companyId,
+            },
+          },
+        };
+        const response = await baseService.index(API_ROUTE, params)
+        const data = response.data || [];
+        setResponsible(data);
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
+  async function getAirports(refresh = false) {
+    if (hasAccess('iflight.airport.index')) {
+      try {
+        const isPassenger = qRampStore().getIsPassenger();
+        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const params = {
+          refresh,
+          params: {
+            filter: {
+              "status": 1,
+              companyId,
+              "allTranslations": true
+            },
+          },
+        }
+        const response = await baseService.index('apiRoutes.qfly.airports', params);
+        const data = response.data;
+        setAirportsList(data);
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  /**
+   * The function getAllList() returns a Promise that resolves to void.
+   */
+  async function getAllList(refresh = false): Promise<void> {
+    Promise.all([
+      getWorkOrders(refresh),
+      getStation(refresh),
+      getOperationType(refresh),
+      getCustomerWithContract(refresh),
+      getCustomer(refresh),
+      getFlightStatuses(refresh),
+      getWorkOrderStatuses(refresh),
+      getGates(refresh),
+      getAirlines(refresh),
+      getACTypes(refresh),
+      getListDelays(refresh),
+      getResponsibleList(refresh),
+      getAirports(refresh),
+      buildServiceList(),
+    ]);
+  }
+
+  /**
    * This object consists of functions for getting and setting data for OperationType,
    * StationContract, CustomerContract, Contract, FlightStatusContract, and WorkOrderStatusesContract.
    * @typedef {Object} WorkOrderList
@@ -721,43 +733,43 @@ export default function workOrderList(): WorkOrderList {
    *    WorkOrderStatusesContract.
    */
 
-    return {
-        setOperationTypeList,
-        getOperationTypeList,
-        getOperationType,
-        setStationList,
-        getStationList,
-        getStation,
-        setCustomerList,
-        getCustomerList,
-        getCustomer,
-        getAllList,
-        setContractList,
-        getContractList,
-        getFlightStatusesList,
-        setFlightStatusesList,
-        getWorkOrderStatusesList,
-        setWorkOrderStatusesList,
-        getWorkOrderStatuses,
-        getGatesList,
-        setGatesList,
-        getGates,
-        getDataWorkOrderList,
-        setDataWorkOrderList,
-        getWorkOrders,
-        getCustomerWithContract,
-        getCustomerWithContractLists,
-        setCustomerWithContractLists,
-        setAirlinesList,
-        getAirlinesList,
-        setACTypesList,
-        getACTypesList,
-        setAirportsList,
-        getAirportsList,
-        setWorkOrderDelays,
-        getWorkOrderDelays,
-        setResponsible,
-        getResponsible,
-        getACTypes,
-    }
+  return {
+    setOperationTypeList,
+    getOperationTypeList,
+    getOperationType,
+    setStationList,
+    getStationList,
+    getStation,
+    setCustomerList,
+    getCustomerList,
+    getCustomer,
+    getAllList,
+    setContractList,
+    getContractList,
+    getFlightStatusesList,
+    setFlightStatusesList,
+    getWorkOrderStatusesList,
+    setWorkOrderStatusesList,
+    getWorkOrderStatuses,
+    getGatesList,
+    setGatesList,
+    getGates,
+    getDataWorkOrderList,
+    setDataWorkOrderList,
+    getWorkOrders,
+    getCustomerWithContract,
+    getCustomerWithContractLists,
+    setCustomerWithContractLists,
+    setAirlinesList,
+    getAirlinesList,
+    setACTypesList,
+    getACTypesList,
+    setAirportsList,
+    getAirportsList,
+    setWorkOrderDelays,
+    getWorkOrderDelays,
+    setResponsible,
+    getResponsible,
+    getACTypes,
+  }
 }
