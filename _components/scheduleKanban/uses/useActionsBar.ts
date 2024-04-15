@@ -22,7 +22,7 @@ export default function useActionsBar(props: any) {
       .add(adjustedOffset, "days")
       .format(DATE_FORMAT);
     await setUrlParams();
-    await buildKanbanStructure;
+    await buildKanbanStructure();
   }
 
   async function next(): Promise<void> {
@@ -43,7 +43,7 @@ export default function useActionsBar(props: any) {
     storeKanban.scheduleType = scheduleType
     storeFilters.scheduleType = scheduleType
     await setUrlParams();
-    await buildKanbanStructure;
+    await buildKanbanStructure();
     getTitleFilter()
   }
 

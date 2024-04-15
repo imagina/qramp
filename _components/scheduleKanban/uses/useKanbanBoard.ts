@@ -207,10 +207,6 @@ export default function useKanbanBoard(props) {
       if (newPath !== oldPath) {
         await setStations()
       }
-
-      if (!storeKanban.loading) {
-        init();
-      }
     },
     { deep: true }
   );
