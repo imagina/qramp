@@ -278,7 +278,8 @@ export default function workOrderList(): WorkOrderList {
      * @returns a Promise.
      */
     async function getStation(refresh = false): Promise<StationContract[] | void> {
-        if (hasAccess('setup.stations.index')) {
+      console.log(hasAccess('setup.stations.index'));
+      if (hasAccess('setup.stations.index')) {
             try {
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -663,6 +664,7 @@ export default function workOrderList(): WorkOrderList {
             getStation(refresh),
             getOperationType(refresh),
             getCustomerWithContract(refresh),
+            getCustomer(refresh),
             getFlightStatuses(refresh),
             getWorkOrderStatuses(refresh),
             getGates(refresh),
