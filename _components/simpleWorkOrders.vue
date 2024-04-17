@@ -262,9 +262,11 @@ export default {
             label: 'Continue editing',
             color: "light-blue-7",
             handler: async () => {
+              this.$emit('loading', true);
               await this.showWorkOrder(response.data);
               this.acceptSchedule = false;
               this.$root.$emit('crud.data.refresh');
+              this.$emit('loading', false);
             },
           },
           {
