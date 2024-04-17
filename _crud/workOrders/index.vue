@@ -673,12 +673,10 @@ export default {
     init() {
       if (this.isRamp) {
         this.crudCustom = import('../../_components/crudCustom/ramp.vue')
-        console.log('init ramp')
       }
       
       if (!this.isRamp) {
         this.crudCustom = import('../../_components/crudCustom/passengers.vue')
-        console.log('init passenger')
       }
 
       //Reset page ID
