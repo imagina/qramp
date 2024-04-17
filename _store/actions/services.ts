@@ -318,7 +318,7 @@ function setAttr(obj) {
 function validationDataAttr(obj: any, key: any) {
     let data: any = {
         name: obj[key].name,
-        value: obj[key].value,
+        value: obj[key].type == 'quantity' ? Math.abs(obj[key].value): obj[key].value,
         type: obj[key].type,
     };
     if (obj[key].id && obj[key].attributeId) {
@@ -356,6 +356,7 @@ export function productDataTransformation(data = []) {
     try {
         const products: any = [];
         data.forEach((items: any) => {
+            console.log(items);
             if (items.id || isDelete(items.formField)) {
                 products.push({
                     product_id: items.id,
