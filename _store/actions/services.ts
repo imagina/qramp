@@ -8,7 +8,7 @@ import {
     COMPANY_RAMP,
 } from '../../_components/model/constants.js';
 import pluginsArray from 'src/plugins/array.js';
-import { store, clone } from 'src/plugins/utils'
+import { store } from 'src/plugins/utils'
 import _ from 'lodash';
 
 /* A model for the service list. */
@@ -114,6 +114,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = productName;
+            dynamicFieldModel.helpText = product.helpText;
             dynamicFieldModel.formField = getDynamicField(product);
             data.push({ ...dynamicFieldModel });
         });
