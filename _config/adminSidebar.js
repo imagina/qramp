@@ -1,4 +1,4 @@
-import pages from 'src/setup/pages' // Get Pages from config
+const pages = config('pages') // Get Pages from config
 
 //Blog
 export default [
@@ -28,5 +28,4 @@ export default [
       pages.qramp.oagStations
     ]
   },
-
 ]

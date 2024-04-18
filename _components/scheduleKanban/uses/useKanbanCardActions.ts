@@ -2,9 +2,6 @@ import { computed, inject } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
-  STATUS_CLOSED,
-  STATUS_POSTED,
-  STATUS_SUBMITTED,
   STATUS_SCHEDULE,
 } from '../../model/constants.js';
 
@@ -16,7 +13,6 @@ import { Screen } from 'quasar'
 import devicesModel from '../models/devices.model';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
-import setEditableCard from '../actions/setEditableCard';
 import getCurrentColumn from '../actions/getCurrentColumn';
 import openInlineSchedule from '../actions/openInlineSchedule'
 import { i18n, store, alert } from 'src/plugins/utils'

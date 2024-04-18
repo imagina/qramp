@@ -199,11 +199,15 @@ export default defineComponent({
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-track {
-  @apply tw-bg-gray-100  !important;
+  @apply tw-bg-gray-100 !important;
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-thumb {
   @apply tw-bg-gray-100 !important;
+}
+
+.columnCtn .scrollbar:hover::-webkit-scrollbar-thumb {
+  @apply tw-bg-gray-300 !important;
 }
 
 .columnCtn .text-blue-gray-rb-5 {

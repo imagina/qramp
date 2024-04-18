@@ -34,6 +34,13 @@ export default {
               align: 'left',
             },
             {
+              name: 'helpText',
+              label: 'Help text',
+              field: 'helpText',
+              format: val => val ? val : '-',
+              align: 'left',
+            },
+            {
               name: 'status',
               label: this.$tr('isite.cms.form.status'),
               field: 'status',
@@ -97,6 +104,13 @@ export default {
               readonly: true,
             },
           },
+          helpText: {
+            value: "",
+            type: "input",
+            props: {
+              label: 'Help text',
+            },
+          },
           status: {
             name: 'status',
             value: '',
@@ -116,6 +130,15 @@ export default {
               color: "primary"
             },
 
+          },
+          sortOrder: {
+            value: null,
+            type: "input",
+            props: {
+              label: 'Sort order',
+              type: "number",
+              mask: "###################",
+            },
           },
           categories: {
             value: null,

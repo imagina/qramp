@@ -58,7 +58,13 @@ export default defineComponent({
               <q-avatar size="32px" font-size="18px" :icon="item.icon" color="primary" text-color="white"/>
             </q-item-section>
             <q-item-section class="q-py-sm">
-              <span class="tw-text-base tw-font-bold" style="color:#1F294F;">{{ item.title }}</span>
+              <span class="tw-text-base tw-font-bold" style="color:#1F294F;">
+                {{ item.title }}
+                <br>
+                <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
+                  {{ item.helpText }}
+                </span>
+              </span>
               <span class="tw-text-sm" style="color:#8A98C3;">{{ showValue(item.formField.quantity) }}</span>
             </q-item-section>
           </template>
@@ -84,39 +90,46 @@ export default defineComponent({
         <!-- <q-separator color="red" />-->
       </q-list>
     </div>
-    <q-list v-for="(item, index) in newData" :key="index" v-else>
-      <div class="q-py-sm row">
-        <div class="row q-py-md">
-          <div class="q-py-sm tw-items-center" style="width: 220px; display: flex;">
-            <div class="q-px-sm">
-              <q-avatar size="32px" font-size="18px" :icon="item.icon" color="primary" text-color="white"/>
-            </div>
-            <div>
-              {{ item.title }}
+    <div v-else>
+      <q-list v-for="(item, index) in newData" :key="index" >
+        <div class="q-py-sm row">
+          <div class="row q-py-md">
+            <div class="q-py-sm" style="width: 220px; display: flex;">
+              <div class="q-px-sm">
+                <q-avatar size="32px" font-size="18px" :icon="item.icon" color="primary" text-color="white"/>
+              </div>
+              <div>
+                <p>{{ item.title }} 
+                  <br>
+                  <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
+                    {{ item.helpText }}
+                  </span>
+              </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
-            <div class="flex no-wrap items-center">
-              <dynamic-field
-                  class="q-ml-sm marginzero"
-                  v-model="newData[index]['formField'][keyfield]['value']"
-                  :field="field"
-              />
-              <div
-                  class="tw--mt-4 tw-px-3 tw-font-semibold tw-hidden"
-                  v-if="field.type === 'fullDate'
-                  && field.props.typeIndexDate === 1"
-              >
-                Difference (hours): {{ 1 }}
+          <div class="row">
+            <div class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
+              <div class="flex no-wrap items-center">
+                <dynamic-field
+                    class="q-ml-sm marginzero"
+                    v-model="data[index]['formField'][keyfield]['value']"
+                    :field="field"
+                />
+                <div
+                    class="tw--mt-4 tw-px-3 tw-font-semibold tw-hidden"
+                    v-if="field.type === 'fullDate' 
+                    && field.props.typeIndexDate === 1"
+                >
+                  Difference (hours): {{ 1 }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <q-separator color="#fff"/>
-    </q-list>
+        <q-separator color="#fff"/>
+      </q-list>
+    </div>
   </div>
 </template>
 
