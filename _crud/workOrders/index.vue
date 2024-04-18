@@ -673,12 +673,10 @@ export default {
     init() {
       if (this.isRamp) {
         this.crudCustom = import('../../_components/crudCustom/ramp.vue')
-        console.log('init ramp')
       }
       
       if (!this.isRamp) {
         this.crudCustom = import('../../_components/crudCustom/passengers.vue')
-        console.log('init passenger')
       }
 
       //Reset page ID
@@ -760,20 +758,20 @@ export default {
       qRampStore().setTitleOffline(titleModal);
     },
     showWorkOrder(data) {
-    if (this.isAppOffline) {
-      this.openModal(data);
-      return;
-    }
-    this.$crud.show('apiRoutes.qramp.workOrders', data.id, {
-      refresh: true,
-      params: {
-        include: "customer,workOrderStatus,operationType,station,contract,responsible"
+      if (this.isAppOffline) {
+        this.openModal(data);
+        return;
       }
-    }).then(async (item) => {
-      this.openModal(item.data);
-    }).catch((err) => {
-      console.log(err);
-    });
+      this.$crud.show('apiRoutes.qramp.workOrders', data.id, {
+        refresh: true,
+        params: {
+          include: "customer,workOrderStatus,operationType,station,contract,responsible"
+        }
+      }).then(async (item) => {
+        this.openModal(item.data);
+      }).catch((err) => {
+        console.log(err);
+      });
     },
     async getFlightMap(workOrder) {
       try {
@@ -785,5 +783,10 @@ export default {
       }
     },
   },
+  provide() {
+    return {
+      showWorkOrder: this.showWorkOrder
+    }
+  }
 }
 </script>
