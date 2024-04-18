@@ -15,7 +15,7 @@ export default async function getWorkOrders(refresh = false, page = 1, date): Pr
         const params = {
             refresh,
             params: {
-                take: 10,
+                take: 15,
                 page,
                 filter: {
                     businessUnitId,

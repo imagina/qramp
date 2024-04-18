@@ -398,8 +398,8 @@ export default {
                 label: this.validateStatus(item.statusId) ? this.$tr('isite.cms.label.edit') : this.$tr('isite.cms.label.show'),
                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
               }),
-              action: async (item) => {
-                await this.showWorkOrder(item)
+              action: (item) => {
+                this.showWorkOrder(item)
               }
             },
             {
@@ -693,23 +693,22 @@ export default {
       })
       qRampStore().setTitleOffline(titleModal);
     },
-    async showWorkOrder(data) {
-      try {
-        if (this.isAppOffline) {
-          this.openModal(data);
-          return;
-        }
-        const response = await this.$crud.show('apiRoutes.qramp.workOrders', data.id,
-          {
-            refresh: true,
-            params: {
-              include: "customer,workOrderStatus,operationType,station,contract,responsible",
-            }
-          })
-        this.openModal(response.data)
-      } catch (error) {
-        console.log(error);
+    showWorkOrder(data) {
+      if (this.isAppOffline) {
+        this.openModal(data);
+        return;
       }
+      this.$crud.show('apiRoutes.qramp.workOrders', data.id,
+        {
+          refresh: true,
+          params: {
+            include: "customer,workOrderStatus,operationType,station,contract,responsible",
+          }
+        }).then(async (item) => {
+          this.openModal(item.data)
+        }).catch((err) => {
+          console.log(err);
+        });
     },
     async getFlightMap(workOrder) {
       try {

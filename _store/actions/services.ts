@@ -114,6 +114,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = productName;
+            dynamicFieldModel.helpText = product.helpText;
             dynamicFieldModel.formField = getDynamicField(product);
             data.push({ ...dynamicFieldModel });
         });
@@ -318,7 +319,7 @@ function setAttr(obj) {
 function validationDataAttr(obj: any, key: any) {
     let data: any = {
         name: obj[key].name,
-        value: obj[key].type == 'quantity' ? Math.abs(obj[key].value): obj[key].value,
+        value: obj[key].value,
         type: obj[key].type,
     };
     if (obj[key].id && obj[key].attributeId) {

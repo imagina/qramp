@@ -7,7 +7,7 @@ import storeFilters from "../store/filters.store";
 import scheduleTypeModel from '../models/scheduleType.model';
 import modalScheduleStore from '../store/modalSchedule.store'
 import _ from 'lodash'
- 
+
 export async function getColumns(): Promise<Columns[]> {
   try {
     const  weekAgenda = scheduleTypeModel[0].value;
@@ -45,14 +45,14 @@ export async function getCards(refresh = false): Promise<void> {
       const params = {
         field: "schedule_date",
         type: "customRange",
-        from: startDate.set({ 
-          hour: filterTime[0], 
-          minute: 0, second: 0 
+        from: startDate.set({
+          hour: filterTime[0],
+          minute: 0, second: 0
         }).format('YYYY-MM-DD HH:mm:ss'),
-        to: endDate.set({ 
-          hour: filterTime[1], 
-          minute: 59, 
-          second: 59 
+        to: endDate.set({
+          hour: filterTime[1],
+          minute: 59,
+          second: 59
         }).format('YYYY-MM-DD HH:mm:ss')
       }
 

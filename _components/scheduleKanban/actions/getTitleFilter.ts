@@ -6,7 +6,7 @@ import scheduleTypeModel from "../models/scheduleType.model";
 
 export default function getTitleFilter(): void {
     const filterTime = modelHoursFilter.find(item => store.form.time === item.value) || null;
-    const selectedDate = moment(store.selectedDate);
+    const selectedDate = moment(store.selectedDate, 'YYYY/MM/DD');
 
     if(storeKanban.scheduleType == scheduleTypeModel[0].value){
       store.titleFilter = `${selectedDate

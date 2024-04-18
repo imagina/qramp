@@ -30,12 +30,13 @@ export default async function checkUrlParams(proxy: any): Promise<void>{
 }
 
 function getSelectedDay(params: any): string {
+  const formatDate = 'YYYY/MM/DD';
   const isWeek = store.scheduleType == scheduleTypeModel[0].value
   if(isWeek){
-    const dateStart = moment(params.dateStart).format('YYYY/MM/DD');
-    const dayOfweek = moment(store.selectedDate).day();
-    return moment(dateStart).day(dayOfweek).format('YYYY/MM/DD');
+    const dateStart = moment(params.dateStart).format(formatDate);
+    const dayOfweek = moment(store.selectedDate, formatDate).day();
+    return moment(dateStart, formatDate).day(dayOfweek).format(formatDate);
     } else {
-    return moment(params.dateStart).format('YYYY/MM/DD');
+    return moment(params.dateStart).format(formatDate);
   }
 }

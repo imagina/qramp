@@ -101,7 +101,7 @@ export default function useKanbanCard(props: any = {}) {
       return;
     }
     if(isbound.inbound && !isbound.outbound) {
-        const flightNumberInbound = props.card.faFlightId.split('-')[0] || null;
+        const flightNumberInbound = props.card.faFlightId ? props.card.faFlightId.split('-')[0] : null;
         workOrder = {
           workOrderId: props.card.id, 
           faFlightId: props.card.faFlightId, 
@@ -111,7 +111,7 @@ export default function useKanbanCard(props: any = {}) {
         }                           
     }
     if(!isbound.inbound && isbound.outbound) {
-      const flightNumberoutbound = props.card.outboundFaFlightId.split('-')[0] || null;
+      const flightNumberoutbound = props.card.outboundFaFlightId ? props.card.outboundFaFlightId.split('-')[0] : null;
       workOrder = {
         workOrderId: props.card.id, 
         faFlightId: props.card.outboundFaFlightId, 
