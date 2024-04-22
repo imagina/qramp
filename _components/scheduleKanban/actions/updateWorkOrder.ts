@@ -6,13 +6,32 @@ import crud from 'src/modules/qcrud/_services/baseService'
 export default async function updateWorkOrder(id: number, attributes: any): Promise<void> {
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
+        const params = {
+            include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
+            filter: {
+                businessUnitId: { operator: '!=', value: 8 },
+                date: {
+                    field: "created_at",
+                    type: "5daysAroundToday",
+                    from: null,
+                    to: null
+                },
+                order: {
+                    field: "id",
+                    way: "desc"
+                },
+                withoutDefaultInclude: true,
+            },
+            page: 1
+        }
+        const key = `${API_ROUTE}::requestParams[${JSON.stringify(params)}]`
         const DEFAULT_DATE_FORMAT = 'MM/DD/YYYY HH:mm'
         const FORMAT_DATE = 'YYYY-MM-DDTHH:mm:ss'
         const dataUpdate = { ...attributes }
         const dataForApi = { ...attributes }
 
         if (storeKanban.isAppOffline) {
-            dataForApi.titleOffline = `${i18n.tr("ifly.cms.form.updateWorkOrder")}`;
+            dataForApi.titleOffline = i18n.tr("ifly.cms.form.updateWorkOrder");
         }
 
         if (dataUpdate.inboundFlightNumber) {
@@ -52,7 +71,7 @@ export default async function updateWorkOrder(id: number, attributes: any): Prom
         }
 
         await Promise.allSettled([
-            cacheOffline.updateRecord(API_ROUTE, dataUpdate, dataUpdate?.id),
+            cacheOffline.updateRecord(key, dataUpdate, dataUpdate?.id),
             crud.update(
                 API_ROUTE,
                 id,

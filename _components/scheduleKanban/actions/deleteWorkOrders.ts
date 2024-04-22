@@ -6,9 +6,28 @@ import crud from 'src/modules/qcrud/_services/baseService'
 export default async function deleteWorkOrders(workOrderId: number): Promise<void> {
     try {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
+        const params = {
+            include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
+            filter: {
+                businessUnitId: { operator: '!=', value: 8 },
+                date: {
+                    field: "created_at",
+                    type: "5daysAroundToday",
+                    from: null,
+                    to: null
+                },
+                order: {
+                    field: "id",
+                    way: "desc"
+                },
+                withoutDefaultInclude: true,
+            },
+            page: 1
+        }
+        const key = `${API_ROUTE}::requestParams[${JSON.stringify(params)}]`
 
         await Promise.allSettled([
-            cacheOffline.deleteItem(workOrderId, API_ROUTE),
+            cacheOffline.deleteItem(workOrderId, key),
             crud.delete(
                 API_ROUTE,
                 workOrderId,

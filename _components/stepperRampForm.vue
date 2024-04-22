@@ -192,7 +192,7 @@ export default {
         }
 
         if (this.isAppOffline) {
-          formatData.titleOffline = `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${this.data.workOrderId}`;
+          formatData.titleOffline = this.$tr("ifly.cms.form.updateWorkOrder");
         }
 
         if (this.data.update) {
@@ -273,6 +273,25 @@ export default {
     },
     async sendWorkOrder(formatData) {
       const ROUTE = 'apiRoutes.qramp.workOrders';
+      const paramsKeyCache = {
+            include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
+            filter: {
+                businessUnitId: { operator: '!=', value: 8 },
+                date: {
+                    field: "created_at",
+                    type: "5daysAroundToday",
+                    from: null,
+                    to: null
+                },
+                order: {
+                    field: "id",
+                    way: "desc"
+                },
+                withoutDefaultInclude: true,
+            },
+            page: 1
+        }
+        const key = `${ROUTE}::requestParams[${JSON.stringify(paramsKeyCache)}]`
       const titleOffline = qRampStore().getTitleOffline();
       const params = {params: {titleOffline}};
       if (this.disabledReadonly) {
@@ -284,7 +303,7 @@ export default {
       this.disabled = true;
       this.$emit('loading', true)
 
-      await this.updateDataInCache(ROUTE, formatData)
+      await this.updateDataInCache(key, formatData)
 
       const request = this.data.update
         ? this.$crud.update(ROUTE, this.data.workOrderId, formatData, params)

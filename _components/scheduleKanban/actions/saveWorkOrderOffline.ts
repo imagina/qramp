@@ -27,6 +27,28 @@ export default async function saveWorkOrderOffline(requestResponse) {
 
     const data = requestResponse?.data.length === 0 ? form : requestResponse?.data
     const CACHE_PATH = 'apiRoutes.qramp.workOrders'
-    await cacheOffline.updateList(CACHE_PATH, data)
+    const params = {
+        params: {
+            include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
+            filter: {
+                businessUnitId: { operator: '!=', value: 8 },
+                date: {
+                    field: "created_at",
+                    type: "5daysAroundToday",
+                    from: null,
+                    to: null
+                },
+                order: {
+                field: "id",
+                way: "desc"
+                },
+                withoutDefaultInclude: true,
+            },
+            page: 1
+        },
+    }
+
+    const key = `${CACHE_PATH}::requestParams[${JSON.stringify(params.params)}]`
+    await cacheOffline.updateList(key, data)
     return data
 }
