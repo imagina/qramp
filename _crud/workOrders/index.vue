@@ -1,8 +1,8 @@
 <template>
   <div id="crudPage" :key="pageId">
     <!---Component CRUD-->
-    <form-orders ref="formOrders" @refresh-data="getDataTable(true)" />
-    <commentsModal ref="commentsModal" :commentableId="commentableId" isCrud />
+    <form-orders  v-if="!crudLoading" ref="formOrders" @refresh-data="getDataTable(true)" />
+    <commentsModal  v-if="!crudLoading" ref="commentsModal" :commentableId="commentableId" isCrud />
     <crud
       v-if="!crudLoading"
       :crud-data="crudCustom"
@@ -32,7 +32,6 @@ import commentsModal from '../../_components/schedule/modals/commentsModal.vue';
 import htmlComment from '../../_components//model/htmlComment.js';
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import { cacheOffline } from 'src/plugins/utils';
-import { marRaw } from 'vue';
 
 export default {
   props: {},
@@ -152,6 +151,7 @@ export default {
               label: 'Comments',
               field: 'comments',
               align: 'left',
+              tooltip: false,
               format: item => !this.$store.state.qofflineMaster.isAppOffline && item && item > 0 ? htmlComment(item) : '',
               formatColumn: row => ({
                 textColor: row.comments ? `red-5` : ''
