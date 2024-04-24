@@ -27,12 +27,16 @@ export default {
       component: () => import('../_components/quick-cards/percentage.vue')
     }
   ],
-  offline: async (refresh=false) => {
-    const module = await import('../_store/actions/workOrderList.ts')
+  uploadWorkOrderLists: async (refresh=false) => {
+    const workOrderList = await import('../_store/actions/workOrderList.ts')
+    await Promise.all([
+      workOrderList.default().getAllList(refresh),
+    ]);
+  },
+  refreshWorkOrders: async (refresh=false) => {
     const buildKanbanStructure = await import('../_components/scheduleKanban/actions/buildKanbanStructure.ts')
     await Promise.all([
-      module.default().getAllList(refresh),
       buildKanbanStructure?.default(refresh),
     ]);
-  }
+  },
 }
