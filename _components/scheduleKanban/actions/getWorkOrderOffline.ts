@@ -10,7 +10,11 @@ export default async function getWorkOrderOffline(date, page): Promise<WorkOrder
         const workOrdersFiltered = await getFilteredWorkOrdersOffline(date)
         storeKanban.statusIdList = workOrdersFiltered.map(workOrder => workOrder.statusId);
 
-        const cardsChunk = await paginateCacheOffline({ data: workOrdersFiltered }, null, page)
+        const cardsChunk = await paginateCacheOffline(
+            { data: workOrdersFiltered }, 
+            null, 
+            page,
+        )
         const data = _.orderBy(
           cardsChunk.data,
           ['scheduleDate'],

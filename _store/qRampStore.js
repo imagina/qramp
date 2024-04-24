@@ -472,25 +472,8 @@ export default function qRampStore() {
         try {
             const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
             const CACHE_PATH = 'apiRoutes.qramp.workOrders'
-            const params = {
-                include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
-                filter: {
-                    businessUnitId: { operator: '!=', value: 8 },
-                    date: {
-                        field: "created_at",
-                        type: "5daysAroundToday",
-                        from: null,
-                        to: null
-                    },
-                    order: {
-                        field: "id",
-                        way: "desc"
-                    },
-                    withoutDefaultInclude: true,
-                },
-                page: 1
-            }
-            const key = `${CACHE_PATH}::requestParams[${JSON.stringify(params)}]`
+            const PAGE = 1
+            const key = `${CACHE_PATH}?page=${PAGE}`
             const payload = {
                 id: workOrderId,
                 statusId
@@ -500,7 +483,7 @@ export default function qRampStore() {
                 payload.titleOffline = i18n.tr("ifly.cms.form.updateWorkOrder");
             }
 
-            await cacheOffline.updateRecord(key, payload, payload ?.id);
+            await cacheOffline.updateRecord(key, payload, payload?.id);
             await baseService.update(API_ROUTE, workOrderId, payload);
         } catch (error) {
             console.log('Error changeStatus Schedule', error);

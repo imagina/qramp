@@ -273,25 +273,8 @@ export default {
     },
     async sendWorkOrder(formatData) {
       const ROUTE = 'apiRoutes.qramp.workOrders';
-      const paramsKeyCache = {
-            include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
-            filter: {
-                businessUnitId: { operator: '!=', value: 8 },
-                date: {
-                    field: "created_at",
-                    type: "5daysAroundToday",
-                    from: null,
-                    to: null
-                },
-                order: {
-                    field: "id",
-                    way: "desc"
-                },
-                withoutDefaultInclude: true,
-            },
-            page: 1
-        }
-        const key = `${ROUTE}::requestParams[${JSON.stringify(paramsKeyCache)}]`
+      const PAGE = 1
+      const key = `${ROUTE}?page=${PAGE}`
       const titleOffline = qRampStore().getTitleOffline();
       const params = {params: {titleOffline}};
       if (this.disabledReadonly) {
