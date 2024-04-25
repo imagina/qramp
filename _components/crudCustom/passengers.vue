@@ -24,7 +24,7 @@ export default {
   async created() {
     this.$nextTick(async () => {
       await qRampStore().setIsPassenger(true);
-      const previousPath = this.$route.meta.previousPath.split('/')[1];
+      const previousPath = this.$route.meta?.previousPath?.split('/')[1];
       if (!this.$route.path.startsWith(`/${previousPath}`)) {
           await workOrderList().getAllList();
       }
