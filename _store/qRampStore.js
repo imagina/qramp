@@ -181,7 +181,8 @@ export default function qRampStore() {
     }
 
     function validateFutureDateTime(dateTime, dateMin = null, currentDate) {
-        const current = moment(currentDate).format('YYYY/MM/DD');
+        const DATE_FORMAT = 'MM/DD/YYYY HH:mm';
+        const current = moment(currentDate, DATE_FORMAT).format('YYYY/MM/DD');
         const date = moment();
         const today = date.format('YYYY/MM/DD');
         const hour = date.format('H');
