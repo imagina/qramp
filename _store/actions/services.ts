@@ -58,32 +58,24 @@ export async function buildServiceList(): Promise<any[]> {
     try {
         const categories = await getCategories();
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
-        const build = categoryList.map((item) => {
+        const buildService = (item: any): any => {
             let dynamicField: any = {
                 dynamicField: getIfItIsTypeListOrDynamicField(item.products),
             };
             dynamicField = dynamicField.dynamicField.length === 0 ? {} : dynamicField;
-            let lists = {};
-            if(item.children && item.children.length > 0) {
-                lists = item.children.map(item => {
-                    let dynamicFieldChildren: any = {
-                        dynamicField: getIfItIsTypeListOrDynamicField(item.products),
-                    };
-                    return {
-                        id: item.id,
-                        title: item.name,
-                        ...dynamicFieldChildren
-                    };
-                })
-                lists = { lists }
+            let children = [];
+            if (item.children && item.children.length > 0) {
+                children = item.children.map(child => buildService(child));
             }
             return {
                 id: item.id,
                 title: item.name,
                 ...dynamicField,
-                ...lists,
+                lists: children
             };
-        });
+        };
+
+        const build = categoryList.map(buildService);
         return build;
     } catch (error) {
         console.log(error);

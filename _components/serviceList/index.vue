@@ -62,13 +62,12 @@ export default defineComponent({
         </template>
       </q-input>
       <q-list
-          v-if="showServiceList"
           bordered
           separator
           class="tw-shadow-lg tw-rounded-lg"
       >
         <q-item
-            v-for="service in filterService"
+            v-for="service in filterService.lists"
             :key="service.id"
             clickable
             v-ripple
@@ -90,15 +89,15 @@ export default defineComponent({
           v-if="!loading &&
           selectService.dynamicField &&
           selectService.dynamicField.length > 0"
-          :selectService="selectService"
-          :data="filterService"
+          :data="filterService.dynamicField"
       />
       <component
           v-if="selectService.component"
           :is="selectService.component"
       />
       <div
-          v-if="showNoData"
+          v-if="filterService.lists.length === 0
+          && filterService.dynamicField.length === 0"
           class="tw-text-center tw-text-gray-600 tw-text-xl"
       >
         <i class="fa-light fa-triangle-exclamation"></i>

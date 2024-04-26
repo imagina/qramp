@@ -33,13 +33,6 @@ export default function useServiceList(props = {}, emit = null) {
     const search = ref<string>("");
     const selectService = shallowRef<ServiceModelContract>({});
     const breadcrumbs = ref<ServiceModelContract[]>([]);
-    const showServiceList = computed(
-        (): boolean =>
-            !loading.value &&
-            !selectService.value.component &&
-            !selectService.value.dynamicField &&
-            filterService.value && filterService.value.length > 0
-    );
     const showNoData = computed(
         (): boolean =>
             !loading.value &&
@@ -54,14 +47,31 @@ export default function useServiceList(props = {}, emit = null) {
                 (item) => item.id === selectService.value.id
             );
             if (service) {
-                return service.lists;
+                return { dynamicField: [], lists: service.lists || [] };
             }
-            return serviceListModel.value;
+            return { dynamicField: [], lists: serviceListModel.value };
         }
-        if (selectService.value.lists && selectService.value.lists.length > 0) {
-            return selectService.value.lists;
+
+        if (selectService.value.lists &&
+            selectService.value.lists.length > 0 &&
+            selectService.value.dynamicField &&
+            selectService.value.dynamicField.length > 0) {
+            return { dynamicField: selectService.value.dynamicField, lists: selectService.value.lists };
         }
-        return selectService.value.dynamicField || [];
+        if (selectService.value.lists &&
+            selectService.value.lists.length > 0 &&
+            !selectService.value.dynamicField) {
+            return { dynamicField: [], lists: selectService.value.lists };
+        }
+        if (selectService.value.lists &&
+            selectService.value.lists.length === 0 &&
+            selectService.value.dynamicField &&
+            selectService.value.dynamicField.length > 0) {
+            return { dynamicField: selectService.value.dynamicField, lists: [] };
+        }
+
+        // Si no hay ni listas ni campos dinámicos, devuelve un objeto con ambos campos como arrays vacíos
+        return { dynamicField: [], lists: [] };
     });
     /**
      * If the service is null, then set the selectService.value to an empty object, and set the
@@ -83,8 +93,7 @@ export default function useServiceList(props = {}, emit = null) {
             breadcrumbs.value = [];
             return;
         }
-
-        selectService.value = cloneDeep(service)
+        selectService.value = service;
         if (index !== null) {
             breadcrumbs.value = breadcrumbs.value.filter(
                 (breadcrumb, indexBr) => indexBr <= index
@@ -95,12 +104,24 @@ export default function useServiceList(props = {}, emit = null) {
     };
     /* Filtering the list of services. */
     const filterService = computed<ServiceModelContract | any>(() => {
+        const filteredServices = services.value;
+
         if (search.value !== "") {
-            return services.value.filter((item) =>
-                item.title.toLowerCase().includes(search.value.toLowerCase())
+            const filteredLists = filteredServices.lists.filter((listItem) =>
+                listItem.title.toLowerCase().includes(search.value.toLowerCase())
             );
+
+            const filteredDynamicFields = filteredServices.dynamicField.filter((dynamicItem) =>
+                dynamicItem.title.toLowerCase().includes(search.value.toLowerCase())
+            );
+
+            return {
+                dynamicField: filteredDynamicFields,
+                lists: filteredLists
+            };
         }
-        return services.value;
+
+        return filteredServices;
     });
     return {
         serviceListModel,
@@ -111,7 +132,6 @@ export default function useServiceList(props = {}, emit = null) {
         filterService,
         search,
         loading,
-        showServiceList,
         showNoData,
         trans,
     };
