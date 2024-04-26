@@ -92,7 +92,7 @@ export default {
     authenticated: true,
     path: '/passenger/work-orders/index',
     name: 'qramp.admin.passenger',
-    page: import('../_crud/workOrders/index.vue'),
+    page: () => import('../_crud/workOrders/index.vue'),
     layout: () => import('layouts/master.vue'),
     title: 'ifly.cms.sidebar.workOrders',
     icon: 'fa-light fa-briefcase',
