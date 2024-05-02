@@ -37,5 +37,11 @@ export default {
   schedulers: `${urlBase}/schedulers`,
   reloadTransactions: `${urlBase}/work-orders/reload-transactions`,
   passengerContractRules: `${urlBase}/passenger-contract-rules`,
-  passengerContractRulesUpsert: `${urlBase}/passenger-contract-rules/upsert`
+  passengerContractRulesUpsert: `${urlBase}/passenger-contract-rules/upsert`,
+  bulkPost: `${urlBase}/work-orders/bulk-post`,
+  bulkSubmit: `${urlBase}/work-orders/bulk-submit`,
+  bulkExportPdf: `${urlBase}/work-orders/bulk-export-pdf`,
+  bulkExportCsv: `${urlBase}/work-orders/bulk-export-csv`,
+  passengerBulkExportCsv: `${urlBase}/work-orders/passenger-bulk-export-csv`,
+  bulkReloadTransactions: `${urlBase}/work-orders/bulk-reload-transactions`
 }

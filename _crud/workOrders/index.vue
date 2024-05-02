@@ -509,7 +509,7 @@ export default {
             },
             {
               name: 'Reload Transactions',
-              icon: 'fa-light fa-download',
+              icon: 'fa-solid fa-rotate-right',
               label: 'Reload Transactions',
               action: (item) => {
                 this.postReloadTransactions(item.id);
@@ -521,7 +521,7 @@ export default {
           ],
           bulkActions: [
             {
-              apiRoute: '/ramp/v1/work-orders/bulk-post',
+              apiRoute: 'apiRoutes.qramp.bulkPost',
               permission: 'ramp.work-orders.bulk-post',
               criteria: 'id',
               props: {
@@ -530,7 +530,7 @@ export default {
               }
             },
             {
-              apiRoute: '/ramp/v1/work-orders/bulk-submit',
+              apiRoute: 'apiRoutes.qramp.bulkSubmit',
               permission: 'ramp.work-orders.bulk-submit',
               criteria: 'id',
               props: {
@@ -539,16 +539,16 @@ export default {
               }
             },
             {
-              apiRoute: '/ramp/v1/work-orders/bulk-export-pdf',
+              apiRoute: 'apiRoutes.qramp.bulkExportPdf',
               permission: 'ramp.work-orders.bulk-export-pdf',
               criteria: 'id',
               props: {
-                icon: 'fas fa-download',
+                icon: 'fa-solid fa-print',
                 label: 'Print Bulk(PDF)'
               }
             },
             {
-              apiRoute: '/ramp/v1/work-orders/bulk-export-csv',
+              apiRoute: `apiRoutes.qramp.${this.isRamp ? 'bulkExportCsv' : 'passengerBulkExportCsv'}`,
               permission: 'ramp.work-orders.bulk-export-csv',
               criteria: 'id',
               props: {
@@ -557,11 +557,11 @@ export default {
               }
             },
             {
-              apiRoute: '/ramp/v1/work-orders/bulk-reload-transactions',
+              apiRoute: 'apiRoutes.qramp.bulkReloadTransactions',
               permission: 'ramp.work-orders.bulk-reload-transactions',
               criteria: 'id',
               props: {
-                icon: 'fas fa-download',
+                icon: 'fa-solid fa-rotate-right',
                 label: 'Reload Transactions'
               }
             }
@@ -674,8 +674,8 @@ export default {
     init() {
       this.crudLoading = true;
       this.crudCustom = this.isRamp ?
-        import('../../_components/crudCustom/ramp.vue') :
-        import('../../_components/crudCustom/passengers.vue');
+        import('modules/qramp/_components/crudCustom/ramp.vue') :
+        import('modules/qramp/_components/crudCustom/passengers.vue');
 
       //Reset page ID
       this.pageId = this.$uid();
