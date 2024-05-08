@@ -306,14 +306,14 @@ export default {
           ],
           filters: {
             date: {
+              value: null,
+              type: 'dateRange',
               props: {
-                label: this.isRamp ? 'Block-in/out Date' : 'Scheduled date'
+                label: this.isRamp ? 'Block-in/out Date' : 'Scheduled date',
+                mask: 'YYYY-MM-DD - YYYY-MM-DD',
+
+                field: this.isRamp ? 'blockInBlockOut' : 'schedule_date'
               },
-              name: this.isRamp ? 'blockInBlockOut' : 'scheduledDate',
-              field: {
-                value: this.isRamp ? 'blockInBlockOut' : 'schedule_date'
-              },
-              quickFilter: true
             },
             customerId: {
               value: null,
@@ -414,7 +414,17 @@ export default {
               props: {
                 label: 'Areas',
                 'clearable': true
-              }
+              },
+              date: {
+                value: null,
+                type: 'dateRange',
+                props: {
+                  label: this.isRamp ? 'Block-in/out Date' : 'Scheduled date',
+                  mask: 'YYYY-MM-DD - YYYY-MM-DD',
+
+                  field: this.isRamp ? 'blockInBlockOut' : 'schedule_date'
+                },
+              },
             },
             businessUnitId: {
               value: this.isRamp ? BUSINESS_UNIT_RAMP : BUSINESS_UNIT_PASSENGER
