@@ -310,7 +310,7 @@ export default {
               type: 'dateRange',
               props: {
                 label: this.isRamp ? 'Block-in/out Date' : 'Scheduled date',
-                mask: 'YYYY-MM-DD - YYYY-MM-DD',
+                mask: 'YYYY-MM-DD',
 
                 field: this.isRamp ? 'blockInBlockOut' : 'schedule_date'
               },
@@ -420,7 +420,7 @@ export default {
                 type: 'dateRange',
                 props: {
                   label: this.isRamp ? 'Block-in/out Date' : 'Scheduled date',
-                  mask: 'YYYY-MM-DD - YYYY-MM-DD',
+                  mask: 'YYYY-MM-DD',
 
                   field: this.isRamp ? 'blockInBlockOut' : 'schedule_date'
                 },
