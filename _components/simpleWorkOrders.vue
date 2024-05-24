@@ -208,6 +208,11 @@ export default {
               this.search({type: 'search'});
               return;
           }
+
+          if (!this.form.faFlightId && this.isAppOffline) {
+            const message = this.$tr("ifly.cms.label.flightMessage").replace("#file_number", this.form.preFlightNumber)
+            this.messageWhenFlightIsNotChosen(message)
+          }
         } else {
           this.$alert.error({
             message: this.$tr("isite.cms.message.formInvalid"),
@@ -333,7 +338,7 @@ export default {
             dataForm,
           )
         } catch (err) {
-          console.log(err)
+          console.error(err)
         }
 
         const offlineWorkOrder = {
@@ -343,6 +348,7 @@ export default {
           customerId: Number(this.form.customerId),
           inboundFlightNumber: this.form.preFlightNumber,
           outboundFlightNumber: this.form.preFlightNumber,
+          offlineId: this.isAppOffline ? offlineId : null,
           offline: this.isAppOffline,
           id: this.isAppOffline ? offlineId : await response?.data?.id
         };

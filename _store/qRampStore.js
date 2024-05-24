@@ -479,11 +479,10 @@ export default function qRampStore() {
             }
 
             if (storeKanban.isAppOffline) {
-                payload.titleOffline = `${i18n.tr("ifly.cms.form.updateWorkOrder")} Id: ${workOrderId}`;
+                payload.titleOffline = i18n.tr("ifly.cms.form.updateWorkOrder");
             }
 
-            await cacheOffline.updateRecord(CACHE_PATH, payload, payload ?.id
-        ),
+            await cacheOffline.updateRecord(CACHE_PATH, payload, payload?.id),
             await baseService.update(API_ROUTE, workOrderId, payload);
         } catch (error) {
             console.log('Error changeStatus Schedule', error);

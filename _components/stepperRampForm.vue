@@ -192,7 +192,7 @@ export default {
         }
 
         if (this.isAppOffline) {
-          formatData.titleOffline = `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${this.data.workOrderId}`;
+          formatData.titleOffline = this.$tr("ifly.cms.form.updateWorkOrder");
         }
 
         if (this.data.update) {

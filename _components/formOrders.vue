@@ -196,7 +196,6 @@ export default {
             await this.$crud.delete('apiRoutes.qramp.workOrders', this.modalProps.workOrderId)
             await this.getWorkOrders();
             this.clear()
-            //[ptc]
             this.$emit('refresh-data')
             await qRampStore().hideLoading();
           }
