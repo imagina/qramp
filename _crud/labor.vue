@@ -2,11 +2,7 @@
   <div>
     <form-orders ref="formOrders" />
     <flightDetail />
-    <commentsModal
-      ref="commentsModal"
-      :commentableId="commentableId"
-      isCrud
-    />
+    <commentsModal ref="commentsModal" :commentableId="commentableId" isCrud />
     <inner-loading :visible="loadingBulk" />
   </div>
 </template>
@@ -16,7 +12,7 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_CLOSED,
-  STATUS_DRAFT, 
+  STATUS_DRAFT,
   STATUS_SCHEDULE,
   BUSINESS_UNIT_PASSENGER,
   COMPANY_PASSENGER,
@@ -27,7 +23,7 @@ import flightDetail from '../_components/modal/flightDetail.vue';
 import commentsModal from '../_components/schedule/modals/commentsModal.vue'
 import htmlComment from '../_components/model/htmlComment.js';
 import workOrderList from '../_store/actions/workOrderList.ts';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 
 export default {
   name: 'RampCrud',
@@ -55,7 +51,7 @@ export default {
       deep: true,
       handler: function (newValue, oldValue) {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
-        this.areaId = this.$filter.values.areaId;
+          this.areaId = this.$filter.values.areaId;
       }
     },
     'isAppOffline': {
@@ -100,7 +96,7 @@ export default {
         || statusId == STATUS_POSTED
         || statusId == STATUS_SCHEDULE
         || (statusId == STATUS_SUBMITTED
-        && this.editPermissionseSubmitted)
+          && this.editPermissionseSubmitted)
     },
     crudData() {
       return {
@@ -166,7 +162,7 @@ export default {
               }),
               action: (item) => {
                 this.commentableId = item.id || null;
-                if(this.$refs.commentsModal) {
+                if (this.$refs.commentsModal) {
                   this.$refs.commentsModal.showModal();
                 }
               },
@@ -192,19 +188,19 @@ export default {
             {
               name: "inboundFlightNumber",
               label: 'Inbound Flight Number',
-              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
+              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
               align: "left",
               format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
               action: (item) => {
-                   const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
-                   const workOrder = {
-                        workOrderId: item.id, 
-                        faFlightId: item.faFlightId, 
-                        flightNumber: flightNumberInbound || item.inboundFlightNumber,
-                        boundScheduleDate: item.inboundScheduleArrival || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
-                        type: 'inbound',
-                    }
-                  this.getFlightMap(workOrder)
+                const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
+                const workOrder = {
+                  workOrderId: item.id,
+                  faFlightId: item.faFlightId,
+                  flightNumber: flightNumberInbound || item.inboundFlightNumber,
+                  boundScheduleDate: item.inboundScheduleArrival || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+                  type: 'inbound',
+                }
+                this.getFlightMap(workOrder)
               }
             },
             {
@@ -218,17 +214,17 @@ export default {
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
-              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
+              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
               align: "left",
               format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
               action: (item) => {
-                  const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
-                  const workOrder = {
-                    workOrderId: item.id, 
-                    faFlightId: item.outboundFaFlightId, 
-                    flightNumber: flightNumberoutbound || item.outboundFlightNumber,
-                    boundScheduleDate: item.outboundScheduledDeparture || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
-                    type: 'outbound',
+                const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
+                const workOrder = {
+                  workOrderId: item.id,
+                  faFlightId: item.outboundFaFlightId,
+                  flightNumber: flightNumberoutbound || item.outboundFlightNumber,
+                  boundScheduleDate: item.outboundScheduledDeparture || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+                  type: 'outbound',
                 }
                 this.getFlightMap(workOrder)
               }
@@ -304,11 +300,11 @@ export default {
           ],
           filters: {
             date: {
-              props:{
+              props: {
                 label: "Scheduled date"
               },
               name: "scheduleDate",
-              field: {value: 'schedule_date'},
+              field: { value: 'schedule_date' },
               quickFilter: true
             },
             customerId: {
@@ -334,9 +330,9 @@ export default {
               type: 'select',
               quickFilter: true,
               loadOptions: {
-                  apiRoute: 'apiRoutes.qramp.setupContracts',
-                  select: {'label': 'contractName', 'id': 'id'},
-                  requestParams: {
+                apiRoute: 'apiRoutes.qramp.setupContracts',
+                select: { 'label': 'contractName', 'id': 'id' },
+                requestParams: {
                   filter: {
                     contractStatusId: 1,
                     businessUnitId: BUSINESS_UNIT_PASSENGER
@@ -344,8 +340,8 @@ export default {
                 },
               },
               props: {
-                  label: 'Contract',
-                  'clearable': true,
+                label: 'Contract',
+                'clearable': true,
               },
             },
             statusId: {
@@ -390,10 +386,10 @@ export default {
               props: {
                 label: 'Ad Hoc',
                 clearable: true,
-                options:[
-                {label: this.$tr('isite.cms.label.yes'), value: true,},
-                {label: this.$tr('isite.cms.label.no'), value: false,},
-              ],
+                options: [
+                  { label: this.$tr('isite.cms.label.yes'), value: true, },
+                  { label: this.$tr('isite.cms.label.no'), value: false, },
+                ],
               },
             },
             businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
@@ -425,7 +421,7 @@ export default {
               label: this.$tr('isite.cms.label.closeFlight'),
               format: item => ({
                 //must have the submit permission and the work order can't be submited or posted
-                vIf: ![STATUS_POSTED, STATUS_SUBMITTED,STATUS_CLOSED].includes(item.statusId)
+                vIf: ![STATUS_POSTED, STATUS_SUBMITTED, STATUS_CLOSED].includes(item.statusId)
               }),
               action: (item) => {
                 this.changeStatus(STATUS_CLOSED, item.id)
@@ -452,7 +448,7 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted  && ![STATUS_POSTED].includes(item.statusId),
+                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted && ![STATUS_POSTED].includes(item.statusId),
                   label: this.$tr('isite.cms.label.post')
 
                 }),
@@ -476,8 +472,8 @@ export default {
               label: 'Comments',
               action: (item) => {
                 this.commentableId = item.id || null;
-                if(this.$refs.commentsModal) {
-                    this.$refs.commentsModal.showModal();
+                if (this.$refs.commentsModal) {
+                  this.$refs.commentsModal.showModal();
                 }
               },
               format: item => (
@@ -493,7 +489,7 @@ export default {
                 this.postReloadTransactions(item.id);
               },
               format: item => ({
-                  vIf: this.$auth.hasAccess('ramp.labor-work-orders.reload-transactions') && !this.isAppOffline
+                vIf: this.$auth.hasAccess('ramp.labor-work-orders.reload-transactions') && !this.isAppOffline
               }),
             },
           ],
@@ -592,9 +588,9 @@ export default {
               {
                 label: 'Total',
                 field: val => {
-                    const quantity = val.quantity || 0;
-                    const rate = val.contractLine?.rate || 0;
-                    return quantity * rate;
+                  const quantity = val.quantity || 0;
+                  const rate = val.contractLine?.rate || 0;
+                  return quantity * rate;
                 }
               },
               {
@@ -665,10 +661,10 @@ export default {
         id: itemId,
         statusId: status
       }
-      let customParams = { 
-        params: { 
-          titleOffline: this.getOfflineTitleStatus(status, itemId) || '' 
-        } 
+      let customParams = {
+        params: {
+          titleOffline: this.getOfflineTitleStatus(status, itemId) || ''
+        }
       }
 
       this.$emit('loading', true)
@@ -678,7 +674,7 @@ export default {
 
       const request = this.$crud.update(
         API_ROUTE,
-        itemId, 
+        itemId,
         payload,
         customParams
       )
@@ -686,8 +682,8 @@ export default {
         .catch(err => {
           this.$emit('loading', false)
           if (!this.isAppOffline) {
-            this.$alert.error({ 
-              message: `${this.$tr('isite.cms.message.recordNoUpdated')}` 
+            this.$alert.error({
+              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
             })
           }
         })

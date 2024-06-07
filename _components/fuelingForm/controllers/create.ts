@@ -2,16 +2,17 @@ import Vue, { computed, ref, getCurrentInstance } from 'vue'
 import { BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, FUELING, STATUS_DRAFT } from '../../model/constants';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from '../../../_store/qRampStore';
-import alert from '@imagina/qsite/_plugins/alert.js';
-import store from '../store/index'
+import storeFlueling from '../store/index'
 import showWorkOrder from '../services/showWorkOrder'
+import { alert, store, i18n } from 'src/plugins/utils';
+import baseService from "src/modules/qcrud/_services/baseService.js";
 
 export default function createController() {
   const formFueling: any = ref(null);
   const refCustomer: any = ref(null);
   const proxy = (getCurrentInstance() as any).proxy as any;
   const manageResponsiblePermissions = computed(() => {
-    return Vue.prototype.$auth.hasAccess('ramp.work-orders.manage-responsible');
+    return store.hasAccess('ramp.work-orders.manage-responsible');
   })
   const form = ref({
     customerId: null,
@@ -25,10 +26,10 @@ export default function createController() {
         type: "select",
         props: {
           rules: [
-            (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
+            (val) => !!val || i18n.$tr("isite.cms.message.fieldRequired"),
           ],
           selectByDefault: true,
-          label: `*${Vue.prototype.$tr("ifly.cms.form.station")}`,
+          label: `*${i18n.$tr("ifly.cms.form.station")}`,
           clearable: true,
           color: "primary",
           options: workOrderList()
@@ -65,7 +66,7 @@ export default function createController() {
   }))
   async function save() {
     try {
-      store.loading = true;
+      storeFlueling.loading = true;
       const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
       const businessUnitId = { businessUnitId: BUSINESS_UNIT_PASSENGER };
       const dataForm = {
@@ -75,12 +76,12 @@ export default function createController() {
         type: FUELING
       };
       try {
-        const response = await Vue.prototype.$crud.create(
+        const response = await baseService.create(
           API_ROUTE,
           dataForm,
         )
         orderConfirmationMessage(response.data);
-        store.loading = false;
+        storeFlueling.loading = false;
       } catch (err) {
         console.log(err)
       }
@@ -95,7 +96,7 @@ export default function createController() {
       contractId: null,
       statusId: STATUS_DRAFT
     };
-    store.showModal = false;
+    storeFlueling.showModal = false;
   }
   function orderConfirmationMessage(data) {
     alert.info({
@@ -125,7 +126,7 @@ export default function createController() {
           label: 'Create a new one',
           color: 'positive',
           handler: () => {
-            store.loading = true;
+            storeFlueling.loading = true;
             refCustomer.value.reset();
             form.value = {
               customerId: null,
@@ -133,7 +134,7 @@ export default function createController() {
               statusId: STATUS_DRAFT
             };
             formFueling.value.reset();
-            store.loading = false;
+            storeFlueling.loading = false;
           }
         },
       ],

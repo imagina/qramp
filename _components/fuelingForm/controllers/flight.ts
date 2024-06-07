@@ -2,11 +2,12 @@ import Vue, { computed, ref, onMounted } from 'vue'
 import qRampStore from '../../../_store/qRampStore';
 import workOrderList from '../../../_store/actions/workOrderList';
 import momentTimezone from 'moment-timezone';
-import store from '../store/index'
+import storeFueling from '../store/index'
+import { store, i18n } from 'src/plugins/utils';
 
 export default function flightController() {
   const refFlight: any = ref(null);
-  const form: any = computed(() => store.form);
+  const form: any = computed(() => storeFueling.form);
   const disabledReadonly = computed(() => {
     return qRampStore().disabledReadonly();
   })
@@ -17,7 +18,7 @@ export default function flightController() {
     return airport ? momentTimezone.tz(airport.timezone).format("z") : '';
   });
   const readStatus = computed(() => {
-    return !Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-status') || disabledReadonly.value
+    return !store.hasAccess('ramp.work-orders.edit-status') || disabledReadonly.value
   })
   const formFields = computed(() => {
     return {
@@ -28,11 +29,11 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             selectByDefault: true,
             readonly: disabledReadonly.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.station')}`,
+            label: `*${i18n.tr('ifly.cms.form.station')}`,
             clearable: true,
             color: "primary",
             options: workOrderList()
@@ -51,10 +52,10 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             readonly: disabledReadonly.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.acType')}`,
+            label: `*${i18n.tr('ifly.cms.form.acType')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -67,14 +68,14 @@ export default function flightController() {
                 })
               )
           },
-          label: Vue.prototype.$tr('ifly.cms.form.acType'),
+          label: i18n.tr('ifly.cms.form.acType'),
         },
         scheduleDate: {
           value: null,
           type: 'fullDate',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             hint:'Format: MM/DD/YYYY HH:mm',
             mask:'MM/DD/YYYY HH:mm',
@@ -93,10 +94,10 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             readonly: disabledReadonly.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.carrier')}`,
+            label: `*${i18n.tr('ifly.cms.form.carrier')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -109,7 +110,7 @@ export default function flightController() {
                 })
               )
           },
-          label: Vue.prototype.$tr('ifly.cms.form.carrier'),
+          label: i18n.tr('ifly.cms.form.carrier'),
         },
         statusId: {
           name: 'statusId',
@@ -117,10 +118,10 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             readonly: readStatus.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.status')}`,
+            label: `*${i18n.tr('ifly.cms.form.status')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -133,7 +134,7 @@ export default function flightController() {
               )
 
           },
-          label: Vue.prototype.$tr('ifly.cms.form.status'),
+          label: i18n.tr('ifly.cms.form.status'),
         },
         fuelingTicketNumber: {
           value: null,
@@ -141,11 +142,11 @@ export default function flightController() {
           props: {
             readonly: disabledReadonly.value,
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             label: '*Fueling ticket number',
           },
-          label: Vue.prototype.$tr('ifly.cms.form.operation'),
+          label: i18n.tr('ifly.cms.form.operation'),
         },
         fuelingRegistration: {
           value: null,
@@ -159,7 +160,7 @@ export default function flightController() {
     }
   })
   onMounted(() => {
-    store.refsGlobal = { refFlight: refFlight.value };
+    storeFueling.refsGlobal = { refFlight: refFlight.value };
   })
   return { formFields, form, refFlight, disabledReadonly }
 }
