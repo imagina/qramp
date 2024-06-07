@@ -10,6 +10,7 @@ import {
 } from '../../_components/model/constants.js';
 import pluginsArray from '@imagina/qsite/_plugins/array.js';
 import _ from 'lodash';
+import serviceListStore from '../../_components/serviceList/store/serviceList'
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -26,12 +27,14 @@ export const getCategories = async (): Promise<any[]> => {
         try {
             const isPassenger = qRampStore().getIsPassenger();
             const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP; 
+            
             let requestParams = {
                 params: {
                     include:
                         "products,products.attributes,products,products.attributes.values",
                     filter: {
                         companyId,
+                        //types
                     }    
                 },
             };
@@ -58,32 +61,28 @@ export async function buildServiceList(): Promise<any[]> {
     try {
         const categories = await getCategories();
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
-        const build = categoryList.map((item) => {
+        
+        const buildService = (item: any): any => {
             let dynamicField: any = {
                 dynamicField: getIfItIsTypeListOrDynamicField(item.products),
             };
             dynamicField = dynamicField.dynamicField.length === 0 ? {} : dynamicField;
-            let lists = {};
-            if(item.children && item.children.length > 0) {
-                lists = item.children.map(item => {
-                    let dynamicFieldChildren: any = {
-                        dynamicField: getIfItIsTypeListOrDynamicField(item.products),
-                    };
-                    return {
-                        id: item.id,
-                        title: item.name,
-                        ...dynamicFieldChildren
-                    };
-                })
-                lists = { lists }
+            let children = [];
+            if (item.children && item.children.length > 0) {
+                children = item.children.map(child => buildService(child));
             }
             return {
                 id: item.id,
                 title: item.name,
                 ...dynamicField,
-                ...lists,
+                lists: children
             };
-        });
+        };
+
+        const build = categoryList.filter(item => {
+            const types = item.types || [];
+            return types.includes(String(qRampStore().getTypeWorkOrder()));
+        }).map(buildService);
         return build;
     } catch (error) {
         console.log(error);
@@ -103,6 +102,7 @@ export async function buildServiceList(): Promise<any[]> {
  */
 export const getIfItIsTypeListOrDynamicField = (product) => {
     try {
+        
         const products = product || [];
         const data: any = [];
         const dynamicFieldModel: any = {
@@ -110,12 +110,15 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         };
         const organizeProduct = organizeProducts(product);
         organizeProduct?.forEach((product) => {
+            const favourite = serviceListStore().getFavouriteList().find(item => item.id == product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
             dynamicFieldModel.formField = getDynamicField(product);
+            dynamicFieldModel.favourite = favourite ? true : false;
+            dynamicFieldModel.productType = product.type;
             data.push({ ...dynamicFieldModel });
         });
         return data;
@@ -133,6 +136,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  */
 function getDynamicField(product) {
     try {
+        const productoType = product.type || null;
         const att = product.attributes || [];
         const optionAtt = product.options?.attributes || [];
         const result = {};
@@ -143,14 +147,15 @@ function getDynamicField(product) {
             currentValue.type,
             currentValue.name,
             currentValue.values,
+            productoType,
             i
             );
             const key = `${currentValue.type}${currentValue.name ? currentValue.name : ""}`;
             const type = currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
-
+            const value = currentValue.value ? currentValue.type === 'checkbox' ? Number(currentValue.value) : currentValue.value : currentValue.type === 'checkbox' ? 0 : null
             result[key] = {
                 name: currentValue.name,
-                value: currentValue.value ? currentValue.value : null,
+                value,
                 type,
                 id: currentValue.id,
                 props: { ...props },
@@ -172,9 +177,9 @@ function getDynamicField(product) {
  * @param index
  * @returns {PropsDynamicField}
  */
-function setProps(type, name, options, index) {
+function setProps(type, name, options, productType, index) {
     const readonly = qRampStore().disabledReadonly();
-    if (type == "quantity") {
+    if (type == "quantity" || type == "quantityFloat") {
         return {
             label: name,
             readonly,
@@ -204,15 +209,8 @@ function setProps(type, name, options, index) {
             format24h: true,
         };
     }
-    if (type === "quantityFloat") {
-        return {
-            readonly,
-            type: "number",
-            step: "0.1",
-            label: name
-        };
-    }
     return {
+        type: type,
         readonly,
         label: name,
     };
@@ -237,7 +235,7 @@ function setProps(type, name, options, index) {
  *   }
  * ]
  */
-export function getListOfSelectedServices(data) {
+export function getListOfSelectedServices(data, isType = true) {
     try {
         const service = data.filter(item => {
             for (let key in item.formField) {
@@ -247,7 +245,7 @@ export function getListOfSelectedServices(data) {
             }
             return false;
         });
-        return productDataTransformation(service) || [];
+        return productDataTransformation(service, isType) || [];
     } catch (error) {
         console.log(error);
     }
@@ -317,9 +315,13 @@ function setAttr(obj) {
  * }
  */
 function validationDataAttr(obj: any, key: any) {
+    const value = obj[key].type === 'quantity' 
+        ? !obj[key].value || obj[key].value == 0  ? null 
+        : Math.abs(obj[key].value) : obj[key].value;
+    
     let data: any = {
         name: obj[key].name,
-        value: obj[key].value,
+        value,
         type: obj[key].type,
     };
     if (obj[key].id && obj[key].attributeId) {
@@ -353,13 +355,15 @@ function validationDataAttr(obj: any, key: any) {
  *    }
  * ] 
  */
-export function productDataTransformation(data = []) {
+export function productDataTransformation(data = [], isType = false) {
     try {
         const products: any = [];
         data.forEach((items: any) => {
             if (items.id || isDelete(items.formField)) {
+                const productType = isType ? {product_type: items.productType, name: items.title }: {};
                 products.push({
                     product_id: items.id,
+                    ...productType,
                     work_order_item_attributes: setAttr(items.formField),
                 });
             }

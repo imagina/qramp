@@ -1,5 +1,10 @@
 <script lang="ts">
-import {defineComponent, computed} from 'vue';
+import {defineComponent, computed, ref} from 'vue';
+import serviceListStore from './store/serviceList';
+import postFavourites from './services/postFavourites'
+import deleteFavourites from './services/deleteFavourites'
+import workOrderList from '../../_store/actions/workOrderList';
+import alert from '@imagina/qsite/_plugins/alert';
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -12,7 +17,23 @@ export default defineComponent({
   setup(props) {
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
-
+    async function selectFavourite(data: any) {
+      data.favourite = !data.favourite;
+      if (!data.favourite) {
+        const favoriteData = serviceListStore().getFavouriteList().find(item => item.id === data.id);
+        await deleteFavourites(favoriteData);
+        serviceListStore().removeFromFavouriteList(data);
+        alert.success({message: `Favorite deleted successfully Product:${data.title}`} );
+      } else {
+        const response: any = await postFavourites(data);
+        const favoriteData = {...data, favouriteId: response?.id} 
+        serviceListStore().pustFavouriteList(favoriteData);
+        alert.success(`Favorite created successfully Product:${data.title}`); 
+      }
+      await workOrderList().getFavourites(true);
+    }
+    const favourite = ref(false);
+    const refData = ref({});
     function showValue(data: any) {
       if (data) {
         return data.value
@@ -22,7 +43,10 @@ export default defineComponent({
     return {
       isDesktop,
       showValue,
-      data
+      data, 
+      favourite,
+      selectFavourite,
+      refData
     }
   },
 })
@@ -34,7 +58,14 @@ export default defineComponent({
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
             <q-item-section avatar class="q-pr-none " style="min-width: 45px;">
-              <q-avatar size="32px" font-size="18px" :icon="item.icon" color="primary" text-color="white"/>
+              <i 
+                  class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
+                  @click="selectFavourite(data[index])"
+                  :class="{
+                    'fa-solid': data[index].favourite,
+                    'fa-light': !data[index].favourite,
+                  }" 
+              />
             </q-item-section>
             <q-item-section class="q-py-sm">
               <span class="tw-text-base tw-font-bold" style="color:#1F294F;">
@@ -69,51 +100,73 @@ export default defineComponent({
       </q-list>
     </div>
     <div v-else>
-      <q-list v-for="(item, index) in data" :key="index" >
-        <div class="q-py-sm row">
-          <div class="row q-py-md">
-            <div class="q-py-sm" style="width: 220px; display: flex;">
+      <div 
+        v-for="(item, index) in data" :key="index" 
+        class="
+          tw-flex 
+          color-bg-blue-gray-custom 
+          tw-py-2 
+          tw-rounded-lg" 
+        >
+        <div 
+          class="
+            tw-flex 
+            tw-w-2/5 
+            tw-truncate 
+            tw-py-3 
+            text-services 
+            tw-pl-2"
+          >
               <div class="q-px-sm">
-                <q-avatar size="32px" font-size="18px" :icon="item.icon" color="primary" text-color="white"/>
+                <i 
+                  class="fa-star color-icon-star tw-cursor-pointer"
+                  @click="selectFavourite(data[index])"
+                  :class="{
+                    'fa-solid': data[index].favourite,
+                    'fa-light': !data[index].favourite,
+                  }" 
+                />
               </div>
               <div>
                 <p>{{ item.title }} 
                   <br>
-                  <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
+                  <span 
+                    v-if="item.helpText" 
+                    class="tw-text-xs tw-text-gray-500">
                     {{ item.helpText }}
                   </span>
-              </p>
+                </p>
               </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="q-pa-none q-py-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
-              <div class="flex no-wrap items-center">
-                <dynamic-field
-                    class="q-ml-sm marginzero"
-                    v-model="data[index]['formField'][keyfield]['value']"
-                    :field="field"
-                />
-                <div
-                    class="tw--mt-4 tw-px-3 tw-font-semibold tw-hidden"
-                    v-if="field.type === 'fullDate' 
-                    && field.props.typeIndexDate === 1"
-                >
-                  Difference (hours): {{ 1 }}
-                </div>
-              </div>
+        </div>
+        <div 
+          class="
+            tw-w-3/5 
+            tw-mx-2 
+            tw-truncate 
+            tw-flex 
+            tw-flex-wrap 
+            tw-justify-end tw-gap-4"
+          >
+          <div 
+            v-for="(field, keyfield) in item.formField" 
+            :key="keyfield"
+          >
+            <div>
+              <dynamic-field
+                  v-model="data[index]['formField'][keyfield]['value']"
+                  :field="field"
+              />
             </div>
           </div>
         </div>
-        <q-separator color="#fff"/>
-      </q-list>
+      </div>
     </div>
   </div>
 </template>
 
 <style>
 #expansion-container {
-  @apply tw-border tw-border-gray-100 tw-rounded-lg tw-overflow-hidden;
+  @apply tw-border tw-border-gray-100 tw-rounded-lg tw-overflow-hidden tw-p-3;
 }
 
 #expansion-container .card-color {
@@ -128,5 +181,19 @@ export default defineComponent({
 #expansion-container .q-expansion-item--collapsed:before {
   content: '';
   @apply tw-bg-gray-200 tw-mx-4 tw-absolute tw-bottom-0 tw-inset-x-0 tw-h-px;
+}
+.color-bg-blue-gray-custom:hover {
+ background: rgba(241, 244, 250, 1);
+}
+.text-services {
+  font-family: Manrope;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: rgba(76, 93, 148, 1);
+}
+.color-icon-star  {
+  color: rgba(138, 152, 195, 1)
 }
 </style>

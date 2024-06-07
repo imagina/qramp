@@ -103,6 +103,10 @@ export default {
                   label: 'Full Date', 
                   value: 'fullDate'
                 },
+                {
+                  label: 'Checkbox', 
+                  value: 'checkbox'
+                },
               ],
               color: "primary"
             },

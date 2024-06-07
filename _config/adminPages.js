@@ -114,6 +114,7 @@ export default {
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,
+      bulkActions: true
     }
   },
   passengerFlightMap: {
@@ -263,7 +264,7 @@ export default {
     }
   },
   fueling: {
-    permission: 'ramp.fueling.manage',
+    permission: 'ramp.fueling-work-orders.manage',
     activated: true,
     authenticated: true,
     path: '/ramp/fueling/index',
@@ -277,6 +278,22 @@ export default {
       refresh: true,
     }
   },
+  labor: {
+    permission: 'ramp.labor-work-orders.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/labor/index',
+    name: 'qramp.admin.labor',
+    crud: import('../_crud/labor.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Labor',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,

@@ -95,7 +95,7 @@
         </div>
       </div>
       <div
-        v-if="isbound[0]"
+        v-if="isbound[0] && !validateNoFligth"
         class="col-12 col-md-6"
       >
         <div v-if="isCollapse">
@@ -127,7 +127,7 @@
         </div>
       </div>
       <div
-        v-if="isbound[1]" 
+        v-if="isbound[1] & !validateNoFligth" 
         class="col-12 col-md-6"
       >
         <div v-if="isCollapse">
@@ -211,13 +211,16 @@ import {
   BUSINESS_UNIT_RAMP,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
-  OPERATION_TYPE_OTHER
+  OPERATION_TYPE_OTHER,
+  NON_FLIGHT,
+  FLIGHT 
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
 import moment from 'moment';
 import store from '../scheduleKanban/store/modalSchedule.store';
 import momentTimezone from "moment-timezone";
+import serviceListStore from '../serviceList/store/serviceList';
 
 export default {
   props:{
@@ -311,9 +314,20 @@ export default {
       } else {
         this.openAlert = true
       }
+    }, 
+    'form.operationTypeId' (newVal) {
+      if(newVal == 13) {
+        qRampStore().setTypeWorkOrder(NON_FLIGHT);
+      } else {
+        qRampStore().setTypeWorkOrder(FLIGHT);
+      }
+      serviceListStore().init().then();     
     }
   },
   computed: {
+    validateNoFligth(){
+      return qRampStore().getTypeWorkOrder() === NON_FLIGHT;
+    },
     isAppOffline() {
       return this.$store.state.qofflineMaster.isAppOffline;
     },
@@ -576,7 +590,7 @@ export default {
             value: null,
             type: 'select',
             props: {
-              vIf: this.isPassenger,
+              vIf: this.isPassenger && !this.validateNoFligth,
               label: 'Cancellation type',
               clearable: true,
               color:"primary",
@@ -594,8 +608,8 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              label: 'Cancellation Notice Time',
-              vIf: this.validateCancellationNoticeTime,
+              label: 'Cancellation Notice time entered in Hours',
+              vIf: this.validateCancellationNoticeTime && !this.validateNoFligth,
               type:'number',
             },
             label: this.$tr('ifly.cms.form.operation'),
@@ -959,8 +973,10 @@ export default {
             if(updateForm.customerId && updateForm.contractId) {
               return item.id == updateForm.customerId && item.contractId == updateForm.contractId
             }
-            return item.id == updateForm.customerId;
-          });
+            if(updateForm.customerId && !updateForm.contractId) {
+              return item.id == updateForm.customerId && item.contractId == null;
+            }
+          }) || null;
           if(customer) {
             if(customer.label) {
               this.selectCustomerComputed = customer;

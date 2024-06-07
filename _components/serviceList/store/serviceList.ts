@@ -24,6 +24,9 @@ const dataModel: ServiceModelContract[] = [
 const state = reactive<ReactiveStoreContract>({
     serviceList: [],
     loading: false,
+    favouriteList: [],
+    showFavourite: false,
+    errorList: [],
 });
 
 
@@ -61,21 +64,43 @@ export default function serviceListStore(): ServiceListStoreContract {
         }
     }
 
-    /**
-     * This function takes an array of ServiceModelContract objects and assigns it to the serviceList
-     * property of the state object.
-     * @param {ServiceModelContract[]} value - ServiceModelContract[]
-     */
     function setServiceList(value: ServiceModelContract[]): void {
         state.serviceList = value;
     }
 
-    /**
-     * This function returns an array of ServiceModelContract objects.
-     * @returns The serviceList array.
-     */
+    
     function getServiceList(): ServiceModelContract[] {
         return state.serviceList;
+    }
+
+    function getFavouriteList(): any[] {
+        return state.favouriteList;
+    }
+
+    function removeFromFavouriteList(data) {
+        state.favouriteList = state.favouriteList.filter(item => item.id !== data.id);
+    } 
+
+    function pustFavouriteList(data) {
+        state.favouriteList.push(data);
+    } 
+
+    function setFavouriteList(value: any): void {
+        state.favouriteList = value;
+    }
+
+    function getShowFavourite(): boolean {
+        return state.showFavourite;
+    };
+    function setShowFavourite(value: boolean): void {
+        state.showFavourite = value;
+    }
+    function setErrorList(value: any): void {
+        state.errorList = value;
+    };
+
+    function getErrorList() {
+        return state.errorList;
     }
 
     /**
@@ -103,10 +128,10 @@ export default function serviceListStore(): ServiceListStoreContract {
         setServiceList([]);
     }
 
-    async function getServiceListSelected(): Promise<any> {
+    async function getServiceListSelected(isType = false): Promise<any> {
         const services = state.serviceList
             .filter(item => item.id !== 4);
-        return await orderServicesWithTheStructureToSave(services);
+        return await orderServicesWithTheStructureToSave(services, isType);
     }
 
     
@@ -133,12 +158,12 @@ export default function serviceListStore(): ServiceListStoreContract {
      * @param services
      * @returns An array of promises.
      */
-    async function orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise<any> {
+    async function orderServicesWithTheStructureToSave(services: ServiceModelContract[], isType = false): Promise<any> {
         try {
             const data: any = [];
             const allServices = getAllServices(services);
             allServices.forEach(async service => {
-                const dynamicField = await getListOfSelectedServices(service.dynamicField || []);
+                const dynamicField = await getListOfSelectedServices(service.dynamicField || [], isType);
                 await data.push(...dynamicField);
             })
             return data;
@@ -152,9 +177,9 @@ export default function serviceListStore(): ServiceListStoreContract {
      * to save.
      * @returns {Promise<ServiceModelContract[]>} An array of ServiceModelContract objects.
      */
-    async function getServiceItems(): Promise<ServiceModelContract[]> {
+    async function getServiceItems(isType = false): Promise<ServiceModelContract[]> {
         const serviceList = getServiceList();
-        return await serviceListStore().orderServicesWithTheStructureToSave(serviceList);
+        return await orderServicesWithTheStructureToSave(serviceList, isType);
     }
 
     /**
@@ -171,6 +196,19 @@ export default function serviceListStore(): ServiceListStoreContract {
         })
     }
 
+
+    async function filterServicesListByQuantity(): Promise<any> {
+       let serviceList = await getServiceListSelected(true);
+       serviceList = serviceList.filter(item => {
+        if (item.product_type == 2 || item.product_type == 3) {
+            return item.work_order_item_attributes.some(attr => attr.value === null || attr.value === undefined);
+        }
+        return false;
+       })
+       setErrorList(serviceList);
+       return serviceList;
+    }
+
     return {
         getServiceData,
         setServiceList,
@@ -182,5 +220,14 @@ export default function serviceListStore(): ServiceListStoreContract {
         getServiceListSelected,
         orderServicesWithTheStructureToSave,
         getServiceItems,
+        getFavouriteList,
+        setFavouriteList,
+        removeFromFavouriteList,
+        pustFavouriteList,
+        getShowFavourite,
+        setShowFavourite,
+        filterServicesListByQuantity,
+        setErrorList,
+        getErrorList
     }
 }

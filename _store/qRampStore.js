@@ -39,13 +39,27 @@ const state = reactive({
     isblank: false,
     isPassenger: false,
     workOrder: {},
+    isFueling: true,
+    typeWorkOrder: null,
 });
 
 export default function qRampStore() {
     function setIsPassenger(value) {
         state.isPassenger = value;
     }
-
+    function getIsFueling() {
+        return state.isFueling;
+    }
+    function setIsFueling(value) {
+        state.isFueling = value;
+    }
+    function getTypeWorkOrder() {
+        return state.typeWorkOrder;
+    }
+    function setTypeWorkOrder(value) {
+        state.typeWorkOrder = value;
+    }
+    
     function getWorkOrder() {
         return state.workOrder;
     }
@@ -265,8 +279,9 @@ export default function qRampStore() {
 
     function getDifferenceInHours(start, end) {
         if (start) {
-            const dateStart = moment(start);
-            const dateEnd = moment(end);
+            const format = 'MM/DD/YYYY HH:mm';
+            const dateStart = moment(start, format);
+            const dateEnd = moment(end, format);
             const hour = dateEnd.diff(dateStart, 'minutes') / 60;
             return Math.round(hour * 100) / 100;
         }
@@ -559,6 +574,10 @@ export default function qRampStore() {
         changeStatus,
         parseDateOfflineWO,
         getWorkOrder,
-        setWorkOrder
+        setWorkOrder,
+        getIsFueling,
+        setIsFueling,
+        getTypeWorkOrder,
+        setTypeWorkOrder
     }
 }

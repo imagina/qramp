@@ -27,13 +27,6 @@
       @loading="setLoading" 
     />
   </master-modal>
-    <commentsModal
-        v-if="!isAppOffline"
-        ref="commentsModal"
-        :commentableId="modalProps.workOrderId"
-        @getWorkOrders="getWorkOrders"
-        isCrud
-    />
   </div>
 </template>
 <script>
@@ -64,13 +57,11 @@ import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
-import commentsModal from "../_components/schedule/modals/commentsModal.vue";
 
 export default {
   components: {
     stepperRampForm,
     simpleWorkOrders,
-    commentsModal,
   },
   mixins: [responsive, services],
   data() {
@@ -102,15 +93,12 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    permisionCommentsIndex() {
-      return this.$auth.hasAccess('ramp.work-orders-comments.index');
-    },
     steppers() {
       let stepps = [
         {
           ref: 'flight',
           title: 'Flight',
-          icon: 'fas fa-plane',
+          icon: 'fa-regular fa-plane',
           step: STEP_FLIGHT,
           form: this.flight,
           component: iFlight,
@@ -118,14 +106,14 @@ export default {
         {
           ref: 'services',
           title: 'Services',
-          icon: 'fas fa-briefcase',
+          icon: 'fa-regular fa-briefcase-blank',
           step: STEP_SERVICE,
           component: serviceList,
         },
         {
           ref: 'remark',
           title: 'Remark',
-          icon: 'far fa-edit',
+          icon: 'fa-regular fa-comment-dots',
           step: STEP_REMARKS,
           form: this.remark,
           component: iRemarks,
@@ -188,9 +176,9 @@ export default {
         {
           props: {
             vIf: this.$auth.hasAccess('ramp.work-orders.destroy'),
-            color: 'red',
-            icon: 'fa-light fa-trash',
-            label: this.$tr('isite.cms.label.delete'),
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : this.$tr('isite.cms.label.delete'),
+            icon: 'fa-regular fa-trash',
           },
           action: async() => {
             await this.$crud.delete('apiRoutes.qramp.workOrders', this.modalProps.workOrderId)
@@ -202,45 +190,9 @@ export default {
         },
         {
           props: {
-            vIf: !this.isAppOffline && this.permisionCommentsIndex,
-            color: 'primary',
-            icon: 'fa-light fa-comment',
-            label: 'Comments',
-          },
-          action: () => {
-            if(this.$refs.commentsModal) {
-              this.$refs.commentsModal.showModal();
-            }
-          }
-        },
-        {
-          props: {
-            vIf: this.sp > 1,
-            color: 'white',
-            'text-color': 'primary',
-            icon: 'fas fa-arrow-left',
-            label: this.$tr('isite.cms.label.back'),
-          },
-          action: () => {
-            this.$refs.stepper.previous()
-          }
-        },
-        {
-          props: {
-            vIf: this.sp !== this.steppers.length,
-            color: 'primary',
-            'icon-right': 'fas fa-arrow-right',
-            label: this.$tr('isite.cms.label.next')
-          },
-          action: () => {
-            this.$refs.stepper.next()
-          }
-        },
-        {
-          props: {
-            color: 'primary',
-            'icon-right': 'fa-thin fa-floppy-disk',
-            label: 'Save to Draft',
+            icon: 'fa-regular fa-floppy-disk',
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : 'Save to Draft',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
@@ -259,8 +211,9 @@ export default {
         },
         {
           props: {
-            color: 'primary',
-            'icon-right': 'fal fa-check',
+            color: 'white',
+            icon: 'fal fa-check',
+            'text-color': 'positive',
             label: this.$tr('isite.cms.label.closeFlight'),
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
@@ -298,6 +251,30 @@ export default {
             qRampStore().hideLoading()
           }
         },
+        {
+          props: {
+            vIf: this.sp > 1,
+            color: 'white',
+            'text-color': 'primary',
+            class: 'tw-text-xs',
+            icon: 'fas fa-arrow-left',
+          },
+          action: () => {
+            this.$refs.stepper.previous()
+          }
+        },
+        {
+          props: {
+            vIf: this.sp !== this.steppers.length,
+            'text-color': 'white',
+            color: 'primary',
+            'icon-right': 'fas fa-arrow-right',
+            class: 'tw-text-xs',
+          },
+          action: () => {
+            this.$refs.stepper.next()
+          }
+        },
       ];
       return actions;
     }
@@ -313,6 +290,8 @@ export default {
       this.show = show
       this.$root.$emit('crud.data.refresh')
       this.services = [];
+      serviceListStore().setShowFavourite(false)
+      serviceListStore().setErrorList([]);
     },
     /**
      * Loads the form asynchronously with the given parameters.
@@ -340,6 +319,7 @@ export default {
           qRampStore().hideLoading();
           return;
         }
+        qRampStore().setTypeWorkOrder(updateData.data.type || null);
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
         qRampStore().setStatusId(this.statusId);
@@ -380,6 +360,8 @@ export default {
       this.services = [];
       cargoStore().reset();
       remarksStore().reset();
+      serviceListStore().setShowFavourite(false)
+      serviceListStore().setErrorList([]);
     },
     /**
      * Set the loading state of the modal.
@@ -397,6 +379,19 @@ export default {
 }
 </script>
 <style>
+.btn-action-form-orders {
+  @apply tw-bg-gray-200 sm:tw-bg-transparent;
+  color: #4C5D94;
+}
+
+.q-btn__wrapper {
+  padding: 4px 12px;
+}
+
+.master-dialog__actions .q-btn .q-icon {
+  font-size: 16px;
+}
+
 #formRampComponent .boundColor {
   background-color: #F1F4FA;
 }

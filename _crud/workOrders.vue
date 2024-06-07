@@ -2,7 +2,6 @@
     <div>
         <form-orders ref="formOrders"/>
         <flightDetail/>
-        <commentsModal ref="commentsModal" :commentableId="commentableId" isCrud/>
         <inner-loading :visible="loadingBulk" />
     </div>
 </template>
@@ -15,12 +14,12 @@ import {
     STATUS_DRAFT,
     STATUS_SCHEDULE,
     BUSINESS_UNIT_RAMP,
-    COMPANY_RAMP
+    COMPANY_RAMP,
+    NON_FLIGHT,
+    FLIGHT
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
-import commentsModal from '../_components/schedule/modals/commentsModal.vue'
-import htmlComment from '../_components//model/htmlComment.js';
 import workOrderList from '../_store/actions/workOrderList.ts'
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 
@@ -29,13 +28,11 @@ export default {
     components: {
         formOrders,
         flightDetail,
-        commentsModal,
     },
     data() {
         return {
             crudId: this.$uid(),
             areaId: null,
-            commentableId: null,
             loadingBulk: false,
         }
     },
@@ -65,6 +62,7 @@ export default {
     async created() {
         this.$nextTick(async () => {
             await qRampStore().setIsPassenger(false);
+            await qRampStore().setIsFueling(false);
             await workOrderList().getAllList(true);
             await workOrderList().getCustomerWithContract()
         })
@@ -76,9 +74,6 @@ export default {
     computed: {
         isAppOffline() {
             return this.$store.state.qofflineMaster.isAppOffline;
-        },
-        permisionCommentsIndex() {
-            return this.$auth.hasAccess('ramp.work-orders-comments.index');
         },
         filter() {
             return this.$filter;
@@ -105,14 +100,15 @@ export default {
                     method: async () => {
                         await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
                         await qRampStore().setIsPassenger(false);
-                        this.$refs.formOrders.loadform({
-                            modalProps: {
-                                title: this.$tr('ifly.cms.form.newWorkOrder'),
-                                update: false,
-                                width: '35vw'
-                            }
-                        })
-                    }
+                        await qRampStore().setTypeWorkOrder(FLIGHT);
+                            this.$refs.formOrders.loadform({
+                                modalProps: {
+                                    title: this.$tr('ifly.cms.form.newWorkOrder'),
+                                    update: false,
+                                    width: '35vw'
+                                }
+                            })
+                    },
                 },
                 read: {
                     columns: [
@@ -138,20 +134,11 @@ export default {
                             align: 'left'
                         },
                         {
-                            name: "comments",
-                            label: 'Comments',
-                            field: "comments",
-                            align: "left",
-                            format: item => !this.$store.state.qofflineMaster.isAppOffline && item && item > 0 ? htmlComment(item) : '',
-                            formatColumn: row => ({
-                                textColor: row.comments ? `red-5` : ''
-                            }),
-                            action: (item) => {
-                                this.commentableId = item.id || null;
-                                if (this.$refs.commentsModal) {
-                                    this.$refs.commentsModal.showModal();
-                                }
-                            },
+                            name: 'contract',
+                            label: 'Contracts',
+                            field: 'contract',
+                            format: val => val ? val.contractName : '-',
+                            align: 'left'
                         },
                         {
                             name: "flightStatus",
@@ -273,7 +260,13 @@ export default {
                             format: val => val ? val.fullName : '-',
                             align: 'left'
                         },
-
+                        {
+                            name: 'workdayInvoiceId',
+                            label: 'Workday Invoice Id',
+                            field: 'workdayInvoiceId',
+                            format: val => val ? val : '-',
+                            align: 'left'
+                        },
                         {
                             name: "created_at",
                             label: this.$tr("isite.cms.form.createdAt"),
@@ -404,10 +397,11 @@ export default {
                         businessUnitId: { value: BUSINESS_UNIT_RAMP },
                     },
                     requestParams: {
-                        include: 'responsible',
+                        include: 'responsible,contract,customer',
                         filter: {
                             withoutDefaultInclude: true,
                             businessUnitId: BUSINESS_UNIT_RAMP,
+                            type: [FLIGHT, NON_FLIGHT]
                         },
                     },
                     actions: [
@@ -475,21 +469,6 @@ export default {
                                 {
                                     //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
                                     vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
-                                }),
-                        },
-                        {
-                            name: 'Comments',
-                            icon: 'fa-light fa-comment',
-                            label: 'Comments',
-                            action: (item) => {
-                                this.commentableId = item.id || null;
-                                if (this.$refs.commentsModal) {
-                                    this.$refs.commentsModal.showModal();
-                                }
-                            },
-                            format: item => (
-                                {
-                                    vIf: this.permisionCommentsIndex && !this.isAppOffline
                                 }),
                         },
                         {

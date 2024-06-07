@@ -475,4 +475,5 @@ export interface WorkOrderList {
     setResponsible: (data: any)  => void;
     getResponsible: ()  => any;
     getACTypes: () => any;
+    getFavourites: (refresh?: boolean) => Promise<any>;
 }

@@ -18,6 +18,10 @@ export const BUSINESS_UNIT_PASSENGER = 8;
 export const BUSINESS_UNIT_RAMP = { operator: '!=', value: 8};
 export const COMPANY_PASSENGER = [30,33,34];
 export const COMPANY_RAMP = [26,34];
+export const NON_FLIGHT = 2;
+export const FLIGHT = 1;
+export const LABOR = 4;
+export const FUELING = 3;
 export const OPERATION_TYPE_OTHER = 6;
 
 export const modelDataBound = {

@@ -37,5 +37,6 @@ export default {
   schedulers: `${urlBase}/schedulers`,
   reloadTransactions: `${urlBase}/work-orders/reload-transactions`,
   passengerContractRules: `${urlBase}/passenger-contract-rules`,
-  passengerContractRulesUpsert: `${urlBase}/passenger-contract-rules/upsert`
+  passengerContractRulesUpsert: `${urlBase}/passenger-contract-rules/upsert`,
+  workOrderItems: `${urlBase}/work-order-items`
 }

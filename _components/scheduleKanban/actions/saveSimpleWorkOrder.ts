@@ -1,6 +1,6 @@
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import Vue from 'vue';
-import { BUSINESS_UNIT_PASSENGER } from '../../model/constants.js';
+import { BUSINESS_UNIT_PASSENGER, FLIGHT } from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
 import { WorkOrders } from '../contracts/getWorkOrder.contract.js';
 import dataReturnedWorkOrderModel from '../models/dataReturnedWorkOrder.model';
@@ -25,6 +25,7 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
               offlineId: storeKanban.isAppOffline ? offlineId: null,
               titleOffline: Vue.prototype.$tr('ifly.cms.form.newWorkOrder'),
               ...businessUnitId,
+              type: FLIGHT,
             }
           );
         } catch (err) {

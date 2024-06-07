@@ -8,12 +8,12 @@
     <q-stepper
         v-model="sp"
         ref="stepper"
-        color="primary"
         header-nav
         alternative-labels
         animated
         :contracted="$q.screen.lt.md"
         keep-alive
+        active-icon="none"
     >
       <q-step
           v-for="(step, index) in steps"
@@ -22,6 +22,7 @@
           :title="step.title"
           :icon="step.icon"
           :active-color="error ? 'red' : 'primary'"
+          flat
       >
         <component
             :ref="step.ref"
@@ -168,6 +169,15 @@ export default {
         const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
         const remarks = remarkStore().getForm();
         const serviceList = await serviceListStore().getServiceListSelected();
+        const filterList = await serviceListStore().filterServicesListByQuantity();
+        if(filterList.length > 0) {
+          await this.setStep(STEP_SERVICE);
+          this.error = true;
+          qRampStore().hideLoading();
+          await this.setData();
+          this.$alert.error({message: this.$tr('You have services to correct')});
+          return;
+        }
         qRampStore().showLoading();
         const validateAllFieldsRequiredByStep = await this.validateAllFieldsRequiredByStep();
         if (validateAllFieldsRequiredByStep) return;
@@ -186,7 +196,6 @@ export default {
           workOrderItems: [
             ...serviceList
           ],
-          companyId: this.filterCompany,
           ...businessUnitId,
         }
 
@@ -232,6 +241,7 @@ export default {
       cargoStore().reset();
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', {})
       this.$emit('close', false)
+      serviceListStore().setShowFavourite(false)
     },
     async next() {
       await this.setData();
@@ -489,15 +499,48 @@ export default {
 }
 
 .stepper-modal .q-stepper__step-inner {
-  @apply tw-py-4 lg:tw-py-5 tw-px-0 lg:tw-px-0;
+  @apply tw-py-4 lg:tw-py-0 tw-px-0 lg:tw-px-0;
 }
 
 .stepper-modal .q-stepper__step-inner .q-form {
   @apply tw-px-4 lg:tw-px-5;
 }
 
+.q-stepper__header--alternative-labels .q-stepper__tab {
+  @apply tw-py-5 tw-px-0;
+}
+
+.stepper-modal .q-stepper .q-stepper__dot:before {
+  @apply lg:tw-mr-5;
+}
+
+.stepper-modal .q-stepper .q-stepper__dot:after {
+  @apply lg:tw-ml-5;
+}
+
+.stepper-modal .q-stepper__title {
+  color: #1F294F;
+}
+
+.q-stepper__dot {
+  @apply tw-w-10 tw-h-10;
+  min-width: 40px;
+}
+
+.stepper-modal .q-stepper__tab:not(.q-stepper__tab--active) .q-stepper__dot span {
+  @apply tw-text-xl;
+}
+
+.stepper-modal .q-stepper__tab .q-stepper__dot .q-icon {
+  @apply tw-text-xl;
+}
+
+.q-panel-parent {
+  @apply tw-mb-5;
+}
+
 #formRampComponent .master-dialog__actions {
-  @apply tw-py-4 tw-px-7 tw-absolute tw-w-full tw-bottom-0;
+  @apply tw-py-4 tw-px-2 md:tw-px-7 tw-absolute tw-w-full tw-bottom-0;
   background-color: #F1F4FA;
 }
 

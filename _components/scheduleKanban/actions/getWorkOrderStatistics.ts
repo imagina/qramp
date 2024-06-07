@@ -20,7 +20,7 @@ export default async function getWorkOrdersStatistics(refresh = false, date): Pr
                     date,
                     withoutDefaultInclude: true,
                     order: {
-                        field: "schedule_date",
+                        field: qRampStore().getIsPassenger() ? 'schedule_date_local' : "schedule_date",
                         way: "asc",
                     },
                 },

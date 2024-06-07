@@ -11,6 +11,11 @@
       v-if="!card.editable"      
     >
       <div>
+        <chipServices 
+          :workOrderItemsTotal="card.workOrderItemsTotal"
+          :workOrderId="card.id" 
+          class="tw-absolute tw-right-2 tw--mt-2.5"
+        />
         <div class="tw-py-3 tw-pl-2 tw-w-full">
           <div class="tw-flex tw-pb-1">
             <div class="tw-w-10/12">
@@ -153,11 +158,13 @@ import { defineComponent } from "vue";
 import useKanbanCard from '../uses/useKanbanCard'
 import lastComments from './lastComments.vue'
 import kanbanCardActions from './KanbanCardActions.vue'
+import chipServices from './chipServices.vue'
 
 export default defineComponent({
   components: {
     lastComments,
-    kanbanCardActions
+    kanbanCardActions,
+    chipServices
   },
   props: {
     card: {

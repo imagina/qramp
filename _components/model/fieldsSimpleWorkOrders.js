@@ -1,11 +1,14 @@
 import factoryCustomerWithContracts from '../../_store/actions/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
-import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP } from '../model/constants.js';
+import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP, NON_FLIGHT } from '../model/constants.js';
 import workOrderList from '../../_store/actions/workOrderList.ts'
 import storeKanban from '../scheduleKanban/store/kanban.store.ts';
 
 export default {
   computed: {
+    validateNoFligth(){
+      return qRampStore().getTypeWorkOrder() === NON_FLIGHT;
+    },
     isAppOffline() {
       return storeKanban.isAppOffline
     },
@@ -84,7 +87,11 @@ export default {
             type: "search",
             props: {
               rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
+                (val) => {
+                  if(!this.validateNoFligth) {
+                    return !!val || this.$tr("isite.cms.message.fieldRequired")
+                  }
+                } 
               ],
               hint: "Enter the fight number and press enter or press the search icon",
               loading: this.loadingState,

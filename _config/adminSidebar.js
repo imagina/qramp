@@ -10,7 +10,6 @@ export default [
       pages.qramp.schedule,
       pages.qramp.operationType,
       pages.qramp.flightMap,
-      pages.qramp.fueling,
     ]
   },
   {
@@ -21,7 +20,8 @@ export default [
       pages.qramp.passengerSchedule,
       pages.qramp.operationTypePassenger,
       pages.qramp.passengerFlightMap,
-      
+      pages.qramp.fueling,
+      pages.qramp.labor
     ]
   },
   {

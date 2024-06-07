@@ -7,7 +7,8 @@ import storeFilters from "../store/filters.store";
 import scheduleTypeModel from '../models/scheduleType.model';
 import modalScheduleStore from '../store/modalSchedule.store'
 import _ from 'lodash'
-
+import qRampStore from "src/modules/qramp/_store/qRampStore";
+ 
 export async function getColumns(): Promise<Columns[]> {
   try {
     const  weekAgenda = scheduleTypeModel[0].value;
@@ -17,7 +18,7 @@ export async function getColumns(): Promise<Columns[]> {
     const FULL_WEEK = 7
     const days = isWeek ? FULL_WEEK : ONE_DAY //full week | one day
     const type = isWeek ? 'week' : 'day'
-    const startOfWeek: Moment = moment(storeFilters.selectedDate).startOf(type);
+    const startOfWeek = moment(storeFilters.selectedDate, 'YYYY/MM/DD').startOf(type);
 
     return [...Array(days)].map((_, i) => ({
       date: moment(startOfWeek).add(i, "days"),
@@ -43,16 +44,16 @@ export async function getCards(refresh = false): Promise<void> {
       const endDate = item.date.endOf('day');
       const filterTime = storeFilters.filterTime;
       const params = {
-        field: "schedule_date",
+        field: qRampStore().getIsPassenger() ? "schedule_date_local" : "schedule_date",
         type: "customRange",
-        from: startDate.set({
-          hour: filterTime[0],
-          minute: 0, second: 0
+        from: startDate.set({ 
+          hour: filterTime[0], 
+          minute: 0, second: 0 
         }).format('YYYY-MM-DD HH:mm:ss'),
-        to: endDate.set({
-          hour: filterTime[1],
-          minute: 59,
-          second: 59
+        to: endDate.set({ 
+          hour: filterTime[1], 
+          minute: 59, 
+          second: 59 
         }).format('YYYY-MM-DD HH:mm:ss')
       }
 
@@ -65,7 +66,6 @@ export async function getCards(refresh = false): Promise<void> {
 
       item.completed = statistics.data.completed
       item.uncompleted = statistics.data.uncompleted
-
       item.cards.forEach((card) => { card.editable = false, card.loading = false });
       item.loading = false;
       item.total = cardsData.meta.page.total;

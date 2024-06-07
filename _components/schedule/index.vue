@@ -950,7 +950,7 @@ export default {
           .endOf('day').format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
-            field: "schedule_date",
+            field: this.isPassenger ? "schedule_date_local" : "schedule_date",
             type: "customRange",
             from: lastStartM,
             to: lastEndM,
@@ -1005,7 +1005,7 @@ export default {
         const startDateTime = startDateM.startOf('day').set({ hour: time[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss');
         const endDateTime = startDateM.endOf('day').set({ hour: time[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss');
         const customDateObject = {
-          field: 'schedule_date',
+          field: this.isPassenger ? "schedule_date_local" : "schedule_date",
           type: 'customRange',
           from: startDateTime,
           to: endDateTime

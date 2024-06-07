@@ -10,6 +10,8 @@ import kanbanBoard from "./components/kanbanBoard.vue";
 import workOrderList from '../../_store/actions/workOrderList'
 import qRampStore from "../../_store/qRampStore";
 import kanbanStore from './store/kanban.store'
+import serviceListStore from "../serviceList/store/serviceList";
+import { FLIGHT } from "../model/constants";
 
 export default defineComponent({
   components: {
@@ -32,10 +34,12 @@ export default defineComponent({
     function init() {
       new Promise(async (resolve, reject) => {
         const currentRouteName = proxy.$router.currentRoute.path.indexOf('passenger');
+        await qRampStore().setTypeWorkOrder(FLIGHT);
         await workOrderList().setStationList([]);
         await qRampStore().setIsPassenger(currentRouteName !== -1);
         await workOrderList().getAllList();
         await workOrderList().getCustomerWithContract();
+        await serviceListStore().init();
       })
     }
     onMounted(() => {

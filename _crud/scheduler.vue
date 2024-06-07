@@ -1,12 +1,5 @@
 <template>
   <div>
-    <q-btn 
-      color="primary"
-      label="back to schedule" 
-      icon="fa-duotone fa-calendar-plus"
-      class="tw-my-4"
-      @click="getUrlSchedule"
-    />
     <schedulerModal />
   </div>
 </template>
@@ -57,6 +50,16 @@ export default {
             schedulerStore.showModal = true;
           }
         },
+        extraActions: [{
+          label: 'Back to schedule',
+          props:{
+            icon: 'fa-duotone fa-calendar-plus',
+            label: 'Back to schedule',
+          },
+          action: () => {
+            this.getUrlSchedule()
+          }
+        }],
         read: {
           columns: [
             {
