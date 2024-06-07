@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-w-full tw-mb-12">
+  <div class="tw-w-full tw-mb-10 tw-mt-5">
     <delayForm />
     <div class="tw-px-6 tw-mb-8">
       <q-toggle

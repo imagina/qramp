@@ -1,12 +1,5 @@
 <template>
   <div>
-    <q-btn
-      color="primary"
-      label="back to schedule"
-      icon="fa-duotone fa-calendar-plus"
-      class="tw-my-4"
-      @click="getUrlSchedule"
-    />
     <schedulerModal />
   </div>
 </template>
@@ -57,6 +50,16 @@ export default {
             schedulerStore.showModal = true;
           }
         },
+        extraActions: [{
+          label: 'Back to schedule',
+          props: {
+            icon: 'fa-duotone fa-calendar-plus',
+            label: 'Back to schedule',
+          },
+          action: () => {
+            this.getUrlSchedule()
+          }
+        }],
         read: {
           columns: [
             {
@@ -225,17 +228,17 @@ export default {
               type: 'select',
               quickFilter: true,
               loadOptions: {
-                  apiRoute: 'apiRoutes.qramp.setupCustomers',
-                  select: {'label': 'customerName', 'id': 'id'},
-                  requestParams: {
-                      filter: {
-                          companyId: this.filterCompany,
-                      },
+                apiRoute: 'apiRoutes.qramp.setupCustomers',
+                select: { 'label': 'customerName', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
                   },
+                },
               },
               props: {
-                  label: 'Customer',
-                  'clearable': true
+                label: 'Customer',
+                'clearable': true
               },
             },
             acTypeId: {
@@ -256,7 +259,7 @@ export default {
               props: {
                 label: this.$tr('ifly.cms.form.operation'),
                 clearable: true,
-                color:"primary",
+                color: "primary",
                 'hide-bottom-space': false,
                 options: workOrderList().getOperationTypeList().map(item => ({
                   label: item.operationName,
@@ -320,5 +323,4 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-</style>
+<style lang="scss"></style>

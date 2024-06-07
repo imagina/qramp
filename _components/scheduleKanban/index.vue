@@ -1,17 +1,20 @@
 <template>
   <div>
-    <kanbanBoard/>
+    <kanbanBoard />
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, watch, onMounted} from "vue";
+import { defineComponent, watch, onMounted } from "vue";
 import kanbanBoard from "./components/kanbanBoard.vue";
 import workOrderList from '../../_store/actions/workOrderList'
 import qRampStore from "../../_store/qRampStore";
 import kanbanStore from './store/kanban.store'
-import {router} from 'src/plugins/utils'
+import { router } from 'src/plugins/utils'
 let routeName = router.route.path;
+import serviceListStore from "../serviceList/store/serviceList";
+import { FLIGHT } from "../model/constants";
+
 export default defineComponent({
   components: {
     kanbanBoard,
@@ -25,24 +28,26 @@ export default defineComponent({
   setup(props) {
     init();
     watch((currentValue, oldValue) => router.route.path, (currentValue, oldValue) => {
-        if(routeName !== currentValue) {
-          init();
-          routeName = currentValue;
-          kanbanStore.columns.forEach(column => {
-            column.cards = [];
-          })
-        }
-      },
-      {deep: true}
+      if (routeName !== currentValue) {
+        init();
+        routeName = currentValue;
+        kanbanStore.columns.forEach(column => {
+          column.cards = [];
+        })
+      }
+    },
+      { deep: true }
     );
 
     function init() {
       new Promise(async (resolve, reject) => {
         const currentRouteName = router.route.path.indexOf('passenger');
+        await qRampStore().setTypeWorkOrder(FLIGHT);
         await workOrderList().setStationList([]);
         await qRampStore().setIsPassenger(currentRouteName !== -1);
         await workOrderList().getAllList();
         await workOrderList().getCustomerWithContract();
+        await serviceListStore().init();
       })
     }
 

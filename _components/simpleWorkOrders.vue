@@ -1,16 +1,8 @@
 <template>
   <div>
-    <table-flight
-        @cancel="dialog = $event"
-        :dialog="dialog"
-        :dataTable="dataTable"
-        @flightSelect="setDataTable($event)"
-        @validateBound="addmanually"
-    />
-    <q-form
-        ref="formSimpleWorkOrders"
-        id="simpleWordOrder"
-        class="
+    <table-flight v-if="!validateNoFligth" @cancel="dialog = $event" :dialog="dialog" :dataTable="dataTable"
+      @flightSelect="setDataTable($event)" @validateBound="addmanually" />
+    <q-form ref="formSimpleWorkOrders" id="simpleWordOrder" class="
         tw-px-8
         tw-pt-8
         tw-pb-10
@@ -20,42 +12,22 @@
         tw-border
         tw-border-gray-200
         tw-rounded-lg
-      "
-    >
-      <div
-          class="col-12 col-md-6"
-          v-for="(field, keyField) in fields.form"
-          :key="keyField"
-      >
+      ">
+      <div class="col-12 col-md-6" v-for="(field, keyField) in fields.form" :key="keyField">
         <div v-if="keyField == 'customerId'">
-          <dynamic-field
-              v-if="bannerMessage"
-              class="q-mb-md"
-              :field="fields.banner"
-          />
-          <dynamic-field
-              :field="field"
-              v-model="selectCustomerComputed"
-              @update:modelValue="setCustomerForm(keyField)"
-              @filter="setCustomerName"
-              ref="customerId"
-          >
+          <dynamic-field v-if="bannerMessage" class="q-mb-md" :field="fields.banner" />
+          <dynamic-field :field="field" v-model="selectCustomerComputed" @update:modelValue="setCustomerForm(keyField)"
+            @filter="setCustomerName" ref="customerId">
             <template #before-options>
               <div class="q-py-md q-px-md" @click="addCustumers">
                 <div class="row cursor-pointer">
                   <div class="q-pr-md">
-                    <q-btn
-                        push
-                        color="primary"
-                        round
-                        icon="fas fa-plus"
-                        size="xs"
-                    />
+                    <q-btn push color="primary" round icon="fas fa-plus" size="xs" />
                   </div>
                   <div class="q-py-xs">
                     <label class="cursor-pointer">{{
-                        $tr("ifly.cms.label.createNewCustomer")
-                      }}</label>
+      $tr("ifly.cms.label.createNewCustomer")
+    }}</label>
                   </div>
                 </div>
               </div>
@@ -63,14 +35,8 @@
           </dynamic-field>
         </div>
         <div v-else>
-          <dynamic-field
-              :key="keyField"
-              :id="keyField"
-              :field="field"
-              v-model="form[keyField]"
-              @enter="search(field)"
-              @update:modelValue="zanetizeData(keyField)"
-          />
+          <dynamic-field :key="keyField" :id="keyField" :field="field" v-model="form[keyField]" @enter="search(field)"
+            @update:modelValue="zanetizeData(keyField)" />
         </div>
       </div>
     </q-form>
@@ -86,7 +52,8 @@ import {
   STATUS_DRAFT,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
-  modelWorkOrder
+  modelWorkOrder,
+  NON_FLIGHT
 } from './model/constants.js';
 import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
@@ -97,10 +64,11 @@ export default {
   components: {
     tableFlight,
   },
-  emits: ['isError','loading'],
+  emits: ['isError', 'loading'],
   data() {
     return {
       newCustumerAdHoc: [],
+      creationConfirmationMessage: 'Are you sure to create this Work Order with an unscheduled flight number:',
       form: {
         customerId: null,
         contractId: null,
@@ -128,6 +96,9 @@ export default {
   computed: {
     isAppOffline() {
       return this.$store.state.qofflineMaster.isAppOffline;
+    },
+    validateNoFligth() {
+      return qRampStore().getTypeWorkOrder() === NON_FLIGHT;
     },
     selectCustomerComputed: {
       get() {
@@ -159,7 +130,7 @@ export default {
     addCustumers() {
       if (this.customerName !== "") {
         const id = `customer-${qRampStore().numberInRange(8000, 1000)}`;
-        this.newCustumerAdHoc = [{id, label: this.customerName}];
+        this.newCustumerAdHoc = [{ id, label: this.customerName }];
         this.form.adHoc = true;
         this.form.customCustomer = true;
         this.bannerMessage = this.$tr("ifly.cms.message.requestNewCustomer");
@@ -182,8 +153,8 @@ export default {
       if (key !== "customerId") return;
       const selectCustomers =
         this.selectCustomers === null ||
-        this.selectCustomers === undefined ||
-        this.selectCustomers === "" ? {} : this.selectCustomers;
+          this.selectCustomers === undefined ||
+          this.selectCustomers === "" ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId
@@ -204,14 +175,22 @@ export default {
     async saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
         if (success) {
-          if (!this.form.faFlightId && !this.isAppOffline) {
-              this.search({type: 'search'});
-              return;
+          if (
+            (this.isAppOffline || this.form.faFlightId) &&
+            !this.validateNoFligth
+          ) {
+            const message = `${this.creationConfirmationMessage} ${this.form.preFlightNumber}?`
+            await this.messageWhenFlightIsNotChosen(message);
+            return;
+          }
+          if (this.validateNoFligth) {
+            await this.orderConfirmationMessage();
+            return;
           }
 
-          if (!this.form.faFlightId && this.isAppOffline) {
-            const message = this.$tr("ifly.cms.label.flightMessage").replace("#file_number", this.form.preFlightNumber)
-            this.messageWhenFlightIsNotChosen(message)
+          if (!this.form.faFlightId && !this.isAppOffline) {
+            this.search({ type: 'search' });
+            return;
           }
         } else {
           this.$alert.error({
@@ -222,81 +201,85 @@ export default {
       });
     },
     async orderConfirmationMessage() {
-      this.$emit('loading', true);
-      let response = await this.saveRequestSimpleWorkOrder();
-      await this.$alert.info({
-        mode: "modal",
-        title: '',
-        message: 'What do you want to do?',
-        modalWidth: '600px',
-        actions: [
-          {
-            label: 'Go out to the list',
-            color: 'grey-6',
-            handler: async () => {
-              await this.closeModal();
-            }
-          },
-
-          {
-            label: 'Continue editing',
-            color: "light-blue-7",
-            handler: async () => {
-              await this.showWorkOrder(response.data);
-              eventBus.emit('crud.data.refresh');
+      try {
+        this.$emit('loading', true);
+        let response = await this.saveRequestSimpleWorkOrder();
+        await this.$alert.info({
+          mode: "modal",
+          title: '',
+          message: 'What do you want to do?',
+          modalWidth: '600px',
+          actions: [
+            {
+              label: 'Go out to the list',
+              color: 'grey-6',
+              handler: async () => {
+                await this.closeModal();
+              }
             },
-          },
-          {
-            label: 'Create a new one',
-            color: 'positive',
-            handler: () => {
-              this.resetForm();
-            }
-          },
-        ],
-      });
-      this.$emit('loading', false);
+            {
+              label: 'Continue editing',
+              color: "light-blue-7",
+              handler: async () => {
+                await this.showWorkOrder(response.data);
+                eventBus.emit('crud.data.refresh');
+              },
+            },
+            {
+              label: 'Create a new one',
+              color: 'positive',
+              handler: () => {
+                this.resetForm();
+              }
+            },
+          ],
+        });
+
+      } catch (error) {
+        console.error(error);
+        this.$emit('loading', false);
+      }
     },
-    search({type}) {
-      if(!this.isAppOffline) {
+    search({ type }) {
+      if (!this.isAppOffline) {
         if (
-            type != "search" &&
-            (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
+          type != "search" &&
+          (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
         )
           return;
         const params = {
           refresh: true,
           params: {
-            filter: {search: this.form?.preFlightNumber?.toUpperCase()},
+            filter: { search: this.form?.preFlightNumber?.toUpperCase() },
           },
         };
         this.loadingState = true;
         //Request
         this.$crud
-            .index("apiRoutes.qfly.flightaware", params)
-            .then((response) => {
-              this.responseStatus(response);
-            })
-            .catch((error) => {
-              this.loadingState = false;
-              this.$alert.error({message: this.$tr("ifly.cms.message.errorlookingForFlight")})
-              console.log(error);
-            });
+          .index("apiRoutes.qfly.flightaware", params)
+          .then((response) => {
+            this.responseStatus(response);
+          })
+          .catch((error) => {
+            this.loadingState = false;
+            this.$alert.error({ message: this.$tr("ifly.cms.message.errorlookingForFlight") })
+            console.log(error);
+          });
       }
     },
-    async setDataTable({select, dialog}) {
+    async setDataTable({ select, dialog }) {
       this.dialog = dialog;
       this.form.faFlightId = select.faFlightId || null;
       await this.orderConfirmationMessage();
     },
-    messageWhenFlightIsNotChosen(message='') {
+    messageWhenFlightIsNotChosen(message = '') {
       this.$alert.warning({
         mode: "modal",
         title: this.$tr("ifly.cms.form.flight"),
         message,
         actions: [
           {
-            label: this.$tr('isite.cms.label.cancel'), 
+            label: this.$tr('isite.cms.label.cancel'),
             color: 'grey-8'
           },
           {
@@ -311,7 +294,7 @@ export default {
       });
     },
     async addmanually() {
-      const message = `Are you sure to create this Work Order with an unscheduled flight number: ${this.form.preFlightNumber}?`
+      const message = `${this.creationConfirmationMessage} ${this.form.preFlightNumber}?`
       this.messageWhenFlightIsNotChosen(message);
       this.form.faFlightId = null;
       this.dialog = false;
@@ -323,7 +306,7 @@ export default {
         let response = null
 
         qRampStore().showLoading();
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        const businessUnitId = this.isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
         const offlineId = new Date().valueOf()
 
         const dataForm = {
@@ -331,6 +314,8 @@ export default {
           offlineId: this.isAppOffline ? offlineId : null,
           titleOffline: qRampStore().getTitleOffline(),
           ...businessUnitId,
+          type: qRampStore().getTypeWorkOrder(),
+          operationTypeId: this.validateNoFligth ? 13 : null,
         };
         try {
           response = await this.$crud.create(
@@ -354,7 +339,7 @@ export default {
         };
         await cacheOffline.addNewRecord(CACHE_PATH, offlineWorkOrder);
 
-        if(!this.isAppOffline) await workOrderList().getWorkOrders(true)
+        if (!this.isAppOffline) await workOrderList().getWorkOrders(true)
         qRampStore().hideLoading();
 
         return this.isAppOffline ? { data: { ...offlineWorkOrder } } : response;

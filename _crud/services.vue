@@ -168,7 +168,7 @@ export default {
               multiple: true,
               useChips: true,
               clearable: true,
-              label: 'Types',
+              label: 'Fields',
               sortValueBy: 'ORDER_SELECTED'
             },
             loadOptions: {
@@ -186,7 +186,8 @@ export default {
               label: 'Type (AGIONE)',
               options:[
                 {label: 'Full Date', value: 1},
-                {label: 'Delay with Headcounts', value: 2}
+                {label: 'Delay with Headcounts', value: 2},
+                {label: 'Price with Quantity', value: 3}
               ]
             },
           },

@@ -1,5 +1,6 @@
 <template></template>
 <script>
+import {FUELING, FLIGHT, NON_FLIGHT} from '../_components/model/constants.js'
 export default {
   name: 'categories',
   data() {
@@ -77,7 +78,10 @@ export default {
           },
         },
         update: {
-          title: 'Update Category'
+          title: 'Update Category',
+          requestParams: {
+            include:"company",
+          },
         },
         delete: true,
         formLeft: {
@@ -128,6 +132,25 @@ export default {
                 id: 'id'
               },
             }
+          },
+          types: {
+            value: [],
+            type: 'select',
+            props: {
+              rules: [
+                val => val.length || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              label: 'Work Order Types',
+              multiple: true,
+              useChips: true,
+              clearable: true,
+              color: "primary",
+              options: [
+                {label: 'Flight', value: FLIGHT},
+                {label: 'Non flight', value: NON_FLIGHT},
+                {label: 'Fueling', value: FUELING}
+              ]
+            },
           },
         }
       }
