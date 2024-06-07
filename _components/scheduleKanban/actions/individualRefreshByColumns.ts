@@ -5,6 +5,7 @@ import modalScheduleStore from '../store/modalSchedule.store'
 import getIndividualWorkOrders from './getIndividualWorkOrders';
 import getWorkOrdersStatistics from './getWorkOrderStatistics';
 import storeFilters from "../store/filters.store";
+import qRampStore from 'src/modules/qramp/_store/qRampStore';
 
 
 export default async function individualRefreshByColumns(): Promise<void> {
@@ -27,7 +28,7 @@ export default async function individualRefreshByColumns(): Promise<void> {
         const endDate = date.endOf('day');
         const filterTime = storeFilters.filterTime;
         const params = {
-            field: "schedule_date",
+            field: qRampStore().getIsPassenger() ? 'schedule_date_local':"schedule_date",
             type: "customRange",
             from: startDate.set({ 
                 hour: filterTime[0], 

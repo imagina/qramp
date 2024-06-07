@@ -1,7 +1,7 @@
 import {WorkOrders} from '../contracts/getWorkOrder.contract'
 import filtersStore from '../store/filters.store'
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
-import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP } from '../../model/constants';
+import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, FLIGHT } from '../../model/constants';
 import dataReturnedWorkOrder from '../models/dataReturnedWorkOrder.model'
 import getWorkOrderOffline from './getWorkOrderOffline';
 import store from '../store/kanban.store';
@@ -20,12 +20,13 @@ export default async function getWorkOrders(refresh = false, page = 1, date): Pr
                 filter: {
                     businessUnitId,
                     ...filtersStore.payload,
-                    date,
                     withoutDefaultInclude: true,
+                    date,
                     order: {
-                        field: "schedule_date",
+                        field: isPassenger ? "schedule_date_local" : 'schedule_date',
                         way: "asc",
                     },
+                    type: [FLIGHT]
                 },
             },
         };

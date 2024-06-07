@@ -25,17 +25,17 @@
         </div>
       </div>
       <div v-if="isbound.inbound">
-        <div v-for="(field, keyField) in formFields.inbound">
+        <div v-for="(field, keyField) in formFields.inbound" :key="keyField">
           <dynamic-field :field="field" v-model="form[keyField]" />
         </div>
       </div>
       <div v-if="isbound.outbound">
-        <div v-for="(field, keyField) in formFields.outbound">
+        <div v-for="(field, keyField) in formFields.outbound" :key="keyField">
           <dynamic-field :field="field" v-model="form[keyField]" />
         </div>
       </div>
       <div v-if="isbound.inbound && isbound.outbound">
-        <div v-for="(field, keyField) in formFields.full">
+        <div v-for="(field, keyField) in formFields.full" :key="keyField">
           <dynamic-field :field="field" v-model="form[keyField]" />
         </div>
       </div>

@@ -1,15 +1,10 @@
 <template>
   <div id="crudPage" :key="pageId">
     <!---Component CRUD-->
-    <form-orders  v-if="!crudLoading" ref="formOrders" @refresh-data="getDataTable(true)" />
-    <commentsModal  v-if="!crudLoading" ref="commentsModal" :commentableId="commentableId" isCrud />
-    <crud
-      v-if="!crudLoading"
-      :crud-data="crudCustom"
-      :custom-data="crudData"
-      ref="crudComponent"
-      :title="$route.meta.title"
-    />
+    <form-orders v-if="!crudLoading" ref="formOrders" @refresh-data="getDataTable(true)" />
+    <commentsModal v-if="!crudLoading" ref="commentsModal" :commentableId="commentableId" isCrud />
+    <crud v-if="!crudLoading" :crud-data="crudCustom" :custom-data="crudData" ref="crudComponent"
+      :title="$route.meta.title" />
     <inner-loading :visible="loadingBulk" />
   </div>
 </template>
@@ -42,13 +37,13 @@ export default {
   watch: {
     '$route': {
       deep: true,
-      handler: function() {
+      handler: function () {
         this.init();
       }
     },
     '$filter.values': {
       deep: true,
-      handler: function(newValue, oldValue) {
+      handler: function (newValue, oldValue) {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
           this.areaId = this.$filter.values.areaId;
       }
@@ -58,7 +53,7 @@ export default {
     return {};
   },
   mounted() {
-    this.$nextTick(function() {
+    this.$nextTick(function () {
       this.init();
     });
   },
@@ -431,7 +426,7 @@ export default {
           },
           actions: [
             {
-              name: 'edit',
+              name: 'edit-workOrder',
               icon: 'fal fa-pen',
               label: this.$tr('isite.cms.label.edit'),
               format: item => ({

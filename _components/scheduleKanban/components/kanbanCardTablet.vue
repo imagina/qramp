@@ -102,6 +102,11 @@
             </span>
           </div>
         </div>
+        <chipServices 
+           :workOrderItemsTotal="card.workOrderItemsTotal"
+           :workOrderId="card.id"  
+           size="sm"
+        />
         <!--card actions-->
         <kanbanCardActions
           :id="card.id"
@@ -117,11 +122,13 @@ import {defineComponent} from 'vue';
 import kanbanCardActions from './KanbanCardActions.vue'
 import useKanbanCard from '../uses/useKanbanCard';
 import lastComments from './lastComments.vue'
+import chipServices from './chipServices.vue'
 
 export default defineComponent({
   components: {
     lastComments,
-    kanbanCardActions
+    kanbanCardActions,
+    chipServices
   },
   props: {
     card: {

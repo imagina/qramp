@@ -135,14 +135,27 @@ export default function useCustomerField(props: any) {
      * Retrieves customer details and sets them in the state and dataForm.
      */
     async function init(): Promise<void> {
-        const customer = await workOrderList().getCustomerWithContractLists().find(item => item.id == dataForm.value.customerId);
+        const customer = workOrderList().getCustomerWithContractLists().find(item => {
+            if(dataForm.value.customerId && dataForm.value.contractId) {
+              return item.id == dataForm.value.customerId && item.contractId == dataForm.value.contractId
+            }
+            if(dataForm.value.customerId && !dataForm.value.contractId) {
+                return item.id == dataForm.value.customerId && item.contractId == null;
+            }
+          }) || null;
+  
         if (customer) {
-            customer.label = dataForm.value.adHoc ? `${customer.label} (Ad Hoc)` : customer.label;
             if (customer.label) {
                 state.selectCustomers = customer;
             }
-        }
+        } 
         await setCustomer();
+    }
+    function reset() {
+        state.selectCustomers = '';
+        state.newCustumerAdHoc = [];
+        state.bannerMessage = null;
+        state.customerName = '';
     }
     watch(dataForm, async (newValue, oldValue) => {
         await init();
@@ -158,5 +171,6 @@ export default function useCustomerField(props: any) {
         addCustumers,
         setCustomerName,
         setCustomer,
+        reset,
     }
 }

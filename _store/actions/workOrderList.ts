@@ -23,6 +23,7 @@ import {
 import {buildServiceList} from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
 import {store} from 'src/plugins/utils'
+import serviceListStore from '../../_components/serviceList/store/serviceList'
 
 const state = reactive<State>({
   operationTypeList: [],
@@ -667,12 +668,29 @@ export default function workOrderList(): WorkOrderList {
     }
   }
 
+    async function getFavourites(refresh = false) {
+      //if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airport.index')) {
+          try {
+              const response = await baseService.index('apiRoutes.qsite.favourites', {refresh});
+              const data = response.data.map(item => ({
+                  favouriteId: item.id,
+                  id: item.favouritableId,
+                  favouritableType: item.favouritableType,
+              }));
+              serviceListStore().setFavouriteList(data);
+              return data;
+          } catch (error) {
+              console.log(error);
+          }
+      //}
+  }
+
   /**
    * The function getAllList() returns a Promise that resolves to void.
    */
   async function getAllList(refresh = false): Promise<void> {
     Promise.all([
-      getWorkOrders(refresh),
+      //getWorkOrders(refresh),
       getStation(refresh),
       getOperationType(refresh),
       getCustomerWithContract(refresh),
@@ -733,43 +751,44 @@ export default function workOrderList(): WorkOrderList {
    *    WorkOrderStatusesContract.
    */
 
-  return {
-    setOperationTypeList,
-    getOperationTypeList,
-    getOperationType,
-    setStationList,
-    getStationList,
-    getStation,
-    setCustomerList,
-    getCustomerList,
-    getCustomer,
-    getAllList,
-    setContractList,
-    getContractList,
-    getFlightStatusesList,
-    setFlightStatusesList,
-    getWorkOrderStatusesList,
-    setWorkOrderStatusesList,
-    getWorkOrderStatuses,
-    getGatesList,
-    setGatesList,
-    getGates,
-    getDataWorkOrderList,
-    setDataWorkOrderList,
-    getWorkOrders,
-    getCustomerWithContract,
-    getCustomerWithContractLists,
-    setCustomerWithContractLists,
-    setAirlinesList,
-    getAirlinesList,
-    setACTypesList,
-    getACTypesList,
-    setAirportsList,
-    getAirportsList,
-    setWorkOrderDelays,
-    getWorkOrderDelays,
-    setResponsible,
-    getResponsible,
-    getACTypes,
-  }
+    return {
+        setOperationTypeList,
+        getOperationTypeList,
+        getOperationType,
+        setStationList,
+        getStationList,
+        getStation,
+        setCustomerList,
+        getCustomerList,
+        getCustomer,
+        getAllList,
+        setContractList,
+        getContractList,
+        getFlightStatusesList,
+        setFlightStatusesList,
+        getWorkOrderStatusesList,
+        setWorkOrderStatusesList,
+        getWorkOrderStatuses,
+        getGatesList,
+        setGatesList,
+        getGates,
+        getDataWorkOrderList,
+        setDataWorkOrderList,
+        getWorkOrders,
+        getCustomerWithContract,
+        getCustomerWithContractLists,
+        setCustomerWithContractLists,
+        setAirlinesList,
+        getAirlinesList,
+        setACTypesList,
+        getACTypesList,
+        setAirportsList,
+        getAirportsList,
+        setWorkOrderDelays,
+        getWorkOrderDelays,
+        setResponsible,
+        getResponsible,
+        getACTypes,
+        getFavourites,
+    }
 }

@@ -40,13 +40,27 @@ const state = reactive({
     isblank: false,
     isPassenger: false,
     workOrder: {},
+    isFueling: true,
+    typeWorkOrder: null,
 });
 
 export default function qRampStore() {
     function setIsPassenger(value) {
         state.isPassenger = value;
     }
-
+    function getIsFueling() {
+        return state.isFueling;
+    }
+    function setIsFueling(value) {
+        state.isFueling = value;
+    }
+    function getTypeWorkOrder() {
+        return state.typeWorkOrder;
+    }
+    function setTypeWorkOrder(value) {
+        state.typeWorkOrder = value;
+    }
+    
     function getWorkOrder() {
         return state.workOrder;
     }
@@ -561,6 +575,10 @@ export default function qRampStore() {
         changeStatus,
         parseDateOfflineWO,
         getWorkOrder,
-        setWorkOrder
+        setWorkOrder,
+        getIsFueling,
+        setIsFueling,
+        getTypeWorkOrder,
+        setTypeWorkOrder
     }
 }
