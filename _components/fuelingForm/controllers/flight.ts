@@ -1,4 +1,4 @@
-import Vue, { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import qRampStore from '../../../_store/qRampStore';
 import workOrderList from '../../../_store/actions/workOrderList';
 import momentTimezone from 'moment-timezone';

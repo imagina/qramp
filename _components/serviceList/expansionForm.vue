@@ -14,18 +14,10 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    selectService: {
-      type: Object,
-      default: () => { },
-    },
   },
   setup(props) {
-    const { data, selectService } = toRefs(props)
-    const favourite = ref(false);
-    const refData = ref({});
+    const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
-    const newData = ref(clone(data.value))
-
     async function selectFavourite(data: any) {
       data.favourite = !data.favourite;
       if (!data.favourite) {
@@ -41,29 +33,18 @@ export default defineComponent({
       }
       await workOrderList().getFavourites(true);
     }
-
+    const favourite = ref(false);
+    const refData = ref({});
     function showValue(data: any) {
       if (data) {
         return data.value
       }
     }
 
-    watch(newData, (newVal) => {
-      const services = clone(serviceListStore().getServiceList())
-
-      services.map(service => {
-        if (service.id === selectService.value.id) {
-          service.dynamicField = newVal as DynamicField[]
-        }
-      })
-      serviceListStore().setServiceList(services)
-    }, { deep: true })
-
     return {
       isDesktop,
       showValue,
       data,
-      newData,
       favourite,
       selectFavourite,
       refData
@@ -74,7 +55,7 @@ export default defineComponent({
 <template>
   <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
     <div v-if="!isDesktop">
-      <q-list v-for="(item, index) in newData" :key="index">
+      <q-list v-for="(item, index) in data" :key="index">
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
             <q-item-section avatar class="q-pr-none " style="min-width: 45px;">
@@ -112,7 +93,7 @@ export default defineComponent({
       </q-list>
     </div>
     <div v-else>
-      <div v-for="(item, index) in newData" :key="index" class="
+      <div v-for="(item, index) in data" :key="index" class="
           tw-flex 
           color-bg-blue-gray-custom 
           tw-py-2 

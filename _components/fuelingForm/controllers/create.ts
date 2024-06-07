@@ -1,4 +1,4 @@
-import Vue, { computed, ref, getCurrentInstance } from 'vue'
+import { computed, ref, getCurrentInstance } from 'vue'
 import { BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, FUELING, STATUS_DRAFT } from '../../model/constants';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from '../../../_store/qRampStore';

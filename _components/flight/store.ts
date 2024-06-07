@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import qRampStore from '../../_store/qRampStore.js'
 export interface FormContarct {
-    operationTypeId: string;
+    operationTypeId: string | null;
     statusId: string;
     inboundCustomFlightNumber: string;
     outboundCustomFlightNumber: string;
@@ -60,7 +60,7 @@ export interface FlightStoreContract {
 
 const state = reactive<StateContarct>({
     form: {
-        operationTypeId: '',
+        operationTypeId: null,
         statusId: '',
         inboundCustomFlightNumber: '',
         outboundCustomFlightNumber: '',
@@ -124,7 +124,7 @@ export default function flightStore(): FlightStoreContract {
    * @returns {void}
    */
     function setForm(flight: FormContarct): void {
-        state.form.operationTypeId = flight['operationTypeId'] ? flight['operationTypeId'].toString() : ''
+        state.form.operationTypeId = flight['operationTypeId'] ? flight['operationTypeId'].toString() : null;
         state.form.statusId = flight['statusId'] ? flight['statusId'].toString() : ''
         state.form.inboundCustomFlightNumber = flight['inboundCustomFlightNumber'] ? flight['inboundCustomFlightNumber'] : ''
         state.form.outboundCustomFlightNumber = flight['outboundCustomFlightNumber'] ? flight['outboundCustomFlightNumber'] : ''

@@ -1,4 +1,4 @@
-import Vue, {
+import {
   ref,
   computed,
   WritableComputedRef,
