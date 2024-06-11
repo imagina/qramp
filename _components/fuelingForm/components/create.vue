@@ -1,8 +1,8 @@
 <template>
     <div>
-        <q-form 
-          ref="formFueling" 
-          id="simpleWordOrder" 
+        <q-form
+          ref="formFueling"
+          id="simpleWordOrder"
           class="
             tw-px-3
             tw-pt-8
@@ -16,7 +16,7 @@
       ">
          <customer
             :dataForm="form"
-            :addNewOptions="false" 
+            :addNewOptions="false"
             ref="refCustomer"
           />
           <div v-for="(field, keyField) in fields.form" :key="keyField" class="col-12 col-md-6">
@@ -35,9 +35,9 @@ export default defineComponent({
     components: {
       customer
     },
-    setup() {
-        return { 
-            ...createController()
+    setup(props,{emit}) {
+        return {
+            ...createController(props, emit)
         }
     }
 })

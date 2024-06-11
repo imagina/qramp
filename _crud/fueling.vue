@@ -1,8 +1,10 @@
 <template>
   <div>
-    <fuelingForm />
+    <fuelingForm @refresh-data="getDataTable(true)" />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
+    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+          :title="$route.meta.title" />
   </div>
 </template>
 <script>
@@ -41,6 +43,7 @@ export default {
     return {
       showWorkOrder: this.showWorkOrder,
       openModal: true,
+      getDataTable: this.getDataTable
     }
   },
   watch: {
@@ -521,11 +524,16 @@ export default {
     }
   },
   methods: {
+    async getDataTable(refresh) {
+      console.log('hola');
+      console.log(this.$refs.crudComponent)
+      await this.$refs.crudComponent.getDataTable(refresh);
+    },
     async postReloadTransactions(id) {
       try {
         this.loadingBulk = true;
         await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
-        await this.$root.$emit('crud.data.refresh');
+        await this.getDataTable(true);
         this.loadingBulk = false;
       } catch (error) {
         this.loadingBulk = false;

@@ -7,7 +7,7 @@ import showWorkOrder from '../services/showWorkOrder'
 import { alert, store, i18n } from 'src/plugins/utils';
 import baseService from "src/modules/qcrud/_services/baseService.js";
 
-export default function createController() {
+export default function createController(props: any = null, emit: any = null) {
   const formFueling: any = ref(null);
   const refCustomer: any = ref(null);
   const proxy = (getCurrentInstance() as any).proxy as any;
@@ -26,10 +26,10 @@ export default function createController() {
         type: "select",
         props: {
           rules: [
-            (val) => !!val || i18n.$tr("isite.cms.message.fieldRequired"),
+            (val) => !!val || i18n.tr("isite.cms.message.fieldRequired"),
           ],
           selectByDefault: true,
-          label: `*${i18n.$tr("ifly.cms.form.station")}`,
+          label: `*${i18n.tr("ifly.cms.form.station")}`,
           clearable: true,
           color: "primary",
           options: workOrderList()
@@ -109,8 +109,8 @@ export default function createController() {
           label: 'Go out to the list',
           color: 'grey-6',
           handler: async () => {
-            await reset()
-            await proxy.$root.$emit('crud.data.refresh');
+            await emit('refreshData');
+            await reset();
           }
         },
 
@@ -119,7 +119,7 @@ export default function createController() {
           color: "light-blue-7",
           handler: async () => {
             await showWorkOrder(data)
-            await proxy.$root.$emit('crud.data.refresh');
+            await emit('refreshData');
           },
         },
         {

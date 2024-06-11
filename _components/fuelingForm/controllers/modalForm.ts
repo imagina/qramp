@@ -4,7 +4,8 @@ import {
   WritableComputedRef,
   ComputedRef,
   onBeforeUnmount,
-  getCurrentInstance
+  getCurrentInstance,
+  onMounted
 } from 'vue';
 import storeFueling from '../store/index';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
@@ -16,7 +17,7 @@ import baseService from "src/modules/qcrud/_services/baseService.js";
 import { alert, store, i18n } from 'src/plugins/utils';
 import { useQuasar } from 'quasar';
 
-export default function modalFormController() {
+export default function modalFormController(props: any = null, emit: any = null) {
   const $q = useQuasar();
   const proxy = (getCurrentInstance() as any).proxy as any;
   const refCreateForm: any = ref(null);
@@ -57,7 +58,7 @@ export default function modalFormController() {
           storeFueling.loading = true;
           await baseService.delete('apiRoutes.qramp.workOrders', storeFueling.form.id);
           storeFueling.reset();
-          await proxy.$root.$emit('crud.data.refresh');
+          await emit('refresh-data');
           storeFueling.loading = false;
         }
       },
@@ -129,7 +130,7 @@ export default function modalFormController() {
     storeFueling.reset();
     serviceListStore().setShowFavourite(false)
     serviceListStore().setErrorList([]);
-    if (isUpdate.value) proxy.$root.$emit('crud.data.refresh');
+    if (isUpdate.value) emit('refresh-data');
   }
 
   function save() {
@@ -187,10 +188,17 @@ export default function modalFormController() {
     await updateWorkOrders()
     storeFueling.reset();
     serviceListStore().setShowFavourite(false);
-    await proxy.$root.$emit('crud.data.refresh');
+    await emit('refresh-data');
     const message = i18n.tr('isite.cms.message.recordUpdated')
     alert.info({ message })
   }
+  async function getDataTable() {
+    await emit('refresh-data')
+  }
+  onMounted(async () => {
+    storeFueling.emitEvent.refreshData = getDataTable();
+    console.log(storeFueling.emitEvent);
+  })
   onBeforeUnmount(() => {
     storeFueling.reset();
     serviceListStore().setErrorList([]);
@@ -207,5 +215,6 @@ export default function modalFormController() {
     save,
     isUpdate,
     refStepper,
+    getDataTable
   };
 }

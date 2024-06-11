@@ -5,7 +5,7 @@ export default {
     authenticated: true,
     path: '/ramp/work-orders/index',
     name: 'qramp.admin.workOrders',
-    page: () => import('../_crud/workOrders/index.vue'),
+    page: () => import('../_crud/workOrders.vue'),
     layout: () => import('layouts/master.vue'),
     title: 'ifly.cms.sidebar.workOrders',
     icon: 'fa-light fa-briefcase',
@@ -92,7 +92,7 @@ export default {
     authenticated: true,
     path: '/passenger/work-orders/index',
     name: 'qramp.admin.passenger',
-    page: () => import('../_crud/workOrders/index.vue'),
+    page: () => import('../_crud/passengers.vue'),
     layout: () => import('layouts/master.vue'),
     title: 'ifly.cms.sidebar.workOrders',
     icon: 'fa-light fa-briefcase',
@@ -239,8 +239,7 @@ export default {
     authenticated: true,
     path: '/ramp/fueling/index',
     name: 'qramp.admin.fueling',
-    crud: import('../_crud/fueling.vue'),
-    page: () => import('modules/qcrud/_pages/admin/crudPage'),
+    page: () => import('../_crud/fueling.vue'),
     layout: () => import('layouts/master.vue'),
     title: 'Fueling',
     icon: 'fa-light fa-briefcase',
@@ -263,7 +262,7 @@ export default {
       refresh: true,
     }
   },
-  
+
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,

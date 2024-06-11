@@ -1,8 +1,10 @@
 <template>
     <div>
-        <form-orders ref="formOrders"/>
+        <form-orders ref="formOrders" @refresh-data="getDataTable(true)" />
         <flightDetail/>
         <inner-loading :visible="loadingBulk" />
+        <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+            :title="$route.meta.title" />
     </div>
 </template>
 <script>
@@ -21,7 +23,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts'
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 
 export default {
     name: 'RampCrud',
@@ -40,6 +42,7 @@ export default {
         return {
             showWorkOrder: this.showWorkOrder,
             openModal: true,
+            getDataTable: this.getDataTable
         }
     },
     watch: {
@@ -167,8 +170,8 @@ export default {
                             action: (item) => {
                                 const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
                                 const workOrder = {
-                                        workOrderId: item.id, 
-                                        faFlightId: item.faFlightId, 
+                                        workOrderId: item.id,
+                                        faFlightId: item.faFlightId,
                                         flightNumber:  flightNumberInbound || item.inboundFlightNumber,
                                         boundScheduleDate: item.inboundScheduleArrival || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                                         type: 'inbound',
@@ -192,10 +195,10 @@ export default {
                             format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
                             action: (item) => {
                                 const flightNumberOutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
-                                
+
                                 const workOrder = {
-                                        workOrderId: item.id, 
-                                        faFlightId: item.outboundFaFlightId, 
+                                        workOrderId: item.id,
+                                        faFlightId: item.outboundFaFlightId,
                                         flightNumber: flightNumberOutbound || item.outboundFlightNumber,
                                         boundScheduleDate: item.outboundScheduledDeparture || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                                         type: 'outbound',
@@ -406,7 +409,7 @@ export default {
                     },
                     actions: [
                         {
-                            name: 'edit',
+                            name: 'edit-work',
                             icon: 'fal fa-pen',
                             label: this.$tr('isite.cms.label.edit'),
                             format: item => ({
@@ -439,7 +442,7 @@ export default {
 
                                 return {
                                     //must have the submit permission and the work order can't be submited or posted
-                                    vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
+                                    vIf: this.$hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
                                 }
                             },
                             action: (item) => {
@@ -454,7 +457,7 @@ export default {
                                 this.changeStatus(STATUS_POSTED, item.id)
                             },
                             format: item => ({
-                                vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted && ![STATUS_POSTED].includes(item.statusId),
+                                vIf: this.$hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted && ![STATUS_POSTED].includes(item.statusId),
                                 label: this.$tr('isite.cms.label.post')
                             }),
                         },
@@ -468,7 +471,7 @@ export default {
                             format: item => (
                                 {
                                     //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
-                                    vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
+                                    vIf: this.$hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                                 }),
                         },
                         {
@@ -479,7 +482,7 @@ export default {
                                 this.postReloadTransactions(item.id);
                             },
                             format: item => ({
-                                vIf: this.$auth.hasAccess('ramp.work-orders.reload-transactions') && !this.isAppOffline
+                                vIf: this.$hasAccess('ramp.work-orders.reload-transactions') && !this.isAppOffline
                             })
                         },
                     ],
@@ -721,6 +724,9 @@ export default {
                 qRampStore().setWorkOrder(null);
                 console.log(error);
             }
+        },
+        async getDataTable(refresh) {
+          await this.$refs.crudComponent.getDataTable(refresh);
         },
     }
 }

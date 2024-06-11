@@ -1,8 +1,10 @@
 <template>
   <div>
-    <form-orders ref="formOrders" />
+    <form-orders ref="formOrders" @refresh-data="getDataTable(true)" />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
+    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+          :title="$route.meta.title" />
   </div>
 </template>
 <script>
@@ -117,7 +119,7 @@ export default {
                          label: 'Create Flight',
                          action: async () => {
 
-                         } 
+                         }
                         },
                         {
                          label: 'Create Non Flight',
@@ -129,10 +131,10 @@ export default {
                                 modalProps: {
                                     title: this.$tr('ifly.cms.form.newWorkOrder'),
                                     update: false,
-                                    width: '35vw' 
+                                    width: '35vw'
                                 }
                             })
-                         } 
+                         }
                         },
              ]*/
         },
@@ -425,7 +427,7 @@ export default {
           },
           actions: [
             {
-              name: 'edit',
+              name: 'edit-work',
               icon: 'fal fa-pen',
               label: this.$tr('isite.cms.label.edit'),
               format: item => ({
@@ -737,6 +739,9 @@ export default {
         qRampStore().setWorkOrder(null);
         console.log(error);
       }
+    },
+    async getDataTable(refresh) {
+      await this.$refs.crudComponent.getDataTable(refresh);
     },
   }
 }
