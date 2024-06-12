@@ -19,6 +19,7 @@ export default {
     crudData() {
       return {
         crudId: this.crudId,
+        entityName: config("main.qfly.entityNames.workOrder"),
         read: {},
         update: false,
         delete: true,

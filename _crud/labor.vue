@@ -95,7 +95,7 @@ export default {
     crudData() {
       return {
         crudId: this.crudId,
-        entityName: config("main.qfly.entityNames.workOrder"),
+        entityName: config("main.qramp.entityNames.workOrders"),
         apiRoute: 'apiRoutes.qramp.workOrders',
         permission: 'ramp.labor-work-orders',
         create: {

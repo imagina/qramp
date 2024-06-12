@@ -43,7 +43,6 @@ export default {
     return {
       showWorkOrder: this.showWorkOrder,
       openModal: true,
-      getDataTable: this.getDataTable
     }
   },
   watch: {
@@ -97,7 +96,7 @@ export default {
     crudData() {
       return {
         crudId: this.crudId,
-        entityName: config("main.qfly.entityNames.workOrder"),
+        entityName: config("main.qramp.entityNames.workOrders"),
         apiRoute: 'apiRoutes.qramp.workOrders',
         permission: 'ramp.fueling-work-orders',
         create: {
@@ -525,8 +524,6 @@ export default {
   },
   methods: {
     async getDataTable(refresh) {
-      console.log('hola');
-      console.log(this.$refs.crudComponent)
       await this.$refs.crudComponent.getDataTable(refresh);
     },
     async postReloadTransactions(id) {
