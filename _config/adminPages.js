@@ -254,7 +254,7 @@ export default {
     path: '/ramp/labor/index',
     name: 'qramp.admin.labor',
     crud: import('../_crud/labor.vue'),
-    page: () => import('modules/qcrud/_pages/admin/crudPage'),
+    page: () => import('../_crud/labor.vue'),
     layout: () => import('layouts/master.vue'),
     title: 'Labor',
     icon: 'fa-light fa-briefcase',

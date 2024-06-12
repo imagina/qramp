@@ -1,9 +1,10 @@
 <template>
   <div>
-    <form-orders ref="formOrders" />
+    <form-orders ref="formOrders" @refresh-data="getDataTable(true)" />
     <flightDetail />
-    <commentsModal ref="commentsModal" :commentableId="commentableId" isCrud />
     <inner-loading :visible="loadingBulk" />
+    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+          :title="$route.meta.title" />
   </div>
 </template>
 <script>
@@ -20,8 +21,6 @@ import {
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
-import commentsModal from '../_components/schedule/modals/commentsModal.vue'
-import htmlComment from '../_components/model/htmlComment.js';
 import workOrderList from '../_store/actions/workOrderList.ts';
 import { cacheOffline } from 'src/plugins/utils';
 
@@ -30,13 +29,11 @@ export default {
   components: {
     formOrders,
     flightDetail,
-    commentsModal,
   },
   data() {
     return {
       crudId: this.$uid(),
       areaId: null,
-      commentableId: null,
       loadingBulk: false,
     }
   },
@@ -78,9 +75,6 @@ export default {
   computed: {
     isAppOffline() {
       return this.$store.state.qofflineMaster.isAppOffline;
-    },
-    permisionCommentsIndex() {
-      return this.$hasAccess('ramp.labor-work-orders-comments.index');
     },
     filter() {
       console.log(this.$filter);
@@ -127,12 +121,6 @@ export default {
               style: 'width: 50px',
               action: (item) => false
             },
-            /*{
-              name: 'referenceId',
-              label: 'Reference Id',
-              field: 'referenceId',
-              align: 'left'
-            },*/
             {
               name: 'customer',
               label: this.$tr('isite.cms.label.customer'),
@@ -150,22 +138,6 @@ export default {
               field: 'contract',
               format: val => val ? val.contractName : '-',
               align: 'left'
-            },
-            {
-              name: "comments",
-              label: 'Comments',
-              field: "comments",
-              align: "left",
-              format: item => item && item > 0 ? htmlComment(item) : '',
-              formatColumn: row => ({
-                textColor: row.comments ? `red-5` : ''
-              }),
-              action: (item) => {
-                this.commentableId = item.id || null;
-                if (this.$refs.commentsModal) {
-                  this.$refs.commentsModal.showModal();
-                }
-              },
             },
             {
               name: "flightStatus",
@@ -468,21 +440,6 @@ export default {
                 }),
             },
             {
-              name: 'Comments',
-              icon: 'fa-light fa-comment',
-              label: 'Comments',
-              action: (item) => {
-                this.commentableId = item.id || null;
-                if (this.$refs.commentsModal) {
-                  this.$refs.commentsModal.showModal();
-                }
-              },
-              format: item => (
-                {
-                  vIf: this.permisionCommentsIndex && !this.isAppOffline
-                }),
-            },
-            {
               name: 'Reload Transactions',
               icon: 'fa-light fa-download',
               label: 'Reload Transactions',
@@ -732,6 +689,9 @@ export default {
         qRampStore().setWorkOrder(null);
         console.log(error);
       }
+    },
+    async getDataTable(refresh) {
+      await this.$refs.crudComponent.getDataTable(refresh);
     },
   }
 }

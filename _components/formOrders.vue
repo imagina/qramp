@@ -4,7 +4,7 @@
       @hide="clear" :actions="actions" :width="modalProps.width" :maximized="$q.screen.lt.md">
       <stepper-ramp-form v-if="modalProps.update" @sp="sp = $event" @loading="setLoading" ref="stepper"
         :steps="steppers" :data="modalProps" @close-modal="close($event)" @getWorkOrders="getWorkOrders" />
-      <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" @loading="setLoading" />
+      <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" @loading="setLoading" @refreshData="$emit('refresh-data')"/>
     </master-modal>
   </div>
 </template>

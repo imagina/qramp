@@ -62,8 +62,7 @@
                 <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{ field.label }}:</span>
                 <dynamic-field :key="keyField" :class="`${readonly ? 'col-7' : ''}`" :id="keyField" :field="field"
                   :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                  v-model="form[keyField]" @enter="search(field)" :ref="`${keyField}`"
-                  @input="zanetizeData(keyField)" />
+                  v-model="form[keyField]" @enter="search(field)" :ref="`${keyField}`" @update:modelValue="zanetizeData(keyField)" />
               </div>
             </div>
           </collapse>
@@ -78,7 +77,7 @@
                 <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{ field.label }}:</span>
                 <dynamic-field :key="keyField" :class="`${readonly ? 'col-7' : ''}`" :id="keyField" :field="field"
                   :style="`${field.type !== 'input' && !readonly ? keyField == 'destination' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                  v-model="form[keyField]" @enter="search(field)" @input="zanetizeData(keyField)" />
+                  v-model="form[keyField]" @enter="search(field)" @update:modelValue="zanetizeData(keyField)" />
               </div>
             </div>
           </collapse>
@@ -99,7 +98,7 @@
             <div>
               <dynamic-field :key="keyField" :id="keyField" :field="field"
                 :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                v-model="form[keyField]" @input="changeDate(field)" />
+                v-model="form[keyField]" @update:modelValue="changeDate(field)" />
             </div>
           </div>
           <div class="
