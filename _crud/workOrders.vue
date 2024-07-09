@@ -288,12 +288,14 @@ export default {
                     ],
                     filters: {
                         date: {
-                            props: {
-                                label: "Block-in/out Date"
-                            },
-                            name: "blockInBlockOut",
-                            field: {value: 'blockInBlockOut'},
-                            quickFilter: true
+                          value: null,
+                          type: 'dateRange',
+                          props: {
+                            label: "Scheduled date",
+                            field: 'schedule_date_local',
+                          },
+                          name: "scheduleDateLocal",
+                          quickFilter: true
                         },
                         customerId: {
                             value: null,
