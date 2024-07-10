@@ -120,7 +120,9 @@ export default {
                             label: this.$tr('isite.cms.form.id'),
                             field: 'id',
                             style: 'width: 50px',
-                            action: (item) => false
+                            action: (item) => {
+                              this.showWorkOrder(item)
+                            }
                         },
                         {
                             name: 'customer',
@@ -288,14 +290,13 @@ export default {
                     ],
                     filters: {
                         date: {
-                          value: null,
+                          value: {},
                           type: 'dateRange',
                           props: {
                             label: "Scheduled date",
                             field: 'schedule_date_local',
                           },
                           name: "scheduleDateLocal",
-                          quickFilter: true
                         },
                         customerId: {
                             value: null,

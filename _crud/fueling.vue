@@ -113,7 +113,14 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
+              action: (item) => {
+                fuelingFormStore.showModal = true;
+                fuelingFormStore.loading = true;
+                fuelingFormStore.isUpdate = true;
+                fuelingFormStore.titleModal = 'Update fueling' + (item.id ? ` Id: ${item.id}` : '')
+                fuelingFormStore.widthModal = '90vw';
+                this.showWorkOrder(item);
+              }
             },
             {
               name: 'customer',
