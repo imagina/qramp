@@ -44,10 +44,13 @@ import {
   STEP_REMARKS,
   STEP_SIGNATURE,
   BUSINESS_UNIT_PASSENGER,
-  BUSINESS_UNIT_RAMP, 
+  BUSINESS_UNIT_RAMP,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
-  OPERATION_TYPE_OTHER
+  OPERATION_TYPE_OTHER,
+  LABOR,
+  BUSINESS_UNIT_LABOR,
+  OPERATION_TYPE_NON_FLIGHT
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceListStore from './serviceList/store/serviceList.ts';
@@ -166,7 +169,10 @@ export default {
     },
     async sendInfo() {
       try {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        let businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        if(this.isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
+          businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
+        }
         const remarks = remarkStore().getForm();
         const serviceList = await serviceListStore().getServiceListSelected();
         const filterList = await serviceListStore().filterServicesListByQuantity();
@@ -193,6 +199,7 @@ export default {
           delay: dataCargo.delay,
           ourDelay: dataCargo.ourDelay,
           delayComment: dataCargo.delayComment,
+          type: qRampStore().getTypeWorkOrder(),
           workOrderItems: [
             ...serviceList
           ],
@@ -285,7 +292,7 @@ export default {
       const titleOffline = qRampStore().getTitleOffline();
       const params = {params: {titleOffline}};
       if (this.disabledReadonly) {
-        this.$emit('close-modal', false);
+        if (!this.data.parent) this.$emit('close-modal', false);
         this.$emit('loading', false);
         return;
       }
@@ -295,13 +302,13 @@ export default {
 
       await this.updateDataInCache(ROUTE, formatData)
 
-      const request = this.data.update 
+      const request = this.data.update && !this.data?.isClone
         ? this.$crud.update(ROUTE, this.data.workOrderId, formatData, params)
         : this.$crud.create(ROUTE, formatData, params);
 
       await request.then(async res => {
         this.clean()
-        this.$emit('close-modal', false)
+        if (!this.data.parent) this.$emit('close-modal', false)
         const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}`
             : `${this.$tr('isite.cms.message.recordCreated')}`;
         this.$alert.info({message})
@@ -343,11 +350,15 @@ export default {
       try {
         const flightForm = this.$store.state.qrampApp.form;
         let flightformField = this.isPassenger ? FlightformFieldPassengerModel : FlightformFieldModel;
-        const halfTurnInBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        let halfTurnInBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER
         ?  HalfTurnInBountPassengerModel : HalfTurnInBountModel;
-        const halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        let halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER
         ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
-        
+        if(this.isPassenger && flightForm.operationTypeId == OPERATION_TYPE_NON_FLIGHT) {
+          halfTurnInBount = [];
+          halfTurnOutBount = [];
+          flightformField = flightformField.concat(['scheduleDate']);
+        }
         if(!this.isPassenger && flightForm.operationTypeId != OPERATION_TYPE_OTHER) {
           flightformField = flightformField.concat(['inboundBlockIn']);
         }

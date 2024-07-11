@@ -1,5 +1,10 @@
 import Vue, { computed, ref, getCurrentInstance } from 'vue'
-import { BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, FUELING, STATUS_DRAFT } from '../../model/constants';
+import {
+  BUSINESS_UNIT_FUELING,
+  COMPANY_PASSENGER,
+  FUELING,
+  STATUS_DRAFT
+} from '../../model/constants';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from '../../../_store/qRampStore';
 import alert from '@imagina/qsite/_plugins/alert.js';
@@ -20,6 +25,16 @@ export default function createController() {
   });
   const fields = computed(() => ({
     form: {
+      fuelingTicketNumber: {
+        value: null,
+        type: 'input',
+        props: {
+          rules: [
+            val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+          ],
+          label: '*Fueling ticket number',
+        },
+      },
       stationId: {
         value: null,
         type: "select",
@@ -67,7 +82,7 @@ export default function createController() {
     try {
       store.loading = true;
       const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
-      const businessUnitId = { businessUnitId: BUSINESS_UNIT_PASSENGER };
+      const businessUnitId = { businessUnitId: BUSINESS_UNIT_FUELING };
       const dataForm = {
         ...form.value,
         titleOffline: qRampStore().getTitleOffline(),
@@ -79,7 +94,8 @@ export default function createController() {
           API_ROUTE,
           dataForm,
         )
-        orderConfirmationMessage(response.data);
+        await showWorkOrder(response.data)
+        await proxy.$root.$emit('crud.data.refresh');
         store.loading = false;
       } catch (err) {
         console.log(err)
@@ -96,48 +112,6 @@ export default function createController() {
       statusId: STATUS_DRAFT
     };
     store.showModal = false;
-  }
-  function orderConfirmationMessage(data) {
-    alert.info({
-      mode: "modal",
-      title: '',
-      message: 'What do you want to do?',
-      modalWidth: '600px',
-      actions: [
-        {
-          label: 'Go out to the list',
-          color: 'grey-6',
-          handler: async () => {
-            await reset()
-            await proxy.$root.$emit('crud.data.refresh');
-          }
-        },
-
-        {
-          label: 'Continue editing',
-          color: "light-blue-7",
-          handler: async () => {
-            await showWorkOrder(data)
-            await proxy.$root.$emit('crud.data.refresh');
-          },
-        },
-        {
-          label: 'Create a new one',
-          color: 'positive',
-          handler: () => {
-            store.loading = true;
-            refCustomer.value.reset();
-            form.value = {
-              customerId: null,
-              contractId: null,
-              statusId: STATUS_DRAFT
-            };
-            formFueling.value.reset();
-            store.loading = false;
-          }
-        },
-      ],
-    });
   }
   return {
     fields,

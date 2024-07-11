@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue';
-import { BUSINESS_UNIT_PASSENGER, FUELING } from '../../model/constants';
+import { BUSINESS_UNIT_FUELING, FUELING } from '../../model/constants';
 import serviceListStore from '../../serviceList/store/serviceList'
 import remarkStore from '../../remarks/store';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
@@ -22,7 +22,7 @@ const state = reactive({
         contractId: null,
         statusId: null,
         type: FUELING,
-        businessUnitId : BUSINESS_UNIT_PASSENGER,
+        businessUnitId : BUSINESS_UNIT_FUELING,
         stationId: null,
         acTypeId: null,
         carrierId: null,
@@ -90,7 +90,7 @@ const store = computed(() => ({
         state.form.statusId = value.statusId || null;
         state.form.fuelingTicketNumber = value.fuelingTicketNumber || null;
         state.form.fuelingRegistration = value.fuelingRegistration || null;
-        (state.form as any).scheduleDate = value.scheduleDate ? moment(value.scheduleDate).format('MM/DD/YYYY HH:mm') : null;
+        (state.form as any).scheduleDate = value.scheduleDate ? moment(value.scheduleDate).format('MM/DD/YYYY') : null;
         qRampStore().setTypeWorkOrder(value.type)
         qRampStore().setWorkOrderItems(value.workOrderItems);
         serviceListStore().init().then();
@@ -123,7 +123,7 @@ const store = computed(() => ({
             contractId: null,
             statusId: null,
             type: FUELING,
-            businessUnitId : BUSINESS_UNIT_PASSENGER,
+            businessUnitId : BUSINESS_UNIT_FUELING,
             stationId: null,
             acTypeId: null,
             carrierId: null,

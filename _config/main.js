@@ -18,6 +18,11 @@ export default {
     },
     {
       active: true,
+      permission: 'ramp.billing-closed-date.edit',
+      component: () => import('../_components/quick-cards/billingClosedDate')
+    },
+    {
+      active: true,
       permission: 'ramp.dashboard.work-orders-by-status',
       component: () => import('../_components/quick-cards/bar.vue')
     },

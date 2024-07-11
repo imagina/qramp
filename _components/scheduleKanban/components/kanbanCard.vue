@@ -18,7 +18,8 @@
         />
         <div class="tw-py-3 tw-pl-2 tw-w-full">
           <div class="tw-flex tw-pb-1">
-            <div class="tw-w-10/12">
+            <div class="tw-w-10/12 tw-flex">
+              <i v-if="isNonFlight" class="fa-regular fa-plane-slash tw-mr-2" />
               <p 
               class="
                 text-kanban-card 
@@ -53,11 +54,15 @@
             tw-text-xs 
             tw-space-y-1">
             <div class="tw-flex tw-space-x-2 arrival-text">
-              <div v-if="card.calendar.sta">
+              <div v-if="card.calendar.sta && !card.calendar.tos">
                 <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
               </div>
-              <div v-if="card.calendar.std">
+              <div v-if="card.calendar.std && !card.calendar.tos">
                 <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
+              </div>
+              <div v-if="card.calendar.tos">
+                <q-tooltip>Time of Service</q-tooltip>
+                TOS: {{ card.calendar.tos ? $moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
               </div>
             </div>
             <div class="tw-flex tw-space-x-1">

@@ -128,6 +128,18 @@ export default function filterModel() {
         readonly: kanbanStore.isAppOffline,
       },
     },
+    operationTypeId: {
+      value: null,
+      type: 'select',
+      props: {
+        label: `${Vue.prototype.$tr('ifly.cms.form.operation')} type`,
+        clearable: true,
+        color:"primary",
+        'hide-bottom-space': false,
+        options: workOrderList().getOperationTypeList()
+      },
+      label: Vue.prototype.$tr('ifly.cms.form.operation'),
+    },
     type: {
       value: null,
     },

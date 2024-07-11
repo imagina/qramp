@@ -43,7 +43,7 @@ export default function useCustomerField(props: any) {
                 rules: [
                     val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
                 ],
-                label: `*Curtomer/Contract`,
+                label: `*Customer/Contract`,
                 clearable: true,
                 color: "primary",
                 'hide-bottom-space': false,

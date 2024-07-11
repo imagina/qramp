@@ -1,15 +1,19 @@
-import Vue, {computed} from 'vue';
+import { computed, inject } from 'vue';
 import modalScheduleStore from '../store/modalSchedule.store'
 import storeKanban from '../store/kanban.store'
 import _ from "lodash";
 import getCurrentColumn from '../actions/getCurrentColumn';
-
+import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import { FLIGHT, LABOR, NON_FLIGHT } from 'src/modules/qramp/_components/model/constants'
+import modalNonFlightStore from 'src/modules/qramp/_components/modalNonFlight/store/index.store'
 
 export default function useCompletedSchedule(props: any, emit: any) {
   const isBlank = computed(() => storeKanban.isBlank);
   const scheduleType = computed(() => props.scheduleType);
   const dateColumn = computed(() => props.column.date.format('YYYY-MM-DD'));
   const cards = computed(() => props.column.cards)
+  const isPassenger = computed(() => qRampStore().getIsPassenger())
+  const refModalNonFlight: any = inject('refModalNonFlight')
 
 
   const showInline = computed(()=> modalScheduleStore.showInline)
@@ -22,9 +26,27 @@ export default function useCompletedSchedule(props: any, emit: any) {
     set: (value: string) => modalScheduleStore.titleModal = value
   })
 
-  const openForm = computed(() => props.isWeekAgenda? openModalForm : openInlineForm)
+  const openModalNonFlight = () => {
+    modalNonFlightStore.seletedDateColumn = dateColumn.value;
+    modalScheduleStore.seletedDateColumn = dateColumn.value;
+    modalNonFlightStore.stationId = modalScheduleStore.stationId;
+    refModalNonFlight.value.handleModalChange()
+  }
+
+  const openForm = (typeWorkOrder: number | null) => {
+    const isNonFlight = typeWorkOrder === NON_FLIGHT
+    if (props.isWeekAgenda) isNonFlight ? openModalNonFlight() : openModalForm()
+    if (!props.isWeekAgenda) isNonFlight ? openModalNonFlight() : openInlineForm()
+    if (typeWorkOrder) qRampStore().setTypeWorkOrder(typeWorkOrder);
+  }
   const completed = computed(() => props.column.completed)
   const uncompleted = computed(() => props.column.uncompleted)  
+
+  const createNonFlight = computed(() => !isBlank.value && !showInline.value && isPassenger.value && qRampStore().getTypeWorkOrder() !== LABOR)
+
+  const createFlight = computed(() => {
+    return !isBlank.value && !showInline.value
+  })
   
   function openModalForm() {
     modalScheduleStore.isEdit = false;
@@ -61,6 +83,11 @@ export default function useCompletedSchedule(props: any, emit: any) {
     openForm,
     completed,
     uncompleted,
-    cards
+    cards,
+    isPassenger,
+    FLIGHT,
+    NON_FLIGHT,
+    createNonFlight,
+    createFlight,
   }
 }

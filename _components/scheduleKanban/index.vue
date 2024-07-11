@@ -11,7 +11,7 @@ import workOrderList from '../../_store/actions/workOrderList'
 import qRampStore from "../../_store/qRampStore";
 import kanbanStore from './store/kanban.store'
 import serviceListStore from "../serviceList/store/serviceList";
-import { FLIGHT } from "../model/constants";
+import {FLIGHT, LABOR} from "../model/constants";
 
 export default defineComponent({
   components: {
@@ -33,10 +33,22 @@ export default defineComponent({
     );
     function init() {
       new Promise(async (resolve, reject) => {
-        const currentRouteName = proxy.$router.currentRoute.path.indexOf('passenger');
-        await qRampStore().setTypeWorkOrder(FLIGHT);
+        let currentRoutePath = proxy.$router.currentRoute.path;
+        let isPassenger = currentRoutePath.indexOf('passenger') !== -1;
+        let isLabor = currentRoutePath.indexOf('labor') !== -1;
+        let isRamp = currentRoutePath.indexOf('ramp') !== -1;
+        await qRampStore().setTypeWorkOrder(null);
         await workOrderList().setStationList([]);
-        await qRampStore().setIsPassenger(currentRouteName !== -1);
+        if(isRamp) {
+          await qRampStore().setIsPassenger(false);
+        }
+        if(isPassenger) {
+          await qRampStore().setIsPassenger(true);
+        }
+        if(isLabor) {
+          await qRampStore().setIsPassenger(true);
+          await qRampStore().setTypeWorkOrder(LABOR)
+        }
         await workOrderList().getAllList();
         await workOrderList().getCustomerWithContract();
         await serviceListStore().init();

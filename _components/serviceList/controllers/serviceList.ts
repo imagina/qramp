@@ -1,4 +1,4 @@
-import Vue, { ref, computed, watch, onMounted } from 'vue';
+import Vue, { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import serviceListStore from "../store/serviceList";
 import { ServiceModelContract } from '../contracts/index.contract';
 
@@ -36,7 +36,12 @@ export default function useServiceList(props = {}, emit = null) {
     );
     const search = ref<string>("");
     const selectService = ref<ServiceModelContract>({});
-    const breadcrumbs = ref<ServiceModelContract[]>([]);
+    const breadcrumbs = computed<ServiceModelContract[]>({
+        get: () => serviceListStore().getBreadcrumbs(),
+        set: (value: ServiceModelContract[]) => {
+            serviceListStore().setBreadcrumbs(value);
+        }
+    });
     const showServiceList = computed(
         (): boolean =>
             !loading.value &&
@@ -184,6 +189,9 @@ export default function useServiceList(props = {}, emit = null) {
                 documentBody.activeElement.blur();
             }
         });
+    })
+    onBeforeUnmount(() => {
+        serviceListStore().setBreadcrumbs([]);
     })
     return {
         serviceListModel,

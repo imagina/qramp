@@ -9,7 +9,7 @@ import schedulerStore from '../_components/scheduler/store/index.store.ts'
 import schedulerModal from '../_components/scheduler/index.vue';
 import show from '../_components/scheduler/actions/show.ts';
 import {
-  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, COMPANY_RAMP
+  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, COMPANY_RAMP, LABOR, BUSINESS_UNIT_LABOR
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
@@ -29,6 +29,9 @@ export default {
   },
   computed: {
     filterBusinessUnit() {
+      if(qRampStore().getTypeWorkOrder() === LABOR) {
+        return [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER]
+      }
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     isPassenger() {

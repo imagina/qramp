@@ -2,10 +2,12 @@ import Vue, { reactive } from 'vue';
 import baseService from '@imagina/qcrud/_services/baseService.js'
 import qRampStore from '../qRampStore.js'
 import {
+    BUSINESS_UNIT_FUELING, BUSINESS_UNIT_LABOR,
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
     COMPANY_PASSENGER,
-    COMPANY_RAMP
+    COMPANY_RAMP, FLIGHT, FUELING, LABOR,
+    NON_FLIGHT
 } from '../../_components/model/constants.js';
 import {
     Contract,
@@ -519,7 +521,13 @@ export default function workOrderList(): WorkOrderList {
                 const allowContractName = Vue.prototype.$auth ? Vue.prototype.$auth.hasAccess('ramp.work-orders.see-contract-name') : false;
                 const isPassenger = qRampStore().getIsPassenger();
                 const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-                const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
+                let businessUnitId: any = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
+                if(isPassenger && qRampStore().getTypeWorkOrder() === FUELING) {
+                    businessUnitId = {businessUnitId: BUSINESS_UNIT_FUELING}
+                }
+                if(isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
+                    businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
+                }
                 const custemerParams = {
                     refresh,
                     params: {
@@ -655,7 +663,7 @@ export default function workOrderList(): WorkOrderList {
 
 
     async function getFavourites(refresh = false) {
-        //if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airport.index')) {
+        if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('isite.favourites.index')) {
             try {
                 const response = await baseService.index('apiRoutes.qsite.favourites', {refresh});
                 const data = response.data.map(item => ({
@@ -668,7 +676,84 @@ export default function workOrderList(): WorkOrderList {
             } catch (error) {
                 console.log(error);
             }
-        //}
+        }
+    }
+
+    async function getWorkOrderSearch(search: string | null, refresh = false) {
+        const API_ROUTE = 'apiRoutes.qramp.workOrders'
+        const isPassenger = qRampStore().getIsPassenger();
+        const TYPE = [ FLIGHT, NON_FLIGHT ]
+        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        const flightNumber = search ? { search: search?.toUpperCase() } : {};
+        const requestParameters = {
+            refresh,
+            params: {
+                include: "responsible,contract,customer",
+                filter: {
+                    withoutDefaultInclude: true,
+                    businessUnitId,
+                    ...flightNumber,
+                    type: TYPE,
+                    order: {
+                        field: "id",
+                        way: "desc"
+                    }
+                },
+                page: 1,
+                take: 100
+            }
+        }
+
+        try {
+            return await baseService.index(API_ROUTE, requestParameters)
+        } catch (error) {
+            console.error(error)
+            return error
+        }
+    }
+
+    async function getFlightawareSearch(search: null | string = null, refresh = false) {
+        const API_ROUTE = 'apiRoutes.qfly.flightaware' 
+        const flightNumber = search ? {search: search?.toUpperCase()} : {};
+        const requestParameters = {
+            refresh,
+           filter: {
+            ...flightNumber
+           } 
+        }
+        const flightData = await baseService.index(API_ROUTE, requestParameters)
+        return flightData;
+    }
+    
+    async function getSearchFlightNumber(search: string, type: 'workorder' | 'flightaware', refresh) { 
+        if(type === 'workorder') return getFlightawareSearch(search, refresh)
+        if(type === 'flightaware') return getWorkOrderSearch(search, refresh)
+
+        return {
+            data: []
+        }
+    }
+
+    async function getBillingClosedDate(refresh=true) {
+        const API_ROUTE = 'apiRoutes.qramp.billingClosedDate'
+
+        try {
+            const billingDateData = await baseService.index(
+                API_ROUTE, 
+                {
+                    refresh,
+                    params: { 
+                        filter: { field: 'name' } 
+                    } 
+                }
+            )
+
+            return billingDateData
+        } catch(error) {
+            console.error(error)
+            return error
+        }
+
     }
     
 
@@ -778,5 +863,9 @@ export default function workOrderList(): WorkOrderList {
         getResponsible,
         getACTypes,
         getFavourites,
+        getWorkOrderSearch,
+        getFlightawareSearch,
+        getSearchFlightNumber,
+        getBillingClosedDate,
     }
 }
