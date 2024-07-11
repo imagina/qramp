@@ -341,15 +341,30 @@ export const columnsFlightAware = [
 ]
 
 export const columnsWorkOrders = [
-  { name: 'id', label: 'ID', field: 'id' , align: 'left'},
   { 
-    name: 'type', 
-    label: 'Type', 
-    field: 'type', 
+    name: 'id', 
+    label: 'ID', 
+    field: 'id' , 
     align: 'left',
-    format: item => {
-      const type = item === 1 ? 'Flight' : 'Non-Flight';
-      return `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${type}</span>`
+    format: (val, row) => {
+      if (row.type === NON_FLIGHT) {
+        return `
+          <span>${val}</span>
+          <span 
+            class="
+              tw-border 
+              tw-py-0.5 
+              tw-px-1 
+              tw-rounded-md 
+              tw-text-xs 
+              tw-ml-2
+            "
+          />
+            non-flight
+          </span>
+        `
+      }
+      return `<span>${val}</span>`
     },
   },
   { name: 'inboundFlightNumber', label: 'Inbound Flight Number', field: 'inboundFlightNumber', align: 'left'},

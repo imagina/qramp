@@ -1,8 +1,9 @@
-import Vue, {ref, watch, computed, ComputedRef} from 'vue';
+import {ref, watch, computed, ComputedRef} from 'vue';
 import serviceListStore from '../store/serviceList';
 import findDynamicFieldTitle from '../services/findDynamicFieldTitle';
 import searchAndCreateDynamicField from '../services/searchAndCreateDynamicField';
 import deleteChipRecursive from '../services/deleteChipRecursive';
+import { store } from 'src/plugins/utils'
 
 const chipServicesController = (props: any = {}, emit: any = null) => {
     let lists: any = ref([]);
@@ -12,10 +13,10 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
         return serviceListStore().getFavouriteList().filter(item => serviceList.map(item => item.id).includes(item.id));
     })
     const permissionFavourite = computed(() => ({
-        create: Vue.prototype.$auth.hasAccess('isite.favourites.create'),
-        edit: Vue.prototype.$auth.hasAccess('isite.favourites.edit'),
-        index: Vue.prototype.$auth.hasAccess(`isite.favourites.index`),
-        destroy: Vue.prototype.$auth.hasAccess(`isite.favourites.destroy`),
+        create: store.hasAccess('isite.favourites.create'),
+        edit: store.hasAccess('isite.favourites.edit'),
+        index: store.hasAccess(`isite.favourites.index`),
+        destroy: store.hasAccess(`isite.favourites.destroy`),
     }));
     const showFavourite: ComputedRef<boolean> = computed(() => serviceListStore().getShowFavourite());
     const nameProduct = (productId: string) => {

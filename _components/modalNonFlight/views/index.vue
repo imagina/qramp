@@ -32,7 +32,7 @@
             :field="field"
             v-model="form[keyField]"
             @enter="search()"
-            @input="zanetizeData(keyField)"
+            @update:modelValue="zanetizeData(keyField)"
           />
         </q-form>
       </div>

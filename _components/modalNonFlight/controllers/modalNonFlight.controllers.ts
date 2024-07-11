@@ -1,4 +1,4 @@
-import Vue, { 
+import { 
   computed, 
   ref, 
   toRefs, 
@@ -17,6 +17,7 @@ import { openModalFull } from 'src/modules/qramp/_store/actions/openModalFull'
 import { getSearchByFlightNumber } from '../services/searchFlight'
 import serviceListStore from '../../serviceList/store/serviceList';
 import { cloneFlight } from '../actions/cloneFlight'
+import { i18n } from 'src/plugins/utils'
 
 export default function controller(props: any, emit: any) {
 
@@ -32,7 +33,7 @@ export default function controller(props: any, emit: any) {
       props: {
         vIf: isShowButtonSave.value,
         color: 'primary',
-        label: Vue.prototype.$tr('isite.cms.label.save'),
+        label: i18n.tr('isite.cms.label.save'),
       },
       action: async () => {
         store.loading = true;

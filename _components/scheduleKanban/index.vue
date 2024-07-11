@@ -41,25 +41,24 @@ export default defineComponent({
 
     function init() {
       new Promise(async (resolve, reject) => {
-        console.log('router.route.path', router.route.path)
         let currentRoutePath = router.route.path;
         let isPassenger = currentRoutePath.indexOf('passenger') !== -1;
         let isLabor = currentRoutePath.indexOf('labor') !== -1;
         let isRamp = currentRoutePath.indexOf('ramp') !== -1;
-        // await qRampStore().setTypeWorkOrder(null);
-        // // await workOrderList().setStationList([]);
-        // if(isRamp) {
-        //   await qRampStore().setIsPassenger(false);
-        // }
-        // if(isPassenger) {
-        //   await qRampStore().setIsPassenger(true);
-        // }
-        // if(isLabor) {
-        //   await qRampStore().setIsPassenger(true);
-        //   await qRampStore().setTypeWorkOrder(LABOR)
-        // }
-        // await workOrderList().getAllList();
-        // await workOrderList().getCustomerWithContract();
+        await qRampStore().setTypeWorkOrder(null);
+        await workOrderList().setStationList([]);
+        if(isRamp) {
+          await qRampStore().setIsPassenger(false);
+        }
+        if(isPassenger) {
+          await qRampStore().setIsPassenger(true);
+        }
+        if(isLabor) {
+          await qRampStore().setIsPassenger(true);
+          await qRampStore().setTypeWorkOrder(LABOR)
+        }
+        await workOrderList().getAllList();
+        await workOrderList().getCustomerWithContract();
         await serviceListStore().init();
       })
     }
