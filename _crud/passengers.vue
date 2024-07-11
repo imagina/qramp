@@ -1,9 +1,10 @@
 <template>
   <div>
-    <form-orders ref="formOrders" />
+    <form-orders ref="formOrders" @refresh-data="getDataTable(true)" />
     <modalNonFlight
       ref="refModalNonFlight"
-      :refFormOrders="refModalNonFlight"
+      :refFormOrders="refFormOrders"
+      @getWorkOrderFilter="getDataTable(true)"
     />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
@@ -44,7 +45,7 @@ export default {
       crudId: this.$uid(),
       areaId: null,
       loadingBulk: false,
-      refModalNonFlight: null
+      refFormOrders: null
     }
   },
   provide() {
@@ -80,7 +81,7 @@ export default {
   },
   mounted() {
     this.$nextTick(async () => {
-      this.refModalNonFlight = this.$refs.formOrders
+      this.refFormOrders = this.$refs.formOrders
     })
   },
   beforeUnmount() {

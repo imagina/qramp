@@ -133,13 +133,13 @@ export default function filterModel() {
       value: null,
       type: 'select',
       props: {
-        label: `${Vue.prototype.$tr('ifly.cms.form.operation')} type`,
+        label: `${i18n.tr('ifly.cms.form.operation')} type`,
         clearable: true,
         color:"primary",
         'hide-bottom-space': false,
         options: workOrderList().getOperationTypeList()
       },
-      label: Vue.prototype.$tr('ifly.cms.form.operation'),
+      label: i18n.tr('ifly.cms.form.operation'),
     },
     type: {
       value: null,
