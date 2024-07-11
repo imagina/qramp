@@ -1,7 +1,7 @@
 import Vue, { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import serviceListStore from "../store/serviceList";
 import { ServiceModelContract } from '../contracts/index.contract';
-
+import { i18n } from 'src/plugins/utils';
 
 /**
  * @param props - This is an object that contains the props that are passed to the component.
@@ -23,7 +23,7 @@ export default function useServiceList(props = {}, emit = null) {
      * @constant {any} trans - computed
      * component variable list
      */
-    const trans = computed((): any => Vue.prototype.$tr);
+    const trans = computed((): any =>  i18n.tr);
     const showFavourite = computed(() => serviceListStore().getShowFavourite());
     const favouritesList: any = computed(() => {
         const serviceList = searchAndCreateDynamicField(serviceListModel.value);

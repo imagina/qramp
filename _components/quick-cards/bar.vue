@@ -3,8 +3,8 @@
 </template>
 <script>
 //Component
-import quickCard from '@imagina/qsite/_components/master/quickCard';
-import QCharts from '@imagina/qsite/_components/master/charts.vue';
+import quickCard from 'modules/qsite/_components/master/quickCard';
+import QCharts from 'modules/qsite/_components/master/charts.vue';
 
 export default {
   props: {},
@@ -51,5 +51,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

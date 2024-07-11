@@ -1,6 +1,6 @@
 import moment from "moment";
 import { DataWorkOrder } from "../contracts/getWorkOrder.contract";
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 import filtersStore from '../store/filters.store'
 
 export default async function getFilteredWorkOrdersOffline(date): Promise<DataWorkOrder[]>{
@@ -21,5 +21,5 @@ export default async function getFilteredWorkOrdersOffline(date): Promise<DataWo
         console.log(err)
         return []
     }
-    
+
 }

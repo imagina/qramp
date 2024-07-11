@@ -1,6 +1,6 @@
 <template>
   <q-dialog
-    v-model="dialog"
+    v-model="dialogModel"
     persistent
     full-width
     transition-show="slide-up"
@@ -17,13 +17,13 @@
           :field="{ type: 'search' }"
         />
         <q-table
-          :data="dataTable"
+          :rows="dataTable"
           :columns="columns"
           :row-key="isNonFlight ? 'id' : 'index'"
           selection="single"
           :grid="responsive"
           :filter="filter"
-          :selected.sync="selected"
+          v-model:selected="selected"
           class="tw-w-full"
         >
           <template v-slot:header="props">
@@ -44,18 +44,18 @@
             </q-tr>
           </template>
           <template v-slot:body="props">
-            <q-tr 
+            <q-tr
               :props="props"
               :class="{
                 'tw-bg-red-500': props.row.cancelled
               }"
             >
               <q-td auto-width>
-                <q-checkbox 
-                  dense 
-                  v-model="props.selected" 
+                <q-checkbox
+                  dense
+                  v-model="props.selected"
                   :label="props.row.name"
-                  :disabled="props.row.cancelled"
+                  :disable="props.row.cancelled"
                 />
               </q-td>
               <q-td
@@ -131,7 +131,7 @@
 <script>
 import qRampStore from '../../_store/qRampStore';
 import { 
-  NON_FLIGHT, 
+  NON_FLIGHT,
   columnsFlightAware,
   columnsWorkOrders,
 } from '../model/constants.js';
@@ -161,6 +161,16 @@ export default {
     }
   },
   computed:{
+    dialogModel: {
+      // getter
+      get() {
+        return this.dialog
+      },
+      // setter
+      set(newValue) {
+        this.dialog = newValue
+      }
+    },
     responsive() {return this.windowSize == 'mobile'},
     windowSize() {
       return this.windowWith >= '450' ? 'desktop' : 'mobile'
@@ -212,14 +222,33 @@ export default {
   },
 }
 </script>
-<style lang="stylus" scoped>
+<style lang="scss">
+// .cardResponsive {
+//   overflow-y: scroll;
+//   height: 500px;
 
-  .cardResponsive
-    overflow-y: scroll;
-    height: 500px;
-  .q-dialog__inner
-    div
-      border-radius: 0.75rem
-  .background-color-warn
-    background-color: $warning
+//   .my-sticky-header-column-table {
+//     tr {
+//       th {
+//         position: sticky;
+//         z-index: 2;
+//         background: $primary;
+//         color: #fff;
+//       }
+//     }
+//   }
+// }
+
+.cardResponsive {
+  overflow-y: scroll;
+  height: 500px;
+}
+
+// .q-dialog__inner div {
+//   border-radius: 0.75rem;
+// }
+
+.background-color-warn {
+  background-color: $warning;
+}
 </style>

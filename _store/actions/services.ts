@@ -1,14 +1,14 @@
 /* Importing the baseService, qRampStore, and Vue. */
-import baseService from "@imagina/qcrud/_services/baseService.js";
+import baseService from "src/modules/qcrud/_services/baseService.js";
 import qRampStore from "../qRampStore.js";
-import Vue from 'vue';
 import {
-    BUSINESS_UNIT_PASSENGER, 
+    BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
     COMPANY_PASSENGER,
     COMPANY_RAMP,
 } from '../../_components/model/constants.js';
-import pluginsArray from '@imagina/qsite/_plugins/array.js';
+import pluginsArray from 'src/plugins/array.js';
+import { store } from 'src/plugins/utils'
 import _ from 'lodash';
 import serviceListStore from '../../_components/serviceList/store/serviceList'
 
@@ -23,19 +23,17 @@ export const serviceListModel = {
  * @returns An array of categories.
  */
 export const getCategories = async (): Promise<any[]> => {
-    if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.categories.index')) {
+    if (store.hasAccess('ramp.categories.index')) {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP; 
-            
+            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
             let requestParams = {
                 params: {
                     include:
                         "products,products.attributes,products,products.attributes.values",
                     filter: {
                         companyId,
-                        //types
-                    }    
+                    }
                 },
             };
             const response = await baseService.index(
@@ -61,7 +59,6 @@ export async function buildServiceList(): Promise<any[]> {
     try {
         const categories = await getCategories();
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
-        
         const buildService = (item: any): any => {
             let dynamicField: any = {
                 dynamicField: getIfItIsTypeListOrDynamicField(item.products),
@@ -92,7 +89,7 @@ export async function buildServiceList(): Promise<any[]> {
 
 /**
  * It takes a list of products, and returns a list of dynamic fields.
- * @param product - 
+ * @param product -
  * @returns [
  *   {
  *     "icon": "settings",
@@ -106,7 +103,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         const products = product || [];
         const data: any = [];
         const dynamicFieldModel: any = {
-            icon: "settings",
+            icon: "fa-solid fa-gear",
         };
         const organizeProduct = organizeProducts(product);
         organizeProduct?.forEach((product) => {
@@ -132,7 +129,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  * values of the array replaced with the values of the object.
  * @param attributes
  * @returns {dynamicField}
- *  
+ *
  */
 function getDynamicField(product) {
     try {
@@ -304,7 +301,7 @@ function setAttr(obj) {
  * type. If the object has an id and no attributeId, return an object with id, name, value, type, and
  * attributeId. If the object has an attributeId and value, return an object with attributeId, name,
  * value, and type.
- * @param {any} obj 
+ * @param {any} obj
  * @param {any} key - the key of the object
  * @returns {
  *   id: 1,
@@ -353,7 +350,7 @@ function validationDataAttr(obj: any, key: any) {
  *     "product_id": "1",
  *     "work_order_item_attributes": [],
  *    }
- * ] 
+ * ]
  */
 export function productDataTransformation(data = [], isType = false) {
     try {

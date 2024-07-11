@@ -29,7 +29,8 @@ const state = reactive({
         fuelingTicketNumber: null,
         fuelingRegistration: null,
         scheduleDate: null,
-    }
+    },
+    emitEvent: {},
 })
 
 const store = computed(() => ({
@@ -111,6 +112,12 @@ const store = computed(() => ({
             ],
         }
     },
+    get emitEvent() {
+      return state.emitEvent
+    },
+    set emitEvent(value) {
+      state.emitEvent = {...value}
+    },
     reset() {
         state.step = 1;
         state.showModal = false;
@@ -133,7 +140,7 @@ const store = computed(() => ({
         }
         stepps.forEach(item => {
          item.error = false;
-        }) 
+        })
     }
 })).value
 

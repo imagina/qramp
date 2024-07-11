@@ -10,8 +10,8 @@ export default {
     <q-btn-toggle
         v-if="validateNoFligth"
         rounded unelevated
-        :value="selectedTab"
-        @input="handleChangesTab"
+        :modelValue="selectedTab"
+        @update:modelValue="handleChangesTab"
         toggle-color="secondary"
         color="grey-2" 
         size="14px"

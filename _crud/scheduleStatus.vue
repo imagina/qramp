@@ -1,6 +1,6 @@
 <template></template>
 <script>
-import colorTailwind from '@imagina/qsite/_resources/models/colorTailwind.js'
+import colorTailwind from 'modules/qsite/_resources/models/colorTailwind.js'
 export default {
   name: 'scheduleStatus',
   data() {
@@ -96,5 +96,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

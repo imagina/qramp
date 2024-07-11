@@ -1,39 +1,17 @@
 <template>
   <div>
-    <master-modal 
-      id="formRampComponent" 
-      v-model="show" 
-      v-bind="modalProps" 
-      :persistent="true" 
-      :loading="loading"
-      @hide="clear" 
-      :actions="actions" 
-      :width="modalProps.width" 
-      :maximized="$q.screen.lt.md"
-    >
-    <stepper-ramp-form 
-      v-if="modalProps.update" 
-      @sp="sp = $event" 
-      @loading="setLoading" 
-      ref="stepper" 
-      :steps="steppers"
-      :data="modalProps" 
-      @close-modal="close($event)"
-      @getWorkOrders="getWorkOrders" 
-    />
-    <simpleWorkOrders 
-      v-if="!modalProps.update" 
-      ref="simpleWorkOrder"
-      @loading="setLoading" 
-    />
-  </master-modal>
+    <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true" :loading="loading"
+      @hide="clear" :actions="actions" :width="modalProps.width" :maximized="$q.screen.lt.md">
+      <stepper-ramp-form v-if="modalProps.update" @sp="sp = $event" @loading="setLoading" ref="stepper"
+        :steps="steppers" :data="modalProps" @close-modal="close($event)" @getWorkOrders="getWorkOrders" />
+      <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" @loading="setLoading" @refreshData="$emit('refresh-data')"/>
+    </master-modal>
   </div>
 </template>
 <script>
 import { computed } from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
-import services from '../_mixins/services.js';
 import {
   STATUS_DRAFT,
   STATUS_POSTED,
@@ -61,11 +39,12 @@ import { constructionWorkOrder } from 'src/modules/qramp/_store/actions/construc
 import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
 
 export default {
+  emits: ['getWorkOrderFilter', 'refresh-data'],
   components: {
     stepperRampForm,
     simpleWorkOrders,
   },
-  mixins: [responsive, services],
+  mixins: [responsive],
   data() {
     return {
       show: false,
@@ -123,13 +102,13 @@ export default {
         {
           ref: "signature",
           title: this.$tr('ifly.cms.label.signature'),
-          icon: 'draw',
+          icon: 'fa-solid fa-pen-line',
           step: STEP_SIGNATURE,
           form: this.signature,
           component: iSignature,
         }
       ].filter(item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
-      if(this.isPassenger) {
+      if (this.isPassenger) {
         const delay = {
           ref: "delay",
           title: "Delay",
@@ -181,16 +160,16 @@ export default {
       const actions = [
         {
           props: {
-            vIf: this.$auth.hasAccess('ramp.work-orders.destroy'),
+            vIf: this.$hasAccess('ramp.work-orders.destroy'),
             class: 'btn-action-form-orders',
             label: this.$q.screen.lt.sm ? null : this.$tr('isite.cms.label.delete'),
             icon: 'fa-regular fa-trash',
           },
-          action: async() => {
+          action: async () => {
             await this.$crud.delete('apiRoutes.qramp.workOrders', this.modalProps.workOrderId)
             await this.getWorkOrders();
             this.clear()
-            this.$root.$emit('crud.data.refresh')
+            this.$emit('refresh-data')
             await qRampStore().hideLoading();
           }
         },
@@ -348,7 +327,7 @@ export default {
      */
     close(show) {
       this.show = show
-      this.$root.$emit('crud.data.refresh')
+      this.$emit('refresh-data')
       this.services = [];
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
@@ -477,5 +456,3 @@ export default {
   background-color: #F1F4FA;
 }
 </style>
-
-

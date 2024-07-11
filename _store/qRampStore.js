@@ -12,11 +12,12 @@ import {
     NON_FLIGHT
 } from '../_components/model/constants.js'
 import moment from 'moment';
-import baseService from '@imagina/qcrud/_services/baseService.js'
-import Vue, {reactive} from "vue";
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import baseService from 'modules/qcrud/_services/baseService.js'
+import { cacheOffline, i18n, store } from 'src/plugins/utils';
+import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
+
 
 const state = reactive({
     titleOffline: '',
@@ -200,7 +201,8 @@ export default function qRampStore() {
     }
 
     function validateFutureDateTime(dateTime, dateMin = null, currentDate) {
-        const current = moment(currentDate).format('YYYY/MM/DD');
+        const DATE_FORMAT = 'MM/DD/YYYY HH:mm';
+        const current = moment(currentDate, DATE_FORMAT).format('YYYY/MM/DD');
         const date = moment();
         const today = date.format('YYYY/MM/DD');
         const hour = date.format('H');
@@ -285,9 +287,9 @@ export default function qRampStore() {
 
     function getDifferenceInHours(start, end) {
         if (start) {
-            const format = 'MM/DD/YYYY HH:mm';
-            const dateStart = moment(start, format);
-            const dateEnd = moment(end, format);
+            const DATE_FORMAT = 'MM/DD/YYYY HH:mm';
+            const dateStart = moment(start, DATE_FORMAT);
+            const dateEnd = moment(end, DATE_FORMAT);
             const hour = dateEnd.diff(dateStart, 'minutes') / 60;
             return Math.round(hour * 100) / 100;
         }
@@ -410,7 +412,7 @@ export default function qRampStore() {
     }
 
     function editPermissionseSubmitted() {
-        return Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-when-submitted');
+        return store.hasAccess('ramp.work-orders.edit-when-submitted');
     }
 
     function setAttr(obj) {
@@ -527,11 +529,10 @@ export default function qRampStore() {
             }
 
             if (storeKanban.isAppOffline) {
-                payload.titleOffline = `${Vue.prototype.$tr("ifly.cms.form.updateWorkOrder")} Id: ${workOrderId}`;
+                payload.titleOffline = i18n.tr("ifly.cms.form.updateWorkOrder");
             }
 
-            await cacheOffline.updateRecord(CACHE_PATH, payload, payload ?.id
-        ),
+            await cacheOffline.updateRecord(CACHE_PATH, payload, payload?.id),
             await baseService.update(API_ROUTE, workOrderId, payload);
         } catch (error) {
             console.log('Error changeStatus Schedule', error);

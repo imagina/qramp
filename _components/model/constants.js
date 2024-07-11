@@ -1,5 +1,5 @@
 import moment from 'moment'
-import Vue from 'vue'
+import { i18n } from 'src/plugins/utils'
 export const STEP_FLIGHT = 1;
 export const STEP_SERVICE = 2;
 export const STEP_REMARKS = 3;
@@ -374,7 +374,7 @@ export const columnsWorkOrders = [
     label: 'Inbound Scheduled Arrival', 
     field: 'inboundScheduledArrival' , 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   },
   { name: 'outboundFlightNumber', label: 'Outbound Flight Number', field: 'outboundFlightNumber' , align: 'left'},
   { 
@@ -382,13 +382,13 @@ export const columnsWorkOrders = [
     label: 'Outbound Scheduled Departure', 
     field: 'outboundScheduledDeparture' , 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   },
   { 
     name: 'scheduleDateLocal', 
     label: 'Service Date Created', 
     field: 'scheduleDateLocal', 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   }
 ]

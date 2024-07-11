@@ -1,5 +1,5 @@
 import moment from 'moment';
-import Vue, { reactive, computed } from 'vue';
+import { reactive, computed } from 'vue';
 
 interface State {
     showModal: boolean;

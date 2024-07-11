@@ -1,7 +1,9 @@
-import Vue, { computed } from 'vue';
+import { computed } from 'vue';
+import { store as pluginStore, alert } from 'src/plugins/utils'
 import store from '../store/modalSchedule.store'
 import getCurrentColumn from '../actions/getCurrentColumn';
 import storeKanban from '../store/kanban.store'
+import crud from 'modules/qcrud/_services/baseService'
 
 export default function useModalComment(props) {
   const visible = computed({
@@ -15,11 +17,11 @@ export default function useModalComment(props) {
   });
 
   const isAppOffline = computed(() => storeKanban.isAppOffline)
-  const permisionCommentsIndex = computed(() => Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`))
+  const permisionCommentsIndex = computed(() => pluginStore.hasAccess(`ramp.work-orders-comments.index`))
 
   function showModalComments() {
     if(!permisionCommentsIndex.value) {
-        Vue.prototype.$alert.warning({message: 'You do not have permission to view comments'});
+        alert.warning({message: 'You do not have permission to view comments'});
       return;
     }
     visible.value = true;
@@ -33,7 +35,7 @@ export default function useModalComment(props) {
       const col = getCurrentColumn()
       const card = col.cards.find((card) => card.id == workOrderId)
       if (card) {
-        const response = await Vue.prototype.$crud.show("apiRoutes.qramp.workOrders", workOrderId, {
+        const response = await crud.show("apiRoutes.qramp.workOrders", workOrderId, {
           refresh: true
         })
         card.comments = response.data.comments;

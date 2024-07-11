@@ -1,10 +1,11 @@
-import Vue, { computed, ref } from "vue";
+import { computed, ref } from 'vue';
 import {
   getCommentsFilter,
   getLastComment,
   setLastComment,
   getLoading,
 } from "../../../_store/actions/comments";
+import { store } from 'src/plugins/utils'
 
 export default function useLastComments(props: any) {
   const showTooltip = ref(false);
@@ -13,7 +14,7 @@ export default function useLastComments(props: any) {
   const sizeBadge = computed(() => props.sizeBadge);
   const iconClass = computed(() => props.iconClass);
   const permisionComments = computed(() =>
-    Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`)
+    store.hasAccess(`ramp.work-orders-comments.index`)
   );
   const lastComment = computed(() => getLastComment());
   async function changeLastComment(card) {

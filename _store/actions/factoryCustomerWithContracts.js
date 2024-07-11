@@ -20,7 +20,7 @@ export default function getListCustomerWithContracts(data, permisition) {
             contractId: contract.id,
             value: `${contract.customerName}-${contract.contractName}-${index}`,
             contractName: contract.contractName
-        }) 
-    }); 
+        })
+    });
     return customers;
 }

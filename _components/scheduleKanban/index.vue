@@ -5,13 +5,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance, watch, onMounted } from "vue";
+import { defineComponent, watch, onMounted } from "vue";
 import kanbanBoard from "./components/kanbanBoard.vue";
 import workOrderList from '../../_store/actions/workOrderList'
 import qRampStore from "../../_store/qRampStore";
 import kanbanStore from './store/kanban.store'
+import { router } from 'src/plugins/utils'
+let routeName = router.route.path;
 import serviceListStore from "../serviceList/store/serviceList";
-import {FLIGHT, LABOR} from "../model/constants";
+import { LABOR } from "../model/constants";
 
 export default defineComponent({
   components: {
@@ -24,16 +26,22 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const proxy = (getCurrentInstance() as any).proxy as any;
     init();
-    watch(() => proxy.$route, (currentValue, oldValue) => {
+    watch((currentValue, oldValue) => router.route.path, (currentValue, oldValue) => {
+      if (routeName !== currentValue) {
         init();
-      },
+        routeName = currentValue;
+        kanbanStore.columns.forEach(column => {
+          column.cards = [];
+        })
+      }
+    },
       { deep: true }
     );
+
     function init() {
       new Promise(async (resolve, reject) => {
-        let currentRoutePath = proxy.$router.currentRoute.path;
+        let currentRoutePath = router.route.path;
         let isPassenger = currentRoutePath.indexOf('passenger') !== -1;
         let isLabor = currentRoutePath.indexOf('labor') !== -1;
         let isRamp = currentRoutePath.indexOf('ramp') !== -1;
@@ -54,9 +62,10 @@ export default defineComponent({
         await serviceListStore().init();
       })
     }
+
     onMounted(() => {
       kanbanStore.isBlank = props.isBlank;
-      qRampStore().setIsblank(props.isBlank)
+      qRampStore().setIsblank(props.isBlank);
     })
     return {};
   },

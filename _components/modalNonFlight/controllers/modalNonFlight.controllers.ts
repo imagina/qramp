@@ -1,4 +1,4 @@
-import Vue, { 
+import {
   computed, 
   ref, 
   toRefs, 
@@ -18,6 +18,7 @@ import serviceListStore from '../../serviceList/store/serviceList';
 import { cloneFlight } from '../actions/cloneFlight'
 import { DataWorkOrder } from 'src/modules/qramp/_store/actions/@Contracts/workOrderList.contract'
 import { Form } from '../contracts'
+import { i18n } from 'src/plugins/utils'
 
 export default function controller(props: any, emit: any) {
 
@@ -33,7 +34,7 @@ export default function controller(props: any, emit: any) {
       props: {
         vIf: isShowButtonSave.value,
         color: 'primary',
-        label: Vue.prototype.$tr('isite.cms.label.save'),
+        label: i18n.tr('isite.cms.label.save'),
       },
       action: async () => {
         store.loading = true;
@@ -111,7 +112,6 @@ export default function controller(props: any, emit: any) {
     serviceListStore().setErrorList([]);
     serviceListStore().setShowFavourite(false)
   })
-
   return { 
     listFlightsFound,
     loading,

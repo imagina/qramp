@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { WorkOrders } from '../contracts/getWorkOrder.contract';
 import dataReturnedWorkOrder from '../models/dataReturnedWorkOrder.model'
-import paginateCacheOffline from '@imagina/qsite/_plugins/paginateCacheOffline'
+import paginateCacheOffline from 'src/plugins/paginateCacheOffline'
 import getFilteredWorkOrdersOffline from './getFilteredWorkOrdersOffline';
 import storeKanban from '../store/kanban.store';
 
