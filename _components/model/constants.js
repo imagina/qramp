@@ -392,3 +392,10 @@ export const columnsWorkOrders = [
     format: (val) => (val ? i18n.trdT(val) : "-"),
   }
 ]
+
+export const modalFullProps = {
+  title: '',
+  update: true,
+  workOrderId: null,
+  width: '90vw',
+}

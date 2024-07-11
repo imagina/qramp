@@ -21,7 +21,8 @@ import {
   STEP_FLIGHT,
   STEP_SERVICE,
   STEP_REMARKS,
-  STEP_SIGNATURE
+  STEP_SIGNATURE,
+  modalFullProps
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
@@ -181,17 +182,7 @@ export default {
             icon: 'fa-regular fa-arrow-left',
           },
           action: async() => {
-            this.loading = true;
-            this.resetFormModalFull()
-            const flight = qRampStore().getClonedWorkOrder()
-            const modalProps = {
-              title: this.modalProps.lastTitle,
-              update: true,
-              workOrderId: flight.id,
-              width: '90vw',
-              isClone: true
-            }
-            this.loadform({ data: flight, modalProps })
+            this.loadChildData();
           }
         },
         {
@@ -203,28 +194,7 @@ export default {
             loading: this.loadingComputed,
           },
           action: async () => {
-            this.loading = true;
-            const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
-            const formData = structuredClone(await constructionWorkOrder(data))
-            qRampStore().setClonedWorkOrder(formData)
-
-            this.resetFormModalFull();
-            const workOrder = await getWorkOrder(formData?.parentId)
-            workOrder.data.parentId = null
-
-            const modalProps = {
-              title: this.$tr('ifly.cms.form.updateWorkOrder') + (workOrder.data.id ? ` Id: ${workOrder.data.id}` : ''),
-              lastTitle: this.modalProps.title,
-              update: true,
-              workOrderId: workOrder.data.id,
-              width: '90vw',
-              chip: {
-                label: "Parent",
-              },
-              parent: true
-            }
-
-            this.loadform({ data: workOrder.data, modalProps })
+            await this.loadParentData();
           }
         },
         {
@@ -425,6 +395,41 @@ export default {
     },
     async getWorkOrders(data = null) {
       this.$emit('getWorkOrderFilter', data);
+    },
+    loadChildData() {
+      this.loading = true;
+      this.resetFormModalFull()
+      const flight = qRampStore().getClonedWorkOrder()
+      const modalProps = {
+        ...modalFullProps,
+        title: this.modalProps.lastTitle,
+        workOrderId: flight.id,
+        isClone: true
+      }
+      this.loadform({ data: flight, modalProps })
+    },
+    async loadParentData() {
+      this.loading = true;
+      const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
+      const formData = structuredClone(await constructionWorkOrder(data))
+      qRampStore().setClonedWorkOrder(formData)
+
+      this.resetFormModalFull();
+      const workOrder = await getWorkOrder(formData?.parentId)
+      workOrder.data.parentId = null
+
+      const modalProps = {
+        ...modalFullProps,
+        title: this.$tr('ifly.cms.form.updateWorkOrder') + (workOrder.data.id ? ` Id: ${workOrder.data.id}` : ''),
+        lastTitle: this.modalProps.title,
+        workOrderId: workOrder.data.id,
+        chip: {
+          label: "Parent",
+        },
+        parent: true
+      }
+
+      this.loadform({ data: workOrder.data, modalProps })
     },
     resetFormModalFull() {
       serviceListStore().setShowFavourite(false)
