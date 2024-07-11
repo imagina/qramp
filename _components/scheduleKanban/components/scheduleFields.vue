@@ -5,7 +5,7 @@
         v-if="keyField !== 'sta' && keyField !== 'outboundScheduledDeparture'"
         :field="field"
         v-model="form[keyField]"
-        @input="zanetizeData(keyField)"
+        @update:modelValue="zanetizeData(keyField)"
         :class="{
          'tw-hidden': keyField === 'stationId',
          'xl:tw-w-fit' : inlineMode }"
@@ -14,7 +14,7 @@
         <dynamic-field
           :field="field"
           v-model="form[keyField]"
-          @input="zanetizeData(keyField)"
+          @update:modelValue="zanetizeData(keyField)"
           :class="{ 'tw-hidden': keyField === 'stationId' }"
         />
       </div>
@@ -22,7 +22,7 @@
         <dynamic-field
             :field="field"
             v-model="form[keyField]"
-            @input="zanetizeData(keyField)"
+            @update:modelValue="zanetizeData(keyField)"
             :class="{ 'tw-hidden': keyField === 'stationId' }"
           />
       </div>

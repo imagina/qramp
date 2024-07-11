@@ -1,8 +1,10 @@
 <template>
   <div>
-    <fuelingForm />
+    <fuelingForm @refresh-data="getDataTable(true)" />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
+    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+          :title="$route.meta.title" />
   </div>
 </template>
 <script>
@@ -19,7 +21,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import { cacheOffline } from 'src/plugins/utils';
 import fuelingForm from '../_components/fuelingForm/components/index'
 import fuelingFormStore from '../_components/fuelingForm/store/index.ts'
 
@@ -48,7 +50,7 @@ export default {
       deep: true,
       handler: function (newValue, oldValue) {
         if (JSON.stringify(newValue) !== JSON.stringify(oldValue))
-        this.areaId = this.$filter.values.areaId;
+          this.areaId = this.$filter.values.areaId;
       }
     },
     'isAppOffline': {
@@ -89,12 +91,12 @@ export default {
         || statusId == STATUS_POSTED
         || statusId == STATUS_SCHEDULE
         || (statusId == STATUS_SUBMITTED
-        && this.editPermissionseSubmitted)
+          && this.editPermissionseSubmitted)
     },
     crudData() {
       return {
         crudId: this.crudId,
-        entityName: config("main.qfly.entityNames.workOrder"),
+        entityName: config("main.qramp.entityNames.workOrders"),
         apiRoute: 'apiRoutes.qramp.workOrders',
         permission: 'ramp.fueling-work-orders',
         create: {
@@ -111,7 +113,14 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
+              action: (item) => {
+                fuelingFormStore.showModal = true;
+                fuelingFormStore.loading = true;
+                fuelingFormStore.isUpdate = true;
+                fuelingFormStore.titleModal = 'Update fueling' + (item.id ? ` Id: ${item.id}` : '')
+                fuelingFormStore.widthModal = '90vw';
+                this.showWorkOrder(item);
+              }
             },
             {
               name: 'customer',
@@ -205,7 +214,7 @@ export default {
           ],
           filters: {
             date: {
-              props:{
+              props: {
                 label: "Scheduled date"
               },
               name: "scheduleDateLocal",
@@ -235,9 +244,9 @@ export default {
               type: 'select',
               quickFilter: true,
               loadOptions: {
-                  apiRoute: 'apiRoutes.qramp.setupContracts',
-                  select: {'label': 'contractName', 'id': 'id'},
-                  requestParams: {
+                apiRoute: 'apiRoutes.qramp.setupContracts',
+                select: { 'label': 'contractName', 'id': 'id' },
+                requestParams: {
                   filter: {
                     contractStatusId: 1,
                     businessUnitId: BUSINESS_UNIT_FUELING
@@ -245,8 +254,8 @@ export default {
                 },
               },
               props: {
-                  label: 'Contract',
-                  'clearable': true,
+                label: 'Contract',
+                'clearable': true,
               },
             },
             statusId: {
@@ -291,10 +300,10 @@ export default {
               props: {
                 label: 'Ad Hoc',
                 clearable: true,
-                options:[
-                {label: this.$tr('isite.cms.label.yes'), value: true,},
-                {label: this.$tr('isite.cms.label.no'), value: false,},
-              ],
+                options: [
+                  { label: this.$tr('isite.cms.label.yes'), value: true, },
+                  { label: this.$tr('isite.cms.label.no'), value: false, },
+                ],
               },
             },
             businessUnitId: { value: BUSINESS_UNIT_FUELING },
@@ -309,7 +318,7 @@ export default {
           },
           actions: [
             {
-              name: 'edit',
+              name: 'edit-workOrder',
               icon: 'fal fa-pen',
               label: this.$tr('isite.cms.label.edit'),
               format: item => ({
@@ -331,7 +340,7 @@ export default {
               label: this.$tr('isite.cms.label.closeFlight'),
               format: item => ({
                 //must have the submit permission and the work order can't be submited or posted
-                vIf: ![STATUS_POSTED, STATUS_SUBMITTED,STATUS_CLOSED].includes(item.statusId)
+                vIf: ![STATUS_POSTED, STATUS_SUBMITTED, STATUS_CLOSED].includes(item.statusId)
               }),
               action: (item) => {
                 this.changeStatus(STATUS_CLOSED, item.id)
@@ -343,7 +352,7 @@ export default {
               label: this.$tr('isite.cms.label.submit'),
               format: item => ({
                 //must have the submit permission and the work order can't be submited or posted
-                vIf: this.$auth.hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
+                vIf: this.$hasAccess('ramp.work-orders.submit') && ![STATUS_POSTED, STATUS_SUBMITTED].includes(item.statusId)
               }),
               action: (item) => {
                 this.changeStatus(STATUS_SUBMITTED, item.id)
@@ -358,7 +367,7 @@ export default {
               },
               format: item => (
                 {
-                  vIf: this.$auth.hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted  && ![STATUS_POSTED].includes(item.statusId),
+                  vIf: this.$hasAccess('ramp.work-orders.post') && !item.adHoc && !item.needToBePosted && ![STATUS_POSTED].includes(item.statusId),
                   label: this.$tr('isite.cms.label.post')
 
                 }),
@@ -373,7 +382,7 @@ export default {
               format: item => (
                 {
                   //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
-                  vIf: this.$auth.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
+                  vIf: this.$hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                 }),
             },
             {
@@ -384,7 +393,7 @@ export default {
                 this.postReloadTransactions(item.id);
               },
               format: item => ({
-                  vIf: this.$auth.hasAccess('ramp.fueling-work-orders.reload-transactions') && !this.isAppOffline
+                vIf: this.$hasAccess('ramp.fueling-work-orders.reload-transactions') && !this.isAppOffline
               }),
             },
           ],
@@ -483,9 +492,9 @@ export default {
               {
                 label: 'Total',
                 field: val => {
-                    const quantity = val.quantity || 0;
-                    const rate = val.contractLine?.rate || 0;
-                    return quantity * rate;
+                  const quantity = val.quantity || 0;
+                  const rate = val.contractLine?.rate || 0;
+                  return quantity * rate;
                 }
               },
               {
@@ -528,11 +537,14 @@ export default {
     }
   },
   methods: {
+    async getDataTable(refresh) {
+      await this.$refs.crudComponent.getDataTable(refresh);
+    },
     async postReloadTransactions(id) {
       try {
         this.loadingBulk = true;
         await this.$crud.update('apiRoutes.qramp.reloadTransactions', id, {});
-        await this.$root.$emit('crud.data.refresh');
+        await this.getDataTable(true);
         this.loadingBulk = false;
       } catch (error) {
         this.loadingBulk = false;
@@ -556,10 +568,10 @@ export default {
         id: itemId,
         statusId: status
       }
-      let customParams = { 
-        params: { 
-          titleOffline: this.getOfflineTitleStatus(status, itemId) || '' 
-        } 
+      let customParams = {
+        params: {
+          titleOffline: this.getOfflineTitleStatus(status, itemId) || ''
+        }
       }
 
       this.$emit('loading', true)
@@ -569,7 +581,7 @@ export default {
 
       const request = this.$crud.update(
         API_ROUTE,
-        itemId, 
+        itemId,
         payload,
         customParams
       )
@@ -577,8 +589,8 @@ export default {
         .catch(err => {
           this.$emit('loading', false)
           if (!this.isAppOffline) {
-            this.$alert.error({ 
-              message: `${this.$tr('isite.cms.message.recordNoUpdated')}` 
+            this.$alert.error({
+              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
             })
           }
         })
@@ -589,7 +601,7 @@ export default {
     },
     async openModal(item) {
       await qRampStore().setIsPassenger(true);
-      fuelingFormStore.form = {...item};
+      fuelingFormStore.form = { ...item };
       qRampStore().setTitleOffline(fuelingFormStore.titleModal);
       fuelingFormStore.loading = false;
     },

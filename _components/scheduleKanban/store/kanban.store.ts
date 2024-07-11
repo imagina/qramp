@@ -1,8 +1,8 @@
-import {reactive, computed, ComputedRef} from 'vue';
+import { reactive, computed } from 'vue';
 import moment, { Moment } from 'moment';
 import {Columns, State} from '../contracts/kanbanStore.contract'
 import { COMPANY_PASSENGER, COMPANY_RAMP } from '../../model/constants';
-import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import qRampStore from 'modules/qramp/_store/qRampStore';
 
 
 const state: State = reactive({

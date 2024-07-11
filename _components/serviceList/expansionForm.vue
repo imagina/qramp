@@ -1,10 +1,10 @@
 <script lang="ts">
-import Vue, {defineComponent, computed, ref, getCurrentInstance} from 'vue';
+import { defineComponent, computed, ref, getCurrentInstance } from 'vue';
 import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
-import alert from '@imagina/qsite/_plugins/alert';
+import { alert, store } from 'src/plugins/utils';
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -12,17 +12,16 @@ export default defineComponent({
     data: {
       type: Array,
       default: () => [],
-    }
+    },
   },
   setup(props) {
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
-    const proxy = (getCurrentInstance() as any).proxy as any;
     const permissionFavourite: any = computed(() => ({
-      create: Vue.prototype.$auth.hasAccess('isite.favourites.create'),
-      edit: Vue.prototype.$auth.hasAccess('isite.favourites.edit'),
-      index: Vue.prototype.$auth.hasAccess(`isite.favourites.index`),
-      destroy: Vue.prototype.$auth.hasAccess(`isite.favourites.destroy`),
+      create: store.hasAccess('isite.favourites.create'),
+      edit: store.hasAccess('isite.favourites.edit'),
+      index: store.hasAccess(`isite.favourites.index`),
+      destroy: store.hasAccess(`isite.favourites.destroy`),
     }));
     async function selectFavourite(data: any) {
       data.favourite = !data.favourite;
@@ -31,10 +30,10 @@ export default defineComponent({
         const favoriteData = serviceListStore().getFavouriteList().find(item => item.id === data.id);
         await deleteFavourites(favoriteData);
         serviceListStore().removeFromFavouriteList(data);
-        alert.success({message: `Favorite deleted successfully Product:${data.title}`} );
+        alert.success({ message: `Favorite deleted successfully Product:${data.title}` });
       } else {
         if(!permissionFavourite.value.create) return;
-        const response: any = await postFavourites({...data, userId: proxy.$root.$store.state.quserAuth.userId});
+        const response: any = await postFavourites({...data, userId: store.state.quserAuth.userId});
         const favoriteData = {...data, favouriteId: response?.id} 
         serviceListStore().pustFavouriteList(favoriteData);
         alert.success(`Favorite created successfully Product:${data.title}`);
@@ -52,7 +51,7 @@ export default defineComponent({
     return {
       isDesktop,
       showValue,
-      data, 
+      data,
       favourite,
       selectFavourite,
       refData,
@@ -91,16 +90,11 @@ export default defineComponent({
           <q-card class="row card-color justify-center">
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
-                <dynamic-field
-                    class="marginzero tw-w-full"
-                    v-model="data[index]['formField'][keyfield]['value']"
-                    :field="field"></dynamic-field>
+                <dynamic-field class="marginzero tw-w-full" v-model="newData[index]['formField'][keyfield]['value']"
+                  :field="field" />
               </label>
-              <div
-                  class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden"
-                  v-if="field.type === 'fullDate' 
-                  && field.props.typeIndexDate === 1"
-              >
+              <div class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden" v-if="field.type === 'fullDate'
+      && field.props.typeIndexDate === 1">
                 Difference (hours): {{ 1 }}
               </div>
             </q-card-section>
@@ -110,9 +104,7 @@ export default defineComponent({
       </q-list>
     </div>
     <div v-else>
-      <div 
-        v-for="(item, index) in data" :key="index" 
-        class="
+      <div v-for="(item, index) in data" :key="index" class="
           tw-flex 
           color-bg-blue-gray-custom 
           tw-py-2 
@@ -148,24 +140,16 @@ export default defineComponent({
                 </p>
               </div>
         </div>
-        <div 
-          class="
+        <div class="
             tw-w-3/5 
             tw-mx-2 
             tw-truncate
             tw-flex 
             tw-flex-wrap 
-            tw-justify-end tw-gap-4"
-          >
-          <div 
-            v-for="(field, keyfield) in item.formField" 
-            :key="keyfield"
-          >
+            tw-justify-end tw-gap-4">
+          <div v-for="(field, keyfield) in item.formField" :key="keyfield">
             <div>
-              <dynamic-field
-                  v-model="data[index]['formField'][keyfield]['value']"
-                  :field="field"
-              />
+              <dynamic-field v-model="data[index]['formField'][keyfield]['value']" :field="field" />
             </div>
           </div>
         </div>
@@ -192,9 +176,11 @@ export default defineComponent({
   content: '';
   @apply tw-bg-gray-200 tw-mx-4 tw-absolute tw-bottom-0 tw-inset-x-0 tw-h-px;
 }
+
 .color-bg-blue-gray-custom:hover {
- background: rgba(241, 244, 250, 1);
+  background: rgba(241, 244, 250, 1);
 }
+
 .text-services {
   font-family: Manrope;
   font-size: 15px;
@@ -203,7 +189,8 @@ export default defineComponent({
   text-align: left;
   color: rgba(76, 93, 148, 1);
 }
-.color-icon-star  {
+
+.color-icon-star {
   color: rgba(138, 152, 195, 1)
 }
 </style>

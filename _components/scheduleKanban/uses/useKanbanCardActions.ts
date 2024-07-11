@@ -1,10 +1,7 @@
-import Vue, {computed, inject } from 'vue';
+import { computed, inject } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
-  STATUS_CLOSED,
-  STATUS_POSTED,
-  STATUS_SUBMITTED,
   STATUS_SCHEDULE,
 } from '../../model/constants.js';
 
@@ -16,9 +13,9 @@ import { Screen } from 'quasar'
 import devicesModel from '../models/devices.model';
 import deleteWorkOrders from '../actions/deleteWorkOrders';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
-import setEditableCard from '../actions/setEditableCard';
 import getCurrentColumn from '../actions/getCurrentColumn';
 import openInlineSchedule from '../actions/openInlineSchedule'
+import { i18n, store, alert } from 'src/plugins/utils'
 
 export default function useKanbanCardActions(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -49,7 +46,7 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.create`) && showCardActions.value,
+      vIf: store.hasAccess(`ramp.work-orders.create`) && showCardActions.value,
       icon: 'fa-light fa-copy',
       toolttip: 'Duplicate',
       action: () => {
@@ -57,29 +54,29 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     },
     {
-      vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.edit`) && showCardActions.value,
+      vIf: store.hasAccess(`ramp.work-orders.edit`) && showCardActions.value,
       icon: 'fa-light fa-pen-to-square',
-      toolttip: Vue.prototype.$tr('isite.cms.label.edit'),
+      toolttip: i18n.tr('isite.cms.label.edit'),
       action: () => {
         (props.card.statusId === STATUS_SCHEDULE && !isPassenger.value) ? openInlineSchedule(props) : openModalSchedule()
       },
     },
     {
-      vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.destroy`) && showCardActions.value,
+      vIf: store.hasAccess(`ramp.work-orders.destroy`) && showCardActions.value,
       icon: 'fa-light fa-trash',
-      toolttip: Vue.prototype.$tr('isite.cms.label.delete'),
+      toolttip: i18n.tr('isite.cms.label.delete'),
       action: () => {
-        Vue.prototype.$alert.error({
+        alert.error({
           mode: "modal",
           title: `${props.card.calendar.title}`,
-          message: Vue.prototype.$tr('isite.cms.message.deleteRecord'),
+          message: i18n.tr('isite.cms.message.deleteRecord'),
           actions: [
             {
-              label: Vue.prototype.$tr('isite.cms.label.cancel'),
+              label: i18n.tr('isite.cms.label.cancel'),
               color: 'grey',
             },
             {
-              label: Vue.prototype.$tr('isite.cms.label.delete'),
+              label: i18n.tr('isite.cms.label.delete'),
               color: 'red',
               handler: () => {
                 deleteWorkOrder()
@@ -91,9 +88,9 @@ export default function useKanbanCardActions(props: any = {}) {
       },
     }
   ])
-  
+
   async function showModalFull() {
-    const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
+    const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
     const response = await showWorkOrder(props.card.id);
     await refFormOrders.value.loadform({
       modalProps: {

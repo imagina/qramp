@@ -1,5 +1,6 @@
-import Vue from 'vue';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
+import { cacheOffline } from 'src/plugins/utils';
+import { alert } from 'src/plugins/utils'
+import crud from 'src/modules/qcrud/_services/baseService'
 
 export default async function deleteWorkOrders(workOrderId: number): Promise<void> {
     try {
@@ -7,18 +8,21 @@ export default async function deleteWorkOrders(workOrderId: number): Promise<voi
 
         await Promise.allSettled([
             cacheOffline.deleteItem(workOrderId, API_ROUTE),
-            Vue.prototype.$crud.delete(
-                API_ROUTE, 
-                workOrderId, 
-                { 
-                    params: { 
-                        titleOffline: `Delete Work Order - Id: ${workOrderId}` 
-                    } 
+            crud.delete(
+                API_ROUTE,
+                workOrderId,
+                {
+                    data: {
+                      attributes: {
+                        id: workOrderId,
+                        titleOffline: 'Delete Work Order'
+                      }
+                    }
                 }
             )
         ])
 
-        Vue.prototype.$alert.info('workOrders was deleted correctly');
+        alert.info('workOrders was deleted correctly');
     } catch (error) {
         console.log(error);
     }

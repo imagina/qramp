@@ -8,22 +8,23 @@
         :class="{ 'tw-mr-5' : isDesktop, 'tw-mr-2' : isTablet }"
         v-if="showKanbanCardsActions"
     >
-        <q-btn v-for="(button, index) in cardActions"
-          flat
-          dense
-          size="sm"
-          :key="index"
-          :icon="button.icon"
-          @click="button.action"
-          v-if="button.vIf"
+      <template v-for="(button, index) in cardActions" :key="index">
+        <q-btn
+            flat
+            dense
+            size="sm"
+            :icon="button.icon"
+            @click="button.action"
+            v-if="button.vIf"
         >
-            <q-tooltip> {{ button.toolttip }}</q-tooltip>
+          <q-tooltip> {{ button.toolttip }}</q-tooltip>
         </q-btn>
+      </template>
     </div>
 </template>
 
 <script lang="ts">
-import Vue, {defineComponent} from 'vue';
+import {defineComponent} from 'vue';
 import useKanbanCardActions from '../uses/useKanbanCardActions';
 
 export default defineComponent({
@@ -45,6 +46,6 @@ export default defineComponent({
 
 <style scoped>
 .action-icon {
-  color: #1F294F99  
+  color: #1F294F99
 }
 </style>

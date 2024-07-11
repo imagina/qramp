@@ -1,17 +1,17 @@
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
-import Vue from 'vue';
 import {
     BUSINESS_UNIT_LABOR,
     BUSINESS_UNIT_PASSENGER,
     FLIGHT,
     LABOR, NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT,
-    OPERATION_TYPE_OTHER
 } from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
 import { WorkOrders } from '../contracts/getWorkOrder.contract.js';
 import dataReturnedWorkOrderModel from '../models/dataReturnedWorkOrder.model';
 import saveWorkOrderOffline from './saveWorkOrderOffline';
 import storeKanban from '../store/kanban.store';
+import crud from 'src/modules/qcrud/_services/baseService'
+import { i18n } from 'src/plugins/utils'
 
 export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
     try {
@@ -32,12 +32,12 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
         }
 
         try {
-          response = await Vue.prototype.$crud.create(
+          response = await crud.create(
             API_ROUTE,
             {
               ...form,
               offlineId: storeKanban.isAppOffline ? offlineId: null,
-              titleOffline: Vue.prototype.$tr('ifly.cms.form.newWorkOrder'),
+              titleOffline: i18n.tr('ifly.cms.form.newWorkOrder'),
               ...businessUnitId,
               type,
             }
@@ -46,9 +46,9 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
           console.log(err)
         }
         modalScheduleStore.form.offlineId = offlineId
-        
+
         response = await saveWorkOrderOffline(response);
-        
+
         return response;
       } catch (error) {
         console.error(error);

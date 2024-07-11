@@ -1,7 +1,8 @@
-import Vue, { computed, reactive, onMounted, ComputedRef, watch } from 'vue';
+import { computed, reactive, onMounted, ComputedRef, watch } from 'vue';
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList';
 import { FormState, FieldConfig } from '../contracts/customers.contract';
+import { alert, i18n } from 'src/plugins/utils'
 
 /**
  * Hook to manage customer fields in a form.
@@ -41,9 +42,9 @@ export default function useCustomerField(props: any) {
             },
             props: {
                 rules: [
-                    val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                 ],
-                label: `*Customer/Contract`,
+                label: `*${i18n.tr('ifly.cms.form.customer')}`,
                 clearable: true,
                 color: "primary",
                 'hide-bottom-space': false,
@@ -55,7 +56,7 @@ export default function useCustomerField(props: any) {
             loadOptions: {
                 delayed: workOrderList().getCustomerWithContract,
             },
-            label: Vue.prototype.$tr('ifly.cms.form.customer'),
+            label: i18n.tr('ifly.cms.form.customer'),
         }
     }))
 
@@ -68,7 +69,7 @@ export default function useCustomerField(props: any) {
         if (state.customerName !== "") {
             const id = `customer-${qRampStore().numberInRange(8000, 1000)}`;
             state.newCustumerAdHoc = [{ id, label: state.customerName, value: state.customerName }];
-            state.bannerMessage = Vue.prototype.$tr("ifly.cms.message.requestNewCustomer");
+            state.bannerMessage = i18n.tr("ifly.cms.message.requestNewCustomer");
             state.selectCustomers = {
                 id,
                 value: state.customerName,
@@ -83,8 +84,8 @@ export default function useCustomerField(props: any) {
             return;
         }
         // Show an error alert if `customerName` is empty.
-        Vue.prototype.$alert.error({
-            message: Vue.prototype.$tr("ifly.cms.message.orderaddNewrecord"),
+        alert.error({
+            message: i18n.tr("ifly.cms.message.orderaddNewrecord"),
         });
     }
 
@@ -105,16 +106,16 @@ export default function useCustomerField(props: any) {
             dataForm.value.customCustomerName = dataForm.value.customerId
                 ? null
                 : customCustomerName;
-        }       
-        
+        }
+
         dataForm.value.customerId = selectCustomers.id || null;
         dataForm.value.contractId = selectCustomers.contractId || null;
         let message = null;
         // Set the banner message based on whether a customer is selected or not.
         if (Object.keys(selectCustomers).length > 0) {
             message = dataForm.value.contractId
-                ? `${Vue.prototype.$tr("ifly.cms.message.selectedCustomerWithContract")}`
-                : Vue.prototype.$tr("ifly.cms.message.selectedCustomerWithoutContract");
+                ? `${i18n.tr("ifly.cms.message.selectedCustomerWithContract")}`
+                : i18n.tr("ifly.cms.message.selectedCustomerWithoutContract");
         }
 
         state.bannerMessage =

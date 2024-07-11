@@ -37,7 +37,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import useModalSchedule from '../uses/useModalSchedule'
-import comments from '@imagina/qsite/_components/master/comments/index.vue'
+import comments from 'modules/qsite/_components/master/comments/index.vue'
 import scheduleFields from './scheduleFields.vue'
 
 export default defineComponent({

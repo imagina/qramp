@@ -177,7 +177,7 @@
   </div>
 </template>
 <script lang="ts">
-import Vue, {defineComponent} from 'vue';
+import {defineComponent} from 'vue';
 import kanbanCardActions from './KanbanCardActions.vue'
 import useKanbanCard from '../uses/useKanbanCard';
 import lastComments from './lastComments.vue'
@@ -206,7 +206,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .icons {
-  color: #1F294F99  
+  color: #1F294F99
 }
 .h-200 {
     height: 60vh;

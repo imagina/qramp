@@ -1,5 +1,5 @@
 import moment from 'moment'
-import Vue from 'vue'
+import { i18n } from 'src/plugins/utils'
 export const STEP_FLIGHT = 1;
 export const STEP_SERVICE = 2;
 export const STEP_REMARKS = 3;
@@ -351,16 +351,6 @@ export const columnsWorkOrders = [
       const type = item === 1 ? 'Flight' : 'Non-Flight';
       return `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${type}</span>`
     },
-    // formatColumn: row => {
-    //   console.log(row)
-    //   return {
-    //     bgTextColor: `tw-bg-gray-200`
-    //   }
-    // },
-    // formatAsync: async item => {
-    //   console.log(item)
-    //   return `non-flight`;
-    // },
   },
   { name: 'inboundFlightNumber', label: 'Inbound Flight Number', field: 'inboundFlightNumber', align: 'left'},
   { 
@@ -368,7 +358,7 @@ export const columnsWorkOrders = [
     label: 'Inbound Scheduled Arrival', 
     field: 'inboundScheduledArrival' , 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   },
   { name: 'outboundFlightNumber', label: 'Outbound Flight Number', field: 'outboundFlightNumber' , align: 'left'},
   { 
@@ -376,13 +366,13 @@ export const columnsWorkOrders = [
     label: 'Outbound Scheduled Departure', 
     field: 'outboundScheduledDeparture' , 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   },
   { 
     name: 'scheduleDateLocal', 
     label: 'Service Date Created', 
     field: 'scheduleDateLocal', 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   }
 ]

@@ -47,9 +47,9 @@ export default {
               format: val => (val && val.companyName) ? val.companyName : '-'
             },
             // {
-            //   name: 'parent', 
-            //   label: this.$tr('isite.cms.form.parent'), 
-            //   field: 'parent', 
+            //   name: 'parent',
+            //   label: this.$tr('isite.cms.form.parent'),
+            //   field: 'parent',
             //   align: 'left',
             //   format: val => (val && val.name) ? val.name : '-'
             // },
@@ -67,10 +67,10 @@ export default {
               align: "left",
               format: (val) => (val ? this.$trd(val) : "-"),
             },
-            { 
-              name: 'actions', 
-              label: this.$tr('isite.cms.form.actions'), 
-              align: 'left' 
+            {
+              name: 'actions',
+              label: this.$tr('isite.cms.form.actions'),
+              align: 'left'
             },
           ],
           requestParams: {
@@ -112,7 +112,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.categories',
               select: {
-                label: 'name', 
+                label: 'name',
                 id: 'id'
               },
             }
@@ -128,7 +128,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qsetupagione.setupCompanies',
               select: {
-                label: 'companyName', 
+                label: 'companyName',
                 id: 'id'
               },
             }
@@ -164,5 +164,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

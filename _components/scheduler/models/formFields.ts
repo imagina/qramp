@@ -1,10 +1,11 @@
-import Vue, { computed, ComputedRef } from 'vue';
+import { computed, ComputedRef, getCurrentInstance } from 'vue';
 import { COMPANY_RAMP, COMPANY_PASSENGER } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
 import { modelWeek } from './constants'
 import store from '../store/index.store'
 import {ModelFields, FormFields} from '../contracts/formFields.contract'
-import qRampStore from 'src/modules/qramp/_store/qRampStore.js';
+import { i18n } from 'src/plugins/utils'
+import qRampStore from 'modules/qramp/_store/qRampStore'
 
 
 export default function modelFields(): ModelFields {
@@ -20,9 +21,9 @@ export default function modelFields(): ModelFields {
                 type: 'select',
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
-                    label: Vue.prototype.$tr('ifly.cms.sidebar.airline'),
+                    label: i18n.tr('ifly.cms.sidebar.airline'),
                 },
                 loadOptions: {
                     apiRoute: 'apiRoutes.qfly.airlines',
@@ -47,7 +48,7 @@ export default function modelFields(): ModelFields {
                 },
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
                     label: 'Station',
                     'clearable': true,
@@ -59,9 +60,9 @@ export default function modelFields(): ModelFields {
                 type: 'select',
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
-                    label: Vue.prototype.$tr('ifly.cms.sidebar.aircraftType'),
+                    label: i18n.tr('ifly.cms.sidebar.aircraftType'),
                     options: workOrderList().getACTypesList().map(item => ({
                         label: item.model,
                         value: item.id
@@ -75,7 +76,7 @@ export default function modelFields(): ModelFields {
                 type: 'date',
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
                     hint: 'Format: MM/DD/YYYY',
                     mask: 'MM/DD/YYYY',
@@ -86,14 +87,14 @@ export default function modelFields(): ModelFields {
                     format24h: true,
                     readonly: updateModal.value
                 },
-                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
+                label: i18n.tr('ifly.cms.form.scheduledArrival'),
             },
             untilDate: {
                 value: '',
                 type: 'date',
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
                     hint: 'Format: MM/DD/YYYY',
                     mask: 'MM/DD/YYYY',
@@ -104,7 +105,7 @@ export default function modelFields(): ModelFields {
                     format24h: true,
                     readonly: updateModal.value
                 },
-                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
+                label: i18n.tr('ifly.cms.form.scheduledArrival'),
             },
             daysOfWeek: {
                 value: null,
@@ -112,7 +113,7 @@ export default function modelFields(): ModelFields {
                 props: {
                     multiple: true,
                     rules: [
-                        val => val.length > 0 || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => val.length > 0 || i18n.tr('isite.cms.message.fieldRequired')
                     ],
                     label: 'Days Of Week',
                     alphabeticalSort: false,
@@ -127,14 +128,14 @@ export default function modelFields(): ModelFields {
                 type: 'select',
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
-                    label: `*${Vue.prototype.$tr('ifly.cms.form.operation')}`,
+                    label: `*${i18n.tr('ifly.cms.form.operation')}`,
                     clearable: true,
                     color: "primary",
                     options: workOrderList().getOperationTypeList()
                 },
-                label: Vue.prototype.$tr('ifly.cms.form.operation'),
+                label: i18n.tr('ifly.cms.form.operation'),
             },
         },
         inbound: {
@@ -143,28 +144,28 @@ export default function modelFields(): ModelFields {
                 type: "input",
                 props: {
                     rules: [
-                        (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
+                        (val) => !!val || i18n.tr("isite.cms.message.fieldRequired"),
                     ],
-                    label: `*${Vue.prototype.$tr("ifly.cms.form.flight")}`,
+                    label: `*${i18n.tr("ifly.cms.form.flight")}`,
                     clearable: true,
                     maxlength: 10,
                     color: "primary",
                 },
-                label: Vue.prototype.$tr("ifly.cms.form.flight"),
+                label: i18n.tr("ifly.cms.form.flight"),
             },
             inboundScheduleArrival: {
                 value: '',
                 type: 'hour',
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
                     label: `* Inbound Schedule Arrival`,
                     clearable: true,
                     color: "primary",
                     format24h: true,
                 },
-                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
+                label: i18n.tr('ifly.cms.form.scheduledArrival'),
             },
         },
         outbound: {
@@ -173,28 +174,28 @@ export default function modelFields(): ModelFields {
                 type: "input",
                 props: {
                     rules: [
-                        (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
+                        (val) => !!val || i18n.tr("isite.cms.message.fieldRequired"),
                     ],
                     label: `*Outbound Flight Number`,
                     clearable: true,
                     maxlength: 10,
                     color: "primary",
                 },
-                label: Vue.prototype.$tr("ifly.cms.form.flight"),
+                label: i18n.tr("ifly.cms.form.flight"),
             },
             outboundScheduleDeparture: {
                 value: '',
                 type: 'hour',
                 props: {
                     rules: [
-                        val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                     ],
                     label: `*Outbound Schedule Departure `,
                     clearable: true,
                     color: "primary",
                     format24h: true,
                 },
-                label: Vue.prototype.$tr('ifly.cms.form.scheduledArrival'),
+                label: i18n.tr('ifly.cms.form.scheduledArrival'),
             },
         },
         full: {
@@ -208,7 +209,7 @@ export default function modelFields(): ModelFields {
                     maxlength: 10,
                     color: "primary",
                 },
-                label: Vue.prototype.$tr("ifly.cms.form.flight"),
+                label: i18n.tr("ifly.cms.form.flight"),
             },
         }
     }));

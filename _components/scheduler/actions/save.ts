@@ -1,4 +1,4 @@
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from 'modules/qcrud/_services/baseService.js'
 import store from '../store/index.store'
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import {BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER, LABOR} from '../../model/constants.js';

@@ -1,7 +1,8 @@
 
-import Vue, { computed } from 'vue'
+import { computed } from 'vue'
 import { fields } from '../models/fields.model'
 import store from '../store/index.store'
+import { i18n } from 'src/plugins/utils'
 
 export const fuelingController = () => {
     const loading = computed(() => store.loading)
@@ -20,7 +21,7 @@ export const fuelingController = () => {
                     loading: store.loading,
                     color: 'primary',
                     'icon-right': 'fa-thin fa-floppy-disk',
-                    label: Vue.prototype.$tr('isite.cms.label.save'),
+                    label: i18n.tr('isite.cms.label.save'),
                 },
                 action: () => {
                     save()

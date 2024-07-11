@@ -55,7 +55,7 @@ export default {
         },
         extraActions: [{
           label: 'Back to schedule',
-          props:{
+          props: {
             icon: 'fa-duotone fa-calendar-plus',
             label: 'Back to schedule',
           },
@@ -231,17 +231,17 @@ export default {
               type: 'select',
               quickFilter: true,
               loadOptions: {
-                  apiRoute: 'apiRoutes.qramp.setupCustomers',
-                  select: {'label': 'customerName', 'id': 'id'},
-                  requestParams: {
-                      filter: {
-                          companyId: this.filterCompany,
-                      },
+                apiRoute: 'apiRoutes.qramp.setupCustomers',
+                select: { 'label': 'customerName', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
                   },
+                },
               },
               props: {
-                  label: 'Customer',
-                  'clearable': true
+                label: 'Customer',
+                'clearable': true
               },
             },
             acTypeId: {
@@ -262,7 +262,7 @@ export default {
               props: {
                 label: this.$tr('ifly.cms.form.operation'),
                 clearable: true,
-                color:"primary",
+                color: "primary",
                 'hide-bottom-space': false,
                 options: workOrderList().getOperationTypeList().map(item => ({
                   label: item.operationName,
@@ -316,7 +316,7 @@ export default {
       };
 
       const namesOfDays = numbersDays.map(number => daysOfWeek[number]);
-     
+
       return namesOfDays.join(', ');
     },
     getUrlSchedule() {
@@ -326,5 +326,4 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
-</style>
+<style lang="scss"></style>
