@@ -71,13 +71,13 @@ export default function flightController() {
         },
         scheduleDate: {
           value: null,
-          type: 'fullDate',
+          type: 'date',
           props: {
             rules: [
               val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
             ],
-            hint:'Format: MM/DD/YYYY HH:mm',
-            mask:'MM/DD/YYYY HH:mm',
+            hint:'Format: MM/DD/YYYY',
+            mask:'MM/DD/YYYY',
             'place-holder': 'MM/DD/YYYY HH:mm',
             readonly: disabledReadonly.value,
             label: 'Service date',
@@ -116,6 +116,7 @@ export default function flightController() {
           value: 1,
           type: 'select',
           props: {
+            vIf: Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-status'),
             rules: [
               val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
             ],
@@ -145,7 +146,6 @@ export default function flightController() {
             ],
             label: '*Fueling ticket number',
           },
-          label: Vue.prototype.$tr('ifly.cms.form.operation'),
         },
         fuelingRegistration: {
           value: null,

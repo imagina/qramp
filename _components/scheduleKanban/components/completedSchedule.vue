@@ -55,15 +55,42 @@
                 tw-items-center
                 tw-justify-center"
             >
-                <q-btn
-                    v-if="!isBlank && !showInline"
+                <q-btn-dropdown
+                    class="btn-dropdown-plus"
+                    v-if="createNonFlight"
                     icon="fa-light fa-plus tw-text-blue-500"
                     size="sm"
                     outline
                     unelevated
                     flat
                     dense
-                    @click="openForm"
+                    no-icon-animation
+                >
+                    <q-list>
+                        <q-item clickable v-close-popup @click="openForm(FLIGHT)">
+                            <q-item-section>
+                                <q-item-label>Create Flight</q-item-label>
+                            </q-item-section>
+                        </q-item>
+
+                        <q-item clickable v-close-popup @click="openForm(NON_FLIGHT)">
+                            <q-item-section>
+                                <q-item-label>Create Non-flight</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    </q-list>
+                </q-btn-dropdown>
+                <q-btn
+                    class="btn-dropdown-plus"
+                    v-else-if="createFlight"
+                    icon="fa-light fa-plus tw-text-blue-500"
+                    size="sm"
+                    outline
+                    unelevated
+                    flat
+                    dense
+                    no-icon-animation
+                    @click="openForm(null)"
                 >
                     <q-tooltip>
                         Create schedule
@@ -127,5 +154,9 @@ export default defineComponent({
 <style>
 .h-43 {
   height: 43px !important;
+}
+
+.btn-dropdown-plus > span:nth-child(2) > span > i:nth-child(2) {
+    display: none;
 }
 </style>

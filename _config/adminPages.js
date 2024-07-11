@@ -287,13 +287,26 @@ export default {
     crud: import('../_crud/labor.vue'),
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
-    title: 'Labor',
+    title: 'Work Orders',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,
     }
   },
-  
+  laborSchedule: {
+    permission: 'ramp.labor-work-order-schedules.manage',
+    activated: true,
+    authenticated: true,
+    path: '/labor/schedule/index',
+    name: 'qramp.admin.laborSchedule',
+    page: () => import('../_components/scheduleKanban'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.schedule',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,

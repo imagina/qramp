@@ -1,6 +1,10 @@
 <template>
   <div>
     <form-orders ref="formOrders" />
+    <modalNonFlight
+      ref="refModalNonFlight"
+      :refFormOrders="refModalNonFlight"
+    />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
   </div>
@@ -22,18 +26,21 @@ import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index.vue';
 
 export default {
   name: 'RampCrud',
   components: {
     formOrders,
     flightDetail,
+    modalNonFlight,
   },
   data() {
     return {
       crudId: this.$uid(),
       areaId: null,
       loadingBulk: false,
+      refModalNonFlight: null
     }
   },
   provide() {
@@ -62,9 +69,14 @@ export default {
   async created() {
     this.$nextTick(async () => {
       await qRampStore().setIsPassenger(true);
-      await qRampStore().setIsFueling(false);
+      await qRampStore().setTypeWorkOrder(null);
       await workOrderList().getAllList();
       await workOrderList().getCustomerWithContract()
+    })
+  },
+  mounted() {
+    this.$nextTick(async () => {
+      this.refModalNonFlight = this.$refs.formOrders
     })
   },
   beforeDestroy() {
@@ -98,41 +110,20 @@ export default {
         apiRoute: 'apiRoutes.qramp.workOrders',
         permission: 'ramp.passenger-work-orders',
         create: {
-          method: async () => {
-            await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
-            await qRampStore().setIsPassenger(true);
-            await qRampStore().setTypeWorkOrder(FLIGHT);
-            this.$refs.formOrders.loadform({
-              modalProps: {
-                title: this.$tr('ifly.cms.form.newWorkOrder'),
-                update: false,
-                width: '35vw'
-              }
-            })
-          },
-          /*actions: [
-                        {
-                         label: 'Create Flight',
-                         action: async () => {
-
-                         } 
-                        },
-                        {
-                         label: 'Create Non Flight',
-                         action: async () => {
-                            await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
-                            await qRampStore().setIsPassenger(true);
-                            await qRampStore().setTypeWorkOrder(NON_FLIGHT);
-                            this.$refs.formOrders.loadform({
-                                modalProps: {
-                                    title: this.$tr('ifly.cms.form.newWorkOrder'),
-                                    update: false,
-                                    width: '35vw' 
-                                }
-                            })
-                         } 
-                        },
-             ]*/
+          actions: [
+            {
+              label: 'Create Flight',
+              action: async () => {
+                await this.openCreateMode(FLIGHT)
+              } 
+            },
+            {
+              label: 'Create Non Flight',
+              action: async () => {
+                await this.openCreateMode(NON_FLIGHT)
+              } 
+            },
+          ]
         },
         read: {
           columns: [
@@ -219,7 +210,7 @@ export default {
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
-              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '': '(Manually)'}`,
+              field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}${item.outbountFaFlightId ? '': '(Manually)'}`,
               align: "left",
               format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
               action: (item) => {
@@ -697,24 +688,31 @@ export default {
         })
     },
     async openModal(item) {
-      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
-      await qRampStore().setIsPassenger(true);
+      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.data.id ? ` Id: ${item.data.id}` : '')
+      qRampStore().setIsPassenger(true);
       await this.$refs.formOrders.loadform({
         modalProps: {
-          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
+          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.data.id}`,
           update: true,
-          workOrderId: item.id,
+          workOrderId: item.data?.id,
           width: '90vw',
+          ...item.modalProps
         },
-        data: item,
+        data: item.data,
       })
       qRampStore().setTitleOffline(titleModal);
     },
-    showWorkOrder(data) {
+    showWorkOrder(data, modalProps={}, makeRequest=true) {
       if (this.isAppOffline) {
-        this.openModal(data);
+        this.openModal({ data, modalProps });
         return;
       }
+
+      if (!makeRequest) {
+        this.openModal({ data, modalProps });
+        return;
+      }
+
       this.$crud.show('apiRoutes.qramp.workOrders', data.id,
         {
           refresh: true,
@@ -722,7 +720,7 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible",
           }
         }).then(async (item) => {
-          this.openModal(item.data)
+          this.openModal({ data: item.data, modalProps })
         }).catch((err) => {
           console.log(err);
         });
@@ -736,6 +734,24 @@ export default {
         console.log(error);
       }
     },
+    async openCreateMode(setTypeWorkOrder) {
+      await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
+      await qRampStore().setIsPassenger(true);
+      await qRampStore().setTypeWorkOrder(setTypeWorkOrder);
+      if (setTypeWorkOrder === FLIGHT) {
+        this.$refs.formOrders.loadform({ 
+          modalProps: {
+            title: this.$tr('ifly.cms.form.newWorkOrder'),
+            update: false,
+            width: '34vw',
+          } 
+        })
+      }
+
+      if (setTypeWorkOrder === NON_FLIGHT) {
+        this.$refs.refModalNonFlight.handleModalChange()
+      }
+    }
   }
 }
 </script>
