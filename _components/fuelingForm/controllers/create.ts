@@ -8,7 +8,7 @@ import {
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from '../../../_store/qRampStore';
 import storeFlueling from '../store/index'
-import { store, i18n } from 'src/plugins/utils';
+import { store, i18n, eventBus } from 'src/plugins/utils';
 import baseService from "src/modules/qcrud/_services/baseService.js";
 import showWorkOrder from '../services/showWorkOrder'
 
@@ -95,7 +95,7 @@ export default function createController(props: any = null, emit: any = null) {
           dataForm,
         )
         await showWorkOrder(response.data)
-        // await proxy.$root.$emit('refresh-data');
+        await eventBus.emit('refresh-data');
         store.loading = false;
       } catch (err) {
         console.log(err)

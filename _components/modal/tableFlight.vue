@@ -223,30 +223,11 @@ export default {
 }
 </script>
 <style lang="scss">
-// .cardResponsive {
-//   overflow-y: scroll;
-//   height: 500px;
-
-//   .my-sticky-header-column-table {
-//     tr {
-//       th {
-//         position: sticky;
-//         z-index: 2;
-//         background: $primary;
-//         color: #fff;
-//       }
-//     }
-//   }
-// }
 
 .cardResponsive {
   overflow-y: scroll;
   height: 500px;
 }
-
-// .q-dialog__inner div {
-//   border-radius: 0.75rem;
-// }
 
 .background-color-warn {
   background-color: $warning;

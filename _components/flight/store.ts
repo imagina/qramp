@@ -76,7 +76,6 @@ const state = reactive<StateContarct>({
         adHoc: '',
         carrierId: '',
         stationId: '',
-        // id: null,
         inboundTailNumber: '',
         inboundBlockIn: '',
         inboundScheduledArrival: '',
@@ -172,7 +171,6 @@ export default function flightStore(): FlightStoreContract {
         state.form.cancellationType = flight.cancellationType ? flight.cancellationType : null;
         state.form.parentId = flight.parentId ? flight.parentId : null;
         state.form.scheduleDate = flight.scheduleDate ? flight.scheduleDate : null;
-        // state.form.id = flight.id ? flight.id : null;
         state.responsibles = flight?.responsible ? [{value: flight.responsible.id, label: flight.responsible.fullName}] : [];
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;

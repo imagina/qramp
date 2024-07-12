@@ -117,7 +117,7 @@ export default function flightController() {
           value: 1,
           type: 'select',
           props: {
-            vIf: Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-status'),
+            vIf: store.hasAccess('ramp.work-orders.edit-status'),
             rules: [
               val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
