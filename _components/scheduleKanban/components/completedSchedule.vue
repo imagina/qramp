@@ -55,31 +55,7 @@
                 tw-items-center
                 tw-justify-center"
             >
-                <q-btn-dropdown
-                    class="btn-dropdown-plus"
-                    v-if="createNonFlight"
-                    icon="fa-light fa-plus tw-text-blue-500"
-                    size="sm"
-                    outline
-                    unelevated
-                    flat
-                    dense
-                    no-icon-animation
-                >
-                    <q-list>
-                        <q-item clickable v-close-popup @click="openForm(FLIGHT)">
-                            <q-item-section>
-                                <q-item-label>Create Flight</q-item-label>
-                            </q-item-section>
-                        </q-item>
-
-                        <q-item clickable v-close-popup @click="openForm(NON_FLIGHT)">
-                            <q-item-section>
-                                <q-item-label>Create Non-flight</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                    </q-list>
-                </q-btn-dropdown>
+                <dropdown v-if="createNonFlight" :items="dropdownItems" />
                 <q-btn
                     class="btn-dropdown-plus"
                     v-else-if="createFlight"
@@ -127,6 +103,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import useCompletedSchedule from '../uses/useCompletedSchedule'
+import dropdown from './dropdown.vue';
 
 export default defineComponent({
     props: {
@@ -142,6 +119,9 @@ export default defineComponent({
             type: Object,
             default: () => {}
         }
+    },
+    components: {
+        dropdown
     },
     setup(props, {emit}) {
         return {
