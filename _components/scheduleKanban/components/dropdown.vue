@@ -1,9 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps } from 'vue';
 
-defineProps({
-    items: Object,
-});
+defineProps<{
+    items: {
+        label: string,
+        action: () => void
+    }[]
+}>();
 
 </script>
 <template>
