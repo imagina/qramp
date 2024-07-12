@@ -296,7 +296,6 @@ export default {
                             label: "Scheduled date",
                             field: 'schedule_date_local',
                           },
-                          name: "scheduleDateLocal",
                         },
                         customerId: {
                             value: null,
