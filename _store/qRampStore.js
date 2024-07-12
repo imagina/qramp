@@ -6,7 +6,10 @@ import {
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
     COMPANY_PASSENGER,
-    COMPANY_RAMP
+    COMPANY_RAMP,
+    BUSINESS_UNIT_LABOR,
+    LABOR,
+    NON_FLIGHT
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
@@ -42,6 +45,9 @@ const state = reactive({
     workOrder: {},
     isFueling: true,
     typeWorkOrder: null,
+    isNonFlight: false,
+    billingDate: null,
+    clonedWorkOrder: null,
 });
 
 export default function qRampStore() {
@@ -385,6 +391,26 @@ export default function qRampStore() {
         state.flightId = value;
     }
 
+    function getBillingDate() {
+        return state.billingDate;
+    }
+
+    function setBillingDate(value) {
+        state.billingDate = value;
+    }
+
+    function getClonedWorkOrder() {
+        return state.clonedWorkOrder
+    }
+
+    function setClonedWorkOrder(value) {
+        state.clonedWorkOrder = value
+    }
+
+    function isNonFlight() {
+        return getTypeWorkOrder() === NON_FLIGHT
+    }
+
     function editPermissionseSubmitted() {
         return store.hasAccess('ramp.work-orders.edit-when-submitted');
     }
@@ -483,6 +509,16 @@ export default function qRampStore() {
         }
     }
 
+    function getBusinessUnitId() {
+        const isPassenger = getIsPassenger();
+        let businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        if(getTypeWorkOrder() === LABOR) {
+            businessUnitId = BUSINESS_UNIT_LABOR
+        }
+
+        return businessUnitId
+    }
+
     async function changeStatus(statusId, workOrderId) {
         try {
             const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -579,6 +615,12 @@ export default function qRampStore() {
         getIsFueling,
         setIsFueling,
         getTypeWorkOrder,
-        setTypeWorkOrder
+        setTypeWorkOrder,
+        getBusinessUnitId,
+        getBillingDate,
+        setBillingDate,
+        getClonedWorkOrder,
+        setClonedWorkOrder,
+        isNonFlight,
     }
 }

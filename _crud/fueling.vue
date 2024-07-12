@@ -14,9 +14,9 @@ import {
   STATUS_CLOSED,
   STATUS_DRAFT,
   STATUS_SCHEDULE,
-  BUSINESS_UNIT_PASSENGER,
+  BUSINESS_UNIT_FUELING,
   COMPANY_PASSENGER,
-  FUELING
+  FUELING,
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -65,7 +65,7 @@ export default {
   async created() {
     this.$nextTick(async () => {
       await qRampStore().setIsPassenger(true);
-      await qRampStore().setIsFueling(true);
+      qRampStore().setTypeWorkOrder(FUELING);
       await workOrderList().getAllList();
       await workOrderList().getCustomerWithContract()
     })
@@ -190,6 +190,13 @@ export default {
               align: 'left'
             },
             {
+              name: "schedueleDate",
+              label: 'Service date',
+              field: "scheduleDate",
+              align: "left",
+              format: (val) => (val ? this.$trd(val) : "-"),
+            },
+            {
               name: "created_at",
               label: this.$tr("isite.cms.form.createdAt"),
               field: "createdAt",
@@ -210,8 +217,8 @@ export default {
               props: {
                 label: "Scheduled date"
               },
-              name: "scheduleDate",
-              field: { value: 'schedule_date' },
+              name: "scheduleDateLocal",
+              field: {value: 'schedule_date_local'},
               quickFilter: true
             },
             customerId: {
@@ -242,7 +249,7 @@ export default {
                 requestParams: {
                   filter: {
                     contractStatusId: 1,
-                    businessUnitId: BUSINESS_UNIT_PASSENGER
+                    businessUnitId: BUSINESS_UNIT_FUELING
                   },
                 },
               },
@@ -299,13 +306,13 @@ export default {
                 ],
               },
             },
-            businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
+            businessUnitId: { value: BUSINESS_UNIT_FUELING },
           },
           requestParams: {
             include: 'responsible,contract,customer',
             filter: {
               withoutDefaultInclude: true,
-              businessUnitId: BUSINESS_UNIT_PASSENGER,
+              businessUnitId: BUSINESS_UNIT_FUELING,
               type: [FUELING]
             },
           },

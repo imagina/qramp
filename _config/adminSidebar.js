@@ -19,7 +19,14 @@ export default [
       pages.qramp.passengerSchedule,
       pages.qramp.operationTypePassenger,
       pages.qramp.fueling,
-      pages.qramp.labor
+      {
+        title: 'Labor',
+        icon: 'fa-light fa-tickets-airline',
+        children: [
+          pages.qramp.labor,
+          pages.qramp.laborSchedule
+        ]
+      }
     ]
   },
   {

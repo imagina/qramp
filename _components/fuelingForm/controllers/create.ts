@@ -1,16 +1,20 @@
-import { computed, ref, getCurrentInstance } from 'vue'
-import { BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, FUELING, STATUS_DRAFT } from '../../model/constants';
+import { computed, ref } from 'vue'
+import {
+  BUSINESS_UNIT_FUELING,
+  COMPANY_PASSENGER,
+  FUELING,
+  STATUS_DRAFT
+} from '../../model/constants';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from '../../../_store/qRampStore';
 import storeFlueling from '../store/index'
-import showWorkOrder from '../services/showWorkOrder'
-import { alert, store, i18n } from 'src/plugins/utils';
+import { store, i18n, eventBus } from 'src/plugins/utils';
 import baseService from "src/modules/qcrud/_services/baseService.js";
+import showWorkOrder from '../services/showWorkOrder'
 
 export default function createController(props: any = null, emit: any = null) {
   const formFueling: any = ref(null);
   const refCustomer: any = ref(null);
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const manageResponsiblePermissions = computed(() => {
     return store.hasAccess('ramp.work-orders.manage-responsible');
   })
@@ -21,6 +25,16 @@ export default function createController(props: any = null, emit: any = null) {
   });
   const fields = computed(() => ({
     form: {
+      fuelingTicketNumber: {
+        value: null,
+        type: 'input',
+        props: {
+          rules: [
+            val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+          ],
+          label: '*Fueling ticket number',
+        },
+      },
       stationId: {
         value: null,
         type: "select",
@@ -68,7 +82,7 @@ export default function createController(props: any = null, emit: any = null) {
     try {
       storeFlueling.loading = true;
       const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
-      const businessUnitId = { businessUnitId: BUSINESS_UNIT_PASSENGER };
+      const businessUnitId = { businessUnitId: BUSINESS_UNIT_FUELING };
       const dataForm = {
         ...form.value,
         titleOffline: qRampStore().getTitleOffline(),
@@ -80,8 +94,9 @@ export default function createController(props: any = null, emit: any = null) {
           API_ROUTE,
           dataForm,
         )
-        orderConfirmationMessage(response.data);
-        storeFlueling.loading = false;
+        await showWorkOrder(response.data)
+        await eventBus.emit('refresh-data');
+        store.loading = false;
       } catch (err) {
         console.log(err)
       }
@@ -97,48 +112,6 @@ export default function createController(props: any = null, emit: any = null) {
       statusId: STATUS_DRAFT
     };
     storeFlueling.showModal = false;
-  }
-  function orderConfirmationMessage(data) {
-    alert.info({
-      mode: "modal",
-      title: '',
-      message: 'What do you want to do?',
-      modalWidth: '600px',
-      actions: [
-        {
-          label: 'Go out to the list',
-          color: 'grey-6',
-          handler: async () => {
-            await emit('refreshData');
-            await reset();
-          }
-        },
-
-        {
-          label: 'Continue editing',
-          color: "light-blue-7",
-          handler: async () => {
-            await showWorkOrder(data)
-            await emit('refreshData');
-          },
-        },
-        {
-          label: 'Create a new one',
-          color: 'positive',
-          handler: () => {
-            storeFlueling.loading = true;
-            refCustomer.value.reset();
-            form.value = {
-              customerId: null,
-              contractId: null,
-              statusId: STATUS_DRAFT
-            };
-            formFueling.value.reset();
-            storeFlueling.loading = false;
-          }
-        },
-      ],
-    });
   }
   return {
     fields,

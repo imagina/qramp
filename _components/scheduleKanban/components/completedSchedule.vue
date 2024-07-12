@@ -55,15 +55,18 @@
                 tw-items-center
                 tw-justify-center"
             >
+                <dropdown v-if="createNonFlight" :items="dropdownItems" />
                 <q-btn
-                    v-if="!isBlank && !showInline"
+                    class="btn-dropdown-plus"
+                    v-else-if="createFlight"
                     icon="fa-light fa-plus tw-text-blue-500"
                     size="sm"
                     outline
                     unelevated
                     flat
                     dense
-                    @click="openForm"
+                    no-icon-animation
+                    @click="openForm(null)"
                 >
                     <q-tooltip>
                         Create schedule
@@ -100,6 +103,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import useCompletedSchedule from '../uses/useCompletedSchedule'
+import dropdown from './dropdown.vue';
 
 export default defineComponent({
     props: {
@@ -116,6 +120,9 @@ export default defineComponent({
             default: () => {}
         }
     },
+    components: {
+        dropdown
+    },
     setup(props, {emit}) {
         return {
             ...useCompletedSchedule(props, emit)
@@ -127,5 +134,9 @@ export default defineComponent({
 <style>
 .h-43 {
   height: 43px !important;
+}
+
+.btn-dropdown-plus > span:nth-child(2) > i:nth-child(2) {
+    display: none;
 }
 </style>

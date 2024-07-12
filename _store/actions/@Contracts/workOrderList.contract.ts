@@ -306,6 +306,7 @@ export interface DataWorkOrder {
     defaultInclude: string;
     searchableFields: string;
     fileFormats: null;
+    type: number;
 }
 
 export interface Responsible {
@@ -476,4 +477,8 @@ export interface WorkOrderList {
     getResponsible: ()  => any;
     getACTypes: () => any;
     getFavourites: (refresh?: boolean) => Promise<any>;
+    getBillingClosedDate: (refresh) => Promise<any>;
+    getWorkOrderSearch: (search: string, refresh?: boolean) => Promise<any>;
+    getFlightawareSearch: (search: string, refresh: boolean) => Promise<any>;
+    getSearchFlightNumber: (search: string, type: "workorder" | "flightaware", refresh: boolean) => Promise<any>;
 }

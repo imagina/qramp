@@ -15,9 +15,9 @@ import {
   STATUS_CLOSED,
   STATUS_DRAFT,
   STATUS_SCHEDULE,
-  BUSINESS_UNIT_PASSENGER,
+  BUSINESS_UNIT_LABOR,
   COMPANY_PASSENGER,
-  LABOR
+  LABOR, BUSINESS_UNIT_PASSENGER
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -63,7 +63,7 @@ export default {
   async created() {
     this.$nextTick(async () => {
       await qRampStore().setIsPassenger(true);
-      await qRampStore().setIsFueling(false);
+      await qRampStore().setTypeWorkOrder(LABOR);
       await workOrderList().getAllList();
       await workOrderList().getCustomerWithContract()
     })
@@ -102,7 +102,6 @@ export default {
           method: async () => {
             await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
             await qRampStore().setIsPassenger(true);
-            await qRampStore().setTypeWorkOrder(LABOR);
             this.$refs.formOrders.loadform({
               modalProps: {
                 title: this.$tr('ifly.cms.form.newWorkOrder'),
@@ -188,7 +187,7 @@ export default {
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
-              field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
+              field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}${item.outboundFaFlightId ? '': '(Manually)'}`,
               align: "left",
               format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
               action: (item) => {
@@ -277,8 +276,8 @@ export default {
               props: {
                 label: "Scheduled date"
               },
-              name: "scheduleDate",
-              field: { value: 'schedule_date' },
+              name: "scheduleDateLocal",
+              field: {value: 'schedule_date_local'},
               quickFilter: true
             },
             customerId: {
@@ -309,7 +308,7 @@ export default {
                 requestParams: {
                   filter: {
                     contractStatusId: 1,
-                    businessUnitId: BUSINESS_UNIT_PASSENGER
+                    businessUnitId: [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER]
                   },
                 },
               },
@@ -366,13 +365,13 @@ export default {
                 ],
               },
             },
-            businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
+            businessUnitId: { value: [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER] },
           },
           requestParams: {
             include: 'responsible,contract,customer',
             filter: {
               withoutDefaultInclude: true,
-              businessUnitId: BUSINESS_UNIT_PASSENGER,
+              businessUnitId: [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER],
               type: [LABOR]
             },
           },

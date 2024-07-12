@@ -27,6 +27,7 @@ const state = reactive<ReactiveStoreContract>({
     favouriteList: [],
     showFavourite: false,
     errorList: [],
+    breadcrumbs: [],
 });
 
 
@@ -71,6 +72,14 @@ export default function serviceListStore(): ServiceListStoreContract {
     
     function getServiceList(): ServiceModelContract[] {
         return state.serviceList;
+    }
+
+    function getBreadcrumbs(): any[] {
+        return state.breadcrumbs;
+    };
+
+    function setBreadcrumbs(value: any[]): void {
+        state.breadcrumbs = value;
     }
 
     function getFavouriteList(): any[] {
@@ -126,6 +135,7 @@ export default function serviceListStore(): ServiceListStoreContract {
      */
     function resetStore(): void {
         setServiceList([]);
+        setBreadcrumbs([]);
     }
 
     async function getServiceListSelected(isType = false): Promise<any> {
@@ -228,6 +238,8 @@ export default function serviceListStore(): ServiceListStoreContract {
         setShowFavourite,
         filterServicesListByQuantity,
         setErrorList,
-        getErrorList
+        getErrorList,
+        getBreadcrumbs,
+        setBreadcrumbs
     }
 }

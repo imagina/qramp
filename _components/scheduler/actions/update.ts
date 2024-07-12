@@ -1,12 +1,15 @@
 import baseService from 'modules/qcrud/_services/baseService.js'
 import store from '../store/index.store';
-import qRampStore from 'modules/qramp/_store/qRampStore';
-import { BUSINESS_UNIT_PASSENGER } from '../../model/constants';
+import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import { BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER, LABOR } from '../../model/constants';
 
 export default async function updateScheduler(): Promise<void> {
     try {
         const isPassenger = qRampStore().getIsPassenger();
-        const businessUnitId = isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        let businessUnitId: any = isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
+        if(qRampStore().getTypeWorkOrder() === LABOR) {
+            businessUnitId = { businessUnitId: BUSINESS_UNIT_LABOR }
+        }
         store.loading = true;
         store.validateOperationType();
         const payload = {...store.form, ...businessUnitId}

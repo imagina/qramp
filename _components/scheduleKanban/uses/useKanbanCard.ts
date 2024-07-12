@@ -6,6 +6,7 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_SCHEDULE,
+  NON_FLIGHT,
 } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from './../../../_store/qRampStore.js'
@@ -66,6 +67,8 @@ export default function useKanbanCard(props: any = {}) {
     };
     return statuses[props.card.statusId] || '';
   })
+  
+  const isNonFlight = computed(() => props.card.type === NON_FLIGHT)
 
   async function openModalSchedule() {
     if (!isWeekAgenda.value && modalScheduleStore.showInline) return
@@ -136,5 +139,6 @@ export default function useKanbanCard(props: any = {}) {
     isPassenger,
     storeKanban,
     openModalSelectFlightNumber,
+    isNonFlight,
   };
 }

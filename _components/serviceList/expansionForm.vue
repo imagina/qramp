@@ -1,11 +1,10 @@
 <script lang="ts">
-import { defineComponent, computed, toRefs, ref, watch } from 'vue';
+import { defineComponent, computed, ref, getCurrentInstance } from 'vue';
 import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
-import { DynamicField } from './contracts/index.contract';
-import { clone, alert } from 'src/plugins/utils';
+import { alert, store } from 'src/plugins/utils';
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -18,16 +17,24 @@ export default defineComponent({
   setup(props) {
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
+    const permissionFavourite: any = computed(() => ({
+      create: store.hasAccess('isite.favourites.create'),
+      edit: store.hasAccess('isite.favourites.edit'),
+      index: store.hasAccess(`isite.favourites.index`),
+      destroy: store.hasAccess(`isite.favourites.destroy`),
+    }));
     async function selectFavourite(data: any) {
       data.favourite = !data.favourite;
       if (!data.favourite) {
+        if(!permissionFavourite.value.destroy) return;
         const favoriteData = serviceListStore().getFavouriteList().find(item => item.id === data.id);
         await deleteFavourites(favoriteData);
         serviceListStore().removeFromFavouriteList(data);
         alert.success({ message: `Favorite deleted successfully Product:${data.title}` });
       } else {
-        const response: any = await postFavourites(data);
-        const favoriteData = { ...data, favouriteId: response?.id }
+        if(!permissionFavourite.value.create) return;
+        const response: any = await postFavourites({...data, userId: store.state.quserAuth.userId});
+        const favoriteData = {...data, favouriteId: response?.id} 
         serviceListStore().pustFavouriteList(favoriteData);
         alert.success(`Favorite created successfully Product:${data.title}`);
       }
@@ -47,7 +54,8 @@ export default defineComponent({
       data,
       favourite,
       selectFavourite,
-      refData
+      refData,
+      permissionFavourite
     }
   },
 })
@@ -58,21 +66,24 @@ export default defineComponent({
       <q-list v-for="(item, index) in data" :key="index">
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
-            <q-item-section avatar class="q-pr-none " style="min-width: 45px;">
-              <i class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl" @click="selectFavourite(data[index])"
-                :class="{
-      'fa-solid': data[index].favourite,
-      'fa-light': !data[index].favourite,
-    }" />
+            <q-item-section v-if="permissionFavourite.create" avatar class="q-pr-none " style="min-width: 45px;">
+              <i 
+                  class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
+                  @click="selectFavourite(data[index])"
+                  :class="{
+                    'fa-solid': data[index].favourite,
+                    'fa-light': !data[index].favourite,
+                  }" 
+              />
             </q-item-section>
             <q-item-section class="q-py-sm">
-              <span class="tw-text-base tw-font-bold" style="color:#1F294F;">
+              <p class="tw-text-base tw-font-bold" style="color:#1F294F;">
                 {{ item.title }}
                 <br>
                 <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
                   {{ item.helpText }}
                 </span>
-              </span>
+              </p>
               <span class="tw-text-sm" style="color:#8A98C3;">{{ showValue(item.formField.quantity) }}</span>
             </q-item-section>
           </template>
@@ -97,33 +108,42 @@ export default defineComponent({
           tw-flex 
           color-bg-blue-gray-custom 
           tw-py-2 
-          tw-rounded-lg">
-        <div class="
-            tw-flex 
-            tw-w-2/5 
-            tw-truncate 
+          tw-rounded-lg" 
+        >
+        <div 
+          class="
+            tw-flex
+            tw-w-2/5
+            tw-break-words
             tw-py-3 
             text-services 
-            tw-pl-2">
-          <div class="q-px-sm">
-            <i class="fa-star color-icon-star tw-cursor-pointer" @click="selectFavourite(data[index])" :class="{
-      'fa-solid': data[index].favourite,
-      'fa-light': !data[index].favourite,
-    }" />
-          </div>
-          <div>
-            <p>{{ item.title }}
-              <br>
-              <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
-                {{ item.helpText }}
-              </span>
-            </p>
-          </div>
+            tw-pl-2"
+          >
+              <div class="q-px-sm" v-if="permissionFavourite.create">
+                <i 
+                  class="fa-star color-icon-star tw-cursor-pointer"
+                  @click="selectFavourite(data[index])"
+                  :class="{
+                    'fa-solid': data[index].favourite,
+                    'fa-light': !data[index].favourite,
+                  }" 
+                />
+              </div>
+              <div>
+                <p>
+                  {{ item.title }}
+                </p>
+                <p
+                    v-if="item.helpText"
+                    class="tw-text-xs tw-text-gray-500">
+                  {{ item.helpText }}
+                </p>
+              </div>
         </div>
         <div class="
             tw-w-3/5 
             tw-mx-2 
-            tw-truncate 
+            tw-truncate
             tw-flex 
             tw-flex-wrap 
             tw-justify-end tw-gap-4">

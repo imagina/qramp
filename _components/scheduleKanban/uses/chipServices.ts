@@ -1,6 +1,5 @@
-import { ref, watch, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import serviceListStore from '../../serviceList/store/serviceList'
-import baseService from '@imagina/qcrud/_services/baseService.js'
 import findDynamicFieldTitle from '../../serviceList/services/findDynamicFieldTitle'
 import getWorkOrderItemsActions from '../actions/getWorkOrderItems'
 const chipServicesController = (props: any = {}, emit: any = null) => {
@@ -13,6 +12,7 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     }
     async function getWorkOrderItems() {
         try {
+            workOrdersItems.value = [];
             loading.value = true;
             const response = await getWorkOrderItemsActions(props.workOrderId);
             workOrdersItems.value = response.data;
@@ -21,7 +21,6 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
             console.error(error)
         }
     }
-
     return { 
         nameProduct, 
         popupProxyRef, 

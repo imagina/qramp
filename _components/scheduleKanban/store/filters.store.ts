@@ -5,6 +5,14 @@ import filterModel from '../models/filters.model'
 import moment, { Moment } from 'moment';
 import { State } from '../contracts/filtersStore.contract';
 import storeKanban from '../store/kanban.store';
+import {
+    BUSINESS_UNIT_LABOR,
+    BUSINESS_UNIT_PASSENGER,
+    BUSINESS_UNIT_RAMP,
+    FLIGHT,
+    LABOR
+} from "src/modules/qramp/_components/model/constants";
+import qRampStore from "src/modules/qramp/_store/qRampStore";
 
 const state = reactive<State>({
     showModal: false,
@@ -108,7 +116,13 @@ const store = computed(() => ({
       return state.fullDay.split('-');
     },
     get payload(){
-      const filters = {...state.form};
+      const isPassenger = qRampStore().getIsPassenger();
+      let businessUnitId: any = isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
+      if(qRampStore().getTypeWorkOrder() === LABOR) {
+         businessUnitId = { businessUnitId: [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER] }
+      }
+      const typeWorkOrder = qRampStore().getTypeWorkOrder() === LABOR ? {type: [LABOR]} : {};
+      const filters = {...state.form, ...typeWorkOrder, ...businessUnitId };
       delete filters.time;
       delete filters.scheduleType;
       Object.keys(filters).forEach(

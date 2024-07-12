@@ -62,6 +62,11 @@
   </div>
   <modalSchedule />
   <formOrders ref="refFormOrders" @getWorkOrderFilter="individualRefreshByColumns" />
+  <modalNonFlight
+    ref="refModalNonFlight"
+    :refFormOrders="refFormOrders"
+    @getWorkOrderFilter="individualRefreshByColumns"
+  />
   <modalStation />
   <selectFlightNumberModal />
   <flightDetail />
@@ -81,6 +86,7 @@ import formOrders from "../../formOrders.vue";
 import modalStation from "./modalStation.vue";
 import selectFlightNumberModal from '../../modal/selectFlightNumber/index.vue'
 import flightDetail from '../../modal/flightDetail.vue';
+import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index';
 export default defineComponent({
   components: {
     kanbanColumn,
@@ -91,7 +97,8 @@ export default defineComponent({
     formOrders,
     modalStation,
     selectFlightNumberModal,
-    flightDetail
+    flightDetail,
+    modalNonFlight
   },
   setup(props) {
     return {...useKanbanBoard(props)}

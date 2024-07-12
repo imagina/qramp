@@ -262,7 +262,20 @@ export default {
       refresh: true,
     }
   },
-
+  laborSchedule: {
+    permission: 'ramp.labor-work-order-schedules.manage',
+    activated: true,
+    authenticated: true,
+    path: '/labor/schedule/index',
+    name: 'qramp.admin.laborSchedule',
+    page: () => import('../_components/scheduleKanban'),
+    layout: () => import('layouts/master.vue'),
+    title: 'ifly.cms.sidebar.schedule',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },
   /*passengerWorkOrderStatuses: {
     permission: 'ramp.work-order-statuses.manage',
     activated: true,

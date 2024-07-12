@@ -129,23 +129,17 @@ export default function filterModel() {
         readonly: kanbanStore.isAppOffline,
       },
     },
-    customerId: {
+    operationTypeId: {
       value: null,
       type: 'select',
-      quickFilter: true,
-      loadOptions: {
-        apiRoute: 'apiRoutes.qramp.setupCustomers',
-        select: {'label': 'customerName', 'id': 'id'},
-        requestParams: {
-          filter: {
-            companyId: kanbanStore.filterCompany,
-          },
-        },
-      },
       props: {
-        label: 'Customer',
-        'clearable': true
+        label: `${i18n.tr('ifly.cms.form.operation')} type`,
+        clearable: true,
+        color:"primary",
+        'hide-bottom-space': false,
+        options: workOrderList().getOperationTypeList()
       },
+      label: i18n.tr('ifly.cms.form.operation'),
     },
     type: {
       value: null,

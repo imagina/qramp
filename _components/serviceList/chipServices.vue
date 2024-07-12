@@ -18,7 +18,7 @@ export default defineComponent({
       round
       flat
       @click="favourites"
-      v-if="favouritesList.length > 0"
+      v-if="favouritesList.length > 0 && permissionFavourite.index"
     >
       <q-badge 
         floating 

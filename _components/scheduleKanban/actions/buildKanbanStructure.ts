@@ -45,7 +45,7 @@ export async function getCards(refresh = false): Promise<void> {
       const endDate = item.date.endOf('day');
       const filterTime = storeFilters.filterTime;
       const params = {
-        field: qRampStore().getIsPassenger() ? "schedule_date_local" : "schedule_date",
+        field: "schedule_date_local",
         type: "customRange",
         from: startDate.set({ 
           hour: filterTime[0], 

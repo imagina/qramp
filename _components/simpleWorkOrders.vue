@@ -1,11 +1,11 @@
 <template>
   <div>
     <table-flight
-      @cancel="dialog = $event"
-      :dialog="dialog"
-      :dataTable="dataTable"
-      @flightSelect="setDataTable($event)"
-      @validateBound="addmanually"
+        @cancel="dialog = $event"
+        :dialog="dialog"
+        :dataTable="dataTable"
+        @flightSelect="setDataTable($event)"
+        @validateBound="addmanually"
     />
     <q-form
       ref="formSimpleWorkOrders"
@@ -86,7 +86,7 @@ import {
   STATUS_DRAFT,
   COMPANY_PASSENGER,
   COMPANY_RAMP,
-  modelWorkOrder
+  modelWorkOrder, LABOR, BUSINESS_UNIT_LABOR
 } from './model/constants.js';
 import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts';
@@ -116,7 +116,7 @@ export default {
       dataTable: [],
       dialog: false,
       loading: false,
-      acceptSchedule: false
+      acceptSchedule: false,
     };
   },
   mixins: [
@@ -208,8 +208,8 @@ export default {
           }
 
           if ((!this.form.faFlightId || !this.acceptSchedule) && !this.isAppOffline) {
-            this.search({ type: 'search' });
-            return;
+              this.search({type: 'search'});
+              return;
           }
 
         } else {
@@ -223,7 +223,7 @@ export default {
     async messageWhenFlightIsNotChosen() {
       if (this.acceptSchedule) {
         this.$alert.warning({
-          mode: 'modal',
+          mode: "modal",
           message: `Are you sure to create this Work Order with an unscheduled flight number: ${this.form.preFlightNumber}?`,
           actions: [
             {
@@ -233,8 +233,8 @@ export default {
                 await this.orderConfirmationMessage();
                 this.acceptSchedule = false;
               }
-            }
-          ]
+            },
+          ],
         });
         return;
       }
@@ -280,8 +280,8 @@ export default {
     search({ type }) {
       if (!this.isAppOffline) {
         if (
-          type != 'search' &&
-          (this.form.preFlightNumber !== '' || this.form.preFlightNumber !== null)
+            type != "search" &&
+            (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
         ) return;
 
         if (!this.form.preFlightNumber) return;
@@ -323,8 +323,11 @@ export default {
         let response = null;
 
         qRampStore().showLoading();
-        const businessUnitId = this.isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
-        const offlineId = new Date().valueOf();
+        let businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        if(this.isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
+          businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
+        }
+        const offlineId = new Date().valueOf()
 
         const dataForm = {
           ...this.form,
@@ -372,22 +375,22 @@ export default {
         this.dialog = true;
       }
       if (response.status == 204) {
-        const message = this.$tr('ifly.cms.label.flightMessage').replace('#file_number', this.form.preFlightNumber);
+        const message = this.$tr("ifly.cms.label.flightMessage").replace("#file_number", this.form.preFlightNumber)
         this.$alert.warning({
-          mode: 'modal',
-          title: this.$tr('ifly.cms.form.flight'),
+          mode: "modal",
+          title: this.$tr("ifly.cms.form.flight"),
           message,
           actions: [
-            { label: this.$tr('isite.cms.label.cancel'), color: 'grey-8' },
+            {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
             {
-              label: this.$tr('isite.cms.label.yes'),
-              color: 'primary',
+              label: this.$tr("isite.cms.label.yes"),
+              color: "primary",
               handler: () => {
                 this.acceptSchedule = true;
                 this.form.faFlightId = null;
-              }
-            }
-          ]
+              },
+            },
+          ],
         });
       }
       this.loadingState = false;

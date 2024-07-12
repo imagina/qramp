@@ -2,10 +2,12 @@ import baseService from 'modules/qcrud/_services/baseService.js'
 import {reactive} from 'vue';
 import qRampStore from '../qRampStore.js'
 import {
-  BUSINESS_UNIT_PASSENGER,
-  BUSINESS_UNIT_RAMP,
-  COMPANY_PASSENGER,
-  COMPANY_RAMP
+    BUSINESS_UNIT_FUELING, BUSINESS_UNIT_LABOR,
+    BUSINESS_UNIT_PASSENGER,
+    BUSINESS_UNIT_RAMP,
+    COMPANY_PASSENGER,
+    COMPANY_RAMP, FLIGHT, FUELING, LABOR,
+    NON_FLIGHT
 } from '../../_components/model/constants.js';
 import {
   Contract,
@@ -527,46 +529,6 @@ export default function workOrderList(): WorkOrderList {
     }
   }
 
-  function getCustomerWithContract(refresh = false): Promise<any[] | void> {
-    return new Promise(async (resolve) => {
-      if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
-
-        const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-        const businessUnitId = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
-        const custemerParams = {
-          refresh,
-          params: {
-            filter: {
-              withoutContracts: true,
-              customerStatusId: 1,
-              companyId,
-            }
-          },
-        }
-        const contractParams = {
-          params: {
-            filter: {
-              contractStatusId: 1,
-              ...businessUnitId,
-            }
-          },
-        }
-        const customersData = await Promise.all([
-          baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
-          baseService.index('apiRoutes.qramp.setupContracts', contractParams)
-        ]);
-        const customerList = factoryCustomerWithContracts(customersData, allowContractName);
-        setCustomerWithContractLists(customerList);
-        return resolve(customerList);
-      } else {
-        resolve();
-      }
-    })
-
-  }
-
   async function getACTypes(refresh = false) {
     if (hasAccess('iflight.aircrafttype.index')) {
       try {
@@ -643,47 +605,170 @@ export default function workOrderList(): WorkOrderList {
     }
   }
 
-  async function getAirports(refresh = false) {
-    if (hasAccess('iflight.airport.index')) {
-      try {
+    function getCustomerWithContract(refresh = false): Promise<any[] | void> {
+      return new Promise(async (resolve) => {
+        if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
+
+        const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
         const isPassenger = qRampStore().getIsPassenger();
         const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-        const params = {
-          refresh,
-          params: {
-            filter: {
-              "status": 1,
-              companyId,
-              "allTranslations": true
-            },
-          },
+        let businessUnitId: any = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
+        if(isPassenger && qRampStore().getTypeWorkOrder() === FUELING) {
+            businessUnitId = {businessUnitId: BUSINESS_UNIT_FUELING}
         }
-        const response = await baseService.index('apiRoutes.qfly.airports', params);
-        const data = response.data;
-        setAirportsList(data);
-        return data;
-      } catch (error) {
-        console.log(error);
-      }
+        if(isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
+            businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
+        }
+        const custemerParams = {
+            refresh,
+            params: {
+                filter: {
+                    withoutContracts: true,
+                    customerStatusId: 1,
+                    companyId,
+                }
+            },
+        }
+        const contractParams = {
+            params: {
+                filter: {
+                    contractStatusId: 1,
+                    ...businessUnitId,
+                }
+            },
+        }
+        const customersData = await Promise.all([
+            baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
+            baseService.index('apiRoutes.qramp.setupContracts', contractParams)
+        ]);
+        const customerList = factoryCustomerWithContracts(customersData, allowContractName);
+        setCustomerWithContractLists(customerList);
+        return resolve(customerList);
+        }else{
+            resolve();
+        }
+      })
     }
-  }
+
+    async function getAirports(refresh = false) {
+        if (hasAccess('iflight.airport.index')) {
+            try {
+                const isPassenger = qRampStore().getIsPassenger();
+                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const params = {
+                  refresh,
+                  params: {
+                    filter: {
+                      "status": 1,
+                      companyId,
+                      "allTranslations": true
+                    },
+                  },
+                }
+                const response = await baseService.index('apiRoutes.qfly.airports', params);
+                const data = response.data;
+                setAirportsList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
 
     async function getFavourites(refresh = false) {
-      //if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('iflight.airport.index')) {
-          try {
-              const response = await baseService.index('apiRoutes.qsite.favourites', {refresh});
-              const data = response.data.map(item => ({
-                  favouriteId: item.id,
-                  id: item.favouritableId,
-                  favouritableType: item.favouritableType,
-              }));
-              serviceListStore().setFavouriteList(data);
-              return data;
-          } catch (error) {
-              console.log(error);
+        if (hasAccess('isite.favourites.index')) {
+            try {
+                const response = await baseService.index('apiRoutes.qsite.favourites', {refresh});
+                const data = response.data.map(item => ({
+                    favouriteId: item.id,
+                    id: item.favouritableId,
+                    favouritableType: item.favouritableType,
+                }));
+                serviceListStore().setFavouriteList(data);
+                return data;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+    async function getWorkOrderSearch(search: string | null, refresh = false) {
+        const API_ROUTE = 'apiRoutes.qramp.workOrders'
+        const isPassenger = qRampStore().getIsPassenger();
+        const TYPE = [ FLIGHT, NON_FLIGHT ]
+        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        const flightNumber = search ? { search: search?.toUpperCase() } : {};
+        const requestParameters = {
+            refresh,
+            params: {
+                include: "responsible,contract,customer",
+                filter: {
+                    withoutDefaultInclude: true,
+                    businessUnitId,
+                    ...flightNumber,
+                    type: TYPE,
+                    order: {
+                        field: "id",
+                        way: "desc"
+                    }
+                },
+                page: 1,
+                take: 100
+            }
+        }
+
+        try {
+            return await baseService.index(API_ROUTE, requestParameters)
+        } catch (error) {
+            console.error(error)
+            return error
+        }
+    }
+
+    async function getFlightawareSearch(search: null | string = null, refresh = false) {
+        const API_ROUTE = 'apiRoutes.qfly.flightaware' 
+        const flightNumber = search ? {search: search?.toUpperCase()} : {};
+        const requestParameters = {
+            refresh,
+           filter: {
+            ...flightNumber
+           } 
+        }
+        const flightData = await baseService.index(API_ROUTE, requestParameters)
+        return flightData;
+    }
+    
+    async function getSearchFlightNumber(search: string, type: 'workorder' | 'flightaware', refresh) { 
+        if(type === 'workorder') return getFlightawareSearch(search, refresh)
+        if(type === 'flightaware') return getWorkOrderSearch(search, refresh)
+
+        return {
+            data: []
+        }
+    }
+
+    async function getBillingClosedDate(refresh=true) {
+      const API_ROUTE = 'apiRoutes.qramp.billingClosedDate'
+
+      try {
+        const billingDateData = await baseService.index(
+          API_ROUTE, 
+          {
+            refresh,
+            params: { 
+              filter: { field: 'name' } 
+            } 
           }
-      //}
-  }
+        )
+
+        return billingDateData
+      } catch(error) {
+        console.error(error)
+        return error
+      }
+    }
+    
 
   /**
    * The function getAllList() returns a Promise that resolves to void.
@@ -790,5 +875,9 @@ export default function workOrderList(): WorkOrderList {
         getResponsible,
         getACTypes,
         getFavourites,
+        getWorkOrderSearch,
+        getFlightawareSearch,
+        getSearchFlightNumber,
+        getBillingClosedDate,
     }
 }
