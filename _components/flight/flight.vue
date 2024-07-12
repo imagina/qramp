@@ -651,25 +651,6 @@ export default {
               format24h: true,
             },
           },
-          scheduleDate: {
-            name: "scheduleDate",
-            value: '',
-            type: 'fullDate',
-            props: {
-              vIf: this.showFieldScheduleDate,
-              rules: [
-                val => !!val || this.$tr('isite.cms.message.fieldRequired')
-              ],
-              hint:'Format: MM/DD/YYYY HH:mm',
-              mask:'MM/DD/YYYY HH:mm',
-              'place-holder': 'MM/DD/YYYY HH:mm',
-              readonly: this.disabledReadonly,
-              label: '*Date Entered',
-              clearable: true,
-              color:"primary",
-              format24h: true,
-            },
-          },
         },
         inboundLeft: {
           inboundFlightNumber: {

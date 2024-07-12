@@ -220,7 +220,7 @@ export default function workOrderList(): WorkOrderList {
    * @returns the value of the state.flightStatusesList property.
    */
   function getFlightStatusesList(): FlightStatusContract[] {
-    return [];
+    return state.flightStatusesList;
   }
 
   /**
