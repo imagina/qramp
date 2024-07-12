@@ -379,8 +379,6 @@ export default {
             {
               name: 'edit',
               icon: 'fal fa-pen',
-              vIf: true,
-              label: this.$tr('isite.cms.label.edit'),
               format: item => ({
                 label: this.validateStatus(item.statusId) ? this.$tr('isite.cms.label.edit') : this.$tr('isite.cms.label.show'),
                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
@@ -571,7 +569,7 @@ export default {
             ]
           }
         },
-        update: false,
+        update: true,
         delete: true,
         formLeft: {}
       }
