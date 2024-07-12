@@ -10,7 +10,6 @@ import storeKanban from "../store/kanban.store";
 import storeFilter from "../store/filters.store";
 import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from "./../../../_store/qRampStore.js";
-import _ from "lodash";
 import buildKanbanStructure from "../actions/buildKanbanStructure";
 import individualRefreshByColumns from "../actions/individualRefreshByColumns";
 import checkUrlParams from "../actions/checkUrlParams";
@@ -215,6 +214,9 @@ export default function useKanbanBoard(props) {
 
       if (newPath !== oldPath) {
         await setStations()
+      }
+      if (!storeKanban.loading) {
+        await init();
       }
     },
     { deep: true }
