@@ -22,6 +22,7 @@ import {
   STEP_SERVICE,
   STEP_REMARKS,
   STEP_SIGNATURE,
+  NON_FLIGHT,
   modalFullProps
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
@@ -318,13 +319,15 @@ export default {
         this.show = true
 
         /* Chip to identify non-flight work order */
-        const isParentId = Boolean(updateData.data?.parentId)
-        const isFlightNumber = Boolean(updateData.data?.preFlightNumber)
+        const type = Number(updateData.data?.type)
+        const isNonFlight = type === NON_FLIGHT
         const chip = {
           label: "Non-flight",
         }
         this.modalProps = updateData.modalProps
-        if((isParentId || !isFlightNumber) && this.modalProps.update) this.modalProps.chip = { ...chip }
+        if (this.isPassenger) {
+          if(isNonFlight && this.modalProps.update) this.modalProps.chip = { ...chip }
+        }
 
         this.flight = {}
         this.remark = {}
