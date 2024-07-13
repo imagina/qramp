@@ -46,6 +46,7 @@ export interface FormContarct {
     cancellationType: string | null;
     parentId: number | string | null;
     scheduleDate: string | null;
+    type: number | null;
 }
 export interface StateContarct {
     form: FormContarct;
@@ -102,6 +103,7 @@ const state = reactive<StateContarct>({
         cancellationType: null,
         parentId: null,
         scheduleDate: null,
+        type: null,
     },
     responsibles: {
 
@@ -170,6 +172,7 @@ export default function flightStore(): FlightStoreContract {
         state.form.cancellationType = flight.cancellationType ? flight.cancellationType : null;
         state.form.parentId = flight.parentId ? flight.parentId : null;
         state.form.scheduleDate = flight.scheduleDate ? flight.scheduleDate : null;
+        state.form.type = flight.type ? flight.type : null;
         state.responsibles = flight?.responsible ? [{value: flight.responsible.id, label: flight.responsible.fullName}] : [];
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;
