@@ -74,7 +74,11 @@ export default defineComponent({
             tw-max-w-full
           " v-model="search" clearable>
         <template v-slot:prepend>
-          <q-icon color="primary" class="" name="search" />
+          <q-icon 
+            color="primary" 
+            class="tw-text-base tw-mr-1" 
+            name="fa-solid fa-magnifying-glass" 
+          />
         </template>
       </q-input>
       <ul v-if="filterService.lists.length > 0" class="tw-rounded-lg tw-border tw-px-4 border-color">
