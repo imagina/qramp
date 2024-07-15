@@ -19,7 +19,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'name',
@@ -74,10 +73,10 @@ export default {
               align: "left",
               format: (val) => (val ? this.$trd(val) : "-"),
             },
-            { 
-              name: 'actions', 
-              label: this.$tr('isite.cms.form.actions'), 
-              align: 'left' 
+            {
+              name: 'actions',
+              label: this.$tr('isite.cms.form.actions'),
+              align: 'left'
             },
           ],
           requestParams: {
@@ -85,7 +84,7 @@ export default {
           },
         },
         create: false,
-        update: { 
+        update: {
           title: 'Update Sales Line Items',
           requestParams: {
             include:"categories,attributes"
@@ -95,7 +94,7 @@ export default {
         formLeft: {
           id: {
             value: ''
-          }, 
+          },
           name: {
             value: "",
             type: "input",
@@ -119,11 +118,11 @@ export default {
               label: 'Status',
               options:[
                 {
-                  label: this.$tr('isite.cms.label.enabled'), 
+                  label: this.$tr('isite.cms.label.enabled'),
                   value: true
                 },
                 {
-                  label: this.$tr('isite.cms.label.disabled'), 
+                  label: this.$tr('isite.cms.label.disabled'),
                   value: false
                 }
               ],
@@ -154,7 +153,7 @@ export default {
               },
               config: {
                 options: {
-                  label: 'name', 
+                  label: 'name',
                   value: 'id',
                 }
               },
@@ -174,7 +173,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.attributes',
               select: {
-                label: 'name', 
+                label: 'name',
                 id: 'id'
               },
             }
