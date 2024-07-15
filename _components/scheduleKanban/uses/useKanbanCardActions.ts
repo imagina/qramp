@@ -78,13 +78,13 @@ export default function useKanbanCardActions(props: any = {}) {
             {
               label: i18n.tr('isite.cms.label.delete'),
               color: 'red',
-              handler: () => {
-                deleteWorkOrder()
+              handler: async () => {
+                await deleteWorkOrder()
               }
             },
           ],
         });
-        
+
       },
     }
   ])
@@ -127,13 +127,8 @@ export default function useKanbanCardActions(props: any = {}) {
 
   async function deleteWorkOrder() {
     try {
-      //TO-DO: Mejorar esto:
-      await Promise.allSettled([
-        deleteWorkOrders(props.card.id),
-        setTimeout(() => {
-          buildKanbanStructure(true)
-        }, 1000),
-      ])
+      await deleteWorkOrders(props.card.id);
+      await buildKanbanStructure(true);
     } catch (err) {
       console.log(err)
     }
