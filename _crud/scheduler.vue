@@ -1,6 +1,8 @@
 <template>
   <div>
-    <schedulerModal />
+    <schedulerModal @refreshData="getDataTable(true)" />
+    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+          :title="$route.meta.title" />
   </div>
 </template>
 <script>
@@ -289,7 +291,7 @@ export default {
             },
           }
         },
-        update: false,
+        update: true,
         delete: true,
         formLeft: {},
         formRight: {}
@@ -322,6 +324,9 @@ export default {
     getUrlSchedule() {
       const url = localStorage.getItem('urlSchedule');
       window.location.href = url;
+    },
+    async getDataTable(refresh) {
+      await this.$refs.crudComponent.getDataTable(refresh);
     },
   }
 }

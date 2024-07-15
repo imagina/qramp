@@ -23,8 +23,8 @@ export default defineComponent({
   components:{
     formFields
   },
-  setup() {
-    return { ...useSchedulerModal() };
+  setup(props, { emit }) {
+    return { ...useSchedulerModal(props,emit) };
   },
 });
 </script>
