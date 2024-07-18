@@ -461,7 +461,7 @@ export interface WorkOrderList {
     getGates: () => Promise<Gates[] | void>;
     getDataWorkOrderList: () => WorkOrders;
     setDataWorkOrderList: (data: WorkOrders) => void;
-    getWorkOrders: () => Promise<WorkOrders | void>;
+    getWorkOrders: (refresh?: boolean, businessUnit?) => Promise<WorkOrders | void>;
     getCustomerWithContract: () =>  Promise<any[] | void>;
     setCustomerWithContractLists: (data: any) => void;
     getCustomerWithContractLists: () => any;

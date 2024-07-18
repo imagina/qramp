@@ -492,11 +492,13 @@ export default function workOrderList(): WorkOrderList {
    * then sets the dataWorkOrderList to the response and returns the data.
    * @returns The data is being returned as an array of objects.
    */
-  async function getWorkOrders(refresh = false): Promise<WorkOrders | void> {
+  async function getWorkOrders(refresh = false, businessUnit?): Promise<WorkOrders | void> {
     if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
       try {
         const isPassenger = qRampStore().getIsPassenger();
-        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        let businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        if (businessUnit) businessUnitId = businessUnit;
+
         const params = {
           refresh: refresh,
           cacheTime: cacheTimeForThirtyDays,
@@ -526,6 +528,30 @@ export default function workOrderList(): WorkOrderList {
       } catch (error) {
         console.log(error);
       }
+    }
+  }
+
+  async function getWorkOrderConditionally(refresh = false) {
+    const accessMap = {
+      'passenger': 'ramp.passenger-work-orders.index',
+      'fueling': 'ramp.fueling-work-orders.index',
+      'labor': 'ramp.labor-work-orders.index'
+    };
+  
+    const businessUnits = {
+      'passenger': BUSINESS_UNIT_PASSENGER,
+      'fueling': BUSINESS_UNIT_FUELING,
+      'labor': BUSINESS_UNIT_LABOR
+    };
+  
+    const accessibleUnits = Object.entries(accessMap)
+      .filter(([_, permission]) => hasAccess(permission))
+      .map(([unit, _]) => businessUnits[unit]);
+  
+    if (accessibleUnits.length > 0) {
+      await getWorkOrders(refresh, accessibleUnits);
+    } else {
+      await getWorkOrders(refresh, BUSINESS_UNIT_RAMP);
     }
   }
 
@@ -775,7 +801,7 @@ export default function workOrderList(): WorkOrderList {
    */
   async function getAllList(refresh = false): Promise<void> {
     Promise.all([
-      //getWorkOrders(refresh),
+      getWorkOrderConditionally(refresh),
       getStation(refresh),
       getOperationType(refresh),
       getCustomerWithContract(refresh),
