@@ -727,19 +727,19 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getFlightawareSearch(search: null | string = null, refresh = false) {
-        const API_ROUTE = 'apiRoutes.qfly.flightaware' 
+        const API_ROUTE = 'apiRoutes.qfly.flightaware'
         const flightNumber = search ? {search: search?.toUpperCase()} : {};
         const requestParameters = {
             refresh,
            filter: {
             ...flightNumber
-           } 
+           }
         }
         const flightData = await baseService.index(API_ROUTE, requestParameters)
         return flightData;
     }
-    
-    async function getSearchFlightNumber(search: string, type: 'workorder' | 'flightaware', refresh) { 
+
+    async function getSearchFlightNumber(search: string, type: 'workorder' | 'flightaware', refresh) {
         if(type === 'workorder') return getFlightawareSearch(search, refresh)
         if(type === 'flightaware') return getWorkOrderSearch(search, refresh)
 
@@ -753,12 +753,12 @@ export default function workOrderList(): WorkOrderList {
 
       try {
         const billingDateData = await baseService.index(
-          API_ROUTE, 
+          API_ROUTE,
           {
             refresh,
-            params: { 
-              filter: { field: 'name' } 
-            } 
+            params: {
+              filter: { field: 'name' }
+            }
           }
         )
 
@@ -768,7 +768,7 @@ export default function workOrderList(): WorkOrderList {
         return error
       }
     }
-    
+
 
   /**
    * The function getAllList() returns a Promise that resolves to void.
@@ -788,6 +788,7 @@ export default function workOrderList(): WorkOrderList {
       getListDelays(refresh),
       getResponsibleList(refresh),
       getAirports(refresh),
+      getFavourites(refresh),
       buildServiceList(),
     ]);
   }
