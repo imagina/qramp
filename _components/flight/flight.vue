@@ -381,9 +381,6 @@ export default {
     validateRulesField() {
       return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
     },
-    isNonFlight() {
-      return qRampStore().isNonFlight()
-    },
     timezoneAirport() {
       const station = workOrderList().getStationList().find(item => item.id == this.form.stationId);
       const airportId = station?.airportId;
@@ -401,9 +398,10 @@ export default {
       return this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR && operationTypeId === OPERATION_TYPE_NON_FLIGHT
     },
     isActualInAndActualOut() {
+      const isNonFlight = Number(this.dataCompoment.type) === NON_FLIGHT
       const isParentId = Boolean(this.dataCompoment.parentId)
-      const isPreFlightNumber = Boolean(this.dataCompoment.preFlightNumber)
-      return this.isPassenger && (isParentId || isPreFlightNumber)
+      const showActualInAndActualOut = isNonFlight ? isParentId : true
+      return this.isPassenger ? showActualInAndActualOut : true
     },
     formFields() {
       return {
@@ -917,7 +915,7 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        if (this.isNonFlight) {
+        if (qRampStore().isNonFlight()) {
             this.form.scheduleDate = this.dateFormatterFull(updateForm.scheduleDate)
         }
         if(updateForm.customCustomerName) {
