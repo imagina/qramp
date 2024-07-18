@@ -120,13 +120,13 @@ export default {
               label: 'Create Flight',
               action: async () => {
                 await this.openCreateMode(FLIGHT)
-              } 
+              }
             },
             {
               label: 'Create Non Flight',
               action: async () => {
                 await this.openCreateMode(NON_FLIGHT)
-              } 
+              }
             },
           ]
         },
@@ -421,9 +421,7 @@ export default {
           },
           actions: [
             {
-              name: 'edit-work',
-              icon: 'fal fa-pen',
-              label: this.$tr('isite.cms.label.edit'),
+              name: 'edit',
               format: item => ({
                 label: this.validateStatus(item.statusId) ? this.$tr('isite.cms.label.edit') : this.$tr('isite.cms.label.show'),
                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
@@ -614,7 +612,7 @@ export default {
             ]
           }
         },
-        update: false,
+        update: true,
         delete: true,
         formLeft: {}
       }
@@ -746,12 +744,12 @@ export default {
       await qRampStore().setIsPassenger(true);
       await qRampStore().setTypeWorkOrder(setTypeWorkOrder);
       if (setTypeWorkOrder === FLIGHT) {
-        this.$refs.formOrders.loadform({ 
+        this.$refs.formOrders.loadform({
           modalProps: {
             title: this.$tr('ifly.cms.form.newWorkOrder'),
             update: false,
             width: '34vw',
-          } 
+          }
         })
       }
 

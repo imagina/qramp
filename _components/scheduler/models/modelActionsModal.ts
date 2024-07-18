@@ -10,7 +10,7 @@ import {
 import { i18n, eventBus } from 'src/plugins/utils'
 
 
-export default function modelActionsModal(): ModelActionsModalResult {
+export default function modelActionsModal(emit:any = null): ModelActionsModalResult {
     const actions: ComputedRef<Action[]> = computed(() => ([
         {
             props: {
@@ -31,7 +31,7 @@ export default function modelActionsModal(): ModelActionsModalResult {
                                     await save()
                                 }
                                 await store.reset();
-                              eventBus.emit('crud.data.refresh');
+                                emit('refreshData');
                             }
                         })
                 }

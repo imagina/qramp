@@ -26,14 +26,14 @@ export default defineComponent({
     ">
     <section class="tw-w-full tw-flex tw-items-center">
       <q-breadcrumbs class="
-          tw-flex-none 
+          tw-flex-none
           tw-text-base
           md:tw-text-xl
           max-width-breadcrumbs
           breadcrumbs-color-text
         ">
         <q-breadcrumbs-el label="Services" @click="setBreadcrumbs(null)" class="
-            tw-cursor-pointer 
+            tw-cursor-pointer
             tw-text-base
             md:tw-text-xl
             tw-font-extrabold
@@ -50,11 +50,11 @@ export default defineComponent({
       </div>
     </section>
     <div v-if="errorList.length > 0" class="
-          tw-py-2 
-          tw-text-base 
-          tw-border 
-          tw-border-gray-100 
-          tw-font-semibold 
+          tw-py-2
+          tw-text-base
+          tw-border
+          tw-border-gray-100
+          tw-font-semibold
           tw-px-3
           tw-rounded-lg
           tw-text-red-800
@@ -67,18 +67,14 @@ export default defineComponent({
       <inner-loading :visible="loading" />
       <q-input v-if="!selectService.component && errorList.length === 0" borderless standout dense color="primary"
         input-class="tw-p-0 tw-text-base color-input" placeholder="What are you looking for?" class="
-            tw-mb-6 
+            tw-mb-6
             search
-            search-service-list 
-            tw-text-blue-900 
+            search-service-list
+            tw-text-blue-900
             tw-max-w-full
           " v-model="search" clearable>
         <template v-slot:prepend>
-          <q-icon 
-            color="primary" 
-            class="tw-text-base tw-mr-1" 
-            name="fa-solid fa-magnifying-glass" 
-          />
+          <i class="fa-light fa-magnifying-glass"></i>
         </template>
       </q-input>
       <ul v-if="filterService.lists.length > 0" class="tw-rounded-lg tw-border tw-px-4 border-color">
@@ -88,13 +84,13 @@ export default defineComponent({
             " @click="setBreadcrumbs(service)">
           <div class="
               tw-flex tw-w-full
-              tw-items-center 
-              tw-font-semibold 
-              tw-text-gray-500 
-              tw-py-2.5 
+              tw-items-center
+              tw-font-semibold
+              tw-text-gray-500
+              tw-py-2.5
               tw-px-3.5
               tw-my-2
-              tw-rounded-lg 
+              tw-rounded-lg
               tw-cursor-pointer
               service-list-item
             ">
@@ -103,8 +99,8 @@ export default defineComponent({
             </span>
             <div class="tw-w-1/6 tw-text-right">
               <i class="
-                  fa-light fa-angle-right 
-                  tw-font-black tw-text 
+                  fa-light fa-angle-right
+                  tw-font-black tw-text
                   tw-text-lg color-icon
                 " />
             </div>

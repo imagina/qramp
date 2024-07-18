@@ -1,7 +1,7 @@
 import flight from '../../components/flight.vue';
 import serviceList from '../../../serviceList/index.vue';
 import remarks from '../../../remarks/index.vue';
-import { ref } from 'vue';
+import { ref, markRaw } from 'vue';
 
 export default ref([
     {
@@ -9,7 +9,7 @@ export default ref([
       title: 'Flight',
       icon: 'fa-regular fa-plane',
       step: 1,
-      component: flight,
+      component: markRaw(flight),
       error: false,
       done: false,
     },
@@ -18,7 +18,7 @@ export default ref([
       title: 'Services',
       icon: 'fa-regular fa-briefcase-blank',
       step: 2,
-      component: serviceList,
+      component: markRaw(serviceList),
       error: false,
       done: false,
     },
@@ -27,7 +27,7 @@ export default ref([
       title: 'Remark',
       icon: 'fa-regular fa-comment-dots',
       step: 3,
-      component: remarks,
+      component: markRaw(remarks),
       error: false,
       done: false,
     },

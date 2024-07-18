@@ -296,7 +296,6 @@ export default {
                             label: "Scheduled date",
                             field: 'schedule_date_local',
                           },
-                          name: "scheduleDateLocal",
                         },
                         customerId: {
                             value: null,
@@ -412,9 +411,7 @@ export default {
                     },
                     actions: [
                         {
-                            name: 'edit-work',
-                            icon: 'fal fa-pen',
-                            label: this.$tr('isite.cms.label.edit'),
+                            name: 'edit',
                             format: item => ({
                                 label: this.validateStatus(item.statusId) ? this.$tr('isite.cms.label.edit') : this.$tr('isite.cms.label.show'),
                                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
@@ -608,7 +605,7 @@ export default {
                         ]
                     }
                 },
-                update: false,
+                update: true,
                 delete: true,
                 formLeft: {}
             }
