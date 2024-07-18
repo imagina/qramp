@@ -34,7 +34,7 @@ export default defineComponent({
       } else {
         if(!permissionFavourite.value.create) return;
         const response: any = await postFavourites({...data, userId: store.state.quserAuth.userId});
-        const favoriteData = {...data, favouriteId: response?.id} 
+        const favoriteData = {...data, favouriteId: response?.id || 0};
         serviceListStore().pustFavouriteList(favoriteData);
         alert.success(`Favorite created successfully Product:${data.title}`);
       }
@@ -67,13 +67,13 @@ export default defineComponent({
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
             <q-item-section v-if="permissionFavourite.create" avatar class="q-pr-none " style="min-width: 45px;">
-              <i 
+              <i
                   class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
                   @click="selectFavourite(data[index])"
                   :class="{
                     'fa-solid': data[index].favourite,
                     'fa-light': !data[index].favourite,
-                  }" 
+                  }"
               />
             </q-item-section>
             <q-item-section class="q-py-sm">
@@ -105,28 +105,28 @@ export default defineComponent({
     </div>
     <div v-else>
       <div v-for="(item, index) in data" :key="index" class="
-          tw-flex 
-          color-bg-blue-gray-custom 
-          tw-py-2 
-          tw-rounded-lg" 
+          tw-flex
+          color-bg-blue-gray-custom
+          tw-py-2
+          tw-rounded-lg"
         >
-        <div 
+        <div
           class="
             tw-flex
             tw-w-2/5
             tw-break-words
-            tw-py-3 
-            text-services 
+            tw-py-3
+            text-services
             tw-pl-2"
           >
               <div class="q-px-sm" v-if="permissionFavourite.create">
-                <i 
+                <i
                   class="fa-star color-icon-star tw-cursor-pointer"
                   @click="selectFavourite(data[index])"
                   :class="{
                     'fa-solid': data[index].favourite,
                     'fa-light': !data[index].favourite,
-                  }" 
+                  }"
                 />
               </div>
               <div>
@@ -141,11 +141,11 @@ export default defineComponent({
               </div>
         </div>
         <div class="
-            tw-w-3/5 
-            tw-mx-2 
+            tw-w-3/5
+            tw-mx-2
             tw-truncate
-            tw-flex 
-            tw-flex-wrap 
+            tw-flex
+            tw-flex-wrap
             tw-justify-end tw-gap-4">
           <div v-for="(field, keyfield) in item.formField" :key="keyfield">
             <div>

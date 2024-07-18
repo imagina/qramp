@@ -1,12 +1,13 @@
 <script lang="ts">
-import { defineComponent, defineAsyncComponent } from "vue";
+import { defineComponent } from "vue";
 import expansionForm from "./expansionForm.vue";
 import serviceListController from "./controllers/serviceList";
+import chipServices from './chipServices.vue'
 
 export default defineComponent({
   components: {
     expansionForm,
-    chipServices: defineAsyncComponent(() => import('./chipServices.vue'))
+    chipServices
   },
   setup() {
     return {
