@@ -481,4 +481,5 @@ export interface WorkOrderList {
     getWorkOrderSearch: (search: string, refresh?: boolean) => Promise<any>;
     getFlightawareSearch: (search: string, refresh: boolean) => Promise<any>;
     getSearchFlightNumber: (search: string, type: "workorder" | "flightaware", refresh: boolean) => Promise<any>;
+    getWorkOrderConditionally: (refresh: boolean) => Promise<any>;
 }

@@ -55,7 +55,7 @@ export default {
       deep: true,
       handler: async function (newValue) {
         if (!newValue) {
-          await workOrderList().getWorkOrders(true);
+          await workOrderList().getWorkOrderConditionally(true);
         }
       }
     }

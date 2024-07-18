@@ -358,7 +358,7 @@ export default {
         };
         await cacheOffline.addNewRecord(CACHE_PATH, offlineWorkOrder);
 
-        if (!this.isAppOffline) workOrderList().getWorkOrders(true, true);
+        if (!this.isAppOffline) workOrderList().getWorkOrderConditionally(true, true);
         qRampStore().hideLoading();
 
         return this.isAppOffline ? { data: { ...offlineWorkOrder } } : response;

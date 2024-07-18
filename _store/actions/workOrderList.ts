@@ -537,17 +537,17 @@ export default function workOrderList(): WorkOrderList {
       'fueling': 'ramp.fueling-work-orders.index',
       'labor': 'ramp.labor-work-orders.index'
     };
-  
+
     const businessUnits = {
       'passenger': BUSINESS_UNIT_PASSENGER,
       'fueling': BUSINESS_UNIT_FUELING,
       'labor': BUSINESS_UNIT_LABOR
     };
-  
+
     const accessibleUnits = Object.entries(accessMap)
       .filter(([_, permission]) => hasAccess(permission))
       .map(([unit, _]) => businessUnits[unit]);
-  
+
     if (accessibleUnits.length > 0) {
       await getWorkOrders(refresh, accessibleUnits);
     } else {
@@ -906,5 +906,6 @@ export default function workOrderList(): WorkOrderList {
         getFlightawareSearch,
         getSearchFlightNumber,
         getBillingClosedDate,
+        getWorkOrderConditionally
     }
 }

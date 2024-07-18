@@ -214,7 +214,7 @@ export default {
               await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
-              await workOrderList().getWorkOrders(true);
+              await workOrderList().getWorkOrderConditionally(true);
             };
             qRampStore().hideLoading()
           }
@@ -236,7 +236,7 @@ export default {
               await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
-              await workOrderList().getWorkOrders(true);
+              await workOrderList().getWorkOrderConditionally(true);
             }
             qRampStore().hideLoading()
           }
@@ -256,7 +256,7 @@ export default {
             await this.$refs.stepper.sendInfo();
             await qRampStore().setStatusId(null);
             if (!this.isAppOffline) {
-              workOrderList().getWorkOrders(true);
+              workOrderList().getWorkOrderConditionally(true);
             }
             qRampStore().hideLoading()
           }

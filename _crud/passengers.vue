@@ -66,7 +66,7 @@ export default {
       deep: true,
       handler: async function (newValue) {
         if (!newValue) {
-          await workOrderList().getWorkOrders(true);
+          await workOrderList().getWorkOrderConditionally(true);
         }
       }
     }
@@ -75,7 +75,7 @@ export default {
     this.$nextTick(async () => {
       await qRampStore().setIsPassenger(true);
       await qRampStore().setTypeWorkOrder(null);
-      await workOrderList().getAllList();
+      await workOrderList().getAllList(true);
       await workOrderList().getCustomerWithContract()
     })
   },
