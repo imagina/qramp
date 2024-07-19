@@ -354,7 +354,8 @@ export default {
           inboundFlightNumber: this.form.preFlightNumber,
           outboundFlightNumber: this.form.preFlightNumber,
           offline: this.isAppOffline,
-          id: this.isAppOffline ? offlineId : await response?.data?.id
+          id: this.isAppOffline ? offlineId : await response?.data?.id,
+          type: qRampStore().getTypeWorkOrder(),
         };
         await cacheOffline.addNewRecord(CACHE_PATH, offlineWorkOrder);
 
