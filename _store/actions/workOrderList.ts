@@ -534,7 +534,7 @@ export default function workOrderList(): WorkOrderList {
         const data = response;
         const workOrderIds = data.data.map(item => item.id);
         const responseWorkItems = await getWorkOrderItems(workOrderIds);
-        setWorkOrdersItemsList(responseWorkItems.data);
+        setWorkOrdersItemsList(responseWorkItems?.data);
         setDataWorkOrderList(data);
         return data;
       } catch (error) {

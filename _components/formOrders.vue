@@ -39,6 +39,7 @@ import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
 import { constructionWorkOrder } from 'src/modules/qramp/_store/actions/constructionWorkOrder'
 import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
+import { cacheOffline } from 'src/plugins/utils';
 
 export default {
   emits: ['getWorkOrderFilter', 'refresh-data'],
@@ -168,7 +169,21 @@ export default {
             icon: 'fa-regular fa-trash',
           },
           action: async () => {
-            await this.$crud.delete('apiRoutes.qramp.workOrders', this.modalProps.workOrderId)
+            const route = 'apiRoutes.qramp.workOrders';
+            await cacheOffline.deleteItem(this.modalProps.workOrderId, route)
+            try {
+              await this.$crud.delete(route, this.modalProps.workOrderId, {
+                data: {
+                  attributes: {
+                    id: this.modalProps.workOrderId,
+                    titleOffline: 'Delete Work Order'
+                  }
+                }
+              });
+
+            } catch (e) {
+              console.error(e)
+            }
             await this.getWorkOrders();
             this.clear()
             this.$emit('refresh-data')
