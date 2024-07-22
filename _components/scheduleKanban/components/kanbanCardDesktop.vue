@@ -27,7 +27,7 @@
             v-if="isNonFlight" 
             class="fa-regular fa-plane-slash tw-mr-2" 
           />
-          <p>{{ card.calendar.title }}</p>
+          <p>{{ card.calendar?.title }}</p>
         </div>
         <div class="
           tw-flex
