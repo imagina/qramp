@@ -41,6 +41,7 @@ const state = reactive<State>({
   airportsList: [],
   workOrderDelays: [],
   responsibleList: [],
+  workOrderItems: [],
   /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
   workOrderList: {
     data: [],
@@ -77,6 +78,14 @@ export default function workOrderList(): WorkOrderList {
 
   function setCustomerWithContractLists(data: any) {
     return state.customerWithContractList = data;
+  }
+
+  function getWorkOrdersItemsList() {
+    return state.workOrderItems;
+  }
+
+  function setWorkOrdersItemsList(data: any) {
+    return state.workOrderItems = data;
   }
 
   function getDataWorkOrderList(): WorkOrders {
@@ -503,7 +512,7 @@ export default function workOrderList(): WorkOrderList {
           refresh: refresh,
           cacheTime: cacheTimeForThirtyDays,
           params: {
-            include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
+            //include: 'responsible,workOrderItems,workOrderItems.workOrderItemAttributes',
             filter: {
               businessUnitId,
               date: {
@@ -521,8 +530,12 @@ export default function workOrderList(): WorkOrderList {
             page: 1
           },
         }
-        const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
-        const data = response;
+        const responses = await baseService.index('apiRoutes.qramp.workOrders', params, true);
+        const data = responses;
+        const workOrderIds = data.data.map(item => item.id);
+        console.warn(workOrderIds);
+        const responseWorkItems = await getWorkOrderItems(workOrderIds);
+        setWorkOrdersItemsList(responseWorkItems.data);
         setDataWorkOrderList(data);
         return data;
       } catch (error) {
@@ -530,6 +543,25 @@ export default function workOrderList(): WorkOrderList {
       }
     }
   }
+
+  const getWorkOrderItems = async (workOrderIds: number) => {
+    try {
+      const params = {
+        refresh: true,
+        params: {
+          include: 'workOrderItemAttributes',
+          filter: {
+            workorderId: workOrderIds
+          },
+        }
+      };
+
+      return await baseService.index('apiRoutes.qramp.workOrderItems', params);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
 
   async function getWorkOrderConditionally(refresh = false) {
     const accessMap = {
@@ -906,6 +938,7 @@ export default function workOrderList(): WorkOrderList {
         getFlightawareSearch,
         getSearchFlightNumber,
         getBillingClosedDate,
-        getWorkOrderConditionally
+        getWorkOrderConditionally,
+        getWorkOrdersItemsList
     }
 }

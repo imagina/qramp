@@ -436,6 +436,7 @@ export interface State {
     airportsList: any[];
     workOrderDelays: WorkOrderDelays[];
     responsibleList: any[];
+    workOrderItems: any[];
 }
 
 export interface WorkOrderList {
@@ -482,4 +483,5 @@ export interface WorkOrderList {
     getFlightawareSearch: (search: string, refresh: boolean) => Promise<any>;
     getSearchFlightNumber: (search: string, type: "workorder" | "flightaware", refresh: boolean) => Promise<any>;
     getWorkOrderConditionally: (refresh: boolean) => Promise<any>;
+    getWorkOrdersItemsList: () => any;
 }

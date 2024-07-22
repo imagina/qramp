@@ -38,7 +38,6 @@ export default {
   reloadTransactions: `${urlBase}/work-orders/reload-transactions`,
   passengerContractRules: `${urlBase}/passenger-contract-rules`,
   passengerContractRulesUpsert: `${urlBase}/passenger-contract-rules/upsert`,
-  workOrderItems: `${urlBase}/work-order-items`,
   billingClosedDate: `/isite/v1/settings/ramp::billingClosedDate`,
   updateBillingDate: `${urlBase}/billing-closed-date`,
   bulkPost: `${urlBase}/work-orders/bulk-post`,
