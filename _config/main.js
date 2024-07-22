@@ -1,3 +1,5 @@
+import { cache } from 'src/plugins/cache'
+
 export default {
   moduleName: 'flight',
   //Entities
@@ -34,10 +36,15 @@ export default {
   ],
   lists: async () => {
     const workOrderList = await import('../_store/actions/workOrderList.ts')
+    const STORAGE_KEY = 'apiRoutes.qramp.workOrders::offline'
+    await cache.set(STORAGE_KEY, { data: [] });
     await workOrderList.default().getAllList(true)
   },
   refresh: async () => {
     const buildKanbanStructure = await import('../_components/scheduleKanban/actions/buildKanbanStructure.ts')
+    const workOrderList = await import('../_store/actions/workOrderList.ts')
+
+    await workOrderList.default().getWorkOrderConditionally(true)
     await buildKanbanStructure?.default(true)
   },
 }
