@@ -1,11 +1,19 @@
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from 'src/modules/qcrud/_services/baseService'
+import { cacheOffline } from 'src/plugins/utils'
 import store from '../store/index.store'
+import qRampStore from 'src/modules/qramp/_store/qRampStore'
 
 export const saveWorkOrders = async () => {
+    const API_ROUTE = 'apiRoutes.qramp.workOrders';
+    const isOffline = !navigator.onLine;
+    const offlineId = new Date().valueOf()
+    const payload: any = store.payload();
+    let response = { data: { id: null } }
+
     try {
         store.loading = true;
-        const payload: any = store.payload();
-        const response = await baseService.create('apiRoutes.qramp.workOrders', {
+
+        response = await baseService.create(API_ROUTE, {
             ...payload,
         })
         store.loading = false;
@@ -14,4 +22,12 @@ export const saveWorkOrders = async () => {
         console.error(error);
         store.loading = false;
     }
+
+    const payloadOffline = { 
+        ...payload, 
+        offline: isOffline,
+        id: isOffline ? offlineId : response?.data?.id,
+        type: qRampStore().getTypeWorkOrder(), 
+    }
+    cacheOffline.addNewRecord(API_ROUTE, { ...payloadOffline })
 }
