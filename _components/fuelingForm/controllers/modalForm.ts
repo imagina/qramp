@@ -197,7 +197,6 @@ export default function modalFormController(props: any = null, emit: any = null)
   }
   onMounted(async () => {
     storeFueling.emitEvent.refreshData = getDataTable();
-    console.log(storeFueling.emitEvent);
   })
   onBeforeUnmount(() => {
     storeFueling.reset();
