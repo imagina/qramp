@@ -16,7 +16,6 @@ export default async function getWorkOrderOffline(date, page): Promise<WorkOrder
     try {
         const isPassenger = qRampStore().getIsPassenger();
         const workOrdersFiltered = await getFilteredWorkOrdersOffline(date)
-        console.log(workOrdersFiltered)
         storeKanban.statusIdList = workOrdersFiltered.map(workOrder => workOrder.statusId);
         let businessUnitId: any = isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {businessUnitId: BUSINESS_UNIT_RAMP};
         if(qRampStore().getTypeWorkOrder() === LABOR) {
@@ -28,7 +27,6 @@ export default async function getWorkOrderOffline(date, page): Promise<WorkOrder
           ['scheduleDate'],
           ['asc']
         )
-        console.log(data);
         return {
             data,
             meta: {
