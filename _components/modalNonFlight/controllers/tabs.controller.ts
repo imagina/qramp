@@ -49,6 +49,10 @@ export default function tabController(props: any = null, emit: any = null) {
         if (value) store.selectedTab = NON_FLIGHT
     })
 
+    onMounted(() => {
+        if (isAppOffline.value) store.selectedTab = NON_FLIGHT
+    })
+
     return {
         handleChangesTab,
         iconColorToggle,

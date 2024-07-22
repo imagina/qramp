@@ -27,7 +27,10 @@ export const saveWorkOrders = async () => {
         ...payload, 
         offline: isOffline,
         id: isOffline ? offlineId : response?.data?.id,
-        type: qRampStore().getTypeWorkOrder(), 
+        type: qRampStore().getTypeWorkOrder(),
+        calendar: {
+            title: '(Non-flight)',
+        }
     }
     cacheOffline.addNewRecord(API_ROUTE, { ...payloadOffline })
 }
