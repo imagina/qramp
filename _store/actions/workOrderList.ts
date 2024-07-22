@@ -530,10 +530,9 @@ export default function workOrderList(): WorkOrderList {
             page: 1
           },
         }
-        const responses = await baseService.index('apiRoutes.qramp.workOrders', params, true);
-        const data = responses;
+        const response = await baseService.index('apiRoutes.qramp.workOrders', params, true);
+        const data = response;
         const workOrderIds = data.data.map(item => item.id);
-        console.warn(workOrderIds);
         const responseWorkItems = await getWorkOrderItems(workOrderIds);
         setWorkOrdersItemsList(responseWorkItems.data);
         setDataWorkOrderList(data);
