@@ -59,6 +59,11 @@ const state = reactive<State>({
 const cacheTimeForm24Hour: number = 60 * 60 * 24;
 const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
 
+function demoMessage(error: any): void {
+  if(error.code !== 'ERR_CANCELED') {
+    demoMessage(error);
+  }
+}
 /**
  * This is a work order list function that returns an object with several functions to
  * interact with OperationType, StationContract, CustomerContract, Contract,
@@ -291,7 +296,7 @@ export default function workOrderList(): WorkOrderList {
         setOperationTypeList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -322,7 +327,7 @@ export default function workOrderList(): WorkOrderList {
         setStationList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -344,7 +349,7 @@ export default function workOrderList(): WorkOrderList {
         setAirlinesList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -373,7 +378,7 @@ export default function workOrderList(): WorkOrderList {
         setCustomerList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -403,7 +408,7 @@ export default function workOrderList(): WorkOrderList {
         setContractList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -431,7 +436,7 @@ export default function workOrderList(): WorkOrderList {
         setFlightStatusesList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -462,7 +467,7 @@ export default function workOrderList(): WorkOrderList {
         setWorkOrderStatusesList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -490,7 +495,7 @@ export default function workOrderList(): WorkOrderList {
         setGatesList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -538,7 +543,7 @@ export default function workOrderList(): WorkOrderList {
         setDataWorkOrderList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -557,7 +562,7 @@ export default function workOrderList(): WorkOrderList {
 
       return await baseService.index('apiRoutes.qramp.workOrderItems', params);
     } catch (error) {
-      console.error(error)
+      demoMessage(error)
     }
   }
 
@@ -606,7 +611,7 @@ export default function workOrderList(): WorkOrderList {
         setACTypesList(data);
         return data;
       } catch (error) {
-        console.log(error);
+        demoMessage(error);
       }
     }
   }
@@ -633,8 +638,8 @@ export default function workOrderList(): WorkOrderList {
           value: item.name,
         }));
         setWorkOrderDelays(codeList);
-      } catch (err) {
-        console.log(err)
+      } catch (error) {
+        demoMessage(error);
       }
     }
   }
@@ -656,8 +661,8 @@ export default function workOrderList(): WorkOrderList {
         const response = await baseService.index(API_ROUTE, params)
         const data = response.data || [];
         setResponsible(data);
-      } catch (err) {
-        console.log(err)
+      } catch (error) {
+        demoMessage(error);
       }
     }
   }
@@ -727,7 +732,7 @@ export default function workOrderList(): WorkOrderList {
                 setAirportsList(data);
                 return data;
             } catch (error) {
-                console.log(error);
+                demoMessage(error);
             }
         }
     }
@@ -745,7 +750,7 @@ export default function workOrderList(): WorkOrderList {
                 serviceListStore().setFavouriteList(data);
                 return data;
             } catch (error) {
-                console.log(error);
+                demoMessage(error);
             }
         }
     }
@@ -778,7 +783,7 @@ export default function workOrderList(): WorkOrderList {
         try {
             return await baseService.index(API_ROUTE, requestParameters)
         } catch (error) {
-            console.error(error)
+            demoMessage(error)
             return error
         }
     }
@@ -821,7 +826,7 @@ export default function workOrderList(): WorkOrderList {
 
         return billingDateData
       } catch(error) {
-        console.error(error)
+        demoMessage(error)
         return error
       }
     }
