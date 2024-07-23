@@ -368,7 +368,14 @@ export default {
         cargoStore().setDelayList(updateData.data);
         cargoStore().setDelayComment(updateData.data.delayComment || null)
         cargoStore().setOurDelay(updateData.data.ourDelay || null);
-        qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        if(navigator.onLine) {
+          qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        } else {
+          const workOrderItems = workOrderList().getWorkOrdersItemsList()
+            .filter(item => item.workorderId == this.modalProps.workOrderId);
+          qRampStore().setWorkOrderItems(workOrderItems);
+        }
+
         await serviceListStore().init();
         remarksStore().setForm(updateData.data);
         this.signature.customerName = updateData.data['customerName']
