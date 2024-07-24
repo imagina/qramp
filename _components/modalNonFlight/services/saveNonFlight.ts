@@ -1,7 +1,7 @@
 import baseService from 'src/modules/qcrud/_services/baseService'
 import { cacheOffline } from 'src/plugins/utils'
 import store from '../store/index.store'
-import qRampStore from 'src/modules/qramp/_store/qRampStore'
+import moment from 'moment-timezone'
 
 export const saveWorkOrders = async () => {
     const API_ROUTE = 'apiRoutes.qramp.workOrders';
@@ -10,27 +10,32 @@ export const saveWorkOrders = async () => {
     const payload: any = store.payload();
     let response = { data: { id: null } }
 
+    const payloadOffline = { 
+        ...payload, 
+        offline: isOffline,
+        id: offlineId,
+        statusId: 5,
+        calendar: {
+            title: '(Non-flight)',
+            tos: moment(payload.scheduleDate).add(1, 'hour').format('HH:mm:ss'),
+        }
+    }
+
     try {
         store.loading = true;
 
         response = await baseService.create(API_ROUTE, {
             ...payload,
+            offlineId: isOffline ? offlineId : null,
         })
-        store.loading = false;
-        return response.data
     } catch (error) {
+        if (isOffline) response.data = payloadOffline
         console.error(error);
+    } finally {
         store.loading = false;
-    }
-
-    const payloadOffline = { 
-        ...payload, 
-        offline: isOffline,
-        id: isOffline ? offlineId : response?.data?.id,
-        type: qRampStore().getTypeWorkOrder(),
-        calendar: {
-            title: '(Non-flight)',
+        if (response.data.id) {
+            await cacheOffline.addNewRecord(API_ROUTE, { ...response.data })
         }
+        return response.data
     }
-    cacheOffline.addNewRecord(API_ROUTE, { ...payloadOffline })
 }
