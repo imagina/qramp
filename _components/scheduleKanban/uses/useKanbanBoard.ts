@@ -130,7 +130,7 @@ export default function useKanbanBoard(props) {
       },
       {
         label: i18n.tr("isite.cms.label.filter"),
-        vIf: true,
+        vIf: !isAppOffline.value,
         props: {
           icon: "fa-duotone fa-filter",
           id: "filter-button-crud",
