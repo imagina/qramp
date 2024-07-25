@@ -136,7 +136,7 @@ export default defineComponent({
   height: 43px !important;
 }
 
-.btn-dropdown-plus > span:nth-child(2) > span > i:nth-child(2) {
+.btn-dropdown-plus > span:nth-child(2) > i:nth-child(2) {
     display: none;
 }
 </style>
