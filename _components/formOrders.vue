@@ -239,7 +239,7 @@ export default {
             color: 'white',
             icon: 'fal fa-check',
             'text-color': 'positive',
-            label: this.$tr('isite.cms.label.closeFlight'),
+            label: 'Close',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },

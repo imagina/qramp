@@ -409,6 +409,21 @@ export default {
                 requestParams: { filter: { companyId: COMPANY_PASSENGER } },
               }
             },
+            type: {
+              value: [],
+              type: 'select',
+              props: {
+                label: 'Work Order Types',
+                multiple: true,
+                useChips: true,
+                clearable: true,
+                color: "primary",
+                options: [
+                  {label: 'Flight', value: FLIGHT},
+                  {label: 'Non flight', value: NON_FLIGHT},
+                ]
+              },
+            },
             businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
           },
           requestParams: {

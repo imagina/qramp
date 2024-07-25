@@ -18,6 +18,7 @@ const state = reactive<Store>({
     scheduleDate: null,
     responsibleId: null,
     operationTypeId: OPERATION_TYPE_NON_FLIGHT,
+    preFlightNumber: null,
   },
   seletedDateColumn: null,
   stationId: null,
@@ -101,7 +102,8 @@ export default computed(() => ({
       scheduleDate: null,
       responsibleId: null,
       operationTypeId: OPERATION_TYPE_NON_FLIGHT,
-    }
+      preFlightNumber: null,
+    } 
     state.seletedDateColumn = null
     state.stationId = null
   }

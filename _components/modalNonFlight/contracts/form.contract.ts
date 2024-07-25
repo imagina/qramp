@@ -5,4 +5,5 @@ export interface Form {
     scheduleDate: string | null,
     responsibleId: number | null,
     operationTypeId: number,
+    preFlightNumber: string | null,
 }

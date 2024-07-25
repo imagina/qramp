@@ -111,7 +111,8 @@
         </div>
         <chipServices 
            :workOrderItemsTotal="card.workOrderItemsTotal"
-           :workOrderId="card.id"  
+           :workOrderId="card.id"
+           :typeWorkOrder="card.type"
            size="sm"
         />
         <!--card actions-->

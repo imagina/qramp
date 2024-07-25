@@ -618,7 +618,7 @@ export default {
               vIf: this.manageResponsiblePermissions,
               selectByDefault: true,
               readonly: this.disabledReadonly,
-              label: '*Responsible',
+              label: 'Assigned to',
               clearable: true,
               color: "primary",
               options: this.isAppOffline ? this.filterResponsible : []
@@ -649,6 +649,36 @@ export default {
               format24h: true,
             },
           },
+          scheduleDate: {
+            name: "scheduleDate",
+            value: '',
+            type: 'fullDate',
+            props: {
+              vIf: this.showFieldScheduleDate,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
+              readonly: this.disabledReadonly,
+              label: '*Date Entered',
+              clearable: true,
+              color:"primary",
+              format24h: true,
+            },
+          },
+          preFlightNumber: {
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.showFieldScheduleDate,
+              color: 'primary',
+              readonly: !!this.dataCompoment.parentId,
+              clearable: true,
+              label: 'Flight Number',
+            },
+          }
         },
         inboundLeft: {
           inboundFlightNumber: {
@@ -971,6 +1001,7 @@ export default {
           this.form.outboundTailNumber = updateForm.outboundTailNumber
           this.form.outboundScheduledDeparture = this.dateFormatterFull(updateForm.outboundScheduledDeparture)
           this.form.outboundBlockOut = this.dateFormatterFull(updateForm.outboundBlockOut)
+          this.form.preFlightNumber = updateForm.preFlightNumber;
           this.form.faFlightId = updateForm.faFlightId;
           if (this.form.inboundBlockIn && this.form.outboundBlockOut) {
             this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
