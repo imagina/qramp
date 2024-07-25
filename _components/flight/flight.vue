@@ -238,7 +238,7 @@ export default {
       } else {
         this.openAlert = true
       }
-    }, 
+    },
     'form.operationTypeId' (newVal) {
       if(qRampStore().getTypeWorkOrder() !== LABOR) {
         if(newVal == OPERATION_TYPE_NON_FLIGHT) {
@@ -855,13 +855,14 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard' : 'fullDate',
             props: {
+              ...this.validateRulesBlock,
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.readonly || this.disabledReadonly,
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: `${this.isPassenger ? 'Actual Out' : `${this.$tr('ifly.cms.form.blockOut')}`}`,
+              label: `${this.isPassenger ? 'Actual Out' : `*${this.$tr('ifly.cms.form.blockOut')}`}`,
               clearable: true,
               color: "primary",
               format24h: true,

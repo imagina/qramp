@@ -361,7 +361,7 @@ export default {
           flightformField = flightformField.concat(['scheduleDate']);
         }
         if(!this.isPassenger && flightForm.operationTypeId != OPERATION_TYPE_OTHER) {
-          flightformField = flightformField.concat(['inboundBlockIn']);
+          flightformField = flightformField.concat(['inboundBlockIn', 'outboundBlockOut']);
         }
 
         if(!flightForm.customCustomerName) {
