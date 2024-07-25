@@ -48,10 +48,11 @@ export default function useModalStation() {
           }
           //await checkUrlParams();
           storeKanban.scheduleType = store.scheduleType;
+          store.showModalStation = false;
           getTitleFilter();
           await setUrlParams();
           await buildKanbanStructure();
-          store.showModalStation = false;
+
         }
       });
     } catch (error) {
