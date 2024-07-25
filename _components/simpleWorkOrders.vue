@@ -355,6 +355,7 @@ export default {
               handler: () => {
                 this.acceptSchedule = true;
                 this.form.faFlightId = null;
+                this.orderConfirmationMessage()
               },
             },
           ],

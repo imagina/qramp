@@ -207,14 +207,14 @@ export default function useKanbanBoard(props) {
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
-
-      if(storeFilter.stationId === null) {
-        storeFilter.showModalStation = true;
-      }
-
       if (newPath !== oldPath) {
         await setStations()
       }
+      if(storeFilter.stationId === null) {
+        storeFilter.showModalStation = true;
+        return;
+      }
+
       if (!storeKanban.loading) {
         await init();
       }
