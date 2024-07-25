@@ -1,16 +1,16 @@
 <template>
-  <div class="kanbanBoardCtn">
-      <page-actions
-        ref="pageActions" 
-        :title="title"
-        multipleRefresh
-        :extra-actions="extraPageActions"  
-        class="q-mb-md"
-        @refresh="buildKanbanStructure(true)" 
-      />
+  <div class="kanbanBoardCtn tw-bg-white tw-rounded-xl tw-p-4">
+    <page-actions
+      ref="pageActions" 
+      :title="title"
+      multipleRefresh
+      :extra-actions="extraPageActions"  
+      class="q-mb-md"
+      @refresh="buildKanbanStructure(true)" 
+    />
     <filters v-if="storeFilter.showModal"/>
     <filtersBar v-if="false"/>
-   <actionBar /> 
+    <actionBar /> 
   <div class="tw-flex">
     <div
       class="
@@ -41,10 +41,11 @@
     <div
       v-if="columns.length > 0" 
       class="
-       tw-flex-1 
-       tw-h-auto 
-       tw-flex 
-       tw-overflow-x-auto"
+        tw-flex-1 
+        tw-h-auto 
+        tw-flex 
+        tw-overflow-x-auto
+      "
       >
       <kanbanColumn
         v-for="(column, index) in columns"
@@ -52,11 +53,12 @@
         :column="column"
         :groupOptions="groupOptions"
         class="
-         tw-flex-none 
-         tw-space-y-0 
-         tw-h-auto 
-         tw-rounded-lg 
-         tw-mb-4"
+          tw-flex-none 
+          tw-space-y-0 
+          tw-h-auto 
+          tw-rounded-lg 
+          tw-mb-4
+        "
       />
     </div>
   </div>
