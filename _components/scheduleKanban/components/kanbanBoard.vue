@@ -109,7 +109,7 @@ export default defineComponent({
 </script>
 
 <style>
-. tw-bg-white tw- {
+.kanbanBoardCtn {
   font-family: 'Manrope', sans-serif;
 }
 </style>
