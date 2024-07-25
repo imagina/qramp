@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, ref, getCurrentInstance } from 'vue';
+import { defineComponent, computed, ref } from 'vue';
 import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'

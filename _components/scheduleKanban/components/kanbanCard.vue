@@ -13,20 +13,24 @@
       <div>
         <chipServices 
           :workOrderItemsTotal="card.workOrderItemsTotal"
-          :workOrderId="card.id" 
+          :workOrderId="card.id"
+          :typeWorkOrder="card.type"
           class="tw-absolute tw-right-2 tw--mt-2.5"
         />
         <div class="tw-py-3 tw-pl-2 tw-w-full">
           <div class="tw-flex tw-pb-1">
-            <div class="tw-w-10/12 tw-flex">
+            <div 
+              class="tw-w-10/12 tw-flex tw-cursor-pointer"  
+              @click="openModalSchedule"
+            >
               <i v-if="isNonFlight" class="fa-regular fa-plane-slash tw-mr-2" />
               <p 
-              class="
-                text-kanban-card
-                tw--mt-0.5
-                tw-cursor-pointer
-                tw-truncate"
-              @click="openModalSchedule"
+                class="
+                  text-kanban-card 
+                  tw--mt-0.5 
+                  tw-cursor-pointer 
+                  tw-truncate
+                "
               >
                 {{ card.calendar.title }}
               </p>

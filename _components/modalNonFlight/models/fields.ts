@@ -64,6 +64,16 @@ export const fields = computed(() => ({
             color: 'primary',
         },
     },
+    preFlightNumber: {
+        value: '',
+        type: 'input',
+        props: {
+            vIf: isActiveNonFlightServices.value,
+            color: 'primary',
+            clearable: true,
+            label: 'Flight Number',
+        },
+    },
     stationId: {
         name:'stationId',
         value: store.stationId,
@@ -104,7 +114,7 @@ export const fields = computed(() => ({
         type: "select",
         props: {
             vIf: manageResponsiblePermissions.value && isActiveNonFlightServices.value,
-            label: 'Responsible',
+            label: 'Assigned to',
             clearable: true,
             color: "primary",
             hint: "If you left this field empty, the responsible will be you automatically",
