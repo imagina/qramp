@@ -397,15 +397,6 @@ export default {
           ],
           bulkActions: [
             {
-              apiRoute: "/ramp/v1/work-orders/bulk-post",
-              permission: "ramp.fueling-work-orders.bulk-post",
-              criteria: "id",
-              props: {
-                icon: "fas fa-paper-plane",
-                label: "Post"
-              }
-            },
-            {
               apiRoute: "/ramp/v1/work-orders/bulk-submit",
               permission: "ramp.fueling-work-orders.bulk-submit",
               criteria: "id",
