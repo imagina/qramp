@@ -1,5 +1,5 @@
 import Vue, { computed, ComputedRef } from 'vue';
-import {COMPANY_PASSENGER, COMPANY_RAMP} from '../../model/constants.js'
+import {COMPANY_PASSENGER, COMPANY_RAMP, OPERATION_TYPE_NON_FLIGHT} from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
 import store from '../store/modalSchedule.store'
@@ -53,7 +53,12 @@ export default function modelFields() {
     })))
     const flightStatus = computed(() => flightStatusesList.value.find(item => item.id == form.value.flightStatusId) || null);
 
-    const operationTypeList =  computed(() => workOrderList().getOperationTypeList());
+    const operationTypeList =  computed(() => {
+      const data = structuredClone(workOrderList().getOperationTypeList())
+      if (Number(form.value.operationTypeId) === OPERATION_TYPE_NON_FLIGHT) return data
+      if (isPassenger.value) return data.filter(item => item.id !== OPERATION_TYPE_NON_FLIGHT)
+      return data
+    });
     const fields: ComputedRef<any> = computed(() => ({
         form: {
             inboundFlightNumber: {

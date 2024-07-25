@@ -159,7 +159,8 @@
       </div>
 
       <div
-          class="col-12"
+        v-if="isActualInAndActualOut"
+        class="col-12"
       >
         <div class="tw-font-semibold
           lg:tw-grid
@@ -206,19 +207,18 @@
 import responsive from '../../_mixins/responsive.js'
 import tableFlight from '../modal/tableFlight.vue'
 import qRampStore from '../../_store/qRampStore.js';
-import { 
-  BUSINESS_UNIT_PASSENGER , 
-  BUSINESS_UNIT_RAMP,
+import {
   COMPANY_PASSENGER,
   COMPANY_RAMP,
   OPERATION_TYPE_OTHER,
   NON_FLIGHT,
-  FLIGHT 
+  FLIGHT,
+  LABOR,
+  OPERATION_TYPE_NON_FLIGHT
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
 import moment from 'moment';
-import store from '../scheduleKanban/store/modalSchedule.store';
 import momentTimezone from "moment-timezone";
 import serviceListStore from '../serviceList/store/serviceList';
 
@@ -262,6 +262,7 @@ export default {
         outboundBlockOut: null,
         stationId: null,
         cancellationType: null,
+        scheduleDate: '',
       },
       refresh: 1,
       selected:[],
@@ -285,6 +286,12 @@ export default {
     }
   },
   watch:{
+    dataCompoment: {
+      handler() {
+        this.init()
+      },
+      deep: true
+    },
     'form.inboundFlightNumber' (val) {
       if (!val) {
         this.form.inboundFlightNumber = null,
@@ -316,10 +323,12 @@ export default {
       }
     }, 
     'form.operationTypeId' (newVal) {
-      if(newVal == 13) {
-        qRampStore().setTypeWorkOrder(NON_FLIGHT);
-      } else {
-        qRampStore().setTypeWorkOrder(FLIGHT);
+      if(qRampStore().getTypeWorkOrder() !== LABOR) {
+        if(newVal == OPERATION_TYPE_NON_FLIGHT) {
+          qRampStore().setTypeWorkOrder(NON_FLIGHT);
+        } else {
+          qRampStore().setTypeWorkOrder(FLIGHT);
+        }
       }
       serviceListStore().init().then();     
     }
@@ -332,7 +341,10 @@ export default {
       return this.$store.state.qofflineMaster.isAppOffline;
     },
     operationTypeList() {
-      return workOrderList().getOperationTypeList()
+      const data = structuredClone(workOrderList().getOperationTypeList())
+      if (Number(this.form.operationTypeId) === OPERATION_TYPE_NON_FLIGHT) return data
+      if (this.isPassenger) return data.filter(item => item.id !== OPERATION_TYPE_NON_FLIGHT)
+      return data
     },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
@@ -356,15 +368,6 @@ export default {
       set(value) {
         this.selectCustomers = value;
       }
-    },
-    showLabel(){
-      if(this.readonly && !this.responsive ){
-        return true
-      }
-      if(this.readonly && this.responsive ){
-        return false   
-      }
-      return false
     },
     isbound() {
       if(this.form.operationTypeId) {
@@ -391,17 +394,11 @@ export default {
     readStatus(){
       return  !this.$auth.hasAccess('ramp.work-orders.edit-status') || this.readonly || this.disabledReadonly
     },
-    allowContractName() {
-      return this.$auth.hasAccess('ramp.work-orders.see-contract-name');
-    },
     manageResponsiblePermissions() {
       return this.$auth.hasAccess('ramp.work-orders.manage-responsible') && !this.isPassenger;
     },
     isPassenger() {
      return qRampStore().getIsPassenger();
-    },
-    filterCompany() {
-      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
       return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -467,11 +464,30 @@ export default {
     validateRulesField() {
       return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
     },
+    isNonFlight() {
+      return qRampStore().isNonFlight()
+    },
     timezoneAirport() {
       const station = workOrderList().getStationList().find(item => item.id == this.form.stationId); 
       const airportId = station?.airportId;
       const airport = workOrderList().getAirportsList().find(item => item.id == airportId) || null
       return airport ? momentTimezone.tz(airport.timezone).format("z") : '';
+    },
+    readonlyOperationType() {
+      const { parentId, preFlightNumber, operationTypeId } = this.dataCompoment || {};
+      const isOther = Number(operationTypeId) === OPERATION_TYPE_NON_FLIGHT
+      const createdInNonFlight = (Boolean(parentId) || !Boolean(preFlightNumber)) && isOther;
+      return this.readonly || this.disabledReadonly || createdInNonFlight;
+    },
+    showFieldScheduleDate() {
+      const operationTypeId = Number(this.form.operationTypeId)
+      return this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR && operationTypeId === OPERATION_TYPE_NON_FLIGHT
+    },
+    isActualInAndActualOut() {
+      const isNonFlight = Number(this.dataCompoment.type) === NON_FLIGHT
+      const isParentId = Boolean(this.dataCompoment.parentId)
+      const showActualInAndActualOut = isNonFlight ? isParentId : true
+      return this.isPassenger ? showActualInAndActualOut : true
     },
     formFields() {
       return {
@@ -575,7 +591,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              readonly: this.readonly || this.disabledReadonly,
+              readonly: this.readonlyOperationType,
               outlined: !this.readonly,
               borderless: this.readonly,
               label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.operation')}`,
@@ -688,7 +704,7 @@ export default {
               vIf: this.manageResponsiblePermissions,
               selectByDefault: true,
               readonly: this.disabledReadonly,
-              label: '*Responsible',
+              label: 'Assigned to',
               clearable: true,
               color: "primary",
               options: this.isAppOffline ? this.filterResponsible : []
@@ -700,6 +716,36 @@ export default {
               requestParams: {filter: {companyId: this.filterCompany}}
             },
           },
+          scheduleDate: {
+            name: "scheduleDate",
+            value: '',
+            type: 'fullDate',
+            props: {
+              vIf: this.showFieldScheduleDate,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              hint:'Format: MM/DD/YYYY HH:mm',
+              mask:'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
+              readonly: this.disabledReadonly,
+              label: '*Date Entered',
+              clearable: true,
+              color:"primary",
+              format24h: true,
+            },
+          },
+          preFlightNumber: {
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.showFieldScheduleDate,
+              color: 'primary',
+              readonly: !!this.dataCompoment.parentId,
+              clearable: true,
+              label: 'Flight Number',
+            },
+          }
         },
         inboundLeft:{
           inboundFlightNumber: {
@@ -761,14 +807,14 @@ export default {
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               rules: [
-                val => this.validateRulesField(val)
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
+              label: `*${this.$tr('ifly.cms.form.scheduledArrival')}`,
               clearable: true,
               color:"primary",
               format24h: true,
@@ -849,14 +895,14 @@ export default {
             type: this.readonly ? 'inputStandard':'fullDate',
             props: {
               rules: [
-                val => this.validateRulesField(val)
+                val => val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               hint:'Format: MM/DD/YYYY HH:mm',
               mask:'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
               outlined: !this.readonly,
               borderless: this.readonly,
-              label: this.readonly ? '' : `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
+              label: `*${this.$tr('ifly.cms.form.scheduledDeparture')}`,
               clearable: true,
               color:"primary",
               format24h: true,
@@ -943,9 +989,6 @@ export default {
     },
   },
   methods: {
-    showInputs(keyField){
-      return (keyField == 'customCustomer' && this.form.adHoc) || keyField == 'adHoc'
-    },
     init() {
       this.currentDate()
       this.updateData()
@@ -963,6 +1006,9 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
+        if (this.isNonFlight) {
+            this.form.scheduleDate = this.dateFormatterFull(updateForm.scheduleDate)
+        }
         if(updateForm.customCustomerName) {
           const id = `customer-${this.numberInRange(8000, 1000)}`;
           const objData = {id, label: updateForm.customCustomerName, value: updateForm.customCustomerName};
@@ -1015,6 +1061,7 @@ export default {
           this.form.outboundTailNumber = updateForm.outboundTailNumber
           this.form.outboundScheduledDeparture = this.dateFormatterFull(updateForm.outboundScheduledDeparture)
           this.form.outboundBlockOut = this.dateFormatterFull(updateForm.outboundBlockOut)
+          this.form.preFlightNumber = updateForm.preFlightNumber;
           this.form.faFlightId = updateForm.faFlightId;
           if(this.form.inboundBlockIn && this.form.outboundBlockOut) {
             this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);

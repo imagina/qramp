@@ -8,7 +8,7 @@ export default async function setUrlParams(proxy: any): Promise<void>{
     try {
       const selectedDate = moment(store.selectedDate, 'YYYY/MM/DD');
       const query = store.payload;
-      query.type = store.scheduleType;
+      query.typeAgenda = store.scheduleType;
 
       const isWeek = store.scheduleType == scheduleTypeModel[0].value
       if(isWeek){

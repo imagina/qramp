@@ -1,8 +1,8 @@
-import { ref, watch, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import serviceListStore from '../../serviceList/store/serviceList'
-import baseService from '@imagina/qcrud/_services/baseService.js'
 import findDynamicFieldTitle from '../../serviceList/services/findDynamicFieldTitle'
 import getWorkOrderItemsActions from '../actions/getWorkOrderItems'
+import qRampStore from "src/modules/qramp/_store/qRampStore";
 const chipServicesController = (props: any = {}, emit: any = null) => {
     const workOrderItemsTotal = computed(() => props.workOrderItemsTotal)
     const loading = ref(false);
@@ -13,15 +13,17 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     }
     async function getWorkOrderItems() {
         try {
+            workOrdersItems.value = [];
             loading.value = true;
             const response = await getWorkOrderItemsActions(props.workOrderId);
             workOrdersItems.value = response.data;
+            await qRampStore().setTypeWorkOrder(props.typeWorkOrder);
+            await serviceListStore().init();
             loading.value = false
         } catch (error) {
             console.error(error)
         }
     }
-
     return { 
         nameProduct, 
         popupProxyRef, 

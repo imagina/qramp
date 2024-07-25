@@ -2,6 +2,7 @@ import Vue, { computed } from "vue";
 import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
+import {FLIGHT, FUELING, LABOR, NON_FLIGHT} from "src/modules/qramp/_components/model/constants";
 
 
 export default function filterModel() {
@@ -79,18 +80,32 @@ export default function filterModel() {
         readonly: kanbanStore.isAppOffline,
       },
     },
-    adHoc: {
-      value: null,
-      type: "select",
+    type: {
+      value: [],
+      type: 'select',
       props: {
-        label: "Ad Hoc",
+        label: 'Work Order Types',
+        multiple: true,
+        useChips: true,
         clearable: true,
-        readonly: kanbanStore.isAppOffline,
+        color: "primary",
         options: [
-          { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
-          { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
-        ],
+          {label: 'Flight', value: FLIGHT},
+          {label: 'Non flight', value: NON_FLIGHT},
+        ]
       },
+    },
+    operationTypeId: {
+      value: null,
+      type: 'select',
+      props: {
+        label: `${Vue.prototype.$tr('ifly.cms.form.operation')} type`,
+        clearable: true,
+        color:"primary",
+        'hide-bottom-space': false,
+        options: workOrderList().getOperationTypeList()
+      },
+      label: Vue.prototype.$tr('ifly.cms.form.operation'),
     },
     flightStatusId: {
       value: null,
@@ -110,25 +125,20 @@ export default function filterModel() {
         readonly: kanbanStore.isAppOffline,
       },
     },
-    areaId: {
+    adHoc: {
       value: null,
       type: "select",
-      loadOptions: {
-        apiRoute: "apiRoutes.qsetupagione.areas",
-        select: { label: "name", id: "id" },
-        requestParams: {
-          filter: {
-            companyId: kanbanStore.filterCompany,
-          },
-        },
-      },
       props: {
-        label: "Areas",
+        label: "Ad Hoc",
         clearable: true,
         readonly: kanbanStore.isAppOffline,
+        options: [
+          { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
+          { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
+        ],
       },
     },
-    type: {
+    typeAgenda: {
       value: null,
     },
     dateStart: {

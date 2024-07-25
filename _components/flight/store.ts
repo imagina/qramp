@@ -14,6 +14,7 @@ export interface FormContarct {
     adHoc: number | string;
     carrierId: string;
     stationId: string;
+    // id: number | string | null;
     inboundTailNumber: string;
     inboundBlockIn: string;
     inboundScheduledArrival: string;
@@ -44,6 +45,9 @@ export interface FormContarct {
     responsible?: any;
     cancellationNoticeTime: number | null;
     cancellationType: string | null;
+    parentId: number | string | null;
+    scheduleDate: string | null;
+    type: number | null;
 }
 export interface StateContarct {
     form: FormContarct;
@@ -73,6 +77,7 @@ const state = reactive<StateContarct>({
         adHoc: '',
         carrierId: '',
         stationId: '',
+        // id: null,
         inboundTailNumber: '',
         inboundBlockIn: '',
         inboundScheduledArrival: '',
@@ -98,6 +103,9 @@ const state = reactive<StateContarct>({
         customCustomerName: null,
         cancellationNoticeTime: null,
         cancellationType: null,
+        parentId: null,
+        scheduleDate: null,
+        type: null,
     },
     responsibles: {
 
@@ -164,6 +172,9 @@ export default function flightStore(): FlightStoreContract {
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
         state.form.cancellationNoticeTime = flight.cancellationNoticeTime ? flight.cancellationNoticeTime : null;
         state.form.cancellationType = flight.cancellationType ? flight.cancellationType : null;
+        state.form.parentId = flight.parentId ? flight.parentId : null;
+        state.form.scheduleDate = flight.scheduleDate ? flight.scheduleDate : null;
+        state.form.type = flight.type ? flight.type : null;
         state.responsibles = flight?.responsible ? [{value: flight.responsible.id, label: flight.responsible.fullName}] : [];
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;

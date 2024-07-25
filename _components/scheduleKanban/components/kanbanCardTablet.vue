@@ -23,20 +23,27 @@
             tw-cursor-pointer"
             @click="openModalSchedule"
           >
-            <p class="text-kanban-card-tablet">{{ card.calendar.title }}</p>
-            <span class="arrival-text-tablet" v-if="card.calendar.sta">
+            <div class="tw-flex tw-items-center">
+              <i v-if="isNonFlight" class="fa-regular fa-plane-slash tw-mr-2" />
+              <p class="text-kanban-card-tablet">{{ card.calendar.title }}</p>
+            </div>
+            <span class="arrival-text-tablet" v-if="card.calendar.sta && !card.calendar.tos">
               <i class="
                 fa-solid
                 fa-arrow-down-right
                 tw-mr-1"
               />STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
             </span>
-            <span class="arrival-text-tablet" v-if="card.calendar.std">
+            <span class="arrival-text-tablet" v-if="card.calendar.std && !card.calendar.tos">
               <i class="
                 fa-solid
                 fa-arrow-up-right
                 tw-mx-1"
               />STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
+            </span>
+            <span class="arrival-text-tablet" v-if="card.calendar.tos">
+              <q-tooltip>Time of Service</q-tooltip>
+              TOS: {{ card.calendar.tos ? $moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
             </span>
           </div> 
         </div>
@@ -104,7 +111,8 @@
         </div>
         <chipServices 
            :workOrderItemsTotal="card.workOrderItemsTotal"
-           :workOrderId="card.id"  
+           :workOrderId="card.id"
+           :typeWorkOrder="card.type"
            size="sm"
         />
         <!--card actions-->
