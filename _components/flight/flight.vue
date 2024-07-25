@@ -62,7 +62,8 @@
                 <span v-if="readonly" class="col-5 text-right q-pr-sm text-primary">{{ field.label }}:</span>
                 <dynamic-field :key="keyField" :class="`${readonly ? 'col-7' : ''}`" :id="keyField" :field="field"
                   :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                  v-model="form[keyField]" @enter="search(field)" :ref="`${keyField}`" @update:modelValue="zanetizeData(keyField)" />
+                  v-model="form[keyField]" @enter="search(field)" :ref="`${keyField}`"
+                  @update:modelValue="zanetizeData(keyField)" />
               </div>
             </div>
           </collapse>
@@ -84,10 +85,7 @@
         </div>
       </div>
 
-      <div
-        v-if="isActualInAndActualOut"
-        class="col-12"
-      >
+      <div v-if="isActualInAndActualOut" class="col-12">
         <div class="tw-font-semibold
           lg:tw-grid
           lg:tw-grid-cols-2
@@ -202,14 +200,14 @@ export default {
       isCollapse: false,
     }
   },
-  watch:{
+  watch: {
     dataCompoment: {
       handler() {
         this.init()
       },
       deep: true
     },
-    'form.inboundFlightNumber' (val) {
+    'form.inboundFlightNumber'(val) {
       if (!val) {
         this.form.inboundFlightNumber = null,
           this.form.inboundOriginAirportId = null,
@@ -238,10 +236,10 @@ export default {
       } else {
         this.openAlert = true
       }
-    }, 
-    'form.operationTypeId' (newVal) {
-      if(qRampStore().getTypeWorkOrder() !== LABOR) {
-        if(newVal == OPERATION_TYPE_NON_FLIGHT) {
+    },
+    'form.operationTypeId'(newVal) {
+      if (qRampStore().getTypeWorkOrder() !== LABOR) {
+        if (newVal == OPERATION_TYPE_NON_FLIGHT) {
           qRampStore().setTypeWorkOrder(NON_FLIGHT);
         } else {
           qRampStore().setTypeWorkOrder(FLIGHT);
@@ -315,7 +313,7 @@ export default {
       return this.$hasAccess('ramp.work-orders.manage-responsible') && !this.isPassenger;
     },
     isPassenger() {
-     return qRampStore().getIsPassenger();
+      return qRampStore().getIsPassenger();
     },
     filterCompany() {
       return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
@@ -380,6 +378,9 @@ export default {
     },
     validateRulesField() {
       return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
+    },
+    isNonFlight() {
+      return qRampStore().isNonFlight()
     },
     timezoneAirport() {
       const station = workOrderList().getStationList().find(item => item.id == this.form.stationId);
@@ -618,7 +619,7 @@ export default {
               vIf: this.manageResponsiblePermissions,
               selectByDefault: true,
               readonly: this.disabledReadonly,
-              label: '*Responsible',
+              label: 'Assigned to',
               clearable: true,
               color: "primary",
               options: this.isAppOffline ? this.filterResponsible : []
@@ -639,16 +640,46 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              hint:'Format: MM/DD/YYYY HH:mm',
-              mask:'MM/DD/YYYY HH:mm',
+              hint: 'Format: MM/DD/YYYY HH:mm',
+              mask: 'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
               readonly: this.disabledReadonly,
               label: '*Date Entered',
               clearable: true,
-              color:"primary",
+              color: "primary",
               format24h: true,
             },
           },
+          scheduleDate: {
+            name: "scheduleDate",
+            value: '',
+            type: 'fullDate',
+            props: {
+              vIf: this.showFieldScheduleDate,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              hint: 'Format: MM/DD/YYYY HH:mm',
+              mask: 'MM/DD/YYYY HH:mm',
+              'place-holder': 'MM/DD/YYYY HH:mm',
+              readonly: this.disabledReadonly,
+              label: '*Date Entered',
+              clearable: true,
+              color: "primary",
+              format24h: true,
+            },
+          },
+          preFlightNumber: {
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.showFieldScheduleDate,
+              color: 'primary',
+              readonly: !!this.dataCompoment.parentId,
+              clearable: true,
+              label: 'Flight Number',
+            },
+          }
         },
         inboundLeft: {
           inboundFlightNumber: {
@@ -915,10 +946,10 @@ export default {
         this.form.carrierId = updateForm.carrierId
         this.form.customCustomer = updateForm.customCustomer
         this.form.customerId = updateForm.customerId
-        if (qRampStore().isNonFlight()) {
-            this.form.scheduleDate = this.dateFormatterFull(updateForm.scheduleDate)
+        if (this.isNonFlight) {
+          this.form.scheduleDate = this.dateFormatterFull(updateForm.scheduleDate)
         }
-        if(updateForm.customCustomerName) {
+        if (updateForm.customCustomerName) {
           const id = `customer-${this.numberInRange(8000, 1000)}`;
           const objData = { id, label: updateForm.customCustomerName, value: updateForm.customCustomerName };
           this.newCustumerAdHoc = [{ ...objData }];
@@ -970,6 +1001,7 @@ export default {
           this.form.outboundTailNumber = updateForm.outboundTailNumber
           this.form.outboundScheduledDeparture = this.dateFormatterFull(updateForm.outboundScheduledDeparture)
           this.form.outboundBlockOut = this.dateFormatterFull(updateForm.outboundBlockOut)
+          this.form.preFlightNumber = updateForm.preFlightNumber;
           this.form.faFlightId = updateForm.faFlightId;
           if (this.form.inboundBlockIn && this.form.outboundBlockOut) {
             this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);

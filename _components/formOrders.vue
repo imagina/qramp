@@ -4,7 +4,8 @@
       @hide="clear" :actions="actions" :width="modalProps.width" :maximized="$q.screen.lt.md">
       <stepper-ramp-form v-if="modalProps.update" @sp="sp = $event" @loading="setLoading" ref="stepper"
         :steps="steppers" :data="modalProps" @close-modal="close($event)" @getWorkOrders="getWorkOrders" />
-      <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" @loading="setLoading" @refreshData="$emit('refresh-data')"/>
+      <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" @loading="setLoading"
+        @refreshData="$emit('refresh-data')" />
     </master-modal>
   </div>
 </template>
@@ -197,7 +198,7 @@ export default {
             label: this.$q.screen.lt.sm ? null : 'Return to cloned work order',
             icon: 'fa-regular fa-arrow-left',
           },
-          action: async() => {
+          action: async () => {
             this.loadChildData();
           }
         },
@@ -239,7 +240,7 @@ export default {
             color: 'white',
             icon: 'fal fa-check',
             'text-color': 'positive',
-            label: this.$tr('isite.cms.label.closeFlight'),
+            label: 'Close',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
@@ -341,7 +342,7 @@ export default {
         }
         this.modalProps = updateData.modalProps
         if (this.isPassenger) {
-          if(isNonFlight && this.modalProps.update) this.modalProps.chip = { ...chip }
+          if (isNonFlight && this.modalProps.update) this.modalProps.chip = { ...chip }
         }
 
         this.flight = {}
@@ -368,7 +369,7 @@ export default {
         cargoStore().setDelayList(updateData.data);
         cargoStore().setDelayComment(updateData.data.delayComment || null)
         cargoStore().setOurDelay(updateData.data.ourDelay || null);
-        if(navigator.onLine) {
+        if (navigator.onLine) {
           qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
         } else {
           const workOrderItems = workOrderList().getWorkOrdersItemsList()

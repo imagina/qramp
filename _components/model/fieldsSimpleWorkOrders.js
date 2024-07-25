@@ -122,7 +122,7 @@ export default {
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
-              label: 'Responsible',
+              label: 'Assigned to',
               clearable: true,
               color: "primary",
               hint: "If you left this field empty, the responsible will be you automatically",

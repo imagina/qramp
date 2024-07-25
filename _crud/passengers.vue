@@ -45,7 +45,7 @@ export default {
       crudId: this.$uid(),
       areaId: null,
       loadingBulk: false,
-      refFormOrders: null
+      refModalNonFlight: null
     }
   },
   provide() {
@@ -81,10 +81,10 @@ export default {
   },
   mounted() {
     this.$nextTick(async () => {
-      this.refFormOrders = this.$refs.formOrders
+      this.refModalNonFlight = this.$refs.formOrders
     })
   },
-  beforeUnmount() {
+  beforeDestroy() {
     qRampStore().setFlightList([]);
     qRampStore().setFlightId(null);
   },
@@ -408,6 +408,21 @@ export default {
                 select: { label: 'operationName', id: 'id' },
                 requestParams: { filter: { companyId: COMPANY_PASSENGER } },
               }
+            },
+            type: {
+              value: [],
+              type: 'select',
+              props: {
+                label: 'Work Order Types',
+                multiple: true,
+                useChips: true,
+                clearable: true,
+                color: "primary",
+                options: [
+                  {label: 'Flight', value: FLIGHT},
+                  {label: 'Non flight', value: NON_FLIGHT},
+                ]
+              },
             },
             businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
           },

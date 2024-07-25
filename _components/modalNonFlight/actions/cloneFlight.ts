@@ -5,6 +5,7 @@ import {
     DEFAULT_STATION_ID 
 } from '../../model/constants'
 import store from '../store/index.store'
+import moment from "moment-timezone"
 
 export const cloneFlight = (flight) => {
     return {
@@ -40,7 +41,7 @@ export const cloneFlight = (flight) => {
         updatedBy: flight.updatedBy,
         operationTypeId: OPERATION_TYPE_NON_FLIGHT,
         type: NON_FLIGHT,
-        scheduleDate: store.seletedDateColumn,
+        scheduleDate: moment().format('MM/DD/YYYY HH:mm'),
         parentId: flight.id,
     }
 }

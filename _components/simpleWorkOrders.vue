@@ -1,16 +1,8 @@
 <template>
   <div>
-    <table-flight
-        @cancel="dialog = $event"
-        :dialog="dialog"
-        :dataTable="dataTable"
-        @flightSelect="setDataTable($event)"
-        @validateBound="addmanually"
-    />
-    <q-form
-      ref="formSimpleWorkOrders"
-      id="simpleWordOrder"
-      class="
+    <table-flight @cancel="dialog = $event" :dialog="dialog" :dataTable="dataTable" @flightSelect="setDataTable($event)"
+      @validateBound="addmanually" />
+    <q-form ref="formSimpleWorkOrders" id="simpleWordOrder" class="
         tw-px-8
         tw-pt-8
         tw-pb-10
@@ -20,42 +12,22 @@
         tw-border
         tw-border-gray-200
         tw-rounded-lg
-      "
-    >
-      <div
-        class="col-12 col-md-6"
-        v-for="(field, keyField) in fields.form"
-        :key="keyField"
-      >
+      ">
+      <div class="col-12 col-md-6" v-for="(field, keyField) in fields.form" :key="keyField">
         <div v-if="keyField == 'customerId'">
-          <dynamic-field
-            v-if="bannerMessage"
-            class="q-mb-md"
-            :field="fields.banner"
-          />
-          <dynamic-field
-            :field="field"
-            v-model="selectCustomerComputed"
-            @update:modelValue="setCustomerForm(keyField)"
-            @filter="setCustomerName"
-            ref="customerId"
-          >
+          <dynamic-field v-if="bannerMessage" class="q-mb-md" :field="fields.banner" />
+          <dynamic-field :field="field" v-model="selectCustomerComputed" @update:modelValue="setCustomerForm(keyField)"
+            @filter="setCustomerName" ref="customerId">
             <template #before-options>
               <div class="q-py-md q-px-md" @click="addCustumers">
                 <div class="row cursor-pointer">
                   <div class="q-pr-md">
-                    <q-btn
-                      push
-                      color="primary"
-                      round
-                      icon="fas fa-plus"
-                      size="xs"
-                    />
+                    <q-btn push color="primary" round icon="fas fa-plus" size="xs" />
                   </div>
                   <div class="q-py-xs">
                     <label class="cursor-pointer">{{
-                        $tr('ifly.cms.label.createNewCustomer')
-                      }}</label>
+      $tr('ifly.cms.label.createNewCustomer')
+    }}</label>
                   </div>
                 </div>
               </div>
@@ -63,14 +35,8 @@
           </dynamic-field>
         </div>
         <div v-else>
-          <dynamic-field
-            :key="keyField"
-            :id="keyField"
-            :field="field"
-            v-model="form[keyField]"
-            @enter="search(field)"
-            @update:modelValue="zanetizeData(keyField)"
-          />
+          <dynamic-field :key="keyField" :id="keyField" :field="field" v-model="form[keyField]" @enter="search(field)"
+            @update:modelValue="zanetizeData(keyField)" />
         </div>
       </div>
     </q-form>
@@ -180,8 +146,8 @@ export default {
       if (key !== 'customerId') return;
       const selectCustomers =
         this.selectCustomers === null ||
-        this.selectCustomers === undefined ||
-        this.selectCustomers === '' ? {} : this.selectCustomers;
+          this.selectCustomers === undefined ||
+          this.selectCustomers === '' ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId
@@ -208,8 +174,8 @@ export default {
           }
 
           if ((!this.form.faFlightId || !this.acceptSchedule) && !this.isAppOffline) {
-              this.search({type: 'search'});
-              return;
+            this.search({ type: 'search' });
+            return;
           }
 
         } else {
@@ -280,8 +246,8 @@ export default {
     search({ type }) {
       if (!this.isAppOffline) {
         if (
-            type != "search" &&
-            (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
+          type != "search" &&
+          (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
         ) return;
 
         if (!this.form.preFlightNumber) return;
@@ -323,9 +289,9 @@ export default {
         let response = null;
 
         qRampStore().showLoading();
-        let businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
-        if(this.isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
-          businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
+        let businessUnitId = this.isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
+        if (this.isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
+          businessUnitId = { businessUnitId: BUSINESS_UNIT_LABOR }
         }
         const offlineId = new Date().valueOf()
 
@@ -382,7 +348,7 @@ export default {
           title: this.$tr("ifly.cms.form.flight"),
           message,
           actions: [
-            {label: this.$tr('isite.cms.label.cancel'), color: 'grey-8'},
+            { label: this.$tr('isite.cms.label.cancel'), color: 'grey-8' },
             {
               label: this.$tr("isite.cms.label.yes"),
               color: "primary",

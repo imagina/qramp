@@ -9,7 +9,7 @@ export default async function setUrlParams(): Promise<void>{
       const DATE_FORMAT = 'YYYY/MM/DD'
       const selectedDate = moment(store.selectedDate, DATE_FORMAT);
       const query = store.payload;
-      query.type = store.scheduleType;
+      query.typeAgenda = store.scheduleType;
 
       const isWeek = store.scheduleType == scheduleTypeModel[0].value
       if(isWeek){

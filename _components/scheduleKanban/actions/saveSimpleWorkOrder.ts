@@ -4,6 +4,7 @@ import {
     BUSINESS_UNIT_PASSENGER,
     FLIGHT,
     LABOR, NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT,
+    OPERATION_TYPE_OTHER
 } from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
 import { WorkOrders } from '../contracts/getWorkOrder.contract.js';

@@ -14,10 +14,6 @@ export default function useCompletedSchedule(props: any, emit: any) {
   const cards = computed(() => props.column.cards)
   const isPassenger = computed(() => qRampStore().getIsPassenger())
   const refModalNonFlight: any = inject('refModalNonFlight')
-  const dropdownItems = [
-    { label: 'Create Flight', action: () => openForm(FLIGHT) },
-    { label: 'Create Non-flight', action: () => openForm(NON_FLIGHT) },
-  ]
 
   const showInline = computed(()=> modalScheduleStore.showInline)
   const modalShowSchedule = computed({
@@ -92,6 +88,5 @@ export default function useCompletedSchedule(props: any, emit: any) {
     NON_FLIGHT,
     createNonFlight,
     createFlight,
-    dropdownItems,
   }
 }

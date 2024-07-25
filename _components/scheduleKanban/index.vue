@@ -13,7 +13,7 @@ import kanbanStore from './store/kanban.store'
 import { router } from 'src/plugins/utils'
 let routeName = router.route.path;
 import serviceListStore from "../serviceList/store/serviceList";
-import { LABOR } from "../model/constants";
+import {FLIGHT, LABOR} from "../model/constants";
 
 export default defineComponent({
   components: {

@@ -8,6 +8,7 @@ import {
   onBeforeUnmount 
 } from "vue";
 import store from '../store/index.store'
+import { mergeColumnDateWithCurrentTime } from 'src/modules/qramp/_store/actions/mergeColumnDateWithCurrentTime'
 import { fields } from '../models/fields';
 import { NON_FLIGHT } from '../../model/constants';
 import { listRequiredFields } from '../models/modelDefault/listRequiredFields'
@@ -17,7 +18,6 @@ import { getSearchByFlightNumber } from '../services/searchFlight'
 import serviceListStore from '../../serviceList/store/serviceList';
 import { cloneFlight } from '../actions/cloneFlight'
 import { DataWorkOrder } from 'src/modules/qramp/_store/actions/@Contracts/workOrderList.contract'
-import { Form } from '../contracts'
 import { i18n } from 'src/plugins/utils'
 
 export default function controller(props: any, emit: any) {
@@ -49,8 +49,9 @@ export default function controller(props: any, emit: any) {
       store.showModal = value;
     }
   });
+  const titleModal: ComputedRef<string> = computed(() => store.titleModal);
   const widthModal: ComputedRef<string> = computed(() => store.widthModal);
-  const form: ComputedRef<Form> = computed(() => store.form);
+  const form: any = computed(() => store.form);
 
   const isActiveNonFlightServices = computed(() => store.selectedTab === NON_FLIGHT)
 
@@ -94,9 +95,12 @@ export default function controller(props: any, emit: any) {
       title: `Non-flight based on Work Order #${select.id}`,
       isClone: true,
     }
-
+    const flight = {
+      ...clonedFlight,
+      scheduleDate: mergeColumnDateWithCurrentTime(),
+    }
     await showModalFull(
-      { ...clonedFlight }, 
+      flight, 
       modalProps
     )
   }
@@ -128,6 +132,7 @@ export default function controller(props: any, emit: any) {
     search,
     clear,
     zanetizeData,
+    titleModal,
     handleModalChange
   }
 }

@@ -44,7 +44,7 @@ export default function useCustomerField(props: any) {
                 rules: [
                     val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                 ],
-                label: `*${i18n.tr('ifly.cms.form.customer')}`,
+                label: `*Customer/Contract`,
                 clearable: true,
                 color: "primary",
                 'hide-bottom-space': false,

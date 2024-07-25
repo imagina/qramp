@@ -15,7 +15,11 @@ export default defineComponent({
     workOrderId: {
       type: Number,
       default: () => 0,
-    }
+    },
+    typeWorkOrder: {
+      type: Number,
+      default: () => 0,
+    },
   },
   setup(props, {emit}) {
     return { ...chipServicesController(props, emit) }

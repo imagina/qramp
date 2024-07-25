@@ -5,6 +5,8 @@ import qRampStore from 'src/modules/qramp/_store/qRampStore'
 import { COMPANY_PASSENGER, COMPANY_RAMP, FLIGHT, NON_FLIGHT } from '../../model/constants'
 import store from '../store/index.store'
 import { i18n, store as auth } from 'src/plugins/utils'
+import { mergeColumnDateWithCurrentTime } from 'src/modules/qramp/_store/actions/mergeColumnDateWithCurrentTime'
+import modalScheduleStore from 'src/modules/qramp/_components/scheduleKanban/store/modalSchedule.store'
 
 const isBlank = computed(() => storeKanban.isBlank);
 const isPassenger = computed(() =>  qRampStore().getIsPassenger());
@@ -64,9 +66,19 @@ export const fields = computed(() => ({
             color: 'primary',
         },
     },
+    preFlightNumber: {
+        value: '',
+        type: 'input',
+        props: {
+            vIf: isActiveNonFlightServices.value,
+            color: 'primary',
+            clearable: true,
+            label: 'Flight Number',
+        },
+    },
     stationId: {
         name:'stationId',
-        value: store.stationId,
+        value: modalScheduleStore.stationId, //TO-DO: Don't take stationId from this store
         type: 'select',
         props: {
             vIf: isActiveNonFlightServices.value,
@@ -82,7 +94,7 @@ export const fields = computed(() => ({
         },
     },
     scheduleDate: {
-        value: store.seletedDateColumn,
+        value: mergeColumnDateWithCurrentTime(),
         type: 'fullDate',
         props: {
             vIf: isActiveNonFlightServices.value,
@@ -104,7 +116,7 @@ export const fields = computed(() => ({
         type: "select",
         props: {
             vIf: manageResponsiblePermissions.value && isActiveNonFlightServices.value,
-            label: 'Responsible',
+            label: 'Assigned to',
             clearable: true,
             color: "primary",
             hint: "If you left this field empty, the responsible will be you automatically",

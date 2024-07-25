@@ -2,6 +2,7 @@ import { ref, computed } from 'vue';
 import serviceListStore from '../../serviceList/store/serviceList'
 import findDynamicFieldTitle from '../../serviceList/services/findDynamicFieldTitle'
 import getWorkOrderItemsActions from '../actions/getWorkOrderItems'
+import qRampStore from "src/modules/qramp/_store/qRampStore";
 const chipServicesController = (props: any = {}, emit: any = null) => {
     const workOrderItemsTotal = computed(() => props.workOrderItemsTotal)
     const loading = ref(false);
@@ -16,6 +17,8 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
             loading.value = true;
             const response = await getWorkOrderItemsActions(props.workOrderId);
             workOrdersItems.value = response.data;
+            await qRampStore().setTypeWorkOrder(props.typeWorkOrder);
+            await serviceListStore().init();
             loading.value = false
         } catch (error) {
             console.error(error)

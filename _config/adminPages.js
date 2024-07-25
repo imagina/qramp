@@ -255,7 +255,7 @@ export default {
     crud: import('../_crud/labor.vue'),
     page: () => import('../_crud/labor.vue'),
     layout: () => import('layouts/master.vue'),
-    title: 'Labor',
+    title: 'Work Orders',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,
