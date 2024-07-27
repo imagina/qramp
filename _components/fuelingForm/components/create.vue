@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import createController from '../controllers/create'
 import customer from '../../customer/index.vue'
 
@@ -35,6 +35,7 @@ export default defineComponent({
     components: {
       customer
     },
+    emits: ['refresh-data'],
     setup(props,{emit}) {
         return {
             ...createController(props, emit)
