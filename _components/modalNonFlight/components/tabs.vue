@@ -22,6 +22,9 @@ export default {
         spread
     >
         <template v-slot:one>
+            <q-tooltip v-if="isAppOffline">
+                Disabled in offline mode
+            </q-tooltip>
             <help-text
                 class="tw-ml-2"
                 @click.native.stop
