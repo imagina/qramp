@@ -574,19 +574,18 @@ export default {
         payload,
         customParams
       )
-      request
-        .catch(err => {
-          this.$emit('loading', false)
-          if (!this.isAppOffline) {
-            this.$alert.error({
-              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
-            })
-          }
-        })
-        .finally(() => {
-          this.$emit('loading', false)
-          this.$root.$emit('crud.data.refresh')
-        })
+      request.catch(err => {
+        this.$emit('loading', false)
+        if (!this.isAppOffline) {
+          this.$alert.error({
+            message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
+          })
+        }
+      }).finally(() => {
+        this.$emit('loading', false)
+        this.getDataTable()
+        this.$root.$emit('crud.data.refresh')
+      })
     },
     async openModal(item) {
       await qRampStore().setIsPassenger(true);

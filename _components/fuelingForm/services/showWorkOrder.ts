@@ -16,11 +16,13 @@ export default async function showWorkOrder(data) {
                 include: "customer,workOrderStatus,operationType,station,contract,responsible",
               }
             })
-        await qRampStore().setIsPassenger(true);
         store.form = {...response.data};
-        qRampStore().setTitleOffline(store.titleModal);
-        store.loading = false; 
     } catch (error) {
        console.info(error); 
+    } finally {
+      store.loading = false;
+      if (!navigator.onLine) store.form = {...data }
+      await qRampStore().setIsPassenger(true);
+      qRampStore().setTitleOffline(store.titleModal);
     }
 }

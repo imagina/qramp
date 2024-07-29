@@ -11,6 +11,7 @@ import storeFlueling from '../store/index'
 import { store, i18n, eventBus } from 'src/plugins/utils';
 import baseService from "src/modules/qcrud/_services/baseService.js";
 import showWorkOrder from '../services/showWorkOrder'
+import { cacheOffline } from 'src/plugins/utils'
 
 export default function createController(props: any = null, emit: any = null) {
   const formFueling: any = ref(null);
@@ -82,24 +83,41 @@ export default function createController(props: any = null, emit: any = null) {
     try {
       storeFlueling.loading = true;
       const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
+      const CACHE_PATH = 'apiRoutes.qramp.workOrders';
       const businessUnitId = { businessUnitId: BUSINESS_UNIT_FUELING };
+      const isOffline = !navigator.onLine;
+      const offlineId = new Date().valueOf()
+      let response = { data: {} }
+
       const dataForm = {
         ...form.value,
         titleOffline: qRampStore().getTitleOffline(),
         ...businessUnitId,
-        type: FUELING
+        type: FUELING,
+        offlineId: isOffline ? offlineId : null,
       };
+
+      const payloadOffline = { 
+        ...dataForm, 
+        offline: isOffline,
+        id: offlineId,
+      }
+
       try {
-        const response = await baseService.create(
+        response = await baseService.create(
           API_ROUTE,
           dataForm,
         )
-        await showWorkOrder(response.data)
-        await eventBus.emit('refresh-data');
-        store.loading = false;
       } catch (err) {
+        if (isOffline) response.data = payloadOffline
         console.log(err)
+      } finally {
+        await cacheOffline.addNewRecord(CACHE_PATH, { ...response.data })
+        await emit('refresh-data');
+        await showWorkOrder(response.data)
+        store.loading = false;
       }
+      
 
     } catch (error) {
       console.error(error);
