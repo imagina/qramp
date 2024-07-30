@@ -8,10 +8,11 @@ import {
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from '../../../_store/qRampStore';
 import storeFlueling from '../store/index'
-import { store, i18n, eventBus } from 'src/plugins/utils';
+import { store, i18n } from 'src/plugins/utils';
 import baseService from "src/modules/qcrud/_services/baseService.js";
 import showWorkOrder from '../services/showWorkOrder'
 import { cacheOffline } from 'src/plugins/utils'
+import moment from 'moment-timezone'
 
 export default function createController(props: any = null, emit: any = null) {
   const formFueling: any = ref(null);
@@ -101,6 +102,7 @@ export default function createController(props: any = null, emit: any = null) {
         ...dataForm, 
         offline: isOffline,
         id: offlineId,
+        scheduleDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
       }
 
       try {
