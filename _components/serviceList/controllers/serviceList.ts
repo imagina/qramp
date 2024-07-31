@@ -1,4 +1,4 @@
-import Vue, { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import serviceListStore from "../store/serviceList";
 import { ServiceModelContract } from '../contracts/index.contract';
 import { i18n } from 'src/plugins/utils';

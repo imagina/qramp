@@ -4,7 +4,6 @@ import {
   WritableComputedRef,
   ComputedRef,
   onBeforeUnmount,
-  getCurrentInstance,
   onMounted
 } from 'vue';
 import storeFueling from '../store/index';
@@ -19,7 +18,6 @@ import { useQuasar } from 'quasar';
 
 export default function modalFormController(props: any = null, emit: any = null) {
   const $q = useQuasar();
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const refCreateForm: any = ref(null);
   const refStepper: any = ref(null);
   const loading: ComputedRef<boolean> = computed(() => storeFueling.loading);
