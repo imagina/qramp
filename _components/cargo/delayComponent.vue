@@ -88,12 +88,11 @@ export default defineComponent({
           props: {
             options: workOrderList().getWorkOrderDelays(),
             readonly: disabledReadonly.value,
-            label: i18n.tr("icommerce.cms.sidebar.code"),
+            label: i18n.tr("isite.cms.label.code"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: i18n.tr("icommerce.cms.sidebar.code"),
         };
         obj["hours" + index] = {
           value: delay.hours,
@@ -107,7 +106,6 @@ export default defineComponent({
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: i18n.tr("isite.cms.label.time"),
         };
       });
       return obj;
