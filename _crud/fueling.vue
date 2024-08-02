@@ -327,7 +327,7 @@ export default {
                 fuelingFormStore.showModal = true;
                 fuelingFormStore.loading = true;
                 fuelingFormStore.isUpdate = true;
-                fuelingFormStore.titleModal = 'Update fueling' + (item.id ? ` Id: ${item.id}` : '')
+                fuelingFormStore.titleModal = 'Update fueling'
                 fuelingFormStore.widthModal = '90vw';
                 this.showWorkOrder(item);
               }
@@ -547,7 +547,7 @@ export default {
         4: 'CLOSED',
         5: 'SCHEDULE',
       }
-      return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
+      return `Work Order ${statusObj[statusId]}`;
     },
     async changeStatus(status, itemId) {
       const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -581,10 +581,9 @@ export default {
             message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
           })
         }
-      }).finally(() => {
+      }).finally(async () => {
         this.$emit('loading', false)
-        this.getDataTable()
-        this.$root.$emit('crud.data.refresh')
+        await this.getDataTable(true);
       })
     },
     async openModal(item) {

@@ -30,7 +30,6 @@ import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts';
 import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index.vue';
 import { cacheOffline } from 'src/plugins/utils';
-import { eventBus } from 'src/plugins/utils'
 
 export default {
   name: 'RampCrud',
@@ -62,14 +61,6 @@ export default {
           this.areaId = this.$filter.values.areaId;
       }
     },
-    'isAppOffline': {
-      deep: true,
-      handler: async function (newValue) {
-        if (!newValue) {
-          await workOrderList().getWorkOrderConditionally(true);
-        }
-      }
-    }
   },
   async created() {
     this.$nextTick(async () => {
@@ -657,7 +648,7 @@ export default {
         4: 'CLOSED',
         5: 'SCHEDULE',
       }
-      return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
+      return `Work Order ${statusObj[statusId]}`;
     },
     async changeStatus(status, itemId) {
       const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -684,26 +675,24 @@ export default {
         payload,
         customParams
       )
-      request
-        .catch(err => {
-          this.$emit('loading', false)
-          if (!this.isAppOffline) {
-            this.$alert.error({
-              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
-            })
-          }
-        })
-        .finally(() => {
-          this.$emit('loading', false)
-          eventBus.emit('crud.data.refresh')
-        })
+      request.catch(err => {
+        this.$emit('loading', false)
+        if (!this.isAppOffline) {
+          this.$alert.error({
+            message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
+          })
+        }
+      }).finally(async () => {
+        this.$emit('loading', false)
+        await this.getDataTable(true);
+      })
     },
     async openModal(item) {
-      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.data.id ? ` Id: ${item.data.id}` : '')
+      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder')
       qRampStore().setIsPassenger(true);
       await this.$refs.formOrders.loadform({
         modalProps: {
-          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.data.id}`,
+          title: `${this.$tr('ifly.cms.form.updateWorkOrder')}`,
           update: true,
           workOrderId: item.data?.id,
           width: '90vw',

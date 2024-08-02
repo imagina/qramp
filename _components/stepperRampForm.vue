@@ -207,10 +207,6 @@ export default {
           ...businessUnitId,
         }
 
-        if (this.isAppOffline) {
-          formatData.titleOffline = this.$tr("ifly.cms.form.updateWorkOrder");
-        }
-
         if (this.data.update) {
           formatData.id = this.data.workOrderId;
         }

@@ -123,6 +123,7 @@ export default {
     fieldsSimpleWorkOrders
   ],
   inject: ['showWorkOrder', 'closeModal'],
+  emits: ['loading', 'isError', 'refreshData'],
   computed: {
     isAppOffline() {
       return this.$store.state.qofflineMaster.isAppOffline;
@@ -271,6 +272,7 @@ export default {
             color: 'positive',
             handler: () => {
               this.resetForm();
+              this.$emit('refreshData');
             }
           }
         ]
@@ -348,6 +350,7 @@ export default {
 
         const offlineWorkOrder = {
           ...modelWorkOrder,
+          ...businessUnitId,
           adHoc: this.form.adHoc,
           stationId: Number(this.form.stationId),
           customerId: Number(this.form.customerId),
