@@ -96,6 +96,7 @@ export default function createController(props: any = null, emit: any = null) {
         ...businessUnitId,
         type: FUELING,
         offlineId: isOffline ? offlineId : null,
+        ...(isOffline ? { apiRoute: CACHE_PATH, } : {})
       };
 
       const payloadOffline = { 

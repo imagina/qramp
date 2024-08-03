@@ -337,7 +337,8 @@ export default {
           titleOffline: qRampStore().getTitleOffline(),
           ...businessUnitId,
           type: qRampStore().getTypeWorkOrder(),
-          operationTypeId: this.validateNoFligth ? 13 : null
+          operationTypeId: this.validateNoFligth ? 13 : null,
+          ...(this.isAppOffline ? { apiRoute: CACHE_PATH, } : {})
         };
         try {
           response = await this.$crud.create(
