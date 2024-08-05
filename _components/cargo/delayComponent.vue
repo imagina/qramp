@@ -57,7 +57,6 @@ import qRampStore from "../../_store/qRampStore.js";
 import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
 import delayForm from './delayForm.vue';
 import { i18n } from 'src/plugins/utils'
-import crud from 'src/modules/qcrud/_services/baseService'
 
 export default defineComponent({
   components: {
@@ -125,35 +124,7 @@ export default defineComponent({
         hours: "",
       });
     }
-
-    function getCodeList() {
-      const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
-      const params = {
-        refresh: true,
-        params: {
-          filter: {
-            companyId: filterCompany.value,
-          },
-        },
-      };
-      crud
-        .index(API_ROUTE, params)
-        .then((res) => {
-          const data = res.data || [];
-          const codeList = data.map((item) => ({
-            id: item.id,
-            label: item.name,
-            value: item.name,
-          }));
-          workOrderList().setWorkOrderDelays(codeList);
-        })
-        .catch((err) => {
-          workOrderList().setWorkOrderDelays([]);
-          console.log("ERROR WHILE OBTAINING THE LIST OF CODES:", err);
-        });
-    }
     onMounted(() => {
-      getCodeList();
       delay.value = delayList.value.length > 0;
     })
     return {
@@ -162,7 +133,6 @@ export default defineComponent({
       delDelay,
       delay,
       resetDelayList,
-      getCodeList,
       addDelay,
     };
   },
