@@ -53,14 +53,6 @@ export default {
                     this.areaId = this.$filter.values.areaId;
             }
         },
-        'isAppOffline': {
-            deep: true,
-            handler: async function (newValue) {
-                if (!newValue) {
-                    await workOrderList().getWorkOrderConditionally(true);
-                }
-            }
-        }
     },
     async created() {
         this.$nextTick(async () => {
@@ -635,7 +627,7 @@ export default {
                 4: 'CLOSED',
                 5: 'SCHEDULE',
             }
-            return `Work Order ${statusObj[statusId]} - ID ${itemId}`;
+            return `Work Order ${statusObj[statusId]}`;
         },
         async changeStatus(status, itemId) {
             const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -663,21 +655,19 @@ export default {
                 payload,
                 customParams
             );
-            request.then(res => {
-                this.$root.$emit('crud.data.refresh')
+            request.catch(async err => {
+                if (!this.isAppOffline) {
+                    this.$alert.error({
+                        message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
+                    })
+                }
+            }).finally(async () => {
                 this.$emit('loading', false)
+                await this.getDataTable(true);
             })
-                .catch(async err => {
-                    this.$emit('loading', false)
-                    if (!this.isAppOffline) {
-                        this.$alert.error({
-                            message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
-                        })
-                    }
-                })
         },
         async openModal(item) {
-            const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
+            const titleModal = this.$tr('ifly.cms.form.updateWorkOrder')
             await qRampStore().setIsPassenger(false);
             await this.$refs.formOrders.loadform({
                 modalProps: {

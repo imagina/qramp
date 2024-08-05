@@ -37,6 +37,7 @@ export default function modalFormController(props: any = null, emit: any = null)
         label: i18n.tr('isite.cms.label.save'),
       },
       action: async () => {
+        qRampStore().setTitleOffline('New fueling')
         save()
       }
     },

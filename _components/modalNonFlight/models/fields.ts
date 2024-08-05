@@ -41,7 +41,7 @@ const manageResponsiblePermissions = computed(() => {
 const isActiveNonFlightServices = computed(() => store.selectedTab === NON_FLIGHT)
 
 const isAppOffline = computed(() => {
-    return storeKanban.isAppOffline
+    return auth.state.qofflineMaster.isAppOffline
 })
 
 export const fields = computed(() => ({
@@ -126,7 +126,7 @@ export const fields = computed(() => ({
             filterByQuery: !isAppOffline.value,
             requestParams: {
                 filter: {
-                companyId: filterCompany.value
+                    companyId: filterCompany.value
                 }
             }
         },

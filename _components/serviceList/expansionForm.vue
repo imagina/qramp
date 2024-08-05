@@ -17,6 +17,7 @@ export default defineComponent({
   setup(props) {
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
+    const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
     const permissionFavourite: any = computed(() => ({
       create: store.hasAccess('isite.favourites.create'),
       edit: store.hasAccess('isite.favourites.edit'),
@@ -55,7 +56,8 @@ export default defineComponent({
       favourite,
       selectFavourite,
       refData,
-      permissionFavourite
+      permissionFavourite,
+      isAppOffline
     }
   },
 })
@@ -119,7 +121,7 @@ export default defineComponent({
             text-services
             tw-pl-2"
           >
-              <div class="q-px-sm" v-if="permissionFavourite.create">
+              <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
                 <i
                   class="fa-star color-icon-star tw-cursor-pointer"
                   @click="selectFavourite(data[index])"

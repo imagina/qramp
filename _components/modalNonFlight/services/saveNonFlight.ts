@@ -27,6 +27,7 @@ export const saveWorkOrders = async () => {
         response = await baseService.create(API_ROUTE, {
             ...payload,
             offlineId: isOffline ? offlineId : null,
+            ...(isOffline ? { apiRoute: API_ROUTE, } : {})
         })
     } catch (error) {
         if (isOffline) response.data = payloadOffline
