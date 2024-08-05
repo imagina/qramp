@@ -371,8 +371,9 @@ export default {
         if(navigator.onLine) {
           qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
         } else {
-          const workOrderItems = workOrderList().getWorkOrdersItemsList()
-            .filter(item => item.workorderId == this.modalProps.workOrderId);
+          const workOrderItems = workOrderList().getWorkOrdersItemsList()?.filter(
+            item => item.workorderId == this.modalProps.workOrderId
+          );
           const updatedItems = updateData.data['workOrderItems']?.length > 0
             ? updateData.data['workOrderItems']
             : workOrderItems;
