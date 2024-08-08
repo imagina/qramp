@@ -61,7 +61,7 @@ const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
 
 function demoMessage(error: any): void {
   if(error.code !== 'ERR_CANCELED') {
-    demoMessage(error);
+    console.error(error);
   }
 }
 /**
