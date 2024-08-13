@@ -741,11 +741,15 @@ export default function workOrderList(): WorkOrderList {
     async function getFavourites(refresh = false) {
         if (hasAccess('isite.favourites.index')) {
             try {
-                const response = await baseService.index('apiRoutes.qsite.favourites', {refresh});
+                const response = await baseService.index('apiRoutes.qramp.favourites', {refresh});
                 const data = response.data.map(item => ({
-                    favouriteId: item.id,
-                    id: item.favouritableId,
-                    favouritableType: item.favouritableType,
+                    id: item.id,
+                    contractId: item.contractId,
+                    customerId: item.customerId,
+                    stationId: item.stationId,
+                    productId: item.productId,
+                    carrierId: item.carrierId,
+                    operationTypeId: item.operationTypeId,
                 }));
                 serviceListStore().setFavouriteList(data);
                 return data;

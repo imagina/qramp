@@ -98,6 +98,7 @@ export interface ServiceListStoreContract {
     getServiceList(): ServiceModelContract[];
 
     getFavouriteList(): any[];
+    getFavouriteListFiltered(): any[];
 
     setFavouriteList(value: any): void;
     setErrorList(value: any[]): void;

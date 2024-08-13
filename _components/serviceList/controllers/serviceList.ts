@@ -25,10 +25,7 @@ export default function useServiceList(props = {}, emit = null) {
      */
     const trans = computed((): any =>  i18n.tr);
     const showFavourite = computed(() => serviceListStore().getShowFavourite());
-    const favouritesList: any = computed(() => {
-        const serviceList = searchAndCreateDynamicField(serviceListModel.value);
-        return serviceListStore().getFavouriteList().filter(item => serviceList.map(item => item.id).includes(item.id));
-    });
+    const favouritesList: any = computed(() => serviceListStore().getFavouriteListFiltered());
     const loading = computed((): Boolean => serviceListStore().getLoading());
     const errorList = computed(() => serviceListStore().getErrorList())
     const serviceListModel = computed((): ServiceModelContract[] =>
@@ -151,7 +148,7 @@ export default function useServiceList(props = {}, emit = null) {
             };
         }
         if (showFavourite.value && errorList.length === 0) {
-            const favourites = favouritesList.value.map(item => item.id);
+            const favourites = favouritesList.value.map(item => item.productId);
             const filteredDynamicFields = searchAndCreateDynamicField(serviceListModel.value || []).filter((dynamicItem) =>
                 favourites.includes(dynamicItem.id)
             );
@@ -170,7 +167,6 @@ export default function useServiceList(props = {}, emit = null) {
                 lists: []
             };
         }
-
         return filteredServices;
     });
 
@@ -179,6 +175,15 @@ export default function useServiceList(props = {}, emit = null) {
             serviceListStore().setShowFavourite(false)
         }
     },
+        { deep: true }
+    );
+    watch(() => serviceListModel, (currentValue, oldValue) => {
+            if (!selectService.value) return 
+            breadcrumbs.value.forEach((item, index) => { 
+                const service = currentValue.value.find(service => service.id === selectService.value.id) ?? null
+                setBreadcrumbs(service, index);
+            });
+        },
         { deep: true }
     );
     onMounted(() => {

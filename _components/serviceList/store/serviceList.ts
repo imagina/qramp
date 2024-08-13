@@ -12,6 +12,7 @@ import {
 } from '../contracts/index.contract';
 import qRampStore from '../../../_store//qRampStore';
 import _ from 'lodash';
+import storeFlight from '../../flight/store'
 
 const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
@@ -86,8 +87,20 @@ export default function serviceListStore(): ServiceListStoreContract {
         return state.favouriteList;
     }
 
-    function removeFromFavouriteList(data) {
-        state.favouriteList = state.favouriteList.filter(item => item.id !== data.id);
+    function getFavouriteListFiltered(): any[] {
+        const { stationId, contractId, customerId, carrierId, operationTypeId } = storeFlight().getForm();
+        return serviceListStore().getFavouriteList().filter(item => {
+            const matchContract = Number(item.contractId) === Number(contractId);
+            const matchCustomer = Number(item.customerId) === Number(customerId);
+            const matchStation = Number(item.stationId) === Number(stationId);
+            const matchCarrier = Number(item.carrierId) === Number(carrierId);
+            const matchOperationType = Number(item.operationTypeId) === Number(operationTypeId);
+            return matchContract && matchCustomer && matchStation && matchCarrier && matchOperationType;
+        });
+    }
+
+    function removeFromFavouriteList(id) {
+        state.favouriteList = state.favouriteList.filter(item => item.productId !== id);
     } 
 
     function pustFavouriteList(data) {
@@ -231,6 +244,7 @@ export default function serviceListStore(): ServiceListStoreContract {
         orderServicesWithTheStructureToSave,
         getServiceItems,
         getFavouriteList,
+        getFavouriteListFiltered,
         setFavouriteList,
         removeFromFavouriteList,
         pustFavouriteList,

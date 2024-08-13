@@ -107,7 +107,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         };
         const organizeProduct = organizeProducts(product);
         organizeProduct?.forEach((product) => {
-            const favourite = serviceListStore().getFavouriteList().find(item => item.id == product.id);
+            const favourite = serviceListStore().getFavouriteListFiltered().find(item => item.productId == product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;

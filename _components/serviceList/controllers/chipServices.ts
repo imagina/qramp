@@ -1,4 +1,4 @@
-import Vue, {ref, watch, computed, ComputedRef} from 'vue';
+import {ref, watch, computed, ComputedRef} from 'vue';
 import serviceListStore from '../store/serviceList';
 import findDynamicFieldTitle from '../services/findDynamicFieldTitle';
 import searchAndCreateDynamicField from '../services/searchAndCreateDynamicField';
@@ -9,9 +9,9 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     let lists: any = ref([]);
     const popupProxyRef: any = ref(null);
     const favouritesList: any = computed(() => {
-        const serviceList: any[] = searchAndCreateDynamicField(serviceListStore().getServiceList());
-        return serviceListStore().getFavouriteList().filter(item => serviceList.map(item => item.id).includes(item.id));
+        return serviceListStore().getFavouriteListFiltered()
     })
+    const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline);
     const permissionFavourite = computed(() => ({
         create: store.hasAccess('isite.favourites.create'),
         edit: store.hasAccess('isite.favourites.edit'),
@@ -56,7 +56,8 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
         showFavourite,
         favouritesList,
         favourites,
-        permissionFavourite
+        permissionFavourite,
+        isAppOffline
     }
 }
 export default chipServicesController;  

@@ -4,6 +4,7 @@ import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
+import storeFlight from '../flight/store';
 import { alert, store } from 'src/plugins/utils';
 
 export default defineComponent({
@@ -28,15 +29,22 @@ export default defineComponent({
       data.favourite = !data.favourite;
       if (!data.favourite) {
         if(!permissionFavourite.value.destroy) return;
-        const favoriteData = serviceListStore().getFavouriteList().find(item => item.id === data.id);
-        await deleteFavourites(favoriteData);
-        serviceListStore().removeFromFavouriteList(data);
+        const favoriteData = serviceListStore().getFavouriteList().find(item => item.productId === data.id);
+        await deleteFavourites(favoriteData.id);
+        serviceListStore().removeFromFavouriteList(data.id);
         alert.success({ message: `Favorite deleted successfully Product:${data.title}` });
       } else {
         if(!permissionFavourite.value.create) return;
-        const response: any = await postFavourites({...data, userId: store.state.quserAuth.userId});
-        const favoriteData = {...data, favouriteId: response?.id || 0};
-        serviceListStore().pustFavouriteList(favoriteData);
+        const { stationId, contractId, customerId, carrierId, operationTypeId } = storeFlight().getForm();
+        const response: any = await postFavourites({
+          productId: data.id, 
+          stationId,
+          contractId,
+          customerId,
+          carrierId,
+          operationTypeId
+        });
+        serviceListStore().pustFavouriteList({ ...response });
         alert.success(`Favorite created successfully Product:${data.title}`);
       }
       await workOrderList().getFavourites(true);

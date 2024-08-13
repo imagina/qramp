@@ -137,6 +137,7 @@ import collapse from './collapse.vue'
 import moment from 'moment';
 import momentTimezone from "moment-timezone";
 import serviceListStore from '../serviceList/store/serviceList';
+import store from './store'
 
 export default {
   props: {
@@ -247,8 +248,21 @@ export default {
           qRampStore().setTypeWorkOrder(FLIGHT);
         }
       }
+      store().setForm(this.form);
       serviceListStore().init().then();
-    }
+    },
+    async 'form.stationId'() {
+      store().setForm(this.form);
+      await serviceListStore().init();
+    },
+    async 'form.carrierId'() {
+      store().setForm(this.form);
+      await serviceListStore().init();
+    },
+    async selectCustomers() {
+      store().setForm(this.form);
+      await serviceListStore().init();
+    },
   },
   computed: {
     validateNoFligth() {
