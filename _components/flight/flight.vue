@@ -240,7 +240,7 @@ export default {
         this.openAlert = true
       }
     },
-    async 'form.operationTypeId'(newVal) {
+    'form.operationTypeId'(newVal) {
       if(qRampStore().getTypeWorkOrder() !== LABOR) {
         if(newVal == OPERATION_TYPE_NON_FLIGHT) {
           qRampStore().setTypeWorkOrder(NON_FLIGHT);
