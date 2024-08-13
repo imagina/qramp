@@ -25,7 +25,10 @@ export default function useServiceList(props = {}, emit = null) {
      */
     const trans = computed((): any =>  i18n.tr);
     const showFavourite = computed(() => serviceListStore().getShowFavourite());
-    const favouritesList: any = computed(() => serviceListStore().getFavouriteListFiltered());
+    const favouritesList: any = computed(() => {
+        const serviceList = searchAndCreateDynamicField(serviceListModel.value);
+        return serviceListStore().getFavouriteListFiltered().filter(item => serviceList.map(service => service.id).includes(item.productId));
+    });
     const loading = computed((): Boolean => serviceListStore().getLoading());
     const errorList = computed(() => serviceListStore().getErrorList())
     const serviceListModel = computed((): ServiceModelContract[] =>

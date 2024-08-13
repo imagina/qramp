@@ -240,7 +240,7 @@ export default {
         this.openAlert = true
       }
     },
-    'form.operationTypeId' (newVal) {
+    async 'form.operationTypeId'(newVal) {
       if(qRampStore().getTypeWorkOrder() !== LABOR) {
         if(newVal == OPERATION_TYPE_NON_FLIGHT) {
           qRampStore().setTypeWorkOrder(NON_FLIGHT);
@@ -248,20 +248,9 @@ export default {
           qRampStore().setTypeWorkOrder(FLIGHT);
         }
       }
-      store().setForm(this.form);
-      serviceListStore().init().then();
-    },
-    async 'form.stationId'() {
-      store().setForm(this.form);
-      await serviceListStore().init();
-    },
-    async 'form.carrierId'() {
-      store().setForm(this.form);
-      await serviceListStore().init();
     },
     async selectCustomers() {
-      store().setForm(this.form);
-      await serviceListStore().init();
+      await this.reFilterFavorites()
     },
   },
   computed: {
@@ -1304,11 +1293,20 @@ export default {
       this.form.outboundCustomFlightNumber = false
       this.form.inboundCustomFlightNumber = false
     },
-    resetField(key = '') {
+    async resetField(key = '') {
       if (key === 'stationId') {
         this.timezoneAirport;
         this.form.gateId = null;
+        
+        await this.reFilterFavorites()
+
         return;
+      }
+      if (key === 'carrierId') {
+        await this.reFilterFavorites()
+      }
+      if (key === 'operationTypeId') {
+        await this.reFilterFavorites()
       }
       if (!this.form.operationTypeId) return;
       this.$refs.myForm.reset();
@@ -1395,6 +1393,10 @@ export default {
       }
       return dataForm.every(item => item === true);
     },
+    async reFilterFavorites() {
+      store().setForm(this.form);
+      await serviceListStore().init();
+    }
   },
 }
 </script>

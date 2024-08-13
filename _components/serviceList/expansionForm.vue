@@ -30,7 +30,7 @@ export default defineComponent({
       if (!data.favourite) {
         if(!permissionFavourite.value.destroy) return;
         const favoriteData = serviceListStore().getFavouriteList().find(item => item.productId === data.id);
-        await deleteFavourites(favoriteData.id);
+        await deleteFavourites(favoriteData?.id);
         serviceListStore().removeFromFavouriteList(data.id);
         alert.success({ message: `Favorite deleted successfully Product:${data.title}` });
       } else {

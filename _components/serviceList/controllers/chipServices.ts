@@ -9,7 +9,8 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     let lists: any = ref([]);
     const popupProxyRef: any = ref(null);
     const favouritesList: any = computed(() => {
-        return serviceListStore().getFavouriteListFiltered()
+        const serviceList: any[] = searchAndCreateDynamicField(serviceListStore().getServiceList());
+        return serviceListStore().getFavouriteListFiltered().filter(item => serviceList.map(service => service.id === item.productId));
     })
     const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline);
     const permissionFavourite = computed(() => ({
