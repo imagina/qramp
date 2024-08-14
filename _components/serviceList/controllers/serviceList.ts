@@ -27,7 +27,7 @@ export default function useServiceList(props = {}, emit = null) {
     const showFavourite = computed(() => serviceListStore().getShowFavourite());
     const favouritesList: any = computed(() => {
         const serviceList = searchAndCreateDynamicField(serviceListModel.value);
-        return serviceListStore().getFavouriteList().filter(item => serviceList.map(item => item.id).includes(item.id));
+        return serviceListStore().getFavouriteList().filter(item => serviceList.map(service => service.id).includes(item.productId));
     });
     const loading = computed((): Boolean => serviceListStore().getLoading());
     const errorList = computed(() => serviceListStore().getErrorList())
@@ -151,7 +151,7 @@ export default function useServiceList(props = {}, emit = null) {
             };
         }
         if (showFavourite.value && errorList.length === 0) {
-            const favourites = favouritesList.value.map(item => item.id);
+            const favourites = favouritesList.value.map(item => item.productId);
             const filteredDynamicFields = searchAndCreateDynamicField(serviceListModel.value || []).filter((dynamicItem) =>
                 favourites.includes(dynamicItem.id)
             );

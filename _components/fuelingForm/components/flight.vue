@@ -8,6 +8,7 @@
                     :key="keyField"
                     :id="keyField"
                     :field="field"
+                    @update:modelValue="handleChange(keyField, $event)"
                     v-model="form[keyField]"
                 />
             </div>
@@ -18,6 +19,7 @@
                     :key="keyField"
                     :id="keyField"
                     :field="field"
+                    @update:modelValue="handleChange(keyField, $event)"
                     v-model="form[keyField]"
                 />
             </div>

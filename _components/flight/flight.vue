@@ -43,7 +43,7 @@
             <dynamic-field v-if="keyField !== 'responsibleId'" :key="keyField" :id="keyField" :field="field"
               :class="`${readonly ? 'col-7' : ''}`"
               :style="`${field.type !== 'input' && !readonly ? 'padding-bottom:1px' : 'padding-bottom:0px'}`"
-              v-model="form[keyField]" @update:modelValue="resetField()" />
+              v-model="form[keyField]" @update:modelValue="resetField(keyField)" />
           </label>
           <div v-if="keyField === 'responsibleId'">
             <dynamic-field :key="keyField" :id="keyField" :field="field" :class="`${readonly ? 'col-7' : ''}`"
@@ -137,6 +137,8 @@ import collapse from './collapse.vue'
 import moment from 'moment';
 import momentTimezone from "moment-timezone";
 import serviceListStore from '../serviceList/store/serviceList';
+import store from './store'
+import { updateFavoriteServicesList } from '../serviceList/actions/updateFavoriteServicesList';
 
 export default {
   props: {
@@ -184,7 +186,6 @@ export default {
       refresh: 1,
       selected: [],
       loadingState: false,
-      openAlert: false,
       update: false,
       dialog: false,
       inOutBound: null,
@@ -225,21 +226,7 @@ export default {
           this.form.outboundScheduledDeparture = null
       }
     },
-    'form.outboundDestinationAirportId'(val) {
-      if (this.form.inboundOriginAirportId) {
-        this.openAlert = false
-      } else {
-        this.openAlert = true
-      }
-    },
-    'form.inboundOriginAirportId'(val) {
-      if (this.form.outboundDestinationAirportId) {
-        this.openAlert = false
-      } else {
-        this.openAlert = true
-      }
-    },
-    'form.operationTypeId' (newVal) {
+    'form.operationTypeId'(newVal) {
       if(qRampStore().getTypeWorkOrder() !== LABOR) {
         if(newVal == OPERATION_TYPE_NON_FLIGHT) {
           qRampStore().setTypeWorkOrder(NON_FLIGHT);
@@ -247,8 +234,9 @@ export default {
           qRampStore().setTypeWorkOrder(FLIGHT);
         }
       }
-      serviceListStore().init().then();
-    }
+
+      // serviceListStore().init().then();
+    },
   },
   computed: {
     validateNoFligth() {
@@ -971,7 +959,6 @@ export default {
         }
 
 
-        await this.setCustomerForm();
         this.form.date = updateForm.date
         this.form.gateId = updateForm.gateId
         this.form.operationTypeId = updateForm.operationTypeId
@@ -1230,7 +1217,7 @@ export default {
       }
       return !!val || this.$tr('isite.cms.message.fieldRequired');
     },
-    setCustomerForm() {
+    async setCustomerForm() {
       const selectCustomers = this.selectCustomers === null ||
         this.selectCustomers === undefined ||
         this.selectCustomers === '' ? {} : this.selectCustomers;
@@ -1246,6 +1233,7 @@ export default {
       this.bannerMessage = selectCustomers && this.form.customerId !== null && !this.form.contractId ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
+      await this.reFilterFavorites();
     },
     setCustomerName(query) {
       this.customerName = query !== '' ? query : '';
@@ -1290,11 +1278,20 @@ export default {
       this.form.outboundCustomFlightNumber = false
       this.form.inboundCustomFlightNumber = false
     },
-    resetField(key = '') {
+    async resetField(key = '') {
       if (key === 'stationId') {
         this.timezoneAirport;
         this.form.gateId = null;
+
+        await this.reFilterFavorites()
+
         return;
+      }
+      if (key === 'operationTypeId') {
+        await this.reFilterFavorites()
+      }
+      if (key === 'carrierId') {
+        await this.reFilterFavorites()
       }
       if (!this.form.operationTypeId) return;
       this.$refs.myForm.reset();
@@ -1381,6 +1378,12 @@ export default {
       }
       return dataForm.every(item => item === true);
     },
+    async reFilterFavorites() {
+      store().setForm(this.form);
+      await workOrderList().getFavourites(true)
+      const servicesList = serviceListStore().getServiceList()
+      updateFavoriteServicesList(servicesList);
+    }
   },
 }
 </script>

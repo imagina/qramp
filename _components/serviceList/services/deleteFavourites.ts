@@ -1,8 +1,8 @@
 import baseService from '@imagina/qcrud/_services/baseService.js'
 
-export default async (data) => {
+export default async (id) => {
     try {
-        await baseService.delete('apiRoutes.qsite.favourites', data.favouriteId);
+        await baseService.delete('apiRoutes.qramp.favourites', id);
     } catch (error) {
         console.log(error)   
     }

@@ -46,5 +46,6 @@ export default {
   bulkExportCsv: `${urlBase}/work-orders/bulk-export-csv`,
   passengerBulkExportCsv: `${urlBase}/work-orders/passenger-bulk-export-csv`,
   bulkReloadTransactions: `${urlBase}/work-orders/bulk-reload-transactions`,
-  workOrderItems: `${urlBase}/work-order-items`
+  workOrderItems: `${urlBase}/work-order-items`,
+  favourites: `${urlBase}/favourites`
 }

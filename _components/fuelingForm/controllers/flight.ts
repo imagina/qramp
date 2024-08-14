@@ -1,9 +1,12 @@
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import qRampStore from '../../../_store/qRampStore';
 import workOrderList from '../../../_store/actions/workOrderList';
 import momentTimezone from 'moment-timezone';
 import storeFueling from '../store/index'
+import storeFlight from '../../flight/store'
+import serviceListStore from '../../serviceList/store/serviceList'
 import { store, i18n } from 'src/plugins/utils';
+import { updateFavoriteServicesList } from '../../serviceList/actions/updateFavoriteServicesList';
 
 export default function flightController() {
   const refFlight: any = ref(null);
@@ -159,8 +162,27 @@ export default function flightController() {
       },
     }
   })
+
+  const reFilterFavorites = async (key: string, value) => {
+    storeFueling.loading = true;
+    storeFlight().setForm({ ...storeFlight().getForm(), [key]: value });
+    await workOrderList().getFavourites(true);
+    const servicesList = serviceListStore().getServiceList();
+    updateFavoriteServicesList(servicesList);
+    storeFueling.loading = false;
+  }
+
+  const handleChange = async (key, event) => {
+    if (key === 'stationId') await reFilterFavorites(key, event)
+    if (key === 'carrierId') await reFilterFavorites(key, event)
+  }
+
+  watch(() => form.value.customerId, async (value) => {
+    reFilterFavorites('customerId', value)
+  }, { deep: true })
+
   onMounted(() => {
     storeFueling.refsGlobal = { refFlight: refFlight.value };
   })
-  return { formFields, form, refFlight, disabledReadonly }
+  return { formFields, form, refFlight, disabledReadonly, handleChange }
 }

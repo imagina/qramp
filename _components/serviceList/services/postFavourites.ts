@@ -1,12 +1,8 @@
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from 'modules/qcrud/_services/baseService.js'
 
 export default async (data) => {
     try {
-        const response = await baseService.create('apiRoutes.qsite.favourites', {
-            favouritableType: 'Idata.Data.Entities.Ramp.Product',
-            favouritableId: data.id,
-            userId: data.userId
-        });
+        const response = await baseService.create('apiRoutes.qramp.favourites', { ...data });
         return response.data;
     } catch (error) {
         console.log(error)

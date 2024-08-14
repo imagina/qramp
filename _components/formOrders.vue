@@ -380,7 +380,6 @@ export default {
           qRampStore().setWorkOrderItems(updatedItems);
         }
 
-        await serviceListStore().init();
         remarksStore().setForm(updateData.data);
         this.signature.customerName = updateData.data['customerName']
         this.signature.customerTitle = updateData.data['customerTitle']
