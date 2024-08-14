@@ -249,6 +249,9 @@ export default {
         }
       }
     },
+    async 'form.carrierId'() {
+      await this.reFilterFavorites()
+    },
     async selectCustomers() {
       await this.reFilterFavorites()
     },
@@ -1302,9 +1305,6 @@ export default {
 
         return;
       }
-      if (key === 'carrierId') {
-        await this.reFilterFavorites()
-      }
       if (key === 'operationTypeId') {
         await this.reFilterFavorites()
       }
@@ -1395,6 +1395,7 @@ export default {
     },
     async reFilterFavorites() {
       store().setForm(this.form);
+      await workOrderList().getFavourites(true)
       await serviceListStore().init();
     }
   },

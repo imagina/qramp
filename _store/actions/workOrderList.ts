@@ -26,6 +26,7 @@ import {buildServiceList} from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
 import {store} from 'src/plugins/utils'
 import serviceListStore from '../../_components/serviceList/store/serviceList'
+import storeFlight from 'src/modules/qramp/_components/flight/store';
 
 const state = reactive<State>({
   operationTypeList: [],
@@ -741,18 +742,37 @@ export default function workOrderList(): WorkOrderList {
     async function getFavourites(refresh = false) {
         if (hasAccess('isite.favourites.index')) {
             try {
-                const response = await baseService.index('apiRoutes.qramp.favourites', {refresh});
-                const data = response.data.map(item => ({
-                    id: item.id,
-                    contractId: item.contractId,
-                    customerId: item.customerId,
-                    stationId: item.stationId,
-                    productId: item.productId,
-                    carrierId: item.carrierId,
-                    operationTypeId: item.operationTypeId,
-                }));
-                serviceListStore().setFavouriteList(data);
-                return data;
+              const { 
+                stationId, 
+                contractId, 
+                customerId, 
+                carrierId, 
+                operationTypeId 
+              } = storeFlight().getForm();
+              const requestParameters = {
+                refresh,
+                params: {
+                  filter: {
+                    stationId, 
+                    contractId, 
+                    customerId, 
+                    carrierId, 
+                    operationTypeId 
+                  },
+                }
+              }
+              const response = await baseService.index('apiRoutes.qramp.favourites', requestParameters);
+              const data = response.data.map(item => ({
+                  id: item.id,
+                  contractId: item.contractId,
+                  customerId: item.customerId,
+                  stationId: item.stationId,
+                  productId: item.productId,
+                  carrierId: item.carrierId,
+                  operationTypeId: item.operationTypeId,
+              }));
+              serviceListStore().setFavouriteList(data);
+              return data;
             } catch (error) {
                 demoMessage(error);
             }
@@ -854,7 +874,6 @@ export default function workOrderList(): WorkOrderList {
       getListDelays(refresh),
       getResponsibleList(refresh),
       getAirports(refresh),
-      getFavourites(refresh),
       buildServiceList(),
     ]);
   }

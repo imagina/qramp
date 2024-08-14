@@ -12,7 +12,6 @@ import {
 } from '../contracts/index.contract';
 import qRampStore from '../../../_store//qRampStore';
 import _ from 'lodash';
-import { filterFavoritesList } from '../actions/filterFavoritesList'
 
 const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
@@ -85,10 +84,6 @@ export default function serviceListStore(): ServiceListStoreContract {
 
     function getFavouriteList(): any[] {
         return state.favouriteList;
-    }
-
-    function getFavouriteListFiltered(): any[] {
-        return filterFavoritesList()
     }
 
     function removeFromFavouriteList(id) {
@@ -236,7 +231,6 @@ export default function serviceListStore(): ServiceListStoreContract {
         orderServicesWithTheStructureToSave,
         getServiceItems,
         getFavouriteList,
-        getFavouriteListFiltered,
         setFavouriteList,
         removeFromFavouriteList,
         pustFavouriteList,
