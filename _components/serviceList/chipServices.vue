@@ -18,7 +18,7 @@ export default defineComponent({
       round
       flat
       @click="favourites"
-      v-if="favouritesList.length > 0 && permissionFavourite.index"
+      v-if="favouritesList.length > 0 && permissionFavourite.index && !isAppOffline"
     >
       <q-badge 
         floating 
@@ -30,7 +30,7 @@ export default defineComponent({
       </q-badge>
     </q-btn>
     <hr 
-      v-if="favouritesList.length > 0 && lists.length > 0" 
+      v-if="favouritesList.length > 0 && lists.length > 0 && !isAppOffline" 
       class="tw-h-5 tw-w-0.5 tw-mx-2 hr-bg-color"
     />
     <q-btn   

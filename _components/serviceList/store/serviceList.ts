@@ -10,7 +10,7 @@ import {
     ReactiveStoreContract,
     DynamicField
 } from '../contracts/index.contract';
-import qRampStore from '../../../_store//qRampStore';
+import qRampStore from '../../../_store/qRampStore';
 import _ from 'lodash';
 
 const CATEGORY_SERVICES = 1;
@@ -86,8 +86,8 @@ export default function serviceListStore(): ServiceListStoreContract {
         return state.favouriteList;
     }
 
-    function removeFromFavouriteList(data) {
-        state.favouriteList = state.favouriteList.filter(item => item.id !== data.id);
+    function removeFromFavouriteList(id) {
+        state.favouriteList = state.favouriteList.filter(item => item.productId !== id);
     } 
 
     function pustFavouriteList(data) {

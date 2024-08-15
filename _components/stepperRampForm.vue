@@ -91,8 +91,8 @@ export default {
   },
   inject: ['disabledReadonly'],
   mounted() {
-    this.$nextTick(function () {
-      this.init()
+    this.$nextTick(async function () {
+      await this.init()
     })
   },
   watch: {
@@ -124,8 +124,10 @@ export default {
     },
   },
   methods: {
-    init() {
+    async init() {
       this.$emit('sp', this.sp)
+      await workOrderList().getFavourites(true);
+      await serviceListStore().init();
     },
     parseDateOfflineWO(dateWO){
       if (!dateWO && !dateWO?.includes('T')) return dateWO;

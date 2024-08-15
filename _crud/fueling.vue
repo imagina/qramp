@@ -24,6 +24,7 @@ import workOrderList from '../_store/actions/workOrderList.ts';
 import { cacheOffline } from 'src/plugins/utils';
 import fuelingForm from '../_components/fuelingForm/components/index'
 import fuelingFormStore from '../_components/fuelingForm/store/index.ts'
+import storeFlight from '../_components/flight/store'
 
 export default {
   name: 'RampCrud',
@@ -589,6 +590,7 @@ export default {
     async openModal(item) {
       await qRampStore().setIsPassenger(true);
       fuelingFormStore.form = { ...item };
+      storeFlight().setForm({ ...item });
       qRampStore().setTitleOffline(fuelingFormStore.titleModal);
       fuelingFormStore.loading = false;
     },

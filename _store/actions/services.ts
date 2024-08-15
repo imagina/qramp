@@ -106,15 +106,16 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             icon: "fa-solid fa-gear",
         };
         const organizeProduct = organizeProducts(product);
+        const favouriteProductIdList = serviceListStore().getFavouriteList().map(item => item.productId);
         organizeProduct?.forEach((product) => {
-            const favourite = serviceListStore().getFavouriteList().find(item => item.id == product.id);
+            const favourite = favouriteProductIdList.includes(product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
             dynamicFieldModel.formField = getDynamicField(product);
-            dynamicFieldModel.favourite = favourite ? true : false;
+            dynamicFieldModel.favourite = favourite;
             dynamicFieldModel.productType = product.type;
             data.push({ ...dynamicFieldModel });
         });
