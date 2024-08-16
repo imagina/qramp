@@ -32,7 +32,7 @@ const filterResponsible = computed(() => {
   })
 
 const filterCompany = computed(() => {
-    return isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP;
+    return qRampStore().getFilterCompany();
 })
 
 const manageResponsiblePermissions = computed(() => {

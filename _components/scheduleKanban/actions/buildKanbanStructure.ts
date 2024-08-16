@@ -6,13 +6,10 @@ import { Columns } from "../contracts/kanbanStore.contract";
 import storeFilters from "../store/filters.store";
 import scheduleTypeModel from '../models/scheduleType.model';
 import modalScheduleStore from '../store/modalSchedule.store'
-import _ from 'lodash'
-import qRampStore from "src/modules/qramp/_store/qRampStore";
  
 export async function getColumns(): Promise<Columns[]> {
   try {
     const  weekAgenda = scheduleTypeModel[0].value;
-    //storeKanban.scheduleType = storeFilters.scheduleType;
     const isWeek = storeKanban.scheduleType === weekAgenda;
     const ONE_DAY = 1
     const FULL_WEEK = 7

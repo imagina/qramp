@@ -15,6 +15,7 @@ const state: State = reactive({
   dragDate: '',
   isBlank: false,
   isAppOffline: false,
+  search: null,
 });
 
 const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -69,7 +70,13 @@ const store: State = computed(() => ({
     state.isAppOffline = value;
   },
   get filterCompany(): any {
-    return isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP;
+    return qRampStore().getFilterCompany();
+  },
+  get search(): string | null {
+    return state.search;
+  },
+  set search(value: string | null) {
+    state.search = value;
   },
 })).value;
 

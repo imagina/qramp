@@ -116,13 +116,9 @@ const store = computed(() => ({
       return state.fullDay.split('-');
     },
     get payload(){
-      const isPassenger = qRampStore().getIsPassenger();
-      let businessUnitId: any = isPassenger ? { businessUnitId: BUSINESS_UNIT_PASSENGER } : {};
-      if(qRampStore().getTypeWorkOrder() === LABOR) {
-         businessUnitId = { businessUnitId: [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER] }
-      }
+      let businessUnitId: any = qRampStore().getBusinessUnitId();
       const typeWorkOrder = qRampStore().getTypeWorkOrder() === LABOR ? {type: [LABOR]} : {};
-      const filters = {...state.form, ...typeWorkOrder, ...businessUnitId };
+      const filters = {...state.form, ...typeWorkOrder, businessUnitId };
       delete filters.time;
       delete filters.scheduleType;
       Object.keys(filters).forEach(

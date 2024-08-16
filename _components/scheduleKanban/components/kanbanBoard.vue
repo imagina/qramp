@@ -6,6 +6,7 @@
         multipleRefresh
         :extra-actions="extraPageActions"  
         class="q-mb-md"
+        @search="val => changeSearch(val)"
         @refresh="buildKanbanStructure(true)" 
       />
     <filters />

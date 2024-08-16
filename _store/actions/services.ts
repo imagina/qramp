@@ -26,7 +26,7 @@ export const getCategories = async (): Promise<any[]> => {
     if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.categories.index')) {
         try {
             const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP; 
+            const companyId = qRampStore().getFilterCompany();
             
             let requestParams = {
                 params: {

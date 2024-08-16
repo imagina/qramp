@@ -50,7 +50,7 @@ import {
   OPERATION_TYPE_OTHER,
   LABOR,
   BUSINESS_UNIT_LABOR,
-  OPERATION_TYPE_NON_FLIGHT
+  OPERATION_TYPE_NON_FLIGHT, STEP_DELAY, STATION_BNA, STATIONS_DELAY
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceListStore from './serviceList/store/serviceList.ts';
@@ -66,6 +66,8 @@ import {
 import remarkStore from './remarks/store.ts';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 import workOrderList from '../_store/actions/workOrderList.ts'
+import storeCargo from "src/modules/qramp/_components/cargo/store/cargo";
+import flightStore from "src/modules/qramp/_components/flight/store"
 
 export default {
   name: 'stepperRampForm',
@@ -111,7 +113,7 @@ export default {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     stepError: {
       get() {
@@ -169,10 +171,7 @@ export default {
     },
     async sendInfo() {
       try {
-        let businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
-        if(this.isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
-          businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
-        }
+        let businessUnitId = qRampStore().getBusinessUnitId();
         const remarks = remarkStore().getForm();
         const serviceList = await serviceListStore().getServiceListSelected();
         const filterList = await serviceListStore().filterServicesListByQuantity();
@@ -203,9 +202,8 @@ export default {
           workOrderItems: [
             ...serviceList
           ],
-          ...businessUnitId,
+          businessUnitId,
         }
-
         if (this.isAppOffline) {
           formatData.titleOffline = `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${this.data.workOrderId}`;
         }
@@ -416,6 +414,53 @@ export default {
           qRampStore().hideLoading();
           return true;
         }
+        const delayList = storeCargo().getDelayList();
+        const validateDelayCode = delayList.some((item) => item.code && item.code.startsWith("99"));
+        const hasValidCodeAndHours = delayList.some(item => (item.code === '' || item.code === null) && item.hours);
+        const delayComment = storeCargo().getDelayComment();
+        const hasCodeAndInvalidHours = delayList.some(item => item.code && (!item.hours || item.hours == 0));
+
+        if (this.isPassenger) {
+          const delays = flightStore().getDifferenceTimeMinute();
+          const message = `You have to enter the at least one delay reason for the ${delays.inbound || delays.outbound}min delay time for flight`
+          if(STATIONS_DELAY.includes(Number(flightForm.stationId)) && delayList.length === 0) {
+            const differenceTimeMinute = flightStore().getDifferenceTimeMinute();
+            const inbound = differenceTimeMinute.inbound;
+            const outbound = differenceTimeMinute.outbound;
+            let time = [{code: null, hours: null}]
+            if(type) {
+              if(type === 'full'){
+                time = [{
+                  code: null,
+                  hours: inbound,
+                },{
+                  code: null,
+                  hours: outbound,
+                }].filter(item => item.hours > 0)
+              }
+              if(type === 'inbound') {
+                time[0].hours = inbound;
+              }
+              if(type === 'outbound') {
+                time[0].hours = outbound;
+              }
+            }
+
+            storeCargo().setDelayListData(time)
+            return await this.handleError(message);
+          }
+          if (hasCodeAndInvalidHours) {
+            return await this.handleError("You have data with empty or zero time");
+          }
+
+          if (hasValidCodeAndHours) {
+            return await this.handleError(message);
+          }
+
+          if (validateDelayCode && !delayComment) {
+            return await this.handleError(this.$tr('isite.cms.message.formInvalid'));
+          }
+        }
         this.error = false;
         return false;
       } catch (error) {
@@ -429,6 +474,15 @@ export default {
     isError(value) {
       this.stepError = value;
     },
+    async handleError(message) {
+      await this.setStep(STEP_DELAY);
+      this.error = true;
+      qRampStore().hideLoading();
+      await this.setData();
+      this.$alert.error({ message });
+      await this.$refs.delay[0].$refs.cargoDelay.validate()
+      return true;
+    }
   },
 }
 </script>

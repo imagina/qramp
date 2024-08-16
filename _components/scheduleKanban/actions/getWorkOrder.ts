@@ -9,6 +9,7 @@ import store from '../store/kanban.store';
 
 export default async function getWorkOrders(refresh = false, page = 1, date): Promise<WorkOrders> {
     try {
+        let searchData: any = store.search ? { search: store.search } : {};
         const params = {
             refresh,
             params: {
@@ -22,6 +23,7 @@ export default async function getWorkOrders(refresh = false, page = 1, date): Pr
                         field: "schedule_date_local",
                         way: "asc",
                     },
+                    ...searchData,
                 },
             },
         };

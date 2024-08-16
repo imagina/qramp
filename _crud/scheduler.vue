@@ -38,7 +38,7 @@ export default {
       return qRampStore().getIsPassenger();
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     crudData() {
       return {

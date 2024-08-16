@@ -146,7 +146,7 @@ export default {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
   },
   methods: {
@@ -322,19 +322,15 @@ export default {
         const CACHE_PATH = 'apiRoutes.qramp.workOrders'
         const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
         let response = null
-
         qRampStore().showLoading();
-        let businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
-        if(this.isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
-          businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
-        }
+        const businessUnitId = qRampStore().getBusinessUnitId();
         const offlineId = new Date().valueOf()
 
         const dataForm = {
           ...this.form, 
           offlineId: this.isAppOffline ? offlineId : null, 
           titleOffline: qRampStore().getTitleOffline(),
-          ...businessUnitId,
+          businessUnitId,
           type: qRampStore().getTypeWorkOrder(),
           operationTypeId: this.validateNoFligth ? 13 : null,
         };

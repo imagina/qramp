@@ -28,7 +28,15 @@ export default [
           pages.qramp.labor,
           pages.qramp.laborSchedule
         ]
-      }
+      },
+    ]
+  },
+  {
+    title: 'Security',
+    icon: 'fa-light fa-shield-halved',
+    children: [
+      pages.qramp.security,
+      pages.qramp.securitySchedule
     ]
   },
   {

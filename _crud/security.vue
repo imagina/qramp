@@ -1,10 +1,6 @@
 <template>
   <div>
     <form-orders ref="formOrders" />
-    <modalNonFlight
-      ref="refModalNonFlight"
-      :refFormOrders="refModalNonFlight"
-    />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
   </div>
@@ -15,33 +11,28 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_CLOSED,
-  STATUS_DRAFT, 
+  STATUS_DRAFT,
   STATUS_SCHEDULE,
-  BUSINESS_UNIT_PASSENGER,
-  COMPANY_PASSENGER,
-  FLIGHT,
-  NON_FLIGHT
+  COMPANY_SECURITY,
+  SECURITY,
+  BUSINESS_UNIT_SECURITY
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
-import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index.vue';
-import Vue from "vue";
 
 export default {
   name: 'RampCrud',
   components: {
     formOrders,
     flightDetail,
-    modalNonFlight,
   },
   data() {
     return {
       crudId: this.$uid(),
       areaId: null,
       loadingBulk: false,
-      refModalNonFlight: null
     }
   },
   provide() {
@@ -69,15 +60,10 @@ export default {
   },
   async created() {
     this.$nextTick(async () => {
-      await qRampStore().setIsPassenger(true);
-      await qRampStore().setTypeWorkOrder(null);
+      await qRampStore().setIsPassenger(false);
+      await qRampStore().setTypeWorkOrder(SECURITY);
       await workOrderList().getAllList(true);
       await workOrderList().getCustomerWithContract()
-    })
-  },
-  mounted() {
-    this.$nextTick(async () => {
-      this.refModalNonFlight = this.$refs.formOrders
     })
   },
   beforeDestroy() {
@@ -109,22 +95,20 @@ export default {
         crudId: this.crudId,
         entityName: config("main.qfly.entityNames.workOrder"),
         apiRoute: 'apiRoutes.qramp.workOrders',
-        permission: 'ramp.passenger-work-orders',
+        permission: 'ramp.security-work-orders',
         create: {
-          actions: [
-            {
-              label: 'Create Flight',
-              action: async () => {
-                await this.openCreateMode(FLIGHT)
-              } 
-            },
-            {
-              label: 'Create Non Flight',
-              action: async () => {
-                await this.openCreateMode(NON_FLIGHT)
-              } 
-            },
-          ]
+          method: async () => {
+            await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
+            await qRampStore().setTypeWorkOrder(SECURITY);
+            await qRampStore().setIsPassenger(false);
+            this.$refs.formOrders.loadform({
+              modalProps: {
+                title: this.$tr('ifly.cms.form.newWorkOrder'),
+                update: false,
+                width: '35vw'
+              }
+            })
+          },
         },
         read: {
           columns: [
@@ -151,17 +135,6 @@ export default {
               label: 'Contracts',
               field: 'contract',
               format: val => val ? val.contractName : '-',
-              align: 'left'
-            },
-            {
-              name: 'operationType',
-              label: 'Operation Type',
-              field: 'operationTypeId',
-              formatAsync: async item => {
-                const response = await workOrderList().getOperationTypeList()
-                  .find(operation => operation.id === item.operationTypeId) || {};
-                  return `${response.operationName || '-'}`;
-                  },
               align: 'left'
             },
             {
@@ -211,7 +184,7 @@ export default {
             {
               name: "outboundFlightNumber",
               label: 'Outbound Flight Number',
-              field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}${item.outbountFaFlightId ? '': '(Manually)'}`,
+              field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}${item.outboundFaFlightId ? '': '(Manually)'}`,
               align: "left",
               format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
               action: (item) => {
@@ -313,7 +286,7 @@ export default {
                 select: { 'label': 'customerName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    companyId: COMPANY_PASSENGER,
+                    companyId: COMPANY_SECURITY,
                   },
                 },
               },
@@ -332,7 +305,7 @@ export default {
                   requestParams: {
                   filter: {
                     contractStatusId: 1,
-                    businessUnitId: BUSINESS_UNIT_PASSENGER
+                    businessUnitId: [BUSINESS_UNIT_SECURITY]
                   },
                 },
               },
@@ -350,7 +323,7 @@ export default {
                 select: { 'label': 'statusName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    companyId: COMPANY_PASSENGER,
+                    companyId: COMPANY_SECURITY,
                   },
                 },
               },
@@ -367,7 +340,7 @@ export default {
                 select: { 'label': 'fullName', 'id': 'id' },
                 requestParams: {
                   filter: {
-                    companyId: COMPANY_PASSENGER,
+                    companyId: COMPANY_SECURITY,
                   },
                 },
               },
@@ -389,43 +362,14 @@ export default {
               ],
               },
             },
-            operationTypeId: {
-                value: null,
-                type: 'select',
-                props: {
-                  label: 'Operation Type',
-                  clearable: true,
-                  color: "primary"
-                },
-                loadOptions: {
-                  apiRoute: 'apiRoutes.qramp.operationTypes',
-                  select: {label: 'operationName', id: 'id'},
-                  requestParams: { filter: { companyId: COMPANY_PASSENGER }},
-                }
-            },
-            type: {
-              value: [],
-              type: 'select',
-              props: {
-                label: 'Work Order Types',
-                multiple: true,
-                useChips: true,
-                clearable: true,
-                color: "primary",
-                options: [
-                  {label: 'Flight', value: FLIGHT},
-                  {label: 'Non flight', value: NON_FLIGHT},
-                ]
-              },
-            },
-            businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
+            businessUnitId: { value: [BUSINESS_UNIT_SECURITY] },
           },
           requestParams: {
             include: 'responsible,contract,customer',
             filter: {
               withoutDefaultInclude: true,
-              businessUnitId: BUSINESS_UNIT_PASSENGER,
-              type: [FLIGHT, NON_FLIGHT]
+              businessUnitId: [BUSINESS_UNIT_SECURITY],
+              type: [SECURITY]
             },
           },
           actions: [
@@ -500,14 +444,14 @@ export default {
                 this.postReloadTransactions(item.id);
               },
               format: item => ({
-                  vIf: this.$auth.hasAccess('ramp.work-orders.reload-transactions') && !this.isAppOffline
+                  vIf: this.$auth.hasAccess('ramp.security-work-orders.reload-transactions') && !this.isAppOffline
               }),
             },
           ],
           bulkActions: [
             {
               apiRoute: "/ramp/v1/work-orders/bulk-post",
-              permission: "ramp.work-orders.bulk-post",
+              permission: "ramp.security-work-orders.bulk-post",
               criteria: "id",
               props: {
                 icon: "fas fa-paper-plane",
@@ -516,7 +460,7 @@ export default {
             },
             {
               apiRoute: "/ramp/v1/work-orders/bulk-submit",
-              permission: "ramp.work-orders.bulk-submit",
+              permission: "ramp.security-work-orders.bulk-submit",
               criteria: "id",
               props: {
                 icon: "fas fa-check",
@@ -525,7 +469,7 @@ export default {
             },
             {
               apiRoute: "/ramp/v1/work-orders/bulk-export-pdf",
-              permission: "ramp.work-orders.bulk-export-pdf",
+              permission: "ramp.security-work-orders.bulk-export-pdf",
               criteria: "id",
               props: {
                 icon: "fas fa-download",
@@ -534,7 +478,7 @@ export default {
             },
             {
               apiRoute: "/ramp/v1/work-orders/passenger-bulk-export-csv",
-              permission: "ramp.work-orders.bulk-export-csv",
+              permission: "ramp.security-work-orders.bulk-export-csv",
               criteria: "id",
               props: {
                 icon: "fas fa-download",
@@ -543,7 +487,7 @@ export default {
             },
             {
               apiRoute: "/ramp/v1/work-orders/bulk-reload-transactions",
-              permission: "ramp.work-orders.bulk-reload-transactions",
+              permission: "ramp.security-work-orders.bulk-reload-transactions",
               criteria: "id",
               props: {
                 icon: "fas fa-download",
@@ -552,7 +496,7 @@ export default {
             }
           ],
           relation: {
-            permission: "ramp.work-orders.see-workday-transactions",
+            permission: "ramp.security-work-orders.see-workday-transactions",
             apiRoute: 'apiRoutes.qramp.workOrderTransactions',
             requestParams: (row) => {
               return {
@@ -704,31 +648,25 @@ export default {
         })
     },
     async openModal(item) {
-      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.data.id ? ` Id: ${item.data.id}` : '')
-      qRampStore().setIsPassenger(true);
+      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
+      await qRampStore().setIsPassenger(false);
+      await qRampStore().setTypeWorkOrder(SECURITY);
       await this.$refs.formOrders.loadform({
         modalProps: {
-          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.data.id}`,
+          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
           update: true,
-          workOrderId: item.data?.id,
+          workOrderId: item.id,
           width: '90vw',
-          ...item.modalProps
         },
-        data: item.data,
+        data: item,
       })
       qRampStore().setTitleOffline(titleModal);
     },
-    showWorkOrder(data, modalProps={}, makeRequest=true) {
+    showWorkOrder(data) {
       if (this.isAppOffline) {
-        this.openModal({ data, modalProps });
+        this.openModal(data);
         return;
       }
-
-      if (!makeRequest) {
-        this.openModal({ data, modalProps });
-        return;
-      }
-
       this.$crud.show('apiRoutes.qramp.workOrders', data.id,
         {
           refresh: true,
@@ -736,7 +674,7 @@ export default {
             include: "customer,workOrderStatus,operationType,station,contract,responsible",
           }
         }).then(async (item) => {
-          this.openModal({ data: item.data, modalProps })
+          this.openModal(item.data)
         }).catch((err) => {
           console.log(err);
         });
@@ -750,24 +688,6 @@ export default {
         console.log(error);
       }
     },
-    async openCreateMode(setTypeWorkOrder) {
-      await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
-      await qRampStore().setIsPassenger(true);
-      await qRampStore().setTypeWorkOrder(setTypeWorkOrder);
-      if (setTypeWorkOrder === FLIGHT) {
-        this.$refs.formOrders.loadform({ 
-          modalProps: {
-            title: this.$tr('ifly.cms.form.newWorkOrder'),
-            update: false,
-            width: '34vw',
-          } 
-        })
-      }
-
-      if (setTypeWorkOrder === NON_FLIGHT) {
-        this.$refs.refModalNonFlight.handleModalChange()
-      }
-    }
   }
 }
 </script>

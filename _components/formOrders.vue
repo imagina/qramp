@@ -370,6 +370,7 @@ export default {
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
       qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
     },
     /**
      * Loads the form asynchronously with the given parameters.
@@ -453,6 +454,8 @@ export default {
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
       qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
+
     },
     /**
      * Set the loading state of the modal.

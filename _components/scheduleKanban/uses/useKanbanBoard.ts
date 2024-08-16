@@ -27,6 +27,12 @@ export default function useKanbanBoard(props) {
   const loadingMain = ref(true);
   const refFormOrders = ref(null);
   const refModalNonFlight = ref(null);
+  const search = computed({
+    get: () => storeKanban.search,
+    set: (value) => {
+      storeKanban.search = value;
+    }
+  })
   const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
   provide("refModalNonFlight", refModalNonFlight);
@@ -75,6 +81,7 @@ export default function useKanbanBoard(props) {
   ]);
   const extraPageActions = computed(() => {
     let extraActions: any = [
+      'search',
       {
         label: "Copy Tiny URL",
         props: {
@@ -196,6 +203,10 @@ export default function useKanbanBoard(props) {
       console.log(error);
     }
   }
+  async function changeSearch(searchData = null) {
+    search.value = searchData;
+    await buildKanbanStructure(true);
+  }
   onMounted(async() => {
     await setStations()
     await init()
@@ -242,6 +253,8 @@ export default function useKanbanBoard(props) {
     individualRefreshByColumns,
     title,
     isAppOffline,
-    loadingMain
+    loadingMain,
+    search,
+    changeSearch
   };
 }

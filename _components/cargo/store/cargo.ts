@@ -27,6 +27,7 @@ const state = reactive<CargoStoreContract>({
     delay: false,
     ourDelay: null,
     delayComment: null,
+    error: false,
 });
 /**
  * It returns an object with a bunch of functions that are used to get and set the state of the store.
@@ -78,9 +79,14 @@ export default function cargoStore(): UseCargoStoreContract {
         }
         const validateDelay = delay.length > 0;
         setDelay(validateDelay);
-        state.delayList = validateDelay
+        const delayList = validateDelay
             ? delay
             : [...modelData];
+        setDelayListData(delayList)
+
+    }
+    function setDelayListData(data: DelayListContract[]): void {
+        state.delayList = data;
     }
     /**
      * The function `getDelay` returns a boolean value.
@@ -109,6 +115,12 @@ export default function cargoStore(): UseCargoStoreContract {
     }
     function setDelayComment(value: string | null): void {
         state.delayComment = value;
+    }
+    function getError(): boolean {
+        return state.error;
+    }
+    function setError(value: boolean): void {
+        state.error = value;
     }
     /**
      * It returns an object with two properties, one of which is an array of objects.
@@ -147,6 +159,7 @@ export default function cargoStore(): UseCargoStoreContract {
         state.delay = false;
         state.ourDelay = null;
         state.delayComment = null;
+        state.error = false;
     }
     return {
         getForm,
@@ -160,6 +173,9 @@ export default function cargoStore(): UseCargoStoreContract {
         getOurDelay,
         setOurDelay,
         getDelayComment,
-        setDelayComment
+        setDelayComment,
+        getError,
+        setError,
+        setDelayListData
     }
 }
