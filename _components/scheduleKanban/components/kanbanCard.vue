@@ -59,14 +59,14 @@
             tw-space-y-1">
             <div class="tw-flex tw-space-x-2 arrival-text">
               <div v-if="card.calendar.sta && !card.calendar.tos">
-                <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
+                <i class="fa-solid fa-arrow-down-right"></i> STA: {{ card.calendar.sta ? moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
               </div>
               <div v-if="card.calendar.std && !card.calendar.tos">
-                <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
+                <i class="fa-solid fa-arrow-up-right"></i> STD: {{ card.calendar.std ? moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
               </div>
               <div v-if="card.calendar.tos">
                 <q-tooltip>Time of Service</q-tooltip>
-                TOS: {{ card.calendar.tos ? $moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
+                TOS: {{ card.calendar.tos ? moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
               </div>
             </div>
             <div class="tw-flex tw-space-x-1">

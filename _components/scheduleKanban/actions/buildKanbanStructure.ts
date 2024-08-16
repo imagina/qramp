@@ -6,8 +6,6 @@ import {Columns} from "../contracts/kanbanStore.contract";
 import storeFilters from "../store/filters.store";
 import scheduleTypeModel from '../models/scheduleType.model';
 import modalScheduleStore from '../store/modalSchedule.store'
-import _ from 'lodash'
-import qRampStore from "src/modules/qramp/_store/qRampStore";
  
 export async function getColumns(): Promise<Columns[]> {
   try {

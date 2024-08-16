@@ -13,7 +13,7 @@ import kanbanStore from './store/kanban.store'
 import { router } from 'src/plugins/utils'
 let routeName = router.route.path;
 import serviceListStore from "../serviceList/store/serviceList";
-import { LABOR } from "../model/constants";
+import { LABOR, SECURITY } from "../model/constants";
 
 export default defineComponent({
   components: {
@@ -45,10 +45,15 @@ export default defineComponent({
         let isPassenger = currentRoutePath.indexOf('passenger') !== -1;
         let isLabor = currentRoutePath.indexOf('labor') !== -1;
         let isRamp = currentRoutePath.indexOf('ramp') !== -1;
+        let isSecurity = currentRoutePath.indexOf('security') !== -1;
         await qRampStore().setTypeWorkOrder(null);
         await workOrderList().setStationList([]);
         if(isRamp) {
           await qRampStore().setIsPassenger(false);
+        }
+        if(isSecurity) {
+          await qRampStore().setIsPassenger(false);
+          await qRampStore().setTypeWorkOrder(SECURITY)
         }
         if(isPassenger) {
           await qRampStore().setIsPassenger(true);

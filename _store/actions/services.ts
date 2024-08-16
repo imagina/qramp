@@ -1,12 +1,6 @@
 /* Importing the baseService, qRampStore, and Vue. */
 import baseService from "src/modules/qcrud/_services/baseService.js";
 import qRampStore from "../qRampStore.js";
-import {
-    BUSINESS_UNIT_PASSENGER,
-    BUSINESS_UNIT_RAMP,
-    COMPANY_PASSENGER,
-    COMPANY_RAMP,
-} from '../../_components/model/constants.js';
 import pluginsArray from 'src/plugins/array.js';
 import { store } from 'src/plugins/utils'
 import _ from 'lodash';
@@ -25,8 +19,8 @@ export const serviceListModel = {
 export const getCategories = async (): Promise<any[]> => {
     if (store.hasAccess('ramp.categories.index')) {
         try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const companyId = qRampStore().getFilterCompany();
+            
             let requestParams = {
                 params: {
                     include:

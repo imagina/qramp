@@ -225,5 +225,6 @@ export default function useModalSchedule(props: any, emit: any) {
     saveForm,
     showCommentsComponent,
     storeKanban,
+    i18n
   }
 }

@@ -1,15 +1,15 @@
 <template>
-  <div class="kanbanBoardCtn tw-bg-white tw-rounded-xl tw-p-4">
-    <page-actions
-      ref="pageActions" 
-      :title="title"
-      multipleRefresh
-      :extra-actions="extraPageActions"  
-      class="q-mb-md"
-      @refresh="buildKanbanStructure(true)" 
-    />
+  <div class="kanbanBoardCtn">
+      <page-actions
+        ref="pageActions" 
+        :title="title"
+        multipleRefresh
+        :extra-actions="extraPageActions"  
+        class="q-mb-md"
+        @search="val => changeSearch(val)"
+        @refresh="buildKanbanStructure(true)" 
+      />
     <filters v-if="storeFilter.showModal"/>
-    <filtersBar v-if="false"/>
     <actionBar /> 
   <div class="tw-flex">
     <div

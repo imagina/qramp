@@ -15,8 +15,8 @@
       />
     </q-form>
     <modalComments
-      v-if="card.id"
-      :commentableId="card.id"
+      v-if="card?.id"
+      :commentableId="card?.id"
     />
     <div class="tw-space-x-2 tw-my-1">
       <button
@@ -29,7 +29,7 @@
       >
         <i class="fa-light fa-floppy-disk" />
         <q-tooltip>
-          {{ $tr("isite.cms.label.save") }}
+          {{ i18n.tr("isite.cms.label.save") }}
         </q-tooltip>
       </button>
       <button
@@ -38,12 +38,12 @@
           tw-rounded-lg
           tw-px-2 tw-py-1
           tw-text-white"
-          v-if="card.id && !storeKanban.isAppOffline"
+          v-if="card?.id && !storeKanban.isAppOffline"
           @click.prevent="showModalComments"
         >
           <i class="fa-light fa-comment" />
           <q-tooltip>
-            {{ $tr("isite.cms.label.comment") }}
+            {{ i18n.tr("isite.cms.label.comment") }}
           </q-tooltip>
       </button>
       <button

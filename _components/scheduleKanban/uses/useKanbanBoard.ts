@@ -29,6 +29,12 @@ export default function useKanbanBoard(props) {
   const refFormOrders = ref(null);
   const refModalNonFlight = ref(null);
   const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
+  const search = computed({
+    get: () => storeKanban.search,
+    set: (value) => {
+      storeKanban.search = value;
+    }
+  })
   provide("refFormOrders", refFormOrders);
   provide("refModalNonFlight", refModalNonFlight);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -76,6 +82,7 @@ export default function useKanbanBoard(props) {
   ]);
   const extraPageActions = computed(() => {
     let extraActions: any = [
+      'search',
       {
         label: "Copy Tiny URL",
         props: {
@@ -197,6 +204,10 @@ export default function useKanbanBoard(props) {
       console.log(error);
     }
   }
+  async function changeSearch(searchData = null) {
+    search.value = searchData;
+    await buildKanbanStructure(true);
+  }
   onMounted(async() => {
     await setStations()
     await init()
@@ -246,6 +257,8 @@ export default function useKanbanBoard(props) {
     title,
     isAppOffline,
     storeFilter,
-    loadingMain
+    loadingMain,
+    search,
+    changeSearch
   };
 }

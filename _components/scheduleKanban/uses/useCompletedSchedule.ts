@@ -1,4 +1,4 @@
-import { computed, inject, ref } from 'vue';
+import { computed, inject } from 'vue';
 import modalScheduleStore from '../store/modalSchedule.store'
 import storeKanban from '../store/kanban.store'
 import _ from "lodash";

@@ -197,6 +197,7 @@ export default function useServiceList(props = {}, emit = null) {
     })
     onBeforeUnmount(() => {
         serviceListStore().setBreadcrumbs([]);
+        serviceListStore().setSelectService({});
     })
     return {
         serviceListModel,

@@ -1,5 +1,5 @@
 import { computed, ComputedRef } from 'vue';
-import {COMPANY_PASSENGER, COMPANY_RAMP, OPERATION_TYPE_NON_FLIGHT} from '../../model/constants.js'
+import { OPERATION_TYPE_NON_FLIGHT} from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
 import store from '../store/modalSchedule.store'
@@ -8,7 +8,6 @@ import { i18n } from 'src/plugins/utils'
 
 export default function modelFields() {
     const isPassenger = computed(() =>  qRampStore().getIsPassenger());
-    const companyId = computed(() => isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP);
     const isBlank = computed(() => kanbanStore.isBlank);
     const form = computed(() => store.form)
     const filterGates = computed(() => {

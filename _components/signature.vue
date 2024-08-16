@@ -79,7 +79,6 @@
 <script>
 
 import responsive from '../_mixins/responsive.js'
-import qRampStore from '../_store/qRampStore.js';
 
 export default {
   props: {
