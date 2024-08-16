@@ -234,8 +234,6 @@ export default {
           qRampStore().setTypeWorkOrder(FLIGHT);
         }
       }
-
-      // serviceListStore().init().then();
     },
   },
   computed: {
