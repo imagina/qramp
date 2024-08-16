@@ -21,4 +21,5 @@ export interface State {
   isBlank: boolean;
   filterCompany?: number;
   isAppOffline: boolean;
+  search: string | null;
 }

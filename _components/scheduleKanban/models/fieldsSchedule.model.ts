@@ -8,7 +8,7 @@ import { i18n } from 'src/plugins/utils'
 
 export default function modelFields() {
     const isPassenger = computed(() =>  qRampStore().getIsPassenger());
-    const companyId = computed(() => isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP);
+    const companyId = computed(() => qRampStore().getFilterCompany());
     const isBlank = computed(() => kanbanStore.isBlank);
     const form = computed(() => store.form)
     const filterGates = computed(() => {

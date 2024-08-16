@@ -19,7 +19,7 @@ export default async function checkUrlParams(): Promise<void>{
         if (params.adHoc) store.form.adHoc = params.adHoc;
         if (params.flightStatusId) store.form.flightStatusId = params.flightStatusId;
         if (params.areaId) store.form.areaId = params.areaId;
-        if( params.type) store.scheduleType = params.type;
+        if( params.type) store.scheduleType = params.typeAgenda;
         store.selectedDate = getSelectedDay(params)
       } else {
         /* defaults */

@@ -9,7 +9,7 @@ import {
     COMPANY_RAMP,
     BUSINESS_UNIT_LABOR,
     LABOR,
-    NON_FLIGHT
+    NON_FLIGHT, SECURITY, BUSINESS_UNIT_SECURITY, COMPANY_SECURITY
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
@@ -17,6 +17,7 @@ import { cacheOffline, i18n, store } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
+import serviceListStore from "src/modules/qramp/_components/serviceList/store/serviceList";
 
 
 const state = reactive({
@@ -489,7 +490,7 @@ export default function qRampStore() {
     async function getFlights() {
         try {
             const isPassenger = getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const companyId = getFilterCompany();
             const workOrderId = state.flightId;
             const params = {
                 refresh: true,
@@ -511,14 +512,23 @@ export default function qRampStore() {
 
     function getBusinessUnitId() {
         const isPassenger = getIsPassenger();
-        let businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-        if(getTypeWorkOrder() === LABOR) {
+        let businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : null;
+        if(isPassenger &&  getTypeWorkOrder() === LABOR) {
             businessUnitId = BUSINESS_UNIT_LABOR
         }
-
+        if(!isPassenger && getTypeWorkOrder() === SECURITY) {
+            businessUnitId = BUSINESS_UNIT_SECURITY
+        }
         return businessUnitId
     }
-
+    function getFilterCompany() {
+        const isPassenger = getIsPassenger();
+        let companies = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        if(!isPassenger && getTypeWorkOrder() === SECURITY) {
+            companies = COMPANY_SECURITY
+        }
+        return companies;
+    }
     async function changeStatus(statusId, workOrderId) {
         try {
             const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -622,5 +632,6 @@ export default function qRampStore() {
         getClonedWorkOrder,
         setClonedWorkOrder,
         isNonFlight,
+        getFilterCompany
     }
 }

@@ -1,6 +1,6 @@
 <template></template>
 <script>
-import {FUELING, FLIGHT, NON_FLIGHT, LABOR} from '../_components/model/constants.js'
+import {FUELING, FLIGHT, NON_FLIGHT, LABOR, SECURITY} from '../_components/model/constants.js'
 export default {
   name: 'categories',
   data() {
@@ -148,7 +148,8 @@ export default {
                 {label: 'Flight', value: FLIGHT},
                 {label: 'Non flight', value: NON_FLIGHT},
                 {label: 'Fueling', value: FUELING},
-                {label: 'Labor', value: LABOR}
+                {label: 'Labor', value: LABOR},
+                {label: 'Security', value: SECURITY}
               ]
             },
           },

@@ -99,9 +99,20 @@
           tw-rounded-md">
           <div v-for="(field, keyField) in formFields.dateBound" :key="keyField">
             <div>
-              <dynamic-field :key="keyField" :id="keyField" :field="field"
-                :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
-                v-model="form[keyField]" @update:modelValue="changeDate(field)" />
+              <dynamic-field
+                  :key="keyField"
+                  :id="keyField"
+                  :field="field"
+                  :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
+                  v-model="form[keyField]"
+                  @update:modelValue="changeDate(field)" 
+              />
+              <div
+                class="tw-text-xs tw-px-3 tw--mt-2 tw-text-gray-400"
+                v-if="differenceTimeMinute[keyField == 'inboundBlockIn' ? 'inbound' : 'outbound'] > delayMinute"
+              >
+                <p>Delay: {{ differenceTimeMinute[keyField == 'inboundBlockIn' ? 'inbound' : 'outbound'] }} min</p>
+              </div>
             </div>
           </div>
           <div class="
@@ -130,7 +141,8 @@ import {
   NON_FLIGHT,
   FLIGHT,
   LABOR,
-  OPERATION_TYPE_NON_FLIGHT
+  OPERATION_TYPE_NON_FLIGHT,
+  STATION_BNA
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
@@ -139,6 +151,8 @@ import momentTimezone from "moment-timezone";
 import serviceListStore from '../serviceList/store/serviceList';
 import store from './store'
 import { updateFavoriteServicesList } from '../serviceList/actions/updateFavoriteServicesList';
+import cargoStore from "src/modules/qramp/_components/cargo/store/cargo";
+import flightStore from "src/modules/qramp/_components/flight/store"
 
 export default {
   props: {
@@ -234,12 +248,15 @@ export default {
           qRampStore().setTypeWorkOrder(FLIGHT);
         }
       }
-
-      // serviceListStore().init().then();
-    },
+      this.validateTimeWithField('inboundScheduledArrival', 'inboundScheduledArrival', 'inbound');
+      this.validateTimeWithField('outboundScheduledDeparture', 'outboundScheduledDeparture', 'outbound');
+    }
   },
   computed: {
-    validateNoFligth() {
+    differenceTimeMinute() {
+      return  flightStore().getDifferenceTimeMinute()
+    },
+    validateNoFligth(){
       return qRampStore().getTypeWorkOrder() === NON_FLIGHT;
     },
     isAppOffline() {
@@ -915,6 +932,12 @@ export default {
       const operationTypeId = Number(this.form.operationTypeId)
       return this.isPassenger && operationTypeId === OPERATION_TYPE_NON_FLIGHT
     },
+    delayList: {
+      get: () => cargoStore().getDelayList(),
+      set: (delayList) => {
+        cargoStore().setDelayListData(delayList);
+      }
+    },
   },
   methods: {
     init() {
@@ -997,6 +1020,9 @@ export default {
           this.completedFormOutBound = this.validateInbound('outboundRight');
           this.form.cancellationNoticeTime = updateForm.cancellationNoticeTime;
           this.form.cancellationType = updateForm.cancellationType;
+          this.validateTimeWithField('inboundScheduledArrival', 'inboundScheduledArrival', 'inbound');
+          this.validateTimeWithField('outboundScheduledDeparture', 'outboundScheduledDeparture', 'outbound');
+
           this.isCollapse = true;
         }, 1000)
       }
@@ -1285,6 +1311,9 @@ export default {
 
         await this.reFilterFavorites()
 
+        this.validateTimeWithField('inboundScheduledArrival', key, 'inbound');
+        this.validateTimeWithField('outboundScheduledDeparture', key, 'outbound');
+        this.setTimeDelayList();
         return;
       }
       if (key === 'operationTypeId') {
@@ -1354,6 +1383,9 @@ export default {
       if (field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
         this.differenceHour = qRampStore().getDifferenceInHours(this.form.inboundBlockIn, this.form.outboundBlockOut);
       }
+      this.validateTimeWithField('inboundScheduledArrival', field.name, 'inbound');
+      this.validateTimeWithField('outboundScheduledDeparture', field.name, 'outbound');
+      this.setTimeDelayList();
     },
     optionResponsible(item) {
       return item ? [{ id: String(item.id), label: item.fullName, value: item.id }] : [];
@@ -1366,7 +1398,46 @@ export default {
           this.form[key] = this.form[key].toUpperCase().replace(/\s+/g, '');
         }
       }
+      this.validateTimeWithField('inboundScheduledArrival', key, 'inbound');
+      this.validateTimeWithField('outboundScheduledDeparture', key, 'outbound');
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
+    },
+    setTimeDelayList(){
+      if (this.isPassenger && this.form.stationId == STATION_BNA)
+      {
+        const inbound = this.differenceTimeMinute.inbound;
+        const outbound = this.differenceTimeMinute.outbound;
+        let time = [{code: null, hours: null}];
+        if(this.isbound[0] && !this.isbound[1] && inbound > this.delayMinute) {
+          time[0].hours = inbound;
+          this.differenceTimeMinute.outbound = 0;
+        }
+        if(!this.isbound[0] && this.isbound[1] && outbound > this.delayMinute) {
+          time[0].hours = outbound;
+          this.differenceTimeMinute.inbound = 0;
+        }
+        if(this.isbound[0] && this.isbound[1] ) {
+          if(OPERATION_TYPE_TURN_PASSENGER == this.form.operationTypeId && outbound > this.delayMinute) {
+            time[0].hours = outbound;
+            this.differenceTimeMinute.inbound = 0;
+          }
+          if (OPERATION_TYPE_TURN_PASSENGER != this.form.operationTypeId && (inbound > this.delayMinute || outbound > this.delayMinute)) {
+            time = [{
+              code: null,
+              hours: inbound,
+            },{
+              code: null,
+              hours: outbound,
+            }].filter(item => item.hours > this.delayMinute);
+          }
+        }
+        const delay = this.delayList.filter(item => item.hours && item.code);
+        if(delay.length > 0) return;
+        this.delayList = [...time];
+      } else {
+        this.differenceTimeMinute.inbound = 0;
+        this.differenceTimeMinute.outbound = 0;
+      }
     },
     validateInbound(keyForm) {
       const dataForm = [];
@@ -1383,6 +1454,25 @@ export default {
       await workOrderList().getFavourites(true)
       const servicesList = serviceListStore().getServiceList()
       updateFavoriteServicesList(servicesList);
+    },
+    differenceMinutesDate(start, end) {
+      if(!start && !end) return 0;
+      const format = 'MM/DD/YYYY HH:mm';
+      const dateStart = moment(start, format);
+      const dateEnd = moment(end, format);
+      const diffMinutes = dateStart.diff(dateEnd, 'minutes');
+      return Math.max(0, diffMinutes);
+    },
+    validateTimeWithField(field, fieldName, column) {
+      const fieldColumnName = column === 'inbound' ? 'inboundBlockIn' : 'outboundBlockOut';
+      if(
+          this.isPassenger &&
+          STATIONS_DELAY.includes(Number(this.form.stationId)) &&
+          this.form[fieldColumnName] !== null
+      ) {
+        if(OPERATION_TYPE_TURN_PASSENGER == this.form.operationTypeId && column === 'inbound') return;
+        this.differenceTimeMinute[column] = this.differenceMinutesDate(this.form[fieldColumnName], this.form[field]);
+      }
     }
   },
 }
