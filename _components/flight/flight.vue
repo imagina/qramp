@@ -109,7 +109,7 @@
               />
               <div
                 class="tw-text-xs tw-px-3 tw--mt-2 tw-text-gray-400"
-                v-if="differenceTimeMinute[keyField == 'inboundBlockIn' ? 'inbound' : 'outbound'] > delayMinute"
+                v-if="validateDelayMinute(keyField)"
               >
                 <p>Delay: {{ differenceTimeMinute[keyField == 'inboundBlockIn' ? 'inbound' : 'outbound'] }} min</p>
               </div>
@@ -142,7 +142,11 @@ import {
   FLIGHT,
   LABOR,
   OPERATION_TYPE_NON_FLIGHT,
-  STATION_BNA
+  STATION_BNA,
+  THIRTY_MINUTES,
+  OPERATION_TYPE_TURN_PASSENGER,
+  FIFTEEN_MINUTES,
+  STATIONS_DELAY 
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
@@ -250,13 +254,23 @@ export default {
       }
       this.validateTimeWithField('inboundScheduledArrival', 'inboundScheduledArrival', 'inbound');
       this.validateTimeWithField('outboundScheduledDeparture', 'outboundScheduledDeparture', 'outbound');
+      this.setTimeDelayList();
     }
   },
   computed: {
+    delayMinute() {
+      return OPERATION_TYPE_TURN_PASSENGER == this.form.operationTypeId ? THIRTY_MINUTES : FIFTEEN_MINUTES;
+    },
     differenceTimeMinute() {
       return  flightStore().getDifferenceTimeMinute()
     },
-    validateNoFligth(){
+    validateDelayMinute() {
+      return keyField => {
+        const threshold = this.differenceTimeMinute[keyField == 'inboundBlockIn' ? 'inbound' : 'outbound'];
+        return this.delayMinute == THIRTY_MINUTES ? threshold >= this.delayMinute : threshold > this.delayMinute;
+      }
+    },
+    validateNoFligth() {
       return qRampStore().getTypeWorkOrder() === NON_FLIGHT;
     },
     isAppOffline() {
@@ -323,7 +337,7 @@ export default {
      return qRampStore().getIsPassenger();
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     filterGates() {
       return workOrderList()
@@ -1403,7 +1417,7 @@ export default {
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
     setTimeDelayList(){
-      if (this.isPassenger && this.form.stationId == STATION_BNA)
+      if (this.isPassenger && STATIONS_DELAY.includes(Number(this.form.stationId)))
       {
         const inbound = this.differenceTimeMinute.inbound;
         const outbound = this.differenceTimeMinute.outbound;
@@ -1451,6 +1465,7 @@ export default {
     },
     async reFilterFavorites() {
       store().setForm(this.form);
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
       await workOrderList().getFavourites(true)
       const servicesList = serviceListStore().getServiceList()
       updateFavoriteServicesList(servicesList);
