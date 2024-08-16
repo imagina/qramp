@@ -80,9 +80,6 @@ export default defineComponent({
     });
 
     const delayList = computed(() => cargoStore().getDelayList());
-    const filterCompany = computed(() =>
-        qRampStore().getFilterCompany()
-    );
     const delayFields = computed(() => {
       const obj = {};
       delayList.value.forEach((delay, index) => {

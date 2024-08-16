@@ -8,12 +8,10 @@ import {
     ServiceModelContract,
     ServiceListStoreContract,
     ReactiveStoreContract,
-    DynamicField
 } from '../contracts/index.contract';
 import qRampStore from '../../../_store/qRampStore';
 import _ from 'lodash';
 
-const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
     {
         id: 4,

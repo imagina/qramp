@@ -10,7 +10,6 @@
         @refresh="buildKanbanStructure(true)" 
       />
     <filters v-if="storeFilter.showModal"/>
-    <!-- <filtersBar v-if="false"/> -->
     <actionBar /> 
   <div class="tw-flex">
     <div

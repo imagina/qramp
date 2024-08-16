@@ -1,9 +1,7 @@
 import { reactive, computed } from 'vue';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import {Columns, State} from '../contracts/kanbanStore.contract'
-import { COMPANY_PASSENGER, COMPANY_RAMP } from '../../model/constants';
 import qRampStore from 'modules/qramp/_store/qRampStore';
-
 
 const state: State = reactive({
   selectedDate: moment().format('YYYY/MM/DD'),
@@ -17,8 +15,6 @@ const state: State = reactive({
   isAppOffline: false,
   search: null,
 });
-
-const isPassenger = computed(() => qRampStore().getIsPassenger());
 
 const store: State = computed(() => ({
   get scheduleType(): string {

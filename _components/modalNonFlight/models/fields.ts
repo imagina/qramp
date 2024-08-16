@@ -2,12 +2,11 @@ import { computed } from 'vue'
 import storeKanban from 'src/modules/qramp/_components/scheduleKanban/store/kanban.store'
 import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
 import qRampStore from 'src/modules/qramp/_store/qRampStore'
-import { COMPANY_PASSENGER, COMPANY_RAMP, FLIGHT, NON_FLIGHT } from '../../model/constants'
+import { FLIGHT, NON_FLIGHT } from '../../model/constants'
 import store from '../store/index.store'
 import { i18n, store as auth } from 'src/plugins/utils'
 
 const isBlank = computed(() => storeKanban.isBlank);
-const isPassenger = computed(() =>  qRampStore().getIsPassenger());
 const isLoadingSearch = computed(() => store.isLoadingSearch)
 
 const filterStation = computed(() => {

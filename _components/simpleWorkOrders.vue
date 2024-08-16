@@ -84,9 +84,7 @@ import {
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
   STATUS_DRAFT,
-  COMPANY_PASSENGER,
-  COMPANY_RAMP,
-  modelWorkOrder, LABOR, BUSINESS_UNIT_LABOR
+  modelWorkOrder,
 } from './model/constants.js';
 import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts';

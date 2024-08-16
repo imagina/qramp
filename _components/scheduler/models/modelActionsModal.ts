@@ -1,13 +1,12 @@
-import { computed, ComputedRef, ref } from 'vue';
+import { computed, ComputedRef } from 'vue';
 import save from '../actions/save'
 import update from '../actions/update'
 import store from '../store/index.store'
 import {
     ModelActionsModalResult,
     Action,
-    Proxy
 } from '../contracts/modelActionsModal.contract'
-import { i18n, eventBus } from 'src/plugins/utils'
+import { i18n } from 'src/plugins/utils'
 
 
 export default function modelActionsModal(emit:any = null): ModelActionsModalResult {

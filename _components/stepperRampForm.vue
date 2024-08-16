@@ -45,12 +45,8 @@ import {
   STEP_SIGNATURE,
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
-  COMPANY_PASSENGER,
-  COMPANY_RAMP,
   OPERATION_TYPE_OTHER,
-  LABOR,
-  BUSINESS_UNIT_LABOR,
-  OPERATION_TYPE_NON_FLIGHT, STEP_DELAY, STATION_BNA, STATIONS_DELAY
+  OPERATION_TYPE_NON_FLIGHT, STEP_DELAY, STATIONS_DELAY
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceListStore from './serviceList/store/serviceList.ts';

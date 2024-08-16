@@ -12,7 +12,6 @@ import setUrlParams from '../actions/setUrlParams';
 import { Screen } from 'quasar';
 import modalScheduleStore from '../store/modalSchedule.store';
 import getWorkOrdersStatistics from '../actions/getWorkOrderStatistics';
-import qRampStore from 'src/modules/qramp/_store/qRampStore';
 
 export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
@@ -215,5 +214,6 @@ export default function useKanbanColumn(props: any = {}) {
     cardComponentName,
     refKanbanColumn,
     refTrigger,
+    moment
   }
 }

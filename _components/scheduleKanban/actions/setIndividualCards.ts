@@ -1,6 +1,5 @@
 import storeKanban from "../store/kanban.store";
 import showWorkOrders from './showWorkOrders'
-import modalScheduleStore from '../store/modalSchedule.store';
 
 export default async function setIndividualCards(cardId: number): Promise<void> {
     try {

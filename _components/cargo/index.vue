@@ -66,8 +66,6 @@ import cargoStore from './store/cargo.ts';
 import {
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
-  COMPANY_PASSENGER,
-  COMPANY_RAMP
 } from '../model/constants.js'
 import delayComponent from './delayComponent.vue'
 

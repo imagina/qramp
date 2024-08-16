@@ -140,5 +140,6 @@ export default function useKanbanCard(props: any = {}) {
     storeKanban,
     openModalSelectFlightNumber,
     isNonFlight,
+    moment
   };
 }

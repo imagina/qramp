@@ -1,17 +1,11 @@
-import Vue, { reactive, computed } from 'vue';
+import { reactive, computed } from 'vue';
 import modelHoursFilter from '../models/hoursFilter.model'
 import scheduleTypeModel from '../models/scheduleType.model';
 import filterModel from '../models/filters.model'
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { State } from '../contracts/filtersStore.contract';
 import storeKanban from '../store/kanban.store';
-import {
-    BUSINESS_UNIT_LABOR,
-    BUSINESS_UNIT_PASSENGER,
-    BUSINESS_UNIT_RAMP,
-    FLIGHT,
-    LABOR
-} from "src/modules/qramp/_components/model/constants";
+import { LABOR } from "src/modules/qramp/_components/model/constants";
 import qRampStore from "src/modules/qramp/_store/qRampStore";
 
 const state = reactive<State>({

@@ -2,7 +2,6 @@ import { WorkOrders } from '../contracts/getWorkOrder.contract'
 import dataReturnedWorkOrderModel from '../models/dataReturnedWorkOrder.model';
 import getWorkOrder from './getWorkOrder'
 import storeFilters from "../store/filters.store";
-import qRampStore from 'src/modules/qramp/_store/qRampStore';
 
 export default async function getIndividualWorkOrders(refresh = false, page = 1, date): Promise<WorkOrders> {
     try {
