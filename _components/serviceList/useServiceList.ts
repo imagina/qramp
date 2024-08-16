@@ -2,8 +2,6 @@ import { ref, computed, shallowRef } from 'vue';
 import serviceListStore from "./store/serviceList";
 import { ServiceModelContract } from './contracts/index.contract';
 import { i18n } from 'src/plugins/utils'
-import cloneDeep from 'lodash.clonedeep';
-
 
 /**
  * @param props - This is an object that contains the props that are passed to the component.

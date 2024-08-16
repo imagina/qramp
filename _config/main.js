@@ -44,7 +44,9 @@ export default {
     const buildKanbanStructure = await import('../_components/scheduleKanban/actions/buildKanbanStructure.ts')
     const workOrderList = await import('../_store/actions/workOrderList.ts')
 
-    await buildKanbanStructure?.default(true)
-    await workOrderList.default().getWorkOrderConditionally(true)
+    await Promise.allSettled([
+      buildKanbanStructure?.default(true),
+      workOrderList.default().getWorkOrderConditionally(true)
+    ])
   },
 }

@@ -22,7 +22,6 @@ import {
   WorkOrderStatusesContract,
   WorkOrderDelays,
 } from './@Contracts/workOrderList.contract';
-import {buildServiceList} from './services';
 import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
 import {store} from 'src/plugins/utils'
 import serviceListStore from '../../_components/serviceList/store/serviceList'
