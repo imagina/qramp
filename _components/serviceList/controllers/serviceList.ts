@@ -35,7 +35,12 @@ export default function useServiceList(props = {}, emit = null) {
         serviceListStore().getServiceList()
     );
     const search = ref<string>("");
-    const selectService = ref<ServiceModelContract>({});
+    const selectService = computed<ServiceModelContract>({
+        get: () => serviceListStore().getSelectService(),
+        set: (value: ServiceModelContract) => {
+            serviceListStore().setSelectService(value);
+        }
+    });
     const breadcrumbs = computed<ServiceModelContract[]>({
         get: () => serviceListStore().getBreadcrumbs(),
         set: (value: ServiceModelContract[]) => {
