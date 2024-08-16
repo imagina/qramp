@@ -5,8 +5,9 @@ import {
     BUSINESS_UNIT_FUELING, BUSINESS_UNIT_LABOR,
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
-    COMPANY_PASSENGER,
-    COMPANY_RAMP, FLIGHT, FUELING, LABOR,
+    FLIGHT,
+    FUELING,
+    LABOR,
     NON_FLIGHT
 } from '../../_components/model/constants.js';
 import {
@@ -280,8 +281,7 @@ export default function workOrderList(): WorkOrderList {
   async function getOperationType(refresh = false): Promise<OperationType[] | void> {
     if (hasAccess('ramp.operation-types.index')) {
       try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           cacheTime: cacheTimeForThirtyDays,
@@ -310,7 +310,7 @@ export default function workOrderList(): WorkOrderList {
     if (hasAccess('setup.stations.index')) {
       try {
         const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const filterRamp = isPassenger ? {companyId} : {
           companyId,
           "allTranslations": true
@@ -336,8 +336,7 @@ export default function workOrderList(): WorkOrderList {
   async function getAirlines(refresh = false) {
     if (hasAccess('iflight.airline.index')) {
       try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           params: {
@@ -361,9 +360,7 @@ export default function workOrderList(): WorkOrderList {
   async function getCustomer(refresh = false): Promise<CustomerContract[] | void> {
     if (hasAccess('setup.customers.index')) {
       try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
-        const filterRamp = isPassenger ? {} : {};
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           cacheTime: cacheTimeForThirtyDays,
@@ -391,8 +388,7 @@ export default function workOrderList(): WorkOrderList {
   async function getContract(refresh = false): Promise<any[] | void> {
     if (hasAccess('ramp.operation-types.index')) {
       try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           cacheTime: cacheTimeForThirtyDays,
@@ -421,8 +417,7 @@ export default function workOrderList(): WorkOrderList {
   async function getFlightStatuses(refresh = false): Promise<FlightStatusContract[] | void> {
     if (hasAccess('iflight.flight-statuses.index')) {
       try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           params: {
@@ -450,7 +445,7 @@ export default function workOrderList(): WorkOrderList {
     if (hasAccess('ramp.work-order-statuses.index')) {
       try {
         const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const filterRamp = isPassenger ? {companyId} : {
           companyId,
           "allTranslations": true
@@ -480,7 +475,7 @@ export default function workOrderList(): WorkOrderList {
     if (hasAccess('setup.gates.index')) {
       try {
         const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           cacheTime: cacheTimeForThirtyDays,
@@ -594,8 +589,7 @@ export default function workOrderList(): WorkOrderList {
   async function getACTypes(refresh = false) {
     if (hasAccess('iflight.aircrafttype.index')) {
       try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           params: {
@@ -621,7 +615,7 @@ export default function workOrderList(): WorkOrderList {
       try {
         const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
         const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           params: {
@@ -648,8 +642,7 @@ export default function workOrderList(): WorkOrderList {
     if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
       try {
         const API_ROUTE = 'apiRoutes.quser.users'
-        const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
           params: {
@@ -673,7 +666,7 @@ export default function workOrderList(): WorkOrderList {
 
         const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
         const isPassenger = qRampStore().getIsPassenger();
-        const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        const companyId = qRampStore().getFilterCompany();
         let businessUnitId: any = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
         if(isPassenger && qRampStore().getTypeWorkOrder() === FUELING) {
             businessUnitId = {businessUnitId: BUSINESS_UNIT_FUELING}
@@ -715,8 +708,7 @@ export default function workOrderList(): WorkOrderList {
     async function getAirports(refresh = false) {
         if (hasAccess('iflight.airport.index')) {
             try {
-                const isPassenger = qRampStore().getIsPassenger();
-                const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+                const companyId = qRampStore().getFilterCompany();
                 const params = {
                   refresh,
                   params: {

@@ -18,6 +18,7 @@ export interface CargoStoreContract {
     delay: boolean;
     ourDelay: string | null;
     delayComment: string | null;
+    error: boolean;
 }
 
 export interface UseCargoStoreContract {
@@ -33,6 +34,9 @@ export interface UseCargoStoreContract {
     setOurDelay(value: string | null);
     getDelayComment(): string | null;
     setDelayComment(value: string | null);
+    getError(): boolean;
+    setError(value: boolean);
+    setDelayListData(data: DelayListContract[]): void;
 }
 
 export interface PayloadContract {

@@ -1,5 +1,4 @@
-import { computed, ComputedRef, getCurrentInstance } from 'vue';
-import { COMPANY_RAMP, COMPANY_PASSENGER } from '../../model/constants.js';
+import { computed, ComputedRef } from 'vue';
 import workOrderList from '../../../_store/actions/workOrderList';
 import { modelWeek } from './constants'
 import store from '../store/index.store'
@@ -10,9 +9,8 @@ import qRampStore from 'modules/qramp/_store/qRampStore'
 
 export default function modelFields(): ModelFields {
     const updateModal: ComputedRef<boolean> = computed(() => store.updateModal);
-    const isPassenger = computed(() => qRampStore().getIsPassenger());
     const filterCompany = computed(() =>
-      isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP
+        qRampStore().getFilterCompany()
     );
     const formFields: ComputedRef<FormFields> = computed(() => ({
         left: {

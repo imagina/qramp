@@ -11,7 +11,7 @@ import schedulerStore from '../_components/scheduler/store/index.store.ts'
 import schedulerModal from '../_components/scheduler/index.vue';
 import show from '../_components/scheduler/actions/show.ts';
 import {
-  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, COMPANY_RAMP, LABOR, BUSINESS_UNIT_LABOR
+  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER, LABOR, BUSINESS_UNIT_LABOR
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
@@ -49,7 +49,7 @@ export default {
       return qRampStore().getIsPassenger();
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     crudData() {
       return {

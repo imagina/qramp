@@ -31,7 +31,7 @@
              dayGray"
             :class="{
               'buttom-day': selectedDate === date.format('YYYY/MM/DD'),
-              'tw-border tw-border-blue-500': $moment().format('YYYY/MM/DD') === date.format('YYYY/MM/DD')
+              'tw-border tw-border-blue-500': moment().format('YYYY/MM/DD') === date.format('YYYY/MM/DD')
             }"
             @click="showKanbanDay"
           >

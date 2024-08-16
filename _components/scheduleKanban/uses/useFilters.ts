@@ -7,6 +7,7 @@ import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
 import getTitleFilter from '../actions/getTitleFilter';
 import storeKanban from '../store/kanban.store';
+import { i18n } from 'src/plugins/utils';
 
 export default function useFilters() {
   const isAppOffline = computed(() => storeKanban.isAppOffline);
@@ -107,6 +108,7 @@ export default function useFilters() {
     scheduleTypeOptions,
     buildKanbanStructure,
     callBuildKanbanStructure,
-    isAppOffline
+    isAppOffline,
+    i18n
   };
 }

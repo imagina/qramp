@@ -3,7 +3,6 @@ import store from '../store/filters.store'
 import {
     ModelActionsModalResult,
     Action,
-    Proxy
 } from '../contracts/modelActionsModal.contract';
 import { i18n } from 'src/plugins/utils'
 

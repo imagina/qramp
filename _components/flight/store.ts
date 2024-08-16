@@ -50,15 +50,20 @@ export interface FormContarct {
 }
 export interface StateContarct {
     form: FormContarct;
-    responsibles: any,
+    responsibles: any;
+    differenceTimeMinute: {
+        inbound: number;
+        outbound: number;
+    };
 }
 
 export interface FlightStoreContract {
     getForm(): FormContarct,
     setForm(flight: FormContarct): void,
     reset(): void,
-    payload(): void,
     getReponsible(): any;
+    getDifferenceTimeMinute(): any;
+    setDifferenceTimeMinute(value: any): any;
 }
 
 const state = reactive<StateContarct>({
@@ -105,9 +110,11 @@ const state = reactive<StateContarct>({
         scheduleDate: null,
         type: null,
     },
-    responsibles: {
-
-    }
+    responsibles: {},
+    differenceTimeMinute: {
+        inbound: 0,
+        outbound: 0,
+    },
 });
 /**
  * Creates a FlightStore object.
@@ -187,8 +194,12 @@ export default function flightStore(): FlightStoreContract {
     function getReponsible() {
         return state.responsibles;
     }
-    function payload(): void {
+    function getDifferenceTimeMinute() {
+        return state.differenceTimeMinute
+    }
 
+    function setDifferenceTimeMinute(value) {
+        state.differenceTimeMinute = value;
     }
     /**
      * Resets the form data to its default values.
@@ -196,12 +207,17 @@ export default function flightStore(): FlightStoreContract {
      * @returns {void}
     */
     function reset(): void {
+        state.differenceTimeMinute = {
+            inbound: 0,
+            outbound: 0,
+        }
     }
     return {
         getForm,
         setForm,
         reset,
-        payload,
-        getReponsible
+        getReponsible,
+        getDifferenceTimeMinute,
+        setDifferenceTimeMinute,
     }
 }

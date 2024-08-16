@@ -47,7 +47,7 @@
               fa-solid
               fa-arrow-down-right
               tw-mr-2"
-            />STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
+            />STA: {{ card.calendar.sta ? moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
           </div>
           <div v-if="card.calendar.std && !card.calendar.tos">
             <i class="
@@ -55,11 +55,11 @@
               fa-arrow-up-right
               tw-ml-4
               tw-mr-1"
-            />STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
+            />STD: {{ card.calendar.std ? moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
           </div>
           <div v-if="card.calendar.tos">
             <q-tooltip>Time of Service</q-tooltip>
-            TOS: {{ card.calendar.tos ? $moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
+            TOS: {{ card.calendar.tos ? moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
           </div>
         </div>
         <div class="
