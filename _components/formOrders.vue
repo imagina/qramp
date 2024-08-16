@@ -424,16 +424,21 @@ export default {
     async getWorkOrders(data = null) {
       this.$emit('getWorkOrderFilter', data);
     },
-    loadChildData() {
+    async loadChildData() {
       this.loading = true;
       this.resetFormModalFull()
       const flight = qRampStore().getClonedWorkOrder()
+      storeFlight().setForm({ ...flight })
+      await workOrderList().getFavourites()
+
       const modalProps = {
         ...modalFullProps,
         title: this.modalProps.lastTitle,
         workOrderId: flight.id,
         isClone: true
       }
+
+      await serviceListStore().init();
       this.loadform({ data: flight, modalProps })
     },
     async loadParentData() {
@@ -445,6 +450,8 @@ export default {
       this.resetFormModalFull();
       const workOrder = await getWorkOrder(formData?.parentId)
       workOrder.data.parentId = null
+      storeFlight().setForm({ ...workOrder.data })
+      await workOrderList().getFavourites()
 
       const modalProps = {
         ...modalFullProps,
@@ -457,13 +464,13 @@ export default {
         parent: true
       }
 
+      await serviceListStore().init();
       this.loadform({ data: workOrder.data, modalProps })
     },
     resetFormModalFull() {
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
-      serviceListStore().resetStore()
-      qRampStore().setWorkOrderItems([])
+      serviceListStore().resetStore();
       cargoStore().reset();
       remarksStore().reset();
       this.$refs.stepper.sp = STEP_FLIGHT;
