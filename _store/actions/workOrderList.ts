@@ -5,6 +5,7 @@ import {
     BUSINESS_UNIT_FUELING, BUSINESS_UNIT_LABOR,
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
+    BUSINESS_UNIT_SECURITY,
     FLIGHT,
     FUELING,
     LABOR,
@@ -566,13 +567,15 @@ export default function workOrderList(): WorkOrderList {
     const accessMap = {
       'passenger': 'ramp.passenger-work-orders.index',
       'fueling': 'ramp.fueling-work-orders.index',
-      'labor': 'ramp.labor-work-orders.index'
+      'labor': 'ramp.labor-work-orders.index',
+      'security': 'ramp.security-work-orders.index'
     };
 
     const businessUnits = {
       'passenger': BUSINESS_UNIT_PASSENGER,
       'fueling': BUSINESS_UNIT_FUELING,
-      'labor': BUSINESS_UNIT_LABOR
+      'labor': BUSINESS_UNIT_LABOR,
+      'security': BUSINESS_UNIT_SECURITY,
     };
 
     const accessibleUnits = Object.entries(accessMap)
