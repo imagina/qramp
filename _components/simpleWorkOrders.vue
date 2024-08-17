@@ -11,12 +11,8 @@
       ref="formSimpleWorkOrders"
       id="simpleWordOrder"
       class="
-        tw-px-4
-        tw-pt-8
-        tw-pb-10
-        tw-my-4
-        tw-mx-8
-        tw-mb-32
+        tw-p-5
+        tw-mb-20
         tw-rounded-lg
       "
     >

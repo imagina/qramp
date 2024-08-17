@@ -10,7 +10,7 @@
           @hide="clear"
         >
             <div>
-                <createForm ref="refCreateForm" v-if="!isUpdate" class="tw-px-4" @refresh-data="getDataTable()"/>
+                <createForm ref="refCreateForm" v-if="!isUpdate" @refresh-data="getDataTable()"/>
                 <stepper  ref="refStepper" v-else />
             </div>
         </master-modal>
