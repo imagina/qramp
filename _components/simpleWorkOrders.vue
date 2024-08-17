@@ -11,14 +11,12 @@
       ref="formSimpleWorkOrders"
       id="simpleWordOrder"
       class="
-        tw-px-8
+        tw-px-4
         tw-pt-8
         tw-pb-10
         tw-my-4
         tw-mx-8
         tw-mb-32
-        tw-border
-        tw-border-gray-200
         tw-rounded-lg
       "
     >
@@ -212,10 +210,7 @@ export default {
           }
 
         } else {
-          this.$alert.error({
-            message: this.$tr('isite.cms.message.formInvalid')
-          });
-          this.$emit('isError', true);
+          triggerErrorEvent()
         }
       });
     },
@@ -388,7 +383,13 @@ export default {
               handler: () => {
                 this.acceptSchedule = true;
                 this.form.faFlightId = null;
-                this.orderConfirmationMessage()
+                this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
+                  if (success) {
+                    this.orderConfirmationMessage()
+                  } else {
+                    triggerErrorEvent()
+                  }
+                });
               },
             },
           ],
@@ -418,6 +419,12 @@ export default {
       this.loading = false;
       this.acceptSchedule = false;
       this.$refs.formSimpleWorkOrders.reset();
+    },
+    triggerErrorEvent() {
+      this.$alert.error({
+        message: this.$tr('isite.cms.message.formInvalid')
+      });
+      this.$emit('isError', true);
     }
   }
 };
