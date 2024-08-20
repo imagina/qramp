@@ -1,8 +1,13 @@
 <template>
   <div>
-    <form-orders ref="formOrders" />
+    <form-orders ref="formOrders" @refresh-data="getDataTable(true)"/>
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
+    <crud 
+      :crud-data="import('./baseCrud.vue')" 
+      :custom-data="crudData" ref="crudComponent"
+      :title="$route.meta.title" 
+    />
   </div>
 </template>
 <script>
@@ -688,6 +693,9 @@ export default {
         qRampStore().setWorkOrder(null);
         console.log(error);
       }
+    },
+    async getDataTable(refresh) {
+      await this.$refs.crudComponent.getDataTable(refresh);
     },
   }
 }

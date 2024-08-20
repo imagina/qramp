@@ -282,7 +282,7 @@ export default {
     path: '/security/index',
     name: 'qramp.admin.security',
     crud: import('../_crud/security.vue'),
-    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    page: () => import('../_crud/security.vue'),
     layout: () => import('layouts/master.vue'),
     title: 'Work Orders',
     icon: 'fa-light fa-briefcase',
