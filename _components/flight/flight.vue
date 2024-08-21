@@ -105,7 +105,7 @@
                   :field="field"
                   :style="`${field.type !== 'input' && !readonly ? keyField == 'origin' ? '' : 'padding-bottom:8px' : 'padding-bottom:8px'}`"
                   v-model="form[keyField]"
-                  @update:modelValue="changeDate(field)" 
+                  @update:modelValue="changeDate(field)"
               />
               <div
                 class="tw-text-xs tw-px-3 tw--mt-2 tw-text-gray-400"
@@ -146,7 +146,7 @@ import {
   THIRTY_MINUTES,
   OPERATION_TYPE_TURN_PASSENGER,
   FIFTEEN_MINUTES,
-  STATIONS_DELAY 
+  STATIONS_DELAY
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
@@ -188,7 +188,7 @@ export default {
         customCustomer: false,
         adHoc: false,
         operationTypeId: null,
-        statusId: "1",
+        statusId: null,
         date: '',
         inboundCustomFlightNumber: null,
         outboundCustomFlightNumber: null,
@@ -604,8 +604,7 @@ export default {
             label: this.$tr('ifly.cms.form.gate'),
           },
           statusId: {
-            name: 'statusId',
-            value: 1,
+            value: null,
             type: this.readonly ? 'inputStandard' : 'select',
             props: {
               rules: [
