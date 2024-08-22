@@ -345,7 +345,7 @@ export default {
 
         const offlineWorkOrder = {
           ...modelWorkOrder,
-          ...businessUnitId,
+          businessUnitId,
           adHoc: this.form.adHoc,
           stationId: Number(this.form.stationId),
           customerId: Number(this.form.customerId),
