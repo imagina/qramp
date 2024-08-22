@@ -15,7 +15,7 @@ export const BUSINESS_UNIT_PASSENGER = 8;
 export const BUSINESS_UNIT_FUELING = 9;
 export const BUSINESS_UNIT_LABOR = 2;
 export const BUSINESS_UNIT_SECURITY = 4;
-export const BUSINESS_UNIT_RAMP = { operator: '!=', value: 8};
+export const BUSINESS_UNIT_RAMP = 'null';
 export const COMPANY_PASSENGER = [30,33,34];
 export const COMPANY_RAMP = [26,34];
 export const COMPANY_SECURITY = [35,36];
