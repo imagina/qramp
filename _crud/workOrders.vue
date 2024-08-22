@@ -391,7 +391,6 @@ export default {
                                 'clearable': true
                             },
                         },
-                        businessUnitId: { value: BUSINESS_UNIT_RAMP },
                     },
                     requestParams: {
                         include: 'responsible,contract,customer',
