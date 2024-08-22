@@ -236,7 +236,7 @@ export default {
     },
     async orderConfirmationMessage() {
       this.$emit('loading', true);
-      let response = await this.saveRequestSimpleWorkOrder();
+      const response = await this.saveRequestSimpleWorkOrder();
       await this.$alert.info({
         mode: 'modal',
         title: '',
@@ -255,9 +255,13 @@ export default {
             label: 'Continue editing',
             color: 'light-blue-7',
             handler: async () => {
-              await this.showWorkOrder(response.data);
+              try {
+                this.$emit('refreshData');
+                await this.showWorkOrder(response.data)
+              } catch (err) {
+                console.error(err);
+              }
               this.acceptSchedule = false;
-              this.$emit('refreshData');
             }
           },
           {
@@ -341,7 +345,7 @@ export default {
 
         const offlineWorkOrder = {
           ...modelWorkOrder,
-          ...businessUnitId,
+          businessUnitId,
           adHoc: this.form.adHoc,
           stationId: Number(this.form.stationId),
           customerId: Number(this.form.customerId),
