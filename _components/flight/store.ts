@@ -14,6 +14,7 @@ export interface FormContarct {
     adHoc: number | string;
     carrierId: string;
     stationId: string;
+    // id: number | string | null;
     inboundTailNumber: string;
     inboundBlockIn: string;
     inboundScheduledArrival: string;
@@ -81,6 +82,7 @@ const state = reactive<StateContarct>({
         adHoc: '',
         carrierId: '',
         stationId: '',
+        // id: null,
         inboundTailNumber: '',
         inboundBlockIn: '',
         inboundScheduledArrival: '',

@@ -45,6 +45,10 @@
               <q-tooltip>Time of Service</q-tooltip>
               TOS: {{ card.calendar.tos ? moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
             </span>
+            <span class="arrival-text-tablet" v-if="card.calendar.tos">
+              <q-tooltip>Time of Service</q-tooltip>
+              TOS: {{ card.calendar.tos ? $moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
+            </span>
           </div> 
         </div>
         <div class="

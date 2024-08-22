@@ -46,7 +46,10 @@ import {
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
   OPERATION_TYPE_OTHER,
-  OPERATION_TYPE_NON_FLIGHT, STEP_DELAY, STATIONS_DELAY
+  OPERATION_TYPE_NON_FLIGHT, 
+  STEP_DELAY,
+  STATIONS_DELAY, 
+  FlightFormFieldSecurityModel
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceListStore from './serviceList/store/serviceList.ts';
@@ -359,6 +362,10 @@ export default {
 
         if(!flightForm.customCustomerName) {
           flightformField = flightformField.concat(['customerId']);
+        }
+
+        if(!this.isPassenger && qRampStore().getTypeWorkOrder() === SECURITY) {
+          flightformField = FlightFormFieldSecurityModel;
         }
 
         const operationType = workOrderList().getOperationTypeList()

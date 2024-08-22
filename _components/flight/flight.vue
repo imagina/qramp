@@ -146,7 +146,8 @@ import {
   THIRTY_MINUTES,
   OPERATION_TYPE_TURN_PASSENGER,
   FIFTEEN_MINUTES,
-  STATIONS_DELAY
+  STATIONS_DELAY,
+  SECURITY
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
@@ -400,6 +401,9 @@ export default {
     validateRulesField() {
       return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
     },
+    isNonFlight() {
+      return qRampStore().isNonFlight()
+    },
     timezoneAirport() {
       const station = workOrderList().getStationList().find(item => item.id == this.form.stationId);
       const airportId = station?.airportId;
@@ -589,7 +593,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard' : 'select',
             props: {
-              vIf: !this.isPassenger,
+              vIf: !this.isPassenger && qRampStore().getTypeWorkOrder() !== SECURITY,
               rules: [
                 val => this.validateSpecialCharacters(val)
               ],
@@ -993,7 +997,6 @@ export default {
             }
           }
         }
-
 
         this.form.date = updateForm.date
         this.form.gateId = updateForm.gateId
@@ -1431,6 +1434,43 @@ export default {
         }
         if(this.isbound[0] && this.isbound[1] ) {
           if(OPERATION_TYPE_TURN_PASSENGER == this.form.operationTypeId && outbound > this.delayMinute) {
+            time[0].hours = outbound;
+            this.differenceTimeMinute.inbound = 0;
+          }
+          if (OPERATION_TYPE_TURN_PASSENGER != this.form.operationTypeId && (inbound > this.delayMinute || outbound > this.delayMinute)) {
+            time = [{
+              code: null,
+              hours: inbound,
+            },{
+              code: null,
+              hours: outbound,
+            }].filter(item => item.hours > this.delayMinute);
+          }
+        }
+        const delay = this.delayList.filter(item => item.hours && item.code);
+        if(delay.length > 0) return;
+        this.delayList = [...time];
+      } else {
+        this.differenceTimeMinute.inbound = 0;
+        this.differenceTimeMinute.outbound = 0;
+      }
+    },
+    setTimeDelayList(){
+      if (this.isPassenger && this.form.stationId == STATION_BNA)
+      {
+        const inbound = this.differenceTimeMinute.inbound;
+        const outbound = this.differenceTimeMinute.outbound;
+        let time = [{code: null, hours: null}];
+        if(this.isbound[0] && !this.isbound[1] && inbound > this.delayMinute) {
+          time[0].hours = inbound;
+          this.differenceTimeMinute.outbound = 0;
+        }
+        if(!this.isbound[0] && this.isbound[1] && outbound > this.delayMinute) {
+          time[0].hours = outbound;
+          this.differenceTimeMinute.inbound = 0;
+        }
+        if(this.isbound[0] && this.isbound[1] ) {
+          if(OPERATION_TYPE_TURN_PASSENGER == this.form.operationTypeId && outbound >= this.delayMinute) {
             time[0].hours = outbound;
             this.differenceTimeMinute.inbound = 0;
           }

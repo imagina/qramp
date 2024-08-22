@@ -25,6 +25,7 @@ import { useQuasar } from 'quasar';
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
   const $q = useQuasar()
+  const refPageActions: any = ref(null);
   const loadingMain = ref(true);
   const refFormOrders = ref(null);
   const refModalNonFlight = ref(null);
@@ -220,12 +221,14 @@ export default function useKanbanBoard(props) {
       const oldPath = oldValue.path
       if (newPath !== oldPath) {
         await setStations()
+        refPageActions.value.search = null;
+        storeKanban.search = null;
       }
       if(storeFilter.stationId === null) {
         storeFilter.showModalStation = true;
         return;
       }
-
+      
       if (!storeKanban.loading) {
         await init();
       }
@@ -259,6 +262,7 @@ export default function useKanbanBoard(props) {
     storeFilter,
     loadingMain,
     search,
-    changeSearch
+    changeSearch,
+    refPageActions
   };
 }

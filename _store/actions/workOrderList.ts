@@ -475,7 +475,6 @@ export default function workOrderList(): WorkOrderList {
   async function getGates(refresh = false): Promise<Gates[] | void> {
     if (hasAccess('setup.gates.index')) {
       try {
-        const isPassenger = qRampStore().getIsPassenger();
         const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
@@ -668,15 +667,9 @@ export default function workOrderList(): WorkOrderList {
         if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
 
         const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
-        const isPassenger = qRampStore().getIsPassenger();
         const companyId = qRampStore().getFilterCompany();
-        let businessUnitId: any = isPassenger ? {businessUnitId: BUSINESS_UNIT_PASSENGER} : {businessUnitId: BUSINESS_UNIT_RAMP};
-        if(isPassenger && qRampStore().getTypeWorkOrder() === FUELING) {
-            businessUnitId = {businessUnitId: BUSINESS_UNIT_FUELING}
-        }
-        if(isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
-            businessUnitId = {businessUnitId: BUSINESS_UNIT_LABOR}
-        }
+        let businessUnitId: any = qRampStore().getFilterCompany() || BUSINESS_UNIT_RAMP;
+      
         const custemerParams = {
             refresh,
             params: {
@@ -776,9 +769,8 @@ export default function workOrderList(): WorkOrderList {
 
     async function getWorkOrderSearch(search: string | null, refresh = false) {
         const API_ROUTE = 'apiRoutes.qramp.workOrders'
-        const isPassenger = qRampStore().getIsPassenger();
         const TYPE = [ FLIGHT, NON_FLIGHT ]
-        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+        const businessUnitId = qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP;
         const flightNumber = search ? { search: search?.toUpperCase() } : {};
         const requestParameters = {
             refresh,

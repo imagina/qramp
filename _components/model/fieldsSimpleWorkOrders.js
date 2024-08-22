@@ -15,9 +15,6 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterBusinessUnit() {
-      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-    },
     filterCompany() {
       return qRampStore().getFilterCompany();
     },
@@ -146,7 +143,7 @@ export default {
   methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { businessUnitId: BUSINESS_UNIT_RAMP };
+        const businessUnitId = qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP;
         const custemerParams = {
           params: {
             filter: {
@@ -161,7 +158,7 @@ export default {
           params: {
             filter: {
               contractStatusId: 1,
-              ...businessUnitId,
+              businessUnitId,
             },
           },
           refresh: false,

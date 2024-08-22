@@ -16,6 +16,7 @@ import { cacheOffline, i18n, store } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
+import serviceListStore from "src/modules/qramp/_components/serviceList/store/serviceList";
 
 
 const state = reactive({
