@@ -14,7 +14,7 @@ export default {
     },
     computed: {
       companyId(){
-        return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        return qRampStore().getFilterCompany();
       },
       isPassenger() {
         return qRampStore().getIsPassenger();

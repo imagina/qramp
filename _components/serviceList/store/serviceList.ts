@@ -12,6 +12,7 @@ import {
 } from '../contracts/index.contract';
 import qRampStore from '../../../_store//qRampStore';
 import _ from 'lodash';
+import {SECURITY} from "src/modules/qramp/_components/model/constants";
 
 const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
@@ -53,7 +54,7 @@ export default function serviceListStore(): ServiceListStoreContract {
             const isPassenger = qRampStore().getIsPassenger();
             const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
             let serviceList = [...response, ...dataModel].filter(item => {
-                if(qRampStore().getIsPassenger()) {
+                if(qRampStore().getIsPassenger() || qRampStore().getTypeWorkOrder() === SECURITY) {
                     return item.id !== 4;
                 }
                 return item;

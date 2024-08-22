@@ -287,27 +287,69 @@ export default {
     crud: import('../_crud/labor.vue'),
     page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
-    title: 'Labor',
+    title: 'Work Orders',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,
     }
   },
-  
-  /*passengerWorkOrderStatuses: {
-    permission: 'ramp.work-order-statuses.manage',
+  laborSchedule: {
+    permission: 'ramp.labor-work-order-schedules.manage',
     activated: true,
     authenticated: true,
-    path: '/passenger/schedule-status/index',
-    name: 'qramp.admin.workOrderStatuses',
-    crud: import('../_crud/workOrderStatuses.vue'),
-    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    path: '/labor/schedule/index',
+    name: 'qramp.admin.laborSchedule',
+    page: () => import('../_components/scheduleKanban'),
     layout: () => import('@imagina/qsite/_layouts/master.vue'),
-    title: 'ifly.cms.sidebar.workOrderStatuses',
+    title: 'ifly.cms.sidebar.schedule',
     icon: 'fa-thin fa-calendar-days',
     subHeader: {
       refresh: true,
     }
-  },*/
+  },
+  security: {
+    permission: 'ramp.security-work-orders.manage',
+    activated: true,
+    authenticated: true,
+    path: '/security/index',
+    name: 'qramp.admin.security',
+    crud: import('../_crud/security.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Work Orders',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  securitySchedule: {
+    permission: 'ramp.security-work-order-schedules.manage',
+    activated: true,
+    authenticated: true,
+    path: '/security/schedule/index',
+    name: 'qramp.admin.securitySchedule',
+    page: () => import('../_components/scheduleKanban'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'ifly.cms.sidebar.schedule',
+    icon: 'fa-thin fa-calendar-days',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  securityOperationType: {
+    permission: 'ramp.operation-types.manage',
+    activated: true,
+    authenticated: true,
+    path: '/security/operation-types/index',
+    name: 'qramp.admin.securityOperationTypes',
+    crud: import('../_crud/operationTypesSecurity.vue'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    layout: () => import('@imagina/qsite/_layouts/master.vue'),
+    title: 'Operation Types',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
 }
 

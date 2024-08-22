@@ -447,7 +447,7 @@ export interface WorkOrderList {
     setCustomerList: (data: CustomerContract[]) => void;
     getCustomerList: () => CustomerContract[];
     getCustomer: () => Promise<CustomerContract[] | void>;
-    getAllList: () => Promise<void>;
+    getAllList: (refresh: boolean) => Promise<void>;
     setContractList: (data: Contract[]) => void;
     getContractList: () => Contract[];
     setFlightStatusesList: (data: FlightStatusContract[]) => void;
@@ -476,4 +476,8 @@ export interface WorkOrderList {
     getResponsible: ()  => any;
     getACTypes: () => any;
     getFavourites: (refresh?: boolean) => Promise<any>;
+    getBillingClosedDate: (refresh) => Promise<any>;
+    getWorkOrderSearch: (search: string, refresh?: boolean) => Promise<any>;
+    getFlightawareSearch: (search: string, refresh: boolean) => Promise<any>;
+    getSearchFlightNumber: (search: string, type: "workorder" | "flightaware", refresh: boolean) => Promise<any>;
 }

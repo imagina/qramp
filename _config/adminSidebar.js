@@ -21,7 +21,23 @@ export default [
       pages.qramp.operationTypePassenger,
       pages.qramp.passengerFlightMap,
       pages.qramp.fueling,
-      pages.qramp.labor
+      {
+        title: 'Labor',
+        icon: 'fa-light fa-tickets-airline',
+        children: [
+          pages.qramp.labor,
+          pages.qramp.laborSchedule
+        ]
+      },
+    ]
+  },
+  {
+    title: 'Security',
+    icon: 'fa-light fa-shield-halved',
+    children: [
+      pages.qramp.security,
+      pages.qramp.securitySchedule,
+      pages.qramp.securityOperationType
     ]
   },
   {

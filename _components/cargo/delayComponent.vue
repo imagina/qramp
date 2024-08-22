@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-w-full tw-mb-10 tw-mt-5">
+  <div class="tw-w-full tw-mb-20 tw-mt-5">
     <delayForm />
     <div class="tw-px-6 tw-mb-8">
       <q-toggle
@@ -7,7 +7,9 @@
         color="primary"
         label="Delay"
         @input="resetDelayList"
+        v-if="!disableToggle"
       />
+      <span class="tw-pl-6" v-else> Delay </span>
       <q-btn
         v-if="delay"
         class="q-ml-sm"
@@ -18,6 +20,7 @@
         @click="addDelay()"
       />
     </div>
+    <q-form ref="cargoDelay">
     <div v-if="delay" class="tw-px-6">
       <div class="row">
         <template v-for="(field, keyField) in delayFields">
@@ -47,6 +50,7 @@
         </template>
       </div>
     </div>
+    </q-form>
   </div>
 </template>
 
@@ -57,6 +61,7 @@ import workOrderList from "../../_store/actions/workOrderList";
 import qRampStore from "../../_store/qRampStore.js";
 import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
 import delayForm from './delayForm.vue';
+import flightStore from "src/modules/qramp/_components/flight/store";
 
 export default defineComponent({
   components: {
@@ -65,6 +70,7 @@ export default defineComponent({
   setup() {
     const disabledReadonly = computed(() => qRampStore().disabledReadonly());
     const isPassenger = computed(() => qRampStore().getIsPassenger());
+    const disableToggle = computed(() => flightStore().getDifferenceTimeMinute().inbound > 0 || flightStore().getDifferenceTimeMinute().outbound > 0);
     const delay = computed({
       get() {
         return cargoStore().getDelay();
@@ -76,7 +82,7 @@ export default defineComponent({
 
     const delayList = computed(() => cargoStore().getDelayList());
     const filterCompany = computed(() =>
-      isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP
+        qRampStore().getFilterCompany()
     );
     const delayFields = computed(() => {
       const obj = {};
@@ -85,6 +91,16 @@ export default defineComponent({
           value: delay.code,
           type: "select",
           props: {
+            hint: "if you don't know the delay code, please ask the airline representative",
+            rules: [
+              val => {
+                const hoursField = obj["hours" + index]?.value;
+                if (hoursField && !val) {
+                  return 'This field is required because one flight has delay';
+                }
+                return true;
+              }
+            ],
             options: workOrderList().getWorkOrderDelays(),
             readonly: disabledReadonly.value,
             label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
@@ -96,15 +112,19 @@ export default defineComponent({
         };
         obj["hours" + index] = {
           value: delay.hours,
-          type: "inputStandard",
+          type: "input",
           props: {
+            rules: [
+              val => obj["code" + index].value && val == 0 ?
+                  false || 'The value cannot be 0 or void' : true
+            ],
             hint: "Enter the Time in minutes",
             mask: "###################",
             readonly: disabledReadonly.value,
             label: Vue.prototype.$tr("isite.cms.label.time"),
             clearable: true,
             color: "primary",
-            "hide-bottom-space": false,
+            "hide-bottom-space": false
           },
           label: Vue.prototype.$tr("isite.cms.label.time"),
         };
@@ -165,6 +185,7 @@ export default defineComponent({
       resetDelayList,
       getCodeList,
       addDelay,
+      disableToggle,
     };
   },
 });

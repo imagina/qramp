@@ -20,13 +20,23 @@ import cache from "@imagina/qsite/_plugins/cache";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
+import {LABOR} from "src/modules/qramp/_components/model/constants";
 
 export default function useKanbanBoard(props) {
   const proxy = (getCurrentInstance() as any).proxy as any;
+  const refPageActions: any = ref(null);
   const loadingMain = ref(true);
   const refFormOrders = ref(null);
+  const refModalNonFlight = ref(null);
+  const search = computed({
+    get: () => storeKanban.search,
+    set: (value) => {
+      storeKanban.search = value;
+    }
+  })
   const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
   provide("refFormOrders", refFormOrders);
+  provide("refModalNonFlight", refModalNonFlight);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
   const fullscreen = ref(false);
@@ -72,13 +82,17 @@ export default function useKanbanBoard(props) {
   ]);
   const extraPageActions = computed(() => {
     let extraActions: any = [
+      'search',
       {
         label: "Copy Tiny URL",
         props: {
           icon: "fa-light fa-copy",
         },
         action: () => {
-          const routeName = isPassenger.value ? "passenger" : "ramp";
+          let routeName = isPassenger.value ? "passenger" : "ramp";
+          if(qRampStore().getTypeWorkOrder() === LABOR) {
+            routeName = "labor";
+          }
           let hrefSplit = window.location.href.split("?");
           let tinyUrl =
             proxy.$store.state.qsiteApp.originURL +
@@ -108,7 +122,10 @@ export default function useKanbanBoard(props) {
           icon: "fa-duotone fa-calendar-plus",
         },
         action: () => {
-          const routeName = isPassenger.value ? "passenger" : "ramp";
+          let routeName = isPassenger.value ? "passenger" : "ramp";
+          if(qRampStore().getTypeWorkOrder() === LABOR) {
+            routeName = "labor";
+          }
           let hrefSplit = window.location.href.split("?");
           let tinyUrl =
             proxy.$store.state.qsiteApp.originURL +
@@ -187,6 +204,10 @@ export default function useKanbanBoard(props) {
       console.log(error);
     }
   }
+  async function changeSearch(searchData = null) {
+    search.value = searchData;
+    await buildKanbanStructure(true);
+  }
   onMounted(async() => {
     await setStations()
     await init()
@@ -197,15 +218,14 @@ export default function useKanbanBoard(props) {
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
-      
+      if (newPath !== oldPath) {
+        await setStations()
+        refPageActions.value.search = null;
+        storeKanban.search = null;
+      }
       if(storeFilter.stationId === null) {
         storeFilter.showModalStation = true;
       }
-
-      if (newPath !== oldPath) {
-        await setStations()
-      }
-
       if (!storeKanban.loading) {
         init();
       }
@@ -229,9 +249,13 @@ export default function useKanbanBoard(props) {
     isDraggingCard,
     buildKanbanStructure,
     refFormOrders,
+    refModalNonFlight,
     individualRefreshByColumns,
     title,
     isAppOffline,
-    loadingMain
+    loadingMain,
+    search,
+    changeSearch,
+    refPageActions
   };
 }

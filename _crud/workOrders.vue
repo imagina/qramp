@@ -62,7 +62,7 @@ export default {
     async created() {
         this.$nextTick(async () => {
             await qRampStore().setIsPassenger(false);
-            await qRampStore().setIsFueling(false);
+            await qRampStore().setTypeWorkOrder(null);
             await workOrderList().getAllList(true);
             await workOrderList().getCustomerWithContract()
         })
@@ -285,12 +285,12 @@ export default {
                     ],
                     filters: {
                         date: {
-                            props: {
-                                label: "Block-in/out Date"
-                            },
-                            name: "blockInBlockOut",
-                            field: {value: 'blockInBlockOut'},
-                            quickFilter: true
+                          props:{
+                            label: "Scheduled date"
+                          },
+                          name: "scheduleDateLocal",
+                          field: {value: 'schedule_date_local'},
+                          quickFilter: true
                         },
                         customerId: {
                             value: null,

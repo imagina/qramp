@@ -44,10 +44,11 @@ import {
   STEP_REMARKS,
   STEP_SIGNATURE,
   BUSINESS_UNIT_PASSENGER,
-  BUSINESS_UNIT_RAMP, 
-  COMPANY_PASSENGER,
-  COMPANY_RAMP,
-  OPERATION_TYPE_OTHER
+  BUSINESS_UNIT_RAMP,
+  OPERATION_TYPE_OTHER,
+  OPERATION_TYPE_NON_FLIGHT,
+  STEP_DELAY,
+  STATIONS_DELAY, FlightFormFieldSecurityModel
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceListStore from './serviceList/store/serviceList.ts';
@@ -63,6 +64,8 @@ import {
 import remarkStore from './remarks/store.ts';
 import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
 import workOrderList from '../_store/actions/workOrderList.ts'
+import storeCargo from "src/modules/qramp/_components/cargo/store/cargo";
+import flightStore from "src/modules/qramp/_components/flight/store"
 
 export default {
   name: 'stepperRampForm',
@@ -108,7 +111,7 @@ export default {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     stepError: {
       get() {
@@ -166,7 +169,7 @@ export default {
     },
     async sendInfo() {
       try {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        let businessUnitId = qRampStore().getBusinessUnitId();
         const remarks = remarkStore().getForm();
         const serviceList = await serviceListStore().getServiceListSelected();
         const filterList = await serviceListStore().filterServicesListByQuantity();
@@ -193,12 +196,12 @@ export default {
           delay: dataCargo.delay,
           ourDelay: dataCargo.ourDelay,
           delayComment: dataCargo.delayComment,
+          type: qRampStore().getTypeWorkOrder(),
           workOrderItems: [
             ...serviceList
           ],
-          ...businessUnitId,
+          businessUnitId,
         }
-
         if (this.isAppOffline) {
           formatData.titleOffline = `${this.$tr("ifly.cms.form.updateWorkOrder")} Id: ${this.data.workOrderId}`;
         }
@@ -285,7 +288,7 @@ export default {
       const titleOffline = qRampStore().getTitleOffline();
       const params = {params: {titleOffline}};
       if (this.disabledReadonly) {
-        this.$emit('close-modal', false);
+        if (!this.data.parent) this.$emit('close-modal', false);
         this.$emit('loading', false);
         return;
       }
@@ -295,13 +298,13 @@ export default {
 
       await this.updateDataInCache(ROUTE, formatData)
 
-      const request = this.data.update 
+      const request = this.data.update && !this.data?.isClone
         ? this.$crud.update(ROUTE, this.data.workOrderId, formatData, params)
         : this.$crud.create(ROUTE, formatData, params);
 
       await request.then(async res => {
         this.clean()
-        this.$emit('close-modal', false)
+        if (!this.data.parent) this.$emit('close-modal', false)
         const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}`
             : `${this.$tr('isite.cms.message.recordCreated')}`;
         this.$alert.info({message})
@@ -343,17 +346,25 @@ export default {
       try {
         const flightForm = this.$store.state.qrampApp.form;
         let flightformField = this.isPassenger ? FlightformFieldPassengerModel : FlightformFieldModel;
-        const halfTurnInBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        let halfTurnInBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER
         ?  HalfTurnInBountPassengerModel : HalfTurnInBountModel;
-        const halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER 
+        let halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER
         ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
-        
+        if(this.isPassenger && flightForm.operationTypeId == OPERATION_TYPE_NON_FLIGHT) {
+          halfTurnInBount = [];
+          halfTurnOutBount = [];
+          flightformField = flightformField.concat(['scheduleDate']);
+        }
         if(!this.isPassenger && flightForm.operationTypeId != OPERATION_TYPE_OTHER) {
           flightformField = flightformField.concat(['inboundBlockIn']);
         }
 
         if(!flightForm.customCustomerName) {
           flightformField = flightformField.concat(['customerId']);
+        }
+
+        if(!this.isPassenger && qRampStore().getTypeWorkOrder() === SECURITY) {
+          flightformField = FlightFormFieldSecurityModel;
         }
 
         const operationType = workOrderList().getOperationTypeList()
@@ -405,6 +416,53 @@ export default {
           qRampStore().hideLoading();
           return true;
         }
+        const delayList = storeCargo().getDelayList();
+        const validateDelayCode = delayList.some((item) => item.code && item.code.startsWith("99"));
+        const hasValidCodeAndHours = delayList.some(item => (item.code === '' || item.code === null) && item.hours);
+        const delayComment = storeCargo().getDelayComment();
+        const hasCodeAndInvalidHours = delayList.some(item => item.code && (!item.hours || item.hours == 0));
+
+        if (this.isPassenger) {
+          const delays = flightStore().getDifferenceTimeMinute();
+          const message = `You have to enter the at least one delay reason for the ${delays.inbound || delays.outbound}min delay time for flight`
+          if(STATIONS_DELAY.includes(Number(flightForm.stationId)) && delayList.length === 0) {
+            const differenceTimeMinute = flightStore().getDifferenceTimeMinute();
+            const inbound = differenceTimeMinute.inbound;
+            const outbound = differenceTimeMinute.outbound;
+            let time = [{code: null, hours: null}]
+            if(type) {
+              if(type === 'full'){
+                time = [{
+                  code: null,
+                  hours: inbound,
+                },{
+                  code: null,
+                  hours: outbound,
+                }].filter(item => item.hours > 0)
+              }
+              if(type === 'inbound') {
+                time[0].hours = inbound;
+              }
+              if(type === 'outbound') {
+                time[0].hours = outbound;
+              }
+            }
+
+            storeCargo().setDelayListData(time)
+            return await this.handleError(message);
+          }
+          if (hasCodeAndInvalidHours) {
+            return await this.handleError("You have data with empty or zero time");
+          }
+
+          if (hasValidCodeAndHours) {
+            return await this.handleError(message);
+          }
+
+          if (validateDelayCode && !delayComment) {
+            return await this.handleError(this.$tr('isite.cms.message.formInvalid'));
+          }
+        }
         this.error = false;
         return false;
       } catch (error) {
@@ -418,6 +476,15 @@ export default {
     isError(value) {
       this.stepError = value;
     },
+    async handleError(message) {
+      await this.setStep(STEP_DELAY);
+      this.error = true;
+      qRampStore().hideLoading();
+      await this.setData();
+      this.$alert.error({ message });
+      await this.$refs.delay[0].$refs.cargoDelay.validate()
+      return true;
+    }
   },
 }
 </script>

@@ -15,11 +15,8 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterBusinessUnit() {
-      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-    },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     allowContractName() {
       return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
@@ -123,7 +120,7 @@ export default {
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
-              label: 'Responsible',
+              label: 'Assigned to',
               clearable: true,
               color: "primary",
               hint: "If you left this field empty, the responsible will be you automatically",
@@ -147,7 +144,7 @@ export default {
   methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { businessUnitId: BUSINESS_UNIT_RAMP };
+        const businessUnitId = qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP;
         const custemerParams = {
           params: {
             filter: {
@@ -162,7 +159,7 @@ export default {
           params: {
             filter: {
               contractStatusId: 1,
-              ...businessUnitId,
+              businessUnitId,
             },
           },
           refresh: false,

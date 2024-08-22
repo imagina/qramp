@@ -15,7 +15,6 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
-import _ from 'lodash'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);

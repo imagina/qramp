@@ -657,7 +657,7 @@ export default {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
   },
   methods: {
@@ -950,7 +950,7 @@ export default {
           .endOf('day').format("YYYY-MM-DD HH:mm:ss");
         return {
           date: {
-            field: this.isPassenger ? "schedule_date_local" : "schedule_date",
+            field: "schedule_date_local",
             type: "customRange",
             from: lastStartM,
             to: lastEndM,
@@ -1005,7 +1005,7 @@ export default {
         const startDateTime = startDateM.startOf('day').set({ hour: time[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss');
         const endDateTime = startDateM.endOf('day').set({ hour: time[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss');
         const customDateObject = {
-          field: this.isPassenger ? "schedule_date_local" : "schedule_date",
+          field: "schedule_date_local",
           type: 'customRange',
           from: startDateTime,
           to: endDateTime

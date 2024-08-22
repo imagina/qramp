@@ -14,6 +14,7 @@ export interface FormContarct {
     adHoc: number | string;
     carrierId: string;
     stationId: string;
+    // id: number | string | null;
     inboundTailNumber: string;
     inboundBlockIn: string;
     inboundScheduledArrival: string;
@@ -44,18 +45,26 @@ export interface FormContarct {
     responsible?: any;
     cancellationNoticeTime: number | null;
     cancellationType: string | null;
+    parentId: number | string | null;
+    scheduleDate: string | null;
+    type: number | null;
 }
 export interface StateContarct {
     form: FormContarct;
-    responsibles: any,
+    responsibles: any;
+    differenceTimeMinute: {
+        inbound: number;
+        outbound: number;
+    };
 }
 
 export interface FlightStoreContract {
     getForm(): FormContarct,
     setForm(flight: FormContarct): void,
     reset(): void,
-    payload(): void,
     getReponsible(): any;
+    getDifferenceTimeMinute(): any;
+    setDifferenceTimeMinute(value: any): any;
 }
 
 const state = reactive<StateContarct>({
@@ -73,6 +82,7 @@ const state = reactive<StateContarct>({
         adHoc: '',
         carrierId: '',
         stationId: '',
+        // id: null,
         inboundTailNumber: '',
         inboundBlockIn: '',
         inboundScheduledArrival: '',
@@ -98,10 +108,15 @@ const state = reactive<StateContarct>({
         customCustomerName: null,
         cancellationNoticeTime: null,
         cancellationType: null,
+        parentId: null,
+        scheduleDate: null,
+        type: null,
     },
-    responsibles: {
-
-    }
+    responsibles: {},
+    differenceTimeMinute: {
+        inbound: 0,
+        outbound: 0,
+    },
 });
 /**
  * Creates a FlightStore object.
@@ -164,6 +179,9 @@ export default function flightStore(): FlightStoreContract {
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
         state.form.cancellationNoticeTime = flight.cancellationNoticeTime ? flight.cancellationNoticeTime : null;
         state.form.cancellationType = flight.cancellationType ? flight.cancellationType : null;
+        state.form.parentId = flight.parentId ? flight.parentId : null;
+        state.form.scheduleDate = flight.scheduleDate ? flight.scheduleDate : null;
+        state.form.type = flight.type ? flight.type : null;
         state.responsibles = flight?.responsible ? [{value: flight.responsible.id, label: flight.responsible.fullName}] : [];
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;
@@ -178,8 +196,12 @@ export default function flightStore(): FlightStoreContract {
     function getReponsible() {
         return state.responsibles;
     }
-    function payload(): void {
+    function getDifferenceTimeMinute() {
+        return state.differenceTimeMinute
+    }
 
+    function setDifferenceTimeMinute(value) {
+        state.differenceTimeMinute = value;
     }
     /**
      * Resets the form data to its default values.
@@ -187,12 +209,17 @@ export default function flightStore(): FlightStoreContract {
      * @returns {void}
     */
     function reset(): void {
+        state.differenceTimeMinute = {
+            inbound: 0,
+            outbound: 0,
+        }
     }
     return {
         getForm,
         setForm,
         reset,
-        payload,
-        getReponsible
+        getReponsible,
+        getDifferenceTimeMinute,
+        setDifferenceTimeMinute,
     }
 }

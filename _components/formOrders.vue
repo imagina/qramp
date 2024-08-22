@@ -43,7 +43,8 @@ import {
   STEP_FLIGHT,
   STEP_SERVICE,
   STEP_REMARKS,
-  STEP_SIGNATURE
+  STEP_SIGNATURE,
+  NON_FLIGHT,
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
@@ -57,6 +58,8 @@ import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
+import { constructionWorkOrder } from 'src/modules/qramp/_store/actions/constructionWorkOrder'
+// import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
 
 export default {
   components: {
@@ -172,6 +175,10 @@ export default {
     },
     actionsStepperButtom() {
       const statusId = qRampStore().getStatusId();
+      const parentId = storeFlight().getForm().parentId
+      const flight = qRampStore().getClonedWorkOrder()
+      const showOpenSourceWorkOrder = Boolean(parentId)
+
       const actions = [
         {
           props: {
@@ -186,6 +193,76 @@ export default {
             this.clear()
             this.$root.$emit('crud.data.refresh')
             await qRampStore().hideLoading();
+          }
+        },
+        {
+          props: {
+            vIf: !showOpenSourceWorkOrder && Boolean(flight),
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : 'Return to cloned work order',
+            icon: 'fa-regular fa-arrow-left',
+          },
+          action: async() => {
+            this.loading = true;
+            const flight = qRampStore().getClonedWorkOrder()
+            const modalProps = {
+              title: `Non-flight based on Work Order #${flight.parentId}`,
+              update: true,
+              workOrderId: flight.id,
+              width: '90vw',
+              isClone: true
+            }
+            this.loadform({ data: flight, modalProps })
+          }
+        },
+        {
+          props: {
+            icon: 'fa-brands fa-sourcetree',
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : 'Open source work order',
+            vIf: showOpenSourceWorkOrder,
+            loading: this.loadingComputed,
+          },
+          action: async () => {
+            this.loading = true;
+            const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
+            const formData = structuredClone(await constructionWorkOrder(data))
+            console.log('store formData', formData)
+            qRampStore().setClonedWorkOrder(formData)
+
+            const url = this.$router.resolve({
+              name: 'qramp.admin.passenger',
+              params: this.$route.params,
+              query: { edit: formData?.parentId }
+            }).href;
+
+            window.open(url, '_blank');
+
+            this.loading = false;
+
+            // this.services = [];
+            // serviceListStore().setShowFavourite(false)
+            // serviceListStore().setErrorList([]);
+            // serviceListStore().resetStore()
+            // qRampStore().setWorkOrderItems([])
+            // cargoStore().reset();
+            // remarksStore().reset();
+
+            // const workOrder = await getWorkOrder(formData?.parentId)
+            // workOrder.data.parentId = null
+
+            // const modalProps = {
+            //   title: this.$tr('ifly.cms.form.updateWorkOrder') + (workOrder.data.id ? ` Id: ${workOrder.data.id}` : ''),
+            //   update: true,
+            //   workOrderId: workOrder.data.id,
+            //   width: '90vw',
+            //   chip: {
+            //     label: "Parent",
+            //   },
+            //   parent: true
+            // }
+
+            // this.loadform({ data: workOrder.data, modalProps })
           }
         },
         {
@@ -214,7 +291,7 @@ export default {
             color: 'white',
             icon: 'fal fa-check',
             'text-color': 'positive',
-            label: this.$tr('isite.cms.label.closeFlight'),
+            label: 'Close',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
@@ -292,6 +369,8 @@ export default {
       this.services = [];
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
+      qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
     },
     /**
      * Loads the form asynchronously with the given parameters.
@@ -306,7 +385,18 @@ export default {
         qRampStore().showLoading();
         const updateData = this.$clone(params)
         this.show = true
+
+        /* Chip to identify non-flight work order */
+        const type = Number(updateData.data?.type)
+        const isNonFlight = type === NON_FLIGHT
+        const chip = {
+          label: "Non-flight",
+        }
         this.modalProps = updateData.modalProps
+        if (this.isPassenger) {
+          if(isNonFlight && this.modalProps.update) this.modalProps.chip = { ...chip }
+        }
+
         this.flight = {}
         this.remark = {}
         this.signature = {}
@@ -343,6 +433,7 @@ export default {
         this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight);
         this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.signature)
         qRampStore().hideLoading();
+        this.loading = false;
       } catch (error) {
         this.loading = false;
         qRampStore().hideLoading();
@@ -362,6 +453,9 @@ export default {
       remarksStore().reset();
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
+      qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
+
     },
     /**
      * Set the loading state of the modal.
