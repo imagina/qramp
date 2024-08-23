@@ -6,6 +6,7 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import { FLIGHT, LABOR, NON_FLIGHT } from 'src/modules/qramp/_components/model/constants'
 import modalNonFlightStore from 'src/modules/qramp/_components/modalNonFlight/store/index.store'
+import { i18n } from 'src/plugins/utils'
 
 export default function useCompletedSchedule(props: any, emit: any) {
   const isBlank = computed(() => storeKanban.isBlank);
@@ -93,5 +94,6 @@ export default function useCompletedSchedule(props: any, emit: any) {
     createNonFlight,
     createFlight,
     dropdownItems,
+    i18n
   }
 }
