@@ -401,9 +401,6 @@ export default {
     validateRulesField() {
       return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
     },
-    isNonFlight() {
-      return qRampStore().isNonFlight()
-    },
     timezoneAirport() {
       const station = workOrderList().getStationList().find(item => item.id == this.form.stationId);
       const airportId = station?.airportId;
