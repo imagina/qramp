@@ -21,6 +21,7 @@ import validateMatchCompanyStation from "../actions/validateMatchCompanyStation"
 import {LABOR} from "src/modules/qramp/_components/model/constants";
 import { store, i18n, helper, cache, router } from 'src/plugins/utils'
 import { useQuasar } from 'quasar';
+import { SECURITY } from "../../model/constants.js";
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
@@ -90,11 +91,8 @@ export default function useKanbanBoard(props) {
           icon: "fa-light fa-copy",
         },
         action: () => {
-          let routeName = isPassenger.value ? "passenger" : "ramp";
-          if(qRampStore().getTypeWorkOrder() === LABOR) {
-            routeName = "labor";
-          }
-          let hrefSplit = window.location.href.split("?");
+          const { routeName, hrefSplit } = determineRouteAndSplitHref()
+
           let tinyUrl =
             store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/public/index`;
@@ -116,21 +114,21 @@ export default function useKanbanBoard(props) {
       },
       {
         label: "Scheduler",
-        vIf:
-          hasAccess("ramp.schedulers.manage"),
+        vIf: hasAccess("ramp.schedulers.manage"),
         props: {
           label: "Scheduler",
           icon: "fa-duotone fa-calendar-plus",
         },
         action: () => {
-          let routeName = isPassenger.value ? "passenger" : "ramp";
-          if(qRampStore().getTypeWorkOrder() === LABOR) {
-            routeName = "labor";
+          const { routeName, hrefSplit } = determineRouteAndSplitHref()
+          let routeNameLocal = routeName
+
+          if (qRampStore().getTypeWorkOrder() ===  SECURITY) {
+            routeNameLocal = "security";
           }
-          let hrefSplit = window.location.href.split("?");
           let tinyUrl =
             store.state.qsiteApp.originURL +
-            `/#/${routeName}/schedule/index`;
+            `/#/${routeNameLocal}/schedule/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
           localStorage.setItem("urlSchedule", tinyUrl);
           router.push({ name: "qramp.admin.scheduler" });
@@ -209,6 +207,17 @@ export default function useKanbanBoard(props) {
     search.value = searchData;
     await buildKanbanStructure(true);
   }
+
+  function determineRouteAndSplitHref() {
+    let routeName = isPassenger.value ? "passenger" : "ramp";
+    if(qRampStore().getTypeWorkOrder() === LABOR) {
+      routeName = "labor";
+    }
+    let hrefSplit = window.location.href.split("?");
+
+    return { routeName, hrefSplit }
+  }
+
   onMounted(async() => {
     await setStations()
     await init()
