@@ -5,11 +5,7 @@ import serviceListStore from '../../_components/serviceList/store/serviceList';
 import cargoStore from '../../_components/cargo/store/cargo';
 
 export const constructionWorkOrder = async (data) => {
-    const isPassenger = qRampStore().getIsPassenger()
-    let businessUnitId = isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
-    if(isPassenger && qRampStore().getTypeWorkOrder() === LABOR) {
-        businessUnitId = { businessUnitId: BUSINESS_UNIT_LABOR }
-    }
+    let businessUnitId = qRampStore().getBusinessUnitId();
     const remarks = remarkStore().getForm();
     const serviceList = await serviceListStore().getServiceListSelected();
     const dataCargo = cargoStore().payload();
@@ -33,7 +29,7 @@ export const constructionWorkOrder = async (data) => {
                 })),
             }))
         ],
-        ...businessUnitId,
+        businessUnitId,
     }
 
     return structuredClone(formatData)
