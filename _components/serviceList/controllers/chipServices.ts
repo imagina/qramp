@@ -1,4 +1,4 @@
-import Vue, {ref, watch, computed, ComputedRef} from 'vue';
+import { ref, watch, computed, ComputedRef } from 'vue';
 import serviceListStore from '../store/serviceList';
 import findDynamicFieldTitle from '../services/findDynamicFieldTitle';
 import searchAndCreateDynamicField from '../services/searchAndCreateDynamicField';

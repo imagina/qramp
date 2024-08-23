@@ -668,7 +668,7 @@ export default function workOrderList(): WorkOrderList {
 
         const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
         const companyId = qRampStore().getFilterCompany();
-        let businessUnitId: any = qRampStore().getFilterCompany() || BUSINESS_UNIT_RAMP;
+        let businessUnitId: any = qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP;
       
         const custemerParams = {
             refresh,
@@ -684,7 +684,7 @@ export default function workOrderList(): WorkOrderList {
             params: {
                 filter: {
                     contractStatusId: 1,
-                    ...businessUnitId,
+                    businessUnitId,
                 }
             },
         }

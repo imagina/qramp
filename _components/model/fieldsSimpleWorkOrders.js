@@ -143,37 +143,9 @@ export default {
   methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
-        const businessUnitId = qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP;
-        const custemerParams = {
-          params: {
-            filter: {
-              withoutContracts: true,
-              customerStatusId: 1,
-              companyId: this.filterCompany,
-            },
-          },
-          refresh: false,
-        };
-        const contractParams = {
-          params: {
-            filter: {
-              contractStatusId: 1,
-              businessUnitId,
-            },
-          },
-          refresh: false,
-        };
-        const customersData = await Promise.all([
-          this.$crud.index("apiRoutes.qramp.setupCustomers", custemerParams),
-          this.$crud.index("apiRoutes.qramp.setupContracts", contractParams),
-        ]);
-        const customerList = factoryCustomerWithContracts(
-          customersData,
-          this.allowContractName
-        );
-
+        const customerList = await workOrderList().getCustomerWithContract();
         return resolve(customerList);
-      });
+      })
     }
   },
 };

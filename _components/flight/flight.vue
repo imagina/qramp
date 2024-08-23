@@ -1455,43 +1455,6 @@ export default {
         this.differenceTimeMinute.outbound = 0;
       }
     },
-    setTimeDelayList(){
-      if (this.isPassenger && this.form.stationId == STATION_BNA)
-      {
-        const inbound = this.differenceTimeMinute.inbound;
-        const outbound = this.differenceTimeMinute.outbound;
-        let time = [{code: null, hours: null}];
-        if(this.isbound[0] && !this.isbound[1] && inbound > this.delayMinute) {
-          time[0].hours = inbound;
-          this.differenceTimeMinute.outbound = 0;
-        }
-        if(!this.isbound[0] && this.isbound[1] && outbound > this.delayMinute) {
-          time[0].hours = outbound;
-          this.differenceTimeMinute.inbound = 0;
-        }
-        if(this.isbound[0] && this.isbound[1] ) {
-          if(OPERATION_TYPE_TURN_PASSENGER == this.form.operationTypeId && outbound >= this.delayMinute) {
-            time[0].hours = outbound;
-            this.differenceTimeMinute.inbound = 0;
-          }
-          if (OPERATION_TYPE_TURN_PASSENGER != this.form.operationTypeId && (inbound > this.delayMinute || outbound > this.delayMinute)) {
-            time = [{
-              code: null,
-              hours: inbound,
-            },{
-              code: null,
-              hours: outbound,
-            }].filter(item => item.hours > this.delayMinute);
-          }
-        }
-        const delay = this.delayList.filter(item => item.hours && item.code);
-        if(delay.length > 0) return;
-        this.delayList = [...time];
-      } else {
-        this.differenceTimeMinute.inbound = 0;
-        this.differenceTimeMinute.outbound = 0;
-      }
-    },
     validateInbound(keyForm) {
       const dataForm = [];
       Object.keys(this.formFields[keyForm]).forEach(key => {

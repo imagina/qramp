@@ -488,7 +488,6 @@ export default function qRampStore() {
 
     async function getFlights() {
         try {
-            const isPassenger = getIsPassenger();
             const companyId = getFilterCompany();
             const workOrderId = state.flightId;
             const params = {
