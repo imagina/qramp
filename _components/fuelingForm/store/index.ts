@@ -83,7 +83,6 @@ const store = computed(() => ({
         if(value.id) {
             state.form.id = value.id;
         }
-        console.log(value.statusId)
         state.form.customerId = value.customerId || null;
         state.form.contractId = value.contractId || null;
         state.form.stationId = Number(value.stationId) || null;
