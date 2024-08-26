@@ -34,7 +34,8 @@ export default [
     icon: 'fa-light fa-shield-halved',
     children: [
       pages.qramp.security,
-      pages.qramp.securitySchedule
+      pages.qramp.securitySchedule,
+      pages.qramp.securityOperationType
     ]
   },
   {

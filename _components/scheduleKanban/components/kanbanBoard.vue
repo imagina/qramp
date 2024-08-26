@@ -1,7 +1,7 @@
 <template>
   <div class="kanbanBoardCtn">
       <page-actions
-        ref="pageActions" 
+        ref="refPageActions"
         :title="title"
         multipleRefresh
         :extra-actions="extraPageActions"  

@@ -53,6 +53,7 @@ export default defineComponent({
                     ...validateRules.value,
                     label: 'Delay Comment',
                     type:"textarea",
+                    'input-style':{height: '17px'}
                 },
             }
         }))

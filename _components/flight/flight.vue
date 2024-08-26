@@ -146,7 +146,8 @@ import {
   THIRTY_MINUTES,
   OPERATION_TYPE_TURN_PASSENGER,
   FIFTEEN_MINUTES,
-  STATIONS_DELAY
+  STATIONS_DELAY,
+  SECURITY
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
@@ -589,7 +590,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard' : 'select',
             props: {
-              vIf: !this.isPassenger,
+              vIf: !this.isPassenger && qRampStore().getTypeWorkOrder() !== SECURITY,
               rules: [
                 val => this.validateSpecialCharacters(val)
               ],
@@ -993,7 +994,6 @@ export default {
             }
           }
         }
-
 
         this.form.date = updateForm.date
         this.form.gateId = updateForm.gateId

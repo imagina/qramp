@@ -415,6 +415,21 @@ export default {
                 ]
               },
             },
+            type: {
+              value: [],
+              type: 'select',
+              props: {
+                label: 'Work Order Types',
+                multiple: true,
+                useChips: true,
+                clearable: true,
+                color: "primary",
+                options: [
+                  {label: 'Flight', value: FLIGHT},
+                  {label: 'Non flight', value: NON_FLIGHT},
+                ]
+              },
+            },
             businessUnitId: { value: BUSINESS_UNIT_PASSENGER },
           },
           requestParams: {
@@ -692,7 +707,7 @@ export default {
       qRampStore().setIsPassenger(true);
       await this.$refs.formOrders.loadform({
         modalProps: {
-          title: `${this.$tr('ifly.cms.form.updateWorkOrder')}`,
+          title: titleModal,
           update: true,
           workOrderId: item.data?.id,
           width: '90vw',

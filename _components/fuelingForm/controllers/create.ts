@@ -118,7 +118,7 @@ export default function createController(props: any = null, emit: any = null) {
         await cacheOffline.addNewRecord(CACHE_PATH, { ...response.data })
         await emit('refresh-data');
         await showWorkOrder(response.data)
-        store.loading = false;
+        storeFlueling.loading = false;
       }
       
 

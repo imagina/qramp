@@ -304,5 +304,20 @@ export default {
       refresh: true,
     }
   },
+  securityOperationType: {
+    permission: 'ramp.operation-types.manage',
+    activated: true,
+    authenticated: true,
+    path: '/security/operation-types/index',
+    name: 'qramp.admin.securityOperationTypes',
+    crud: import('../_crud/operationTypesSecurity.vue'),
+    page: () => import('src/modules/qcrud/_pages/admin/crudPage'),
+    layout: () => import('layouts/master.vue'),
+    title: 'Operation Types',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
 }
 

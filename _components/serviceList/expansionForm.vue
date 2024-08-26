@@ -100,7 +100,7 @@ export default defineComponent({
           <q-card class="row card-color justify-center">
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
-                <dynamic-field class="marginzero tw-w-full" v-model="newData[index]['formField'][keyfield]['value']"
+                <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
                   :field="field" />
               </label>
               <div class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden" v-if="field.type === 'fullDate'
@@ -150,14 +150,19 @@ export default defineComponent({
                 </p>
               </div>
         </div>
-        <div class="
-            tw-w-3/5
-            tw-mx-2
+        <div 
+          class="
+            tw-w-3/5 
+            tw-mx-2 
             tw-truncate
-            tw-flex
-            tw-flex-wrap
-            tw-justify-end tw-gap-4">
-          <div v-for="(field, keyfield) in item.formField" :key="keyfield">
+            tw-flex 
+            tw-flex-wrap 
+            tw-justify-end tw-gap-4"
+          >
+          <div 
+            v-for="(field, keyfield) in item.formField" 
+            :key="keyfield"
+          >
             <div>
               <dynamic-field v-model="data[index]['formField'][keyfield]['value']" :field="field" />
             </div>

@@ -1,5 +1,5 @@
 import { computed, ComputedRef } from 'vue';
-import { OPERATION_TYPE_NON_FLIGHT} from '../../model/constants.js'
+import { OPERATION_TYPE_NON_FLIGHT, SECURITY } from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
 import store from '../store/modalSchedule.store'
@@ -95,7 +95,7 @@ export default function modelFields() {
               value: null,
               type: 'select',
               props: {
-                vIf: !isPassenger.value,
+                vIf: !isPassenger.value && qRampStore().getTypeWorkOrder() !== SECURITY,
                 readonly: isBlank.value,
                 label: `${i18n.tr('ifly.cms.form.gate')}`,
                 clearable: true,

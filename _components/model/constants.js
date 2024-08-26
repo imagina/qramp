@@ -71,6 +71,14 @@ export const FlightformFieldModel = [
     'statusId',
   ];
 
+    export const FlightFormFieldSecurityModel = [
+        'stationId',
+        'acTypeId',
+        'operationTypeId',
+        'carrierId',
+        'statusId',
+    ];
+
   export const HalfTurnInBountModel = [
     'inboundFlightNumber',
     //'inboundOriginAirportId',

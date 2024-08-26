@@ -15,9 +15,6 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterBusinessUnit() {
-      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-    },
     filterCompany() {
       return qRampStore().getFilterCompany();
     },
@@ -146,37 +143,9 @@ export default {
   methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { businessUnitId: BUSINESS_UNIT_RAMP };
-        const custemerParams = {
-          params: {
-            filter: {
-              withoutContracts: true,
-              customerStatusId: 1,
-              companyId: this.filterCompany,
-            },
-          },
-          refresh: false,
-        };
-        const contractParams = {
-          params: {
-            filter: {
-              contractStatusId: 1,
-              ...businessUnitId,
-            },
-          },
-          refresh: false,
-        };
-        const customersData = await Promise.all([
-          this.$crud.index("apiRoutes.qramp.setupCustomers", custemerParams),
-          this.$crud.index("apiRoutes.qramp.setupContracts", contractParams),
-        ]);
-        const customerList = factoryCustomerWithContracts(
-          customersData,
-          this.allowContractName
-        );
-
+        const customerList = await workOrderList().getCustomerWithContract();
         return resolve(customerList);
-      });
+      })
     }
   },
 };

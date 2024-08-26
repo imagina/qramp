@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, onMounted } from "vue";
+import { defineComponent, watch, onMounted, onBeforeUnmount } from "vue";
 import kanbanBoard from "./components/kanbanBoard.vue";
 import workOrderList from '../../_store/actions/workOrderList'
 import qRampStore from "../../_store/qRampStore";
@@ -27,19 +27,19 @@ export default defineComponent({
   },
   setup(props) {
     init();
-    watch((currentValue, oldValue) => router.route.path, (currentValue, oldValue) => {
-      if (routeName !== currentValue) {
-        init();
-        routeName = currentValue;
-        kanbanStore.columns.forEach(column => {
-          column.cards = [];
-        })
-      }
-    },
+    watch(() => router.route.path, (currentValue, oldValue) => {
+        if (routeName !== currentValue) {
+          init(true);
+          routeName = currentValue;
+          kanbanStore.columns.forEach(column => {
+            column.cards = [];
+          })
+        }
+      },
       { deep: true }
     );
 
-    function init() {
+    function init(refresh = false) {
       new Promise(async (resolve, reject) => {
         let currentRoutePath = router.route.path;
         let isPassenger = currentRoutePath.indexOf('passenger') !== -1;
@@ -62,7 +62,7 @@ export default defineComponent({
           await qRampStore().setIsPassenger(true);
           await qRampStore().setTypeWorkOrder(LABOR)
         }
-        await workOrderList().getAllList();
+        await workOrderList().getAllList(refresh);
         await workOrderList().getCustomerWithContract();
         await serviceListStore().init();
       })
@@ -71,6 +71,9 @@ export default defineComponent({
     onMounted(() => {
       kanbanStore.isBlank = props.isBlank;
       qRampStore().setIsblank(props.isBlank);
+    })
+    onBeforeUnmount(() => {
+      kanbanStore.search = null;
     })
     return {};
   },

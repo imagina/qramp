@@ -91,7 +91,7 @@
                     @click="refresh"
                 >
                     <q-tooltip>
-                        {{ $trp('isite.cms.label.refresh') }}
+                        {{ i18n.trp('isite.cms.label.refresh') }}
                     </q-tooltip>
                 </q-btn>
             </div>

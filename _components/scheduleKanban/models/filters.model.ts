@@ -3,7 +3,8 @@ import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 import { i18n } from 'src/plugins/utils'
-import {FLIGHT, NON_FLIGHT} from "src/modules/qramp/_components/model/constants";
+import { FLIGHT, NON_FLIGHT, SECURITY } from "src/modules/qramp/_components/model/constants";
+import qRampStore from "src/modules/qramp/_store/qRampStore";
 
 
 export default function filterModel() {
@@ -85,6 +86,7 @@ export default function filterModel() {
       value: [],
       type: 'select',
       props: {
+        vif: qRampStore().getTypeWorkOrder() !== SECURITY,
         label: 'Work Order Types',
         multiple: true,
         useChips: true,
