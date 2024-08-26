@@ -11,6 +11,7 @@ export default async function updateWorkOrders() {
     const ORIGINAL_DATE_FORMAT = 'MM/DD/YYYY';
     const payloadOffline = {
         ...payload,
+        statusId: Number(payload.statusId),
         offline: !navigator.onLine
     }
 
