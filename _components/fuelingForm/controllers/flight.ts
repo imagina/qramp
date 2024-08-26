@@ -14,6 +14,13 @@ export default function flightController() {
   const disabledReadonly = computed(() => {
     return qRampStore().disabledReadonly();
   })
+  const validateComponentCustomerOffline = computed(() => {
+    if(navigator.onLine) {
+      return true;
+    } else {
+      return !storeFueling.loading
+    }
+  })
   const timezoneAirport = computed(() => {
     const station = workOrderList().getStationList().find(item => item.id == form.value.stationId);
     const airportId = station?.airportId;
@@ -184,5 +191,5 @@ export default function flightController() {
   onMounted(() => {
     storeFueling.refsGlobal = { refFlight: refFlight.value };
   })
-  return { formFields, form, refFlight, disabledReadonly, handleChange }
+  return { formFields, form, refFlight, disabledReadonly, handleChange, validateComponentCustomerOffline }
 }
