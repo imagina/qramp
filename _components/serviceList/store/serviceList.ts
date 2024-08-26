@@ -51,7 +51,6 @@ export default function serviceListStore(): ServiceListStoreContract {
      */
     async function getServiceData(): Promise<void> {
         try {
-            const isPassenger = qRampStore().getIsPassenger();
             const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
             let serviceList = [...response, ...dataModel].filter(item => {
                 if(qRampStore().getIsPassenger() || qRampStore().getTypeWorkOrder() === SECURITY) {

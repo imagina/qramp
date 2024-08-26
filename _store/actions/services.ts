@@ -16,10 +16,10 @@ export const serviceListModel = {
  * It makes a request to the server, and returns the response data.
  * @returns An array of categories.
  */
-export const getCategories = async (): Promise<any[]> => {
+export const getCategories = async (company?: null | []): Promise<any[]> => {
     if (store.hasAccess('ramp.categories.index')) {
         try {
-            const companyId = qRampStore().getFilterCompany();
+            const companyId = company ? company : qRampStore().getFilterCompany();
             
             let requestParams = {
                 params: {

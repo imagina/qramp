@@ -24,7 +24,6 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
         let businessUnitId: any = qRampStore().getBusinessUnitId();
 
         if(qRampStore().getTypeWorkOrder() === LABOR) {
-          businessUnitId = BUSINESS_UNIT_LABOR
           type = LABOR
         }
         if(form.operationTypeId == OPERATION_TYPE_NON_FLIGHT && qRampStore().getTypeWorkOrder() !== LABOR) {

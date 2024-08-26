@@ -6,9 +6,10 @@ import {
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
     BUSINESS_UNIT_SECURITY,
+    COMPANY_PASSENGER,
+    COMPANY_RAMP,
+    COMPANY_SECURITY,
     FLIGHT,
-    FUELING,
-    LABOR,
     NON_FLIGHT
 } from '../../_components/model/constants.js';
 import {
@@ -28,6 +29,7 @@ import factoryCustomerWithContracts from './factoryCustomerWithContracts.js'
 import {store} from 'src/plugins/utils'
 import serviceListStore from '../../_components/serviceList/store/serviceList'
 import storeFlight from 'src/modules/qramp/_components/flight/store';
+import { getCategories } from 'src/modules/qramp/_store/actions/services'
 
 const state = reactive<State>({
   operationTypeList: [],
@@ -60,6 +62,13 @@ const state = reactive<State>({
 });
 const cacheTimeForm24Hour: number = 60 * 60 * 24;
 const cacheTimeForThirtyDays: number = cacheTimeForm24Hour * 30;
+const accessMap = {
+  'passenger': 'ramp.passenger-work-orders.index',
+  'fueling': 'ramp.fueling-work-orders.index',
+  'labor': 'ramp.labor-work-orders.index',
+  'security': 'ramp.security-work-orders.index',
+  'ramp': 'ramp.work-orders.manage'
+};
 
 function demoMessage(error: any): void {
   if(error.code !== 'ERR_CANCELED') {
@@ -563,13 +572,6 @@ export default function workOrderList(): WorkOrderList {
 
 
   async function getWorkOrderConditionally(refresh = false) {
-    const accessMap = {
-      'passenger': 'ramp.passenger-work-orders.index',
-      'fueling': 'ramp.fueling-work-orders.index',
-      'labor': 'ramp.labor-work-orders.index',
-      'security': 'ramp.security-work-orders.index'
-    };
-
     const businessUnits = {
       'passenger': BUSINESS_UNIT_PASSENGER,
       'fueling': BUSINESS_UNIT_FUELING,
@@ -583,8 +585,20 @@ export default function workOrderList(): WorkOrderList {
 
     if (accessibleUnits.length > 0) {
       await getWorkOrders(refresh, accessibleUnits);
-    } else {
-      await getWorkOrders(refresh, BUSINESS_UNIT_RAMP);
+    }
+  }
+
+  const getListOfServicesConditionally = async () => {
+    if (hasAccess(accessMap.ramp)) {
+      await getCategories(COMPANY_RAMP);
+    }
+
+    if (hasAccess(accessMap.passenger)) {
+      await getCategories(COMPANY_PASSENGER); 
+    }
+
+    if (hasAccess(accessMap.security)) {
+      await getCategories(COMPANY_SECURITY);
     }
   }
 
@@ -848,6 +862,7 @@ export default function workOrderList(): WorkOrderList {
    */
   async function getAllList(refresh = false): Promise<void> {
     Promise.all([
+      getListOfServicesConditionally(),
       getWorkOrderConditionally(refresh),
       getStation(refresh),
       getOperationType(refresh),
