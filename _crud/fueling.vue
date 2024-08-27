@@ -328,7 +328,7 @@ export default {
                 fuelingFormStore.showModal = true;
                 fuelingFormStore.loading = true;
                 fuelingFormStore.isUpdate = true;
-                fuelingFormStore.titleModal = 'Update fueling'
+                fuelingFormStore.titleModal = 'Update fueling' + (item.id ? ` Id: ${item.id}` : '')
                 fuelingFormStore.widthModal = '90vw';
                 this.showWorkOrder(item);
               }
