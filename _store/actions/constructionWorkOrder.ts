@@ -1,6 +1,5 @@
 import qRampStore from '../qRampStore'
 import remarkStore from '../../_components/remarks/store';
-import { LABOR, BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_LABOR } from '../../_components/model/constants';
 import serviceListStore from '../../_components/serviceList/store/serviceList';
 import cargoStore from '../../_components/cargo/store/cargo';
 
