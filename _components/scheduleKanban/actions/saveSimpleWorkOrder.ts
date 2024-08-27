@@ -16,6 +16,8 @@ import { i18n } from 'src/plugins/utils'
 export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
     try {
         const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
+        const CACHE_PATH = 'apiRoutes.qramp.workOrders'
+        const modeOffline = !navigator.onLine
         let response = { ...dataReturnedWorkOrderModel }
 
         const offlineId = new Date().valueOf();
@@ -39,6 +41,7 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
               titleOffline: i18n.tr('ifly.cms.form.newWorkOrder'),
               businessUnitId,
               type,
+              ...(modeOffline ? { apiRoute: CACHE_PATH, } : {})
             }
           );
         } catch (err) {
