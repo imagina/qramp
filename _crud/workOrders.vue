@@ -672,7 +672,7 @@ export default {
             await qRampStore().setIsPassenger(false);
             await this.$refs.formOrders.loadform({
                 modalProps: {
-                    title: titleModal,
+                    title: `${titleModal} Id: ${item.id}`,
                     update: true,
                     workOrderId: item.id,
                     width: '90vw'
