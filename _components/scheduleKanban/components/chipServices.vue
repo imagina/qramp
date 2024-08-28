@@ -34,6 +34,7 @@ export default defineComponent({
   >
   <q-btn   
       icon="fa-light fa-briefcase-blank"
+      class="tw-mr-2"
       text-color="primary" 
       :size="size" 
       round
@@ -41,7 +42,8 @@ export default defineComponent({
       v-if="workOrderItemsTotal > 0"
       @click="getWorkOrderItems"
     >
-      <q-badge 
+      <q-badge
+        class="tw--right-2" 
         floating 
         rounded 
         color="primary"
@@ -60,6 +62,7 @@ export default defineComponent({
           lg:tw-overflow-x-hidden"
       >
         <div 
+          v-if="!loading"
           class="
            tw-px-2 
            tw-py-8 
@@ -116,12 +119,14 @@ export default defineComponent({
             </div>
           </div>
         </div>
-        <q-spinner-tail
-          class="tw-mx-auto tw-my-2"
-          v-if="loading"
-          color="primary"
-          size="3em"
-        />
+        <div v-if="loading" class="tw-flex tw-flex-col tw-gap-2 tw-px-2 tw-py-5">
+          <q-skeleton class="tw-mb-3" width="150px" />
+          <q-skeleton 
+            v-for="i in 3"
+            class="tw-rounded-full tw-w-full sm:tw-w-80" 
+            height="27px" 
+          />
+        </div>
       </q-popup-proxy>
       <q-tooltip>
         Service summary

@@ -180,12 +180,17 @@ export default function flightController() {
   }
 
   const handleChange = async (key, event) => {
+    if (form.value[key] == event) return 
+    if (!event) return
+    
     if (key === 'stationId') await reFilterFavorites(key, event)
     if (key === 'carrierId') await reFilterFavorites(key, event)
   }
 
-  watch(() => form.value.customerId, async (value) => {
-    reFilterFavorites('customerId', value)
+  watch(() => form.value.customerId, async (value, oldValue) => {
+    if (value != oldValue) {
+      reFilterFavorites('customerId', value)
+    }
   }, { deep: true })
 
   onMounted(() => {

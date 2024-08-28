@@ -3,6 +3,7 @@ import { BUSINESS_UNIT_FUELING, FUELING } from '../../model/constants';
 import serviceListStore from '../../serviceList/store/serviceList'
 import remarkStore from '../../remarks/store';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
 import remarksStore from '../../remarks/store';
 import stepps from '../models/defaultModels/stepps';
 import moment from 'moment';
@@ -93,7 +94,28 @@ const store = computed(() => ({
         state.form.fuelingRegistration = value.fuelingRegistration || null;
         (state.form as any).scheduleDate = value.scheduleDate ? moment(value.scheduleDate).format('MM/DD/YYYY') : null;
         qRampStore().setTypeWorkOrder(value.type)
-        qRampStore().setWorkOrderItems(value.workOrderItems);
+        if(navigator.onLine) {
+            qRampStore().setWorkOrderItems(value.workOrderItems);
+        } else {
+            const storedWorkOrderServices = workOrderList().getWorkOrdersItemsList()?.filter(
+                item => item.workorderId == value?.workOrderId
+            );
+            
+            const workOrderItems = value.workOrderItems?.length > 0
+                ? value.workOrderItems
+                : storedWorkOrderServices;
+        
+
+            if (!workOrderItems) return 
+            const workOrderItemCamelCase = workOrderItems?.map(item => ({
+                productId: item?.product_id,
+                workOrderItemAttributes: item?.work_order_item_attributes?.map((attribute) => ({
+                    attributeId: attribute?.attribute_id, 
+                    ...attribute
+                })),
+            }))
+            qRampStore().setWorkOrderItems(workOrderItemCamelCase);
+        }
         serviceListStore().init().then();
         remarksStore().setForm(value);
         qRampStore().setStatusId(state.form.statusId);

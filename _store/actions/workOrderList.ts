@@ -10,7 +10,10 @@ import {
     COMPANY_RAMP,
     COMPANY_SECURITY,
     FLIGHT,
-    NON_FLIGHT
+    FUELING,
+    LABOR,
+    NON_FLIGHT,
+    SECURITY
 } from '../../_components/model/constants.js';
 import {
   Contract,
@@ -510,7 +513,7 @@ export default function workOrderList(): WorkOrderList {
    * then sets the dataWorkOrderList to the response and returns the data.
    * @returns The data is being returned as an array of objects.
    */
-  async function getWorkOrders(refresh = false, businessUnit?): Promise<WorkOrders | void> {
+  async function getWorkOrders(refresh = false, businessUnit?, type?): Promise<WorkOrders | void> {
     if (hasAccess('ramp.work-orders.index') || hasAccess('ramp.passenger-work-orders.index')) {
       try {
         const isPassenger = qRampStore().getIsPassenger();
@@ -534,6 +537,7 @@ export default function workOrderList(): WorkOrderList {
                 field: "id",
                 way: "desc"
               },
+              ...(type ? { type } : {}),
               withoutDefaultInclude: true,
             },
             page: 1
@@ -579,12 +583,23 @@ export default function workOrderList(): WorkOrderList {
       'security': BUSINESS_UNIT_SECURITY,
     };
 
+    const typesUnits = {
+      'passenger': [FLIGHT, NON_FLIGHT], 
+      'fueling': FUELING, 
+      'labor': LABOR,  
+      'security': SECURITY
+    }
+
     const accessibleUnits = Object.entries(accessMap)
       .filter(([_, permission]) => hasAccess(permission))
-      .map(([unit, _]) => businessUnits[unit]);
+
+    const businessIds = accessibleUnits.map(([unit, _]) => businessUnits[unit]);
+    const typeIds = accessibleUnits
+      .flatMap(([unit, _]) => typesUnits[unit])
+      .filter(type => type !== undefined)
 
     if (accessibleUnits.length > 0) {
-      await getWorkOrders(refresh, accessibleUnits);
+      await getWorkOrders(refresh, businessIds, typeIds);
     }
   }
 

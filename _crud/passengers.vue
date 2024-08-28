@@ -184,8 +184,10 @@ export default {
               label: 'Inbound Flight Number',
               field: item => `${item.inboundFlightNumber ? item.inboundFlightNumber : ''}${item.faFlightId ? '' : '(Manually)'}`,
               align: "left",
-              format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
+              format: item => this.flightChip(item),
               action: (item) => {
+                if (this.isAppOffline) return
+
                 const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
                 const workOrder = {
                   workOrderId: item.id,
@@ -210,8 +212,10 @@ export default {
               label: 'Outbound Flight Number',
               field: item => `${item.outboundFlightNumber ? item.outboundFlightNumber : ''}${item.outbountFaFlightId ? '': '(Manually)'}`,
               align: "left",
-              format: item => item ? `<span class="tw-border tw-p-1 tw-rounded-md tw-font-medium"/>${item}</span>` : '',
+              format: item => this.flightChip(item),
               action: (item) => {
+                if (this.isAppOffline) return
+                
                 const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
                 const workOrder = {
                   workOrderId: item.id,
@@ -769,6 +773,22 @@ export default {
     },
     async getDataTable(refresh) {
       await this.$refs.crudComponent.getDataTable(refresh);
+    },
+    flightChip(item) {
+      return item 
+        ? `
+          <span 
+            class="
+              tw-border 
+              tw-p-1 
+              tw-rounded-md 
+              tw-font-medium
+              ${this.isAppOffline ? 'tw-cursor-auto' : ''}
+            "
+          />
+            ${item}
+          </span>`  
+        : ''
     },
   }
 }
