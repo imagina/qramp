@@ -146,7 +146,6 @@ import {
   THIRTY_MINUTES,
   OPERATION_TYPE_TURN_PASSENGER,
   FIFTEEN_MINUTES,
-  STATIONS_DELAY,
   SECURITY
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
@@ -1416,7 +1415,7 @@ export default {
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
     setTimeDelayList(){
-      if (this.isPassenger && STATIONS_DELAY.includes(Number(this.form.stationId)))
+      if (this.isPassenger)
       {
         const inbound = this.differenceTimeMinute.inbound;
         const outbound = this.differenceTimeMinute.outbound;
@@ -1481,7 +1480,6 @@ export default {
       const fieldColumnName = column === 'inbound' ? 'inboundBlockIn' : 'outboundBlockOut';
       if(
           this.isPassenger &&
-          STATIONS_DELAY.includes(Number(this.form.stationId)) &&
           this.form[fieldColumnName] !== null
       ) {
         if(OPERATION_TYPE_TURN_PASSENGER == this.form.operationTypeId && column === 'inbound') return;

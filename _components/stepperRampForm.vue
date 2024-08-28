@@ -427,7 +427,7 @@ export default {
         if (this.isPassenger) {
           const delays = flightStore().getDifferenceTimeMinute();
           const message = `You have to enter the at least one delay reason for the ${delays.inbound || delays.outbound}min delay time for flight`
-          if(STATIONS_DELAY.includes(Number(flightForm.stationId)) && delayList.length === 0) {
+          if(delayList.length === 0) {
             const differenceTimeMinute = flightStore().getDifferenceTimeMinute();
             const inbound = differenceTimeMinute.inbound;
             const outbound = differenceTimeMinute.outbound;
