@@ -642,10 +642,9 @@ export default function workOrderList(): WorkOrderList {
   }
 
   async function getListDelays(refresh = false) {
-    if (hasAccess('setup.work-order-delays.index')) {
+    if (hasAccess('ramp.work-order-delays.index')) {
       try {
         const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
-        const isPassenger = qRampStore().getIsPassenger();
         const companyId = qRampStore().getFilterCompany();
         const params = {
           refresh,
