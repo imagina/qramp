@@ -106,10 +106,12 @@ const store = computed(() => ({
                 : storedWorkOrderServices;
         
 
+            if (!workOrderItems) return 
             const workOrderItemCamelCase = workOrderItems?.map(item => ({
-                productId: item.product_id,
-                workOrderItemAttributes: item.work_order_item_attributes.map((attribute) => ({
-                    attributeId: attribute.attribute_id, ...attribute
+                productId: item?.product_id,
+                workOrderItemAttributes: item?.work_order_item_attributes?.map((attribute) => ({
+                    attributeId: attribute?.attribute_id, 
+                    ...attribute
                 })),
             }))
             qRampStore().setWorkOrderItems(workOrderItemCamelCase);
