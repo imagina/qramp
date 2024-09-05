@@ -32,7 +32,7 @@ import cargoStore from './cargo/store/cargo.ts';
 import storeFlight from './flight/store.ts';
 import iFlight from './flight/flight.vue'
 import iRemarks from './remarks/index.vue'
-import iSignature from '../_components/signature.vue';
+import iSignature from '../_components/signature/signature.vue';
 import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
@@ -40,6 +40,7 @@ import delayComponent from '../_components/cargo/delayComponent';
 import { constructionWorkOrder } from 'src/modules/qramp/_store/actions/constructionWorkOrder'
 import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
 import { cacheOffline } from 'src/plugins/utils';
+import signatureStore from 'src/modules/qramp/_components/signature/store/index.store.ts'
 
 export default {
   emits: ['getWorkOrderFilter', 'refresh-data'],
@@ -320,6 +321,17 @@ export default {
       serviceListStore().setErrorList([]);
       qRampStore().setClonedWorkOrder(null)
       storeFlight().reset()
+      signatureStore.resetStore()
+    },
+    setSignature(data) {
+      signatureStore.form = {
+        customerSignature: data.customerSignature,
+        customerName: data.customerName,
+        customerTitle: data.customerTitle,
+        representativeSignature: data.representativeSignature,
+        representativeName: data.representativeName,
+        representativeTitle: data.representativeTitle,
+      }
     },
     /**
      * Loads the form asynchronously with the given parameters.
@@ -354,6 +366,7 @@ export default {
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
         if (!updateData.data) return
+        this.setSignature(updateData.data)
         qRampStore().setTypeWorkOrder(updateData.data?.type || null);
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
@@ -411,7 +424,7 @@ export default {
       serviceListStore().setErrorList([]);
       qRampStore().setClonedWorkOrder(null)
       storeFlight().reset()
-
+      signatureStore.resetStore()
     },
     /**
      * Set the loading state of the modal.

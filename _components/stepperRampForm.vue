@@ -66,8 +66,9 @@ import {
 import remarkStore from './remarks/store.ts';
 import { cacheOffline } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
-import storeCargo from "src/modules/qramp/_components/cargo/store/cargo";
-import flightStore from "src/modules/qramp/_components/flight/store"
+import storeCargo from 'src/modules/qramp/_components/cargo/store/cargo'
+import flightStore from 'src/modules/qramp/_components/flight/store'
+import signatureStore from 'src/modules/qramp/_components/signature/store/index.store.ts'
 
 export default {
   name: 'stepperRampForm',
@@ -154,11 +155,6 @@ export default {
             await this.$refs.flight[0].saveInfo(error);
           }
           break;
-        case STEP_SIGNATURE:
-          if (this.$refs.signature) {
-            this.$refs.signature[0].saveInfo()
-          }
-          break;
       }
     },
     camelToSnakeCase(str) {
@@ -194,6 +190,7 @@ export default {
         data.form.statusId = qRampStore().getStatusId();
         let formatData = {
           ...data.form,
+          ...signatureStore.form,
           ...dataCargo.cargo,
           ...remarks,
           adHoc: data.form.adHoc == 1,

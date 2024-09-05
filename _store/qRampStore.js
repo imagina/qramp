@@ -66,7 +66,7 @@ export default function qRampStore() {
     function setTypeWorkOrder(value) {
         state.typeWorkOrder = value;
     }
-    
+
     function getWorkOrder() {
         return state.workOrder;
     }
@@ -521,7 +521,7 @@ export default function qRampStore() {
     }
     function getFilterCompany() {
         const isPassenger = getIsPassenger();
-        let companies = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+        let companies = isPassenger ? store.getSetting('ramp::passengerCompanies') : store.getSetting('ramp::rampCompanies');
         if(!isPassenger && getTypeWorkOrder() === SECURITY) {
             companies = COMPANY_SECURITY
         }
