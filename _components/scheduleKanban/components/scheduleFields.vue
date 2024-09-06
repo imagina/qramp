@@ -1,5 +1,8 @@
 <template>
-  <div :class="{'lg:tw-flex-wrap lg:tw-space-x-0 xl:tw-flex xl:tw-space-x-2' : inlineMode }">
+  <div :class="{
+    'lg:tw-flex-wrap lg:tw-space-x-0 xl:tw-flex xl:tw-space-x-2' : inlineMode,
+    'tw-mb-1': !inlineMode
+  }">
     <div v-for="(field, keyField) in fields.form" :key="keyField">
       <dynamic-field
         v-if="keyField !== 'sta' && keyField !== 'outboundScheduledDeparture'"

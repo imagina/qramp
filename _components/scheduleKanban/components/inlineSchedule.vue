@@ -35,20 +35,6 @@
         </q-tooltip>
       </button>
       <button
-        class="
-          tw-bg-blue-800
-          tw-rounded-lg
-          tw-px-2 tw-py-1
-          tw-text-white"
-          v-if="card?.id && !storeKanban.isAppOffline"
-          @click.prevent="showModalComments"
-        >
-          <i class="fa-light fa-comment" />
-          <q-tooltip>
-            {{ i18n.tr("isite.cms.label.comment") }}
-          </q-tooltip>
-      </button>
-      <button
         @click.prevent="hideInline"
         class="
           tw-bg-blue-800
@@ -71,7 +57,6 @@ import useModalSchedule from '../uses/useModalSchedule'
 import scheduleFields from './scheduleFields.vue'
 import modalComments from './modalComments.vue'
 import useModalComments from '../uses/useModalComments';
-import storeKanban from '../store/kanban.store';
 
 export default defineComponent({
   components: {

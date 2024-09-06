@@ -6,10 +6,6 @@ import storeKanban from '../store/kanban.store'
 import crud from 'modules/qcrud/_services/baseService'
 
 export default function useModalComment(props) {
-  const visible = computed({
-    get: () => store.showModalComments,
-    set: (value) => store.showModalComments = value
-  });
 
   const loading = computed({
     get: () => store.loading,
@@ -19,17 +15,8 @@ export default function useModalComment(props) {
   const isAppOffline = computed(() => storeKanban.isAppOffline)
   const permisionCommentsIndex = computed(() => pluginStore.hasAccess(`ramp.work-orders-comments.index`))
 
-  function showModalComments() {
-    if(!permisionCommentsIndex.value) {
-        alert.warning({message: 'You do not have permission to view comments'});
-      return;
-    }
-    visible.value = true;
-  }
-
   async function hideModalComments() {
     loading.value = false;
-    visible.value = false;
     try {
       const workOrderId = props.commentableId
       const col = getCurrentColumn()
@@ -46,10 +33,8 @@ export default function useModalComment(props) {
   }
 
   return {
-    visible,
     isAppOffline,
     permisionCommentsIndex,
-    showModalComments,
     hideModalComments,
     loading
   }
