@@ -135,14 +135,11 @@ import responsive from '../../_mixins/responsive.js'
 import tableFlight from '../modal/tableFlight.vue'
 import qRampStore from '../../_store/qRampStore.js';
 import {
-  COMPANY_PASSENGER,
-  COMPANY_RAMP,
   OPERATION_TYPE_OTHER,
   NON_FLIGHT,
   FLIGHT,
   LABOR,
   OPERATION_TYPE_NON_FLIGHT,
-  STATION_BNA,
   THIRTY_MINUTES,
   OPERATION_TYPE_TURN_PASSENGER,
   FIFTEEN_MINUTES,
@@ -218,7 +215,6 @@ export default {
       responsibleList: [],
       completeFormInbound: false,
       completedFormOutBound: false,
-      isCollapse: false,
     }
   },
   watch:{
@@ -951,6 +947,9 @@ export default {
         cargoStore().setDelayListData(delayList);
       }
     },
+    isCollapse() {
+      return store().getIsLoading();
+    }
   },
   methods: {
     init() {
@@ -960,7 +959,7 @@ export default {
     },
     async updateData() {
       if (this.dataCompoment && Object.keys(this.dataCompoment).length > 0) {
-        this.isCollapse = false;
+        store().setIsLoading(false);
         this.update = true
         const updateForm = this.$clone(this.dataCompoment)
         this.form.statusId = updateForm.statusId
@@ -1035,7 +1034,7 @@ export default {
           this.validateTimeWithField('inboundScheduledArrival', 'inboundScheduledArrival', 'inbound');
           this.validateTimeWithField('outboundScheduledDeparture', 'outboundScheduledDeparture', 'outbound');
 
-          this.isCollapse = true;
+          store().setIsLoading(true);
         }, 1000)
       }
     },

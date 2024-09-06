@@ -168,6 +168,7 @@ export default {
             class: 'btn-action-form-orders',
             label: this.$q.screen.lt.sm ? null : this.$tr('isite.cms.label.delete'),
             icon: 'fa-regular fa-trash',
+            loading: this.loadingComputed,
           },
           action: async () => {
             const route = 'apiRoutes.qramp.workOrders';
@@ -342,7 +343,6 @@ export default {
      */
     async loadform(params) {
       try {
-        qRampStore().showLoading();
         const updateData = this.$clone(params)
         this.show = true
 
@@ -365,12 +365,9 @@ export default {
         qRampStore().setWorkOrderItems([]);
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
-        if (!updateData.data) {
-          qRampStore().hideLoading();
-          return;
-        }
+        if (!updateData.data) return
         this.setSignature(updateData.data)
-        qRampStore().setTypeWorkOrder(updateData.data.type || null);
+        qRampStore().setTypeWorkOrder(updateData.data?.type || null);
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
         qRampStore().setStatusId(this.statusId);
@@ -394,6 +391,7 @@ export default {
           qRampStore().setWorkOrderItems(updatedItems);
         }
 
+        await serviceListStore().init();
         remarksStore().setForm(updateData.data);
         this.signature.customerName = updateData.data['customerName']
         this.signature.customerTitle = updateData.data['customerTitle']
@@ -454,7 +452,6 @@ export default {
         isClone: true
       }
 
-      await serviceListStore().init();
       this.loadform({ data: flight, modalProps })
     },
     async loadParentData() {
@@ -480,7 +477,6 @@ export default {
         parent: true
       }
 
-      await serviceListStore().init();
       this.loadform({ data: workOrder.data, modalProps })
     },
     resetFormModalFull() {

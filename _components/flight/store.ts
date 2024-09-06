@@ -55,6 +55,7 @@ export interface StateContarct {
         inbound: number;
         outbound: number;
     };
+    isLoading: boolean;
 }
 
 export interface FlightStoreContract {
@@ -64,6 +65,8 @@ export interface FlightStoreContract {
     getReponsible(): any;
     getDifferenceTimeMinute(): any;
     setDifferenceTimeMinute(value: any): any;
+    setIsLoading(value: boolean): any;
+    getIsLoading(): any;
 }
 
 const state = reactive<StateContarct>({
@@ -115,6 +118,7 @@ const state = reactive<StateContarct>({
         inbound: 0,
         outbound: 0,
     },
+    isLoading: false,
 });
 /**
  * Creates a FlightStore object.
@@ -201,6 +205,14 @@ export default function flightStore(): FlightStoreContract {
     function setDifferenceTimeMinute(value) {
         state.differenceTimeMinute = value;
     }
+
+    function setIsLoading(value: boolean) {
+        state.isLoading = value;
+    }
+
+    function getIsLoading() {
+        return state.isLoading;
+    }
     /**
      * Resets the form data to its default values.
      *
@@ -219,5 +231,7 @@ export default function flightStore(): FlightStoreContract {
         getReponsible,
         getDifferenceTimeMinute,
         setDifferenceTimeMinute,
+        setIsLoading,
+        getIsLoading
     }
 }

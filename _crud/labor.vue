@@ -23,6 +23,7 @@ import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts';
 import { cacheOffline } from 'src/plugins/utils';
+import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 
 export default {
   name: 'RampCrud',
@@ -118,8 +119,8 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => {
-                this.showWorkOrder(item)
+              action: async (item) => {
+                await this.showWorkOrder(item)
               }
             },
             {
@@ -383,8 +384,8 @@ export default {
                 label: this.validateStatus(item.statusId) ? this.$tr('isite.cms.label.edit') : this.$tr('isite.cms.label.show'),
                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
               }),
-              action: (item) => {
-                this.showWorkOrder(item)
+              action: async (item) => {
+                await this.showWorkOrder(item)
               }
             },
             {
@@ -640,36 +641,8 @@ export default {
           this.$root.$emit('crud.data.refresh')
         })
     },
-    async openModal(item) {
-      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
-      await qRampStore().setIsPassenger(true);
-      await this.$refs.formOrders.loadform({
-        modalProps: {
-          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
-          update: true,
-          workOrderId: item.id,
-          width: '90vw',
-        },
-        data: item,
-      })
-      qRampStore().setTitleOffline(titleModal);
-    },
-    showWorkOrder(data) {
-      if (this.isAppOffline) {
-        this.openModal(data);
-        return;
-      }
-      this.$crud.show('apiRoutes.qramp.workOrders', data.id,
-        {
-          refresh: true,
-          params: {
-            include: "customer,workOrderStatus,operationType,station,contract,responsible",
-          }
-        }).then(async (item) => {
-          this.openModal(item.data)
-        }).catch((err) => {
-          console.log(err);
-        });
+    async showWorkOrder(data, modalProps={}, makeRequest=true) {
+      await getWorkOrderAndOpenModal(this.$refs.formOrders, data, modalProps, makeRequest)
     },
     async getFlightMap(workOrder) {
       try {
