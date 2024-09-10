@@ -16,6 +16,7 @@
           v-model="filter" 
           :field="{ type: 'search' }"
         />
+        <!-- id for testing -->
         <q-table
           :rows="dataTable"
           :columns="columns"
@@ -25,6 +26,7 @@
           :filter="filter"
           v-model:selected="selected"
           class="tw-w-full"
+          id="flight-results-table"
         >
           <template v-slot:header="props">
             <q-tr 

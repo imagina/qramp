@@ -9,6 +9,7 @@
         v-if="showKanbanCardsActions"
     >
       <template v-for="(button, index) in cardActions" :key="index">
+        <!-- id for testing -->
         <q-btn
             flat
             dense
@@ -16,6 +17,7 @@
             :icon="button.icon"
             @click="button.action"
             v-if="button.vIf"
+            id="kanban-card-actions"
         >
           <q-tooltip> {{ button.toolttip }}</q-tooltip>
         </q-btn>
