@@ -117,7 +117,7 @@ export default function useKanbanBoard(props) {
         vIf: hasAccess("ramp.schedulers.manage"),
         props: {
           label: "Scheduler",
-          icon: "fa-duotone fa-calendar-plus",
+          icon: "fa-light fa-calendar-plus",
         },
         action: () => {
           const { routeName, hrefSplit } = determineRouteAndSplitHref()
@@ -138,7 +138,7 @@ export default function useKanbanBoard(props) {
         label: i18n.tr("isite.cms.label.filter"),
         vIf: !isAppOffline.value,
         props: {
-          icon: "fa-duotone fa-filter",
+          icon: "fa-light fa-filter",
           id: "filter-button-crud",
         },
         action: () => {
