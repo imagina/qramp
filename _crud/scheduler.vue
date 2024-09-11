@@ -67,7 +67,7 @@ export default {
         extraActions: [{
           label: 'Back to schedule',
           props: {
-            icon: 'fa-duotone fa-calendar-plus',
+            icon: 'fa-light fa-calendar-plus',
             label: 'Back to schedule',
           },
           action: () => {
