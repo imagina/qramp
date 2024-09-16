@@ -3,7 +3,7 @@
     <form-orders ref="formOrders" @refresh-data="getDataTable(true)" />
     <modalNonFlight
       ref="refModalNonFlight"
-      :refFormOrders="refFormOrders"
+      :refFormOrders="securityFormStore"
       @getWorkOrderFilter="getDataTable(true)"
     />
     <flightDetail />
@@ -31,6 +31,8 @@ import workOrderList from '../_store/actions/workOrderList.ts';
 import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index.vue';
 import { cacheOffline } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
+import securityFormStore from "../_components/securityForm/store";
+import { ref } from 'vue';
 
 export default {
   name: 'RampCrud',
@@ -81,6 +83,9 @@ export default {
     qRampStore().setFlightId(null);
   },
   computed: {
+    securityFormStore() {
+      return ref(securityFormStore)
+    },
     isAppOffline() {
       return this.$store.state.qofflineMaster.isAppOffline;
     },
@@ -216,7 +221,7 @@ export default {
               format: item => this.flightChip(item),
               action: (item) => {
                 if (this.isAppOffline) return
-                
+
                 const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
                 const workOrder = {
                   workOrderId: item.id,
@@ -741,19 +746,19 @@ export default {
       await this.$refs.crudComponent.getDataTable(refresh);
     },
     flightChip(item) {
-      return item 
+      return item
         ? `
-          <span 
+          <span
             class="
-              tw-border 
-              tw-p-1 
-              tw-rounded-md 
+              tw-border
+              tw-p-1
+              tw-rounded-md
               tw-font-medium
               ${this.isAppOffline ? 'tw-cursor-auto' : ''}
             "
           />
             ${item}
-          </span>`  
+          </span>`
         : ''
     },
   }

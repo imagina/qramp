@@ -1,7 +1,7 @@
 <template>
-  <master-modal 
-      v-model="showModal" 
-      title="Create non-flight" 
+  <master-modal
+      v-model="showModal"
+      title="Create non-flight"
       :persistent="true"
       :loading="loading"
       :width="widthModal"
@@ -13,7 +13,7 @@
         <customer
           v-if="isActiveNonFlightServices"
           :dataForm="form"
-          :addNewOptions="false" 
+          :addNewOptions="false"
           ref="refCustomer"
         />
         <table-flight
@@ -24,7 +24,7 @@
           :dataTable="listFlightsFound"
         />
         <q-form
-          v-for="(field, keyField) in fields" 
+          v-for="(field, keyField) in fields"
           :key="keyField"
           @submit.prevent
         >
@@ -50,7 +50,7 @@ export default defineComponent({
     refFormOrders: {
       type: Object,
       default: () => ({})
-    }
+    },
   },
   emits: ['getWorkOrderFilter'],
   components: {

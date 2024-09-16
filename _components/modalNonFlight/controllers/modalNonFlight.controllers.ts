@@ -1,11 +1,11 @@
 import {
-  computed, 
-  ref, 
-  toRefs, 
-  ComputedRef, 
-  WritableComputedRef, 
+  computed,
+  ref,
+  toRefs,
+  ComputedRef,
+  WritableComputedRef,
   getCurrentInstance,
-  onBeforeUnmount 
+  onBeforeUnmount
 } from "vue";
 import store from '../store/index.store'
 import { fields } from '../models/fields';
@@ -65,7 +65,6 @@ export default function controller(props: any, emit: any) {
 
   const showModalFull = async (workOrder, customProps?) => {
     openModalFull(refFormOrders.value, workOrder, customProps)
-
     isOpenTableModal.value = false;
     showModal.value = false;
   }
@@ -76,7 +75,7 @@ export default function controller(props: any, emit: any) {
   }
 
   const saveWorkOrderAndOpenIt = async () => {
-    if (!validateRequiredFields()) return 
+    if (!validateRequiredFields()) return
     const data = await saveWorkOrders()
     showModalFull(data)
     await emit('getWorkOrderFilter')
@@ -96,7 +95,7 @@ export default function controller(props: any, emit: any) {
     }
 
     await showModalFull(
-      { ...clonedFlight }, 
+      { ...clonedFlight },
       modalProps
     )
   }
@@ -112,7 +111,7 @@ export default function controller(props: any, emit: any) {
     serviceListStore().setErrorList([]);
     serviceListStore().setShowFavourite(false)
   })
-  return { 
+  return {
     listFlightsFound,
     loading,
     isLoadingSearch,

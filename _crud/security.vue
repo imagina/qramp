@@ -1,17 +1,16 @@
 <template>
   <div>
-    <form-orders ref="formOrders" @refresh-data="getDataTable(true)"/>
+    <securityForm @refresh-data="getDataTable(true)" />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
-    <crud 
-      :crud-data="import('./baseCrud.vue')" 
+    <crud
+      :crud-data="import('./baseCrud.vue')"
       :custom-data="crudData" ref="crudComponent"
-      :title="$route.meta.title" 
+      :title="$route.meta.title"
     />
   </div>
 </template>
 <script>
-import formOrders from "../_components/formOrders.vue"
 import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
@@ -27,11 +26,14 @@ import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts';
 import { cacheOffline } from 'src/plugins/utils.ts';
 import { store } from 'src/plugins/utils'
+import securityForm from '../_components/securityForm/components/index'
+import securityFormStore from '../_components/securityForm/store/index.ts'
+import storeFlight from '../_components/flight/store'
 
 export default {
   name: 'RampCrud',
   components: {
-    formOrders,
+    securityForm,
     flightDetail,
   },
   data() {
@@ -72,7 +74,7 @@ export default {
       await workOrderList().getCustomerWithContract()
     })
   },
-  beforeDestroy() {
+  beforeUnmount() {
     qRampStore().setFlightList([]);
     qRampStore().setFlightId(null);
   },
@@ -170,8 +172,8 @@ export default {
               action: (item) => {
                    const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
                    const workOrder = {
-                        workOrderId: item.id, 
-                        faFlightId: item.faFlightId, 
+                        workOrderId: item.id,
+                        faFlightId: item.faFlightId,
                         flightNumber: flightNumberInbound || item.inboundFlightNumber,
                         boundScheduleDate: item.inboundScheduleArrival || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                         type: 'inbound',
@@ -196,8 +198,8 @@ export default {
               action: (item) => {
                   const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
                   const workOrder = {
-                    workOrderId: item.id, 
-                    faFlightId: item.outboundFaFlightId, 
+                    workOrderId: item.id,
+                    faFlightId: item.outboundFaFlightId,
                     flightNumber: flightNumberoutbound || item.outboundFlightNumber,
                     boundScheduleDate: item.outboundScheduledDeparture || this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
                     type: 'outbound',
@@ -375,20 +377,22 @@ export default {
             filter: {
               withoutDefaultInclude: true,
               businessUnitId: [BUSINESS_UNIT_SECURITY],
-              type: [SECURITY]
             },
           },
           actions: [
             {
               name: 'edit',
-              icon: 'fal fa-pen',
-              label: this.$tr('isite.cms.label.edit'),
               format: item => ({
                 label: this.validateStatus(item.statusId) ? this.$tr('isite.cms.label.edit') : this.$tr('isite.cms.label.show'),
                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
               }),
               action: (item) => {
-                this.showWorkOrder(item)
+                securityFormStore.showModal = true;
+                securityFormStore.loading = true;
+                securityFormStore.isUpdate = true;
+                securityFormStore.titleModal = 'Update fueling' + (item.id ? ` Id: ${item.id}` : '')
+                securityFormStore.widthModal = '90vw';
+                this.showWorkOrder(item);
               }
             },
             {
@@ -573,7 +577,7 @@ export default {
             ]
           }
         },
-        update: false,
+        update: true,
         delete: true,
         formLeft: {}
       }
@@ -622,10 +626,10 @@ export default {
         id: itemId,
         statusId: status
       }
-      let customParams = { 
-        params: { 
-          titleOffline: this.getOfflineTitleStatus(status, itemId) || '' 
-        } 
+      let customParams = {
+        params: {
+          titleOffline: this.getOfflineTitleStatus(status, itemId) || ''
+        }
       }
 
       this.$emit('loading', true)
@@ -635,7 +639,7 @@ export default {
 
       const request = this.$crud.update(
         API_ROUTE,
-        itemId, 
+        itemId,
         payload,
         customParams
       )
@@ -643,8 +647,8 @@ export default {
         .catch(err => {
           this.$emit('loading', false)
           if (!this.isAppOffline) {
-            this.$alert.error({ 
-              message: `${this.$tr('isite.cms.message.recordNoUpdated')}` 
+            this.$alert.error({
+              message: `${this.$tr('isite.cms.message.recordNoUpdated')}`
             })
           }
         })
@@ -654,19 +658,11 @@ export default {
         })
     },
     async openModal(item) {
-      const titleModal = this.$tr('ifly.cms.form.updateWorkOrder') + (item.id ? ` Id: ${item.id}` : '')
       await qRampStore().setIsPassenger(false);
-      await qRampStore().setTypeWorkOrder(SECURITY);
-      await this.$refs.formOrders.loadform({
-        modalProps: {
-          title: `${this.$tr('ifly.cms.form.updateWorkOrder')} Id: ${item.id}`,
-          update: true,
-          workOrderId: item.id,
-          width: '90vw',
-        },
-        data: item,
-      })
-      qRampStore().setTitleOffline(titleModal);
+      securityFormStore.form = { ...item };
+      storeFlight().setForm({ ...item });
+      qRampStore().setTitleOffline(securityFormStore.titleModal);
+      securityFormStore.loading = false;
     },
     showWorkOrder(data) {
       if (this.isAppOffline) {

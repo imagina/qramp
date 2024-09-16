@@ -3,8 +3,7 @@ import qRampStore from '../qRampStore'
 
 export const openModalFull = async (ref, workOrder, customProps={}) => {
     if (!workOrder || !ref) return
-    const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') 
-
+    const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder')
     await (ref as any)?.loadform({
         modalProps: {
             title: `${titleModal} ${(workOrder.id ? ` Id: ${workOrder.id}` : '')}`,
