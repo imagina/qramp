@@ -373,7 +373,7 @@ export default {
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
         storeFlight().setForm(updateData.data);
-        this.flight = storeFlight().getForm();
+        this.flight = structuredClone(storeFlight().getForm());
         qRampStore().setResponsible(updateData.data['responsible']);
         cargoStore().setForm(updateData.data);
         cargoStore().setDelayList(updateData.data);

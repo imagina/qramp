@@ -1461,7 +1461,7 @@ export default {
       return dataForm.every(item => item === true);
     },
     async reFilterFavorites() {
-      store().setForm(this.form);
+      store().setForm(structuredClone(this.form));
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
       await workOrderList().getFavourites(true)
       const servicesList = serviceListStore().getServiceList()
