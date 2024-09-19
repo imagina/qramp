@@ -150,7 +150,7 @@ export default function flightController() {
           },
           label: i18n.tr('ifly.cms.form.status'),
         },
-        responsibleId: {
+        /*responsibleId: {
           value: null,
           type: "select",
           props: {
@@ -168,7 +168,7 @@ export default function flightController() {
             //filterByQuery: !this.isAppOffline,
             //requestParams: { filter: { companyId: this.filterCompany } }
           },
-        },
+        },*/
       },
       inboundLeft: {
         inboundFlightNumber: {
@@ -365,6 +365,7 @@ export default function flightController() {
       ...form.value,
       ...selectedData
     }
+    console.log(form.value)
   }
   async function searchFlightaware(field) {
     if(!['inboundFlightNumber', 'outboundFlightNumber'].includes(field) ) return;
@@ -405,6 +406,15 @@ export default function flightController() {
     }
   }
 
+  function validateBoundComplete(keyForm) {
+    const dataForm = [];
+    Object.keys(formFields.value[keyForm]).forEach(key => {
+      dataForm.push(qRampStore().checkIfDataArrives(form.value[key]))
+    });
+    dataForm.pop();
+    return dataForm.every(item => item === true);
+  }
+
   watch(() => form.value.customerId, async (value, oldValue) => {
     if (value != oldValue) {
       reFilterFavorites('customerId', value)
@@ -425,6 +435,7 @@ export default function flightController() {
     setDataTable,
     dataTable,
     searchFlightaware,
-    loadingBound
+    loadingBound,
+    validateBoundComplete,
   }
 }

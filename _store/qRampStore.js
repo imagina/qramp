@@ -16,7 +16,7 @@ import { cacheOffline, i18n, store } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
-import serviceListStore from "src/modules/qramp/_components/serviceList/store/serviceList";
+import workOrderList from "./actions/workOrderList";
 
 
 const state = reactive({
@@ -326,6 +326,7 @@ export default function qRampStore() {
                 flight.gateDestination = items.gateDestination || '';
                 flight.gateOrigin = items.gateOrigin || '';
             }
+
             dataTable.push(flight)
         })
         return dataTable;
@@ -557,6 +558,58 @@ export default function qRampStore() {
         return `${newDate}T${hour}`;
     }
 
+    function dateFormatterFull(rawDate) {
+      if (!rawDate) return null
+      return moment(rawDate).format('MM/DD/YYYY HH:mm')
+    }
+
+    function isbound(operationTypeId) {
+      if (operationTypeId) {
+        const operationType = workOrderList().getOperationTypeList()
+          .find(item => item.id === Number(operationTypeId));
+        const type = operationType?.options?.type;
+        if (type) {
+          if (type === 'full') {
+            return [true, true];
+          }
+          if (type === 'inbound') {
+            return [true, false]
+          }
+          if (type === 'outbound') {
+            return [false, true];
+          }
+        }
+      }
+      return [false, false];
+    }
+
+    function getFormTable(data) {
+      const {
+        ident,
+        destinationAirport,
+        estimatedOff,
+        registration,
+        originAirport,
+        estimatedOn
+      } = data;
+
+      const destinationAirportId = destinationAirport?.id || null;
+      const originAirportId = originAirport?.id || null;
+
+      const result = {};
+      result.inboundFlightNumber = ident;
+      result.inboundOriginAirportId = originAirportId;
+      result.inboundScheduledArrival = this.dateFormatterFull(estimatedOn);
+      result.inboundTailNumber = registration;
+      result.outboundFlightNumber = ident;
+      result.outboundDestinationAirportId = destinationAirportId;
+      result.outboundScheduledDeparture = this.dateFormatterFull(estimatedOff);
+      result.outboundTailNumber = registration;
+      return result;
+    }
+    function checkIfDataArrives(data) {
+      return (data === null || data === '') ? false : true;
+    }
     return {
         getTitleOffline,
         setTitleOffline,
@@ -630,6 +683,9 @@ export default function qRampStore() {
         getClonedWorkOrder,
         setClonedWorkOrder,
         isNonFlight,
-        getFilterCompany
+        getFilterCompany,
+        dateFormatterFull,
+        getFormTable,
+        checkIfDataArrives
     }
 }

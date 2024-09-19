@@ -24,10 +24,10 @@ export default async function updateWorkOrders() {
     } catch (error) {
         console.info(error);
         store.loading = false;
-    } 
+    }
 
     (payloadOffline as any).scheduleDate = moment(
-        payloadOffline.scheduleDate, 
+        payloadOffline.scheduleDate,
         ORIGINAL_DATE_FORMAT
     ).format(NEW_DATE_FORMAT);
     await cacheOffline.updateRecord(API_ROUTE, payloadOffline, store.form?.id);
