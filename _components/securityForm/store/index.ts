@@ -127,6 +127,7 @@ const store = computed(() => ({
         state.form.outboundScheduledDeparture = qRampStore().dateFormatterFull(value.outboundScheduledDeparture) || null;
         state.form.inboundBlockIn = qRampStore().dateFormatterFull(value.inboundBlockIn) || null;
         state.form.outboundBlockOut = qRampStore().dateFormatterFull(value.outboundBlockOut) || null;
+        state.form.faFlightId = value.from.faFlightId || null;
 
         qRampStore().setTypeWorkOrder(value.type)
         if(navigator.onLine) {
