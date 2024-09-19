@@ -79,7 +79,7 @@ export default function modalFormController(props: any = null, emit: any = null)
           icon: 'fal fa-check',
           class: 'close-btn-bg-color',
           'text-color': 'positive',
-          label: i18n.tr('isite.cms.label.closeFlight'),
+          label: 'Close',
           vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
           loading: storeFueling.loading,
         },

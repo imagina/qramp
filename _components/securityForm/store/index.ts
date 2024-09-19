@@ -6,7 +6,6 @@ import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
 import remarksStore from '../../remarks/store';
 import stepps from '../models/defaultModels/stepps';
-import moment from 'moment';
 
 const state = reactive({
     refsGlobal: {},
@@ -17,6 +16,8 @@ const state = reactive({
     updateModal: false,
     widthModal: '35vw',
     isUpdate: false,
+    dialogTable: false,
+    dataTable: [],
     form: {
         id: null,
         customerId: null,
@@ -28,11 +29,35 @@ const state = reactive({
         stationId: null,
         acTypeId: null,
         carrierId: null,
+        responsibleId: null,
+        inboundFlightNumber: null,
+        inboundOriginAirportId: null,
+        inboundTailNumber: null,
+        inboundScheduledArrival: null,
+        outboundFlightNumber: null,
+        outboundDestinationAirportId: null,
+        outboundTailNumber: null,
+        outboundScheduledDeparture: null,
+        inboundBlockIn: null,
+        outboundBlockOut: null,
+        faFlightId: null,
     },
     emitEvent: {},
 })
 
 const store = computed(() => ({
+    get dataTable() {
+      return state.dataTable;
+    },
+    set dataTable(value) {
+      state.dataTable = value;
+    },
+    get dialogTable(): boolean {
+      return state.dialogTable;
+    },
+    set dialogTable(value: boolean) {
+      state.dialogTable = value;
+    },
     get showModal(): boolean {
         return state.showModal;
     },
@@ -82,13 +107,27 @@ const store = computed(() => ({
         if(value.id) {
             state.form.id = value.id;
         }
+        state.form.id = value.id || null;
         state.form.customerId = value.customerId || null;
         state.form.contractId = value.contractId || null;
+        state.form.statusId = value.statusId || null;
+        state.form.operationTypeId = value.operationTypeId || 2;
+        state.form.type = value.type || null;
         state.form.stationId = Number(value.stationId) || null;
         state.form.acTypeId = value.acTypeId || null;
         state.form.carrierId = value.carrierId || null;
-        state.form.statusId = value.statusId || null;
-        (state.form as any).scheduleDate = value.scheduleDate ? moment(value.scheduleDate).format('MM/DD/YYYY') : null;
+        state.form.responsibleId = value.responsibleId || null;
+        state.form.inboundFlightNumber = value.inboundFlightNumber || null;
+        state.form.inboundOriginAirportId = value.inboundOriginAirportId || null;
+        state.form.inboundTailNumber = value.inboundTailNumber || null;
+        state.form.inboundScheduledArrival = qRampStore().dateFormatterFull(value.inboundScheduledArrival) || null;
+        state.form.outboundFlightNumber = value.outboundFlightNumber || null;
+        state.form.outboundDestinationAirportId = value.outboundDestinationAirportId || null;
+        state.form.outboundTailNumber = value.outboundTailNumber || null;
+        state.form.outboundScheduledDeparture = qRampStore().dateFormatterFull(value.outboundScheduledDeparture) || null;
+        state.form.inboundBlockIn = qRampStore().dateFormatterFull(value.inboundBlockIn) || null;
+        state.form.outboundBlockOut = qRampStore().dateFormatterFull(value.outboundBlockOut) || null;
+
         qRampStore().setTypeWorkOrder(value.type)
         if(navigator.onLine) {
             qRampStore().setWorkOrderItems(value.workOrderItems);
@@ -147,12 +186,24 @@ const store = computed(() => ({
             customerId: null,
             contractId: null,
             statusId: null,
+            operationTypeId: 2,
             type: null,
             businessUnitId : BUSINESS_UNIT_SECURITY,
             stationId: null,
             acTypeId: null,
             carrierId: null,
-            operationTypeId: 2,
+            responsibleId: null,
+            inboundFlightNumber: null,
+            inboundOriginAirportId: null,
+            inboundTailNumber: null,
+            inboundScheduledArrival: null,
+            outboundFlightNumber: null,
+            outboundDestinationAirportId: null,
+            outboundTailNumber: null,
+            outboundScheduledDeparture: null,
+            inboundBlockIn: null,
+            outboundBlockOut: null,
+            faFlightId: null
         }
         stepps.forEach(item => {
          item.error = false;

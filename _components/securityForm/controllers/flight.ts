@@ -1,16 +1,36 @@
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, reactive } from 'vue'
 import qRampStore from '../../../_store/qRampStore';
 import workOrderList from '../../../_store/actions/workOrderList';
 import momentTimezone from 'moment-timezone';
 import storeFueling from '../store/index'
 import storeFlight from '../../flight/store'
 import serviceListStore from '../../serviceList/store/serviceList'
-import { store, i18n } from 'src/plugins/utils';
+import { store, i18n, alert } from 'src/plugins/utils';
 import { updateFavoriteServicesList } from '../../serviceList/actions/updateFavoriteServicesList';
 
 export default function flightController() {
   const refFlight: any = ref(null);
-  const form: any = computed(() => storeFueling.form);
+  const mainDataFligthaware = ref([])
+  const form: any = computed({
+    get: () => storeFueling.form,
+    set: (value) => {
+      storeFueling.form = value;
+    }
+  });
+  const loadingBound = ref(false);
+  const dialogTable = computed({
+    get: () => storeFueling.dialogTable,
+    set: (value) => {
+      storeFueling.dialogTable = value;
+    }
+  })
+  const dataTable = computed({
+    get: () => storeFueling.dataTable,
+    set: (value) => {
+      storeFueling.dataTable = value;
+    }
+  })
+
   const disabledReadonly = computed(() => {
     return qRampStore().disabledReadonly();
   })
@@ -130,6 +150,25 @@ export default function flightController() {
           },
           label: i18n.tr('ifly.cms.form.status'),
         },
+        responsibleId: {
+          value: null,
+          type: "select",
+          props: {
+            //vIf: this.manageResponsiblePermissions,
+            selectByDefault: true,
+            //readonly: this.disabledReadonly,
+            label: 'Assigned to',
+            clearable: true,
+            color: "primary",
+            //options: this.isAppOffline ? this.filterResponsible : []
+          },
+          loadOptions: {
+            //apiRoute: this.isAppOffline ? null : "apiRoutes.quser.users",
+            //select: { label: "fullName", id: "id" },
+            //filterByQuery: !this.isAppOffline,
+            //requestParams: { filter: { companyId: this.filterCompany } }
+          },
+        },
       },
       inboundLeft: {
         inboundFlightNumber: {
@@ -140,7 +179,7 @@ export default function flightController() {
               val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             hint: 'Enter the fight number and press enter or press the search icon',
-            //loading: this.loadingState,
+            loading: loadingBound.value,
             //readonly: this.readonly || this.disabledReadonly || this.loadingState,
             label: `*${i18n.tr('ifly.cms.form.flight')}`,
             clearable: true,
@@ -205,7 +244,7 @@ export default function flightController() {
               val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             hint: 'Enter the fight number and press enter or press the search icon',
-            //loading: this.loadingState,
+            loading: loadingBound.value,
             //readonly:  this.disabledReadonly || this.loadingState,
             label: `*${i18n.tr('ifly.cms.form.flight')}`,
             clearable: true,
@@ -315,6 +354,57 @@ export default function flightController() {
     if (key === 'carrierId') await reFilterFavorites(key, event)
   }
 
+  function setDataTable({select, dialog}) {
+    dialogTable.value = dialog
+    form.value.faFlightId = select.faFlightId || null;
+    const selectedFligth = mainDataFligthaware.value.find((item, index) => {
+      return index === select.index
+    })
+    const selectedData = qRampStore().getFormTable(selectedFligth);
+    form.value = {
+      ...form.value,
+      ...selectedData
+    }
+  }
+  async function searchFlightaware(field) {
+    if(!['inboundFlightNumber', 'outboundFlightNumber'].includes(field) ) return;
+    const search = form.value[field];
+    loadingBound.value = true;
+    const response = await workOrderList().getFlightawareSearch(search, true);
+    mainDataFligthaware.value = response.data;
+    responseStatusFligthaware(response, search)
+    loadingBound.value = false;
+  }
+
+  function responseStatusFligthaware(response, search) {
+    {
+      dataTable.value = [];
+      if (response.status == 200) {
+        dataTable.value = qRampStore().getTableListOfFlights(response.data);
+        dialogTable.value = true;
+      }
+      if (response.status == 204) {
+        const message = i18n.tr("ifly.cms.label.flightMessage").replace("#file_number", search)
+        alert.warning({
+          mode: "modal",
+          title: i18n.tr("ifly.cms.form.flight"),
+          message,
+          actions: [
+            {label: i18n.tr('isite.cms.label.cancel'), color: 'grey-8'},
+            {
+              label: i18n.tr("isite.cms.label.yes"),
+              color: "primary",
+              handler: () => {
+                form.value.faFlightId = null;
+                qRampStore().showFielFlightBoundFormStatus();
+              },
+            },
+          ],
+        });
+      }
+    }
+  }
+
   watch(() => form.value.customerId, async (value, oldValue) => {
     if (value != oldValue) {
       reFilterFavorites('customerId', value)
@@ -324,5 +414,17 @@ export default function flightController() {
   onMounted(() => {
     storeFueling.refsGlobal = { refFlight: refFlight.value };
   })
-  return { formFields, form, refFlight, disabledReadonly, handleChange, validateComponentCustomerOffline }
+  return {
+    formFields,
+    form,
+    refFlight,
+    disabledReadonly,
+    handleChange,
+    validateComponentCustomerOffline,
+    dialogTable,
+    setDataTable,
+    dataTable,
+    searchFlightaware,
+    loadingBound
+  }
 }

@@ -33,6 +33,7 @@ import {store} from 'src/plugins/utils'
 import serviceListStore from '../../_components/serviceList/store/serviceList'
 import storeFlight from 'src/modules/qramp/_components/flight/store';
 import { getCategories } from 'src/modules/qramp/_store/actions/services'
+import filtersStore from "../../_components/scheduleKanban/store/filters.store";
 
 const state = reactive<State>({
   operationTypeList: [],
@@ -584,9 +585,9 @@ export default function workOrderList(): WorkOrderList {
     };
 
     const typesUnits = {
-      'passenger': [FLIGHT, NON_FLIGHT], 
-      'fueling': FUELING, 
-      'labor': LABOR,  
+      'passenger': [FLIGHT, NON_FLIGHT],
+      'fueling': FUELING,
+      'labor': LABOR,
       'security': SECURITY
     }
 
@@ -609,7 +610,7 @@ export default function workOrderList(): WorkOrderList {
     }
 
     if (hasAccess(accessMap.passenger)) {
-      await getCategories(COMPANY_PASSENGER); 
+      await getCategories(COMPANY_PASSENGER);
     }
 
     if (hasAccess(accessMap.security)) {
@@ -697,7 +698,7 @@ export default function workOrderList(): WorkOrderList {
         const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
         const companyId = qRampStore().getFilterCompany();
         let businessUnitId: any = qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP;
-      
+
         const custemerParams = {
             refresh,
             params: {
@@ -758,22 +759,22 @@ export default function workOrderList(): WorkOrderList {
         if (hasAccess('isite.favourites.index')) {
           if (!navigator.onLine) return;
             try {
-              const { 
-                stationId, 
-                contractId, 
-                customerId, 
-                carrierId, 
-                operationTypeId 
+              const {
+                stationId,
+                contractId,
+                customerId,
+                carrierId,
+                operationTypeId
               } = storeFlight().getForm();
               const requestParameters = {
                 refresh,
                 params: {
                   filter: {
-                    stationId, 
-                    contractId, 
-                    customerId, 
-                    carrierId, 
-                    operationTypeId 
+                    stationId,
+                    contractId,
+                    customerId,
+                    carrierId,
+                    operationTypeId
                   },
                 }
               }
@@ -828,13 +829,15 @@ export default function workOrderList(): WorkOrderList {
     }
 
     async function getFlightawareSearch(search: null | string = null, refresh = false) {
-        const API_ROUTE = 'apiRoutes.qfly.flightaware'
-        const flightNumber = search ? {search: search?.toUpperCase()} : {};
-        const requestParameters = {
+      const API_ROUTE = 'apiRoutes.qfly.flightaware'
+      const flightNumber = search ? {search: search?.toUpperCase()} : {};
+
+      const requestParameters = {
             refresh,
-           filter: {
-            ...flightNumber
-           }
+             params: {
+             filter: {
+              ...flightNumber
+             }}
         }
         const flightData = await baseService.index(API_ROUTE, requestParameters)
         return flightData;
