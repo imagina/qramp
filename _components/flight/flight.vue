@@ -1382,11 +1382,9 @@ export default {
 
       if (isNaN(dateTime)) {
         if (this.form.inboundBlockIn) {
-          return dateTime <= this.$moment().format('YYYY/MM/DD')
-            && dateTime >= todayIn;
+          return dateTime >= todayIn;
         }
-        return dateTime <= this.$moment().format('YYYY/MM/DD')
-          && dateTime >= today;
+        return dateTime >= today;
       }
       if (dateMin) {
         return validateDate ? Number(dateMin) >= Number(minIn) : true;
