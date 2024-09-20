@@ -1354,21 +1354,6 @@ export default {
       this.resetBound();
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
-    validateDate(dateTime, dateMin = null) {
-      const date = this.form.inboundScheduledArrival
-        ? this.$moment(this.form.inboundScheduledArrival) : this.$moment();
-      const today = date.format('YYYY/MM/DD');
-      const hour = date.format('H');
-      const min = date.format('mm');
-      const validateDate = today === this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
-      if (isNaN(dateTime)) {
-        return dateTime <= this.$moment().format('YYYY/MM/DD') && dateTime >= today;
-      }
-      if (dateMin) {
-        return validateDate ? Number(dateMin) <= min : true;
-      }
-      return validateDate ? dateTime <= hour : true;
-    },
     validateDateOutboundBlockOut(dateTime, dateMin = null) {
       const outboundScheduledDepartureDate = this.form.outboundBlockOut
         ? this.$moment(this.form.outboundBlockOut) : this.$moment();
