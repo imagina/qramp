@@ -855,6 +855,9 @@ export default {
               clearable: true,
               color: "primary",
               format24h: true,
+              ...((this.isbound[0] && this.isbound[1]) && {
+                options: this.validateDateOutbound,
+              }),
               suffix: this.timezoneAirport,
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
@@ -1384,6 +1387,32 @@ export default {
         }
         return dateTime <= this.$moment().format('YYYY/MM/DD')
           && dateTime >= today;
+      }
+      if (dateMin) {
+        return validateDate ? Number(dateMin) >= Number(minIn) : true;
+      }
+      return validateDate ? Number(dateTime) >= Number(hourIn) : true;
+    },
+    validateDateOutbound(dateTime, dateMin = null) {
+      const inboundScheduledArrival = this.form.inboundScheduledArrival
+      const outboundScheduledDeparture = this.form.outboundScheduledDeparture
+
+      const outboundScheduledDepartureDate = outboundScheduledDeparture
+        ? this.$moment(outboundScheduledDeparture) : this.$moment();
+      const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
+
+      const inboundScheduledArrivalDate = inboundScheduledArrival
+        ? this.$moment(inboundScheduledArrival) : this.$moment();
+      const todayIn = inboundScheduledArrivalDate.format('YYYY/MM/DD')
+      const hourIn = inboundScheduledArrivalDate.format('H');
+      const minIn = inboundScheduledArrivalDate.format('mm');
+      const validateDate = today === todayIn;
+
+      if (isNaN(dateTime)) {
+        if (inboundScheduledArrival) {
+          return dateTime >= todayIn;
+        }
+        return dateTime >= today;
       }
       if (dateMin) {
         return validateDate ? Number(dateMin) >= Number(minIn) : true;
