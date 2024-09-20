@@ -839,6 +839,9 @@ export default {
               clearable: true,
               color: "primary",
               format24h: true,
+              ...((this.isbound[0] && this.isbound[1]) && {
+                options: this.validateDateOutbound,
+              }),
               suffix: this.timezoneAirport,
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
@@ -1335,21 +1338,6 @@ export default {
       this.resetBound();
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
-    validateDate(dateTime, dateMin = null) {
-      const date = this.form.inboundScheduledArrival
-        ? this.$moment(this.form.inboundScheduledArrival) : this.$moment();
-      const today = date.format('YYYY/MM/DD');
-      const hour = date.format('H');
-      const min = date.format('mm');
-      const validateDate = today === this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
-      if (isNaN(dateTime)) {
-        return dateTime <= this.$moment().format('YYYY/MM/DD') && dateTime >= today;
-      }
-      if (dateMin) {
-        return validateDate ? Number(dateMin) <= min : true;
-      }
-      return validateDate ? dateTime <= hour : true;
-    },
     validateDateOutboundBlockOut(dateTime, dateMin = null) {
       const outboundScheduledDepartureDate = this.form.outboundBlockOut
         ? this.$moment(this.form.outboundBlockOut) : this.$moment();
@@ -1363,11 +1351,35 @@ export default {
 
       if (isNaN(dateTime)) {
         if (this.form.inboundBlockIn) {
-          return dateTime <= this.$moment().format('YYYY/MM/DD')
-            && dateTime >= todayIn;
+          return dateTime >= todayIn;
         }
-        return dateTime <= this.$moment().format('YYYY/MM/DD')
-          && dateTime >= today;
+        return dateTime >= today;
+      }
+      if (dateMin) {
+        return validateDate ? Number(dateMin) >= Number(minIn) : true;
+      }
+      return validateDate ? Number(dateTime) >= Number(hourIn) : true;
+    },
+    validateDateOutbound(dateTime, dateMin = null) {
+      const inboundScheduledArrival = this.form.inboundScheduledArrival
+      const outboundScheduledDeparture = this.form.outboundScheduledDeparture
+
+      const outboundScheduledDepartureDate = outboundScheduledDeparture
+        ? this.$moment(outboundScheduledDeparture) : this.$moment();
+      const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
+
+      const inboundScheduledArrivalDate = inboundScheduledArrival
+        ? this.$moment(inboundScheduledArrival) : this.$moment();
+      const todayIn = inboundScheduledArrivalDate.format('YYYY/MM/DD')
+      const hourIn = inboundScheduledArrivalDate.format('H');
+      const minIn = inboundScheduledArrivalDate.format('mm');
+      const validateDate = today === todayIn;
+
+      if (isNaN(dateTime)) {
+        if (inboundScheduledArrival) {
+          return dateTime >= todayIn;
+        }
+        return dateTime >= today;
       }
       if (dateMin) {
         return validateDate ? Number(dateMin) >= Number(minIn) : true;
