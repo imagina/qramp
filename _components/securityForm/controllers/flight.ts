@@ -17,6 +17,7 @@ export default function flightController() {
       storeFueling.form = value;
     }
   });
+  const differenceHour = computed(() => qRampStore().getDifferenceInHours(form.value.inboundBlockIn, form.value.outboundBlockOut))
   const loadingBound = ref(false);
   const dialogTable = computed({
     get: () => storeFueling.dialogTable,
@@ -411,7 +412,6 @@ export default function flightController() {
     Object.keys(formFields.value[keyForm]).forEach(key => {
       dataForm.push(qRampStore().checkIfDataArrives(form.value[key]))
     });
-    dataForm.pop();
     return dataForm.every(item => item === true);
   }
 
@@ -437,5 +437,6 @@ export default function flightController() {
     searchFlightaware,
     loadingBound,
     validateBoundComplete,
+    differenceHour,
   }
 }

@@ -390,7 +390,7 @@ export default {
                 securityFormStore.showModal = true;
                 securityFormStore.loading = true;
                 securityFormStore.isUpdate = true;
-                securityFormStore.titleModal = 'Update fueling' + (item.id ? ` Id: ${item.id}` : '')
+                securityFormStore.titleModal = 'Update security' + (item.id ? ` Id: ${item.id}` : '')
                 securityFormStore.widthModal = '90vw';
                 this.showWorkOrder(item);
               }
