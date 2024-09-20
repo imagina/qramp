@@ -224,22 +224,6 @@ export default {
       },
       deep: true
     },
-    'form.inboundFlightNumber' (val) {
-      if (!val) {
-        this.form.inboundFlightNumber = null,
-          this.form.inboundOriginAirportId = null,
-          this.form.inboundTailNumber = null,
-          this.form.inboundScheduledArrival = null
-      }
-    },
-    'form.outboundFlightNumber'(val) {
-      if (!val) {
-        this.form.outboundFlightNumber = null,
-          this.form.outboundDestinationAirportId = null,
-          this.form.outboundTailNumber = null,
-          this.form.outboundScheduledDeparture = null
-      }
-    },
     'form.operationTypeId'(newVal) {
       if(qRampStore().getTypeWorkOrder() !== LABOR) {
         if(newVal == OPERATION_TYPE_NON_FLIGHT) {
@@ -394,7 +378,7 @@ export default {
       return rules;
     },
     validateRulesField() {
-      return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
+      return val => this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
     },
     timezoneAirport() {
       const station = workOrderList().getStationList().find(item => item.id == this.form.stationId);
