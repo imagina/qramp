@@ -2,6 +2,7 @@ import flight from '../../components/flight.vue';
 import serviceList from '../../../serviceList/index.vue';
 import remarks from '../../../remarks/index.vue';
 import { ref, markRaw } from 'vue';
+import signature from '../../../signature/signature.vue'
 
 export default ref([
     {
@@ -31,4 +32,13 @@ export default ref([
       error: false,
       done: false,
     },
+    {
+      ref: "signature",
+      title: 'Signature',
+      icon: 'fa-solid fa-pen-line',
+      step: 4,
+      component: markRaw(signature),
+      error: false,
+      done: false,
+    }
   ]).value

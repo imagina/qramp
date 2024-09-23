@@ -10,7 +10,8 @@ import { updateFavoriteServicesList } from '../../serviceList/actions/updateFavo
 
 export default function flightController() {
   const refFlight: any = ref(null);
-  const mainDataFligthaware = ref([])
+  const mainDataFligthaware = ref([]);
+  const flightBoundFormStatus = computed(() => qRampStore().getFlightBoundFormStatus());
   const form: any = computed({
     get: () => storeFueling.form,
     set: (value) => {
@@ -151,25 +152,25 @@ export default function flightController() {
           },
           label: i18n.tr('ifly.cms.form.status'),
         },
-        /*responsibleId: {
+        responsibleId: {
           value: null,
           type: "select",
           props: {
-            //vIf: this.manageResponsiblePermissions,
+            vIf: store.hasAccess('ramp.work-orders.manage-responsible'),
             selectByDefault: true,
-            //readonly: this.disabledReadonly,
+            readonly: disabledReadonly.value,
             label: 'Assigned to',
             clearable: true,
             color: "primary",
             //options: this.isAppOffline ? this.filterResponsible : []
           },
           loadOptions: {
-            //apiRoute: this.isAppOffline ? null : "apiRoutes.quser.users",
-            //select: { label: "fullName", id: "id" },
-            //filterByQuery: !this.isAppOffline,
-            //requestParams: { filter: { companyId: this.filterCompany } }
+            apiRoute: "apiRoutes.quser.users",
+            select: { label: "fullName", id: "id" },
+            filterByQuery: true,
+            requestParams: { filter: { companyId: qRampStore().getFilterCompany() } }
           },
-        },*/
+        },
       },
       inboundLeft: {
         inboundFlightNumber: {
@@ -181,7 +182,7 @@ export default function flightController() {
             ],
             hint: 'Enter the fight number and press enter or press the search icon',
             loading: loadingBound.value,
-            //readonly: this.readonly || this.disabledReadonly || this.loadingState,
+            readonly: disabledReadonly.value,
             label: `*${i18n.tr('ifly.cms.form.flight')}`,
             clearable: true,
             maxlength: 7,
@@ -193,16 +194,16 @@ export default function flightController() {
           value: '',
           type: 'select',
           props: {
-            //readonly: (this.disabledReadonly || this.flightBoundFormStatus.boundOriginAirportId),
+            readonly: (disabledReadonly.value || flightBoundFormStatus.value.boundOriginAirportId),
             label: `${i18n.tr('ifly.cms.form.origin')}`,
             clearable: true,
             color: "primary",
-            //suffix: this.timezoneAirport,
+            suffix: timezoneAirport.value,
           },
           loadOptions: {
             apiRoute: 'apiRoutes.qfly.airports',
             select: { label: 'fullName', id: 'id' },
-            //requestParams: { filter: { status: this.refresh, companyId: this.filterCompany } }
+            requestParams: { filter: { status: true, companyId: qRampStore().getFilterCompany() } }
           },
           label: i18n.tr('ifly.cms.form.origin'),
         },
@@ -210,7 +211,7 @@ export default function flightController() {
           value: '',
           type: 'input',
           props: {
-            //readonly: this.disabledReadonly,
+            readonly: disabledReadonly.value,
             label: `${i18n.tr('ifly.cms.form.tail')}`,
             clearable: true,
             color: "primary"
@@ -231,7 +232,7 @@ export default function flightController() {
             clearable: true,
             color: "primary",
             format24h: true,
-            //suffix: this.timezoneAirport,
+            suffix: timezoneAirport.value,
           },
           label: i18n.tr('ifly.cms.form.scheduledArrival'),
         },
@@ -246,7 +247,7 @@ export default function flightController() {
             ],
             hint: 'Enter the fight number and press enter or press the search icon',
             loading: loadingBound.value,
-            //readonly:  this.disabledReadonly || this.loadingState,
+            readonly:  disabledReadonly.value,
             label: `*${i18n.tr('ifly.cms.form.flight')}`,
             clearable: true,
             maxlength: 7,
@@ -257,16 +258,16 @@ export default function flightController() {
           value: '',
           type: 'select',
           props: {
-            //readonly:  (this.disabledReadonly || this.flightBoundFormStatus.boundDestinationAirport),
+            readonly:  (disabledReadonly.value || flightBoundFormStatus.value.boundDestinationAirport),
             label: `${i18n.tr('ifly.cms.form.destination')}`,
             clearable: true,
             color: "primary",
-            //suffix: this.timezoneAirport,
+            suffix: timezoneAirport.value,
           },
           loadOptions: {
             apiRoute: 'apiRoutes.qfly.airports',
             select: { label: 'fullName', id: 'id' },
-            //requestParams: { filter: { status: this.refresh, companyId: this.filterCompany } }
+            requestParams: { filter: { status: true, companyId: qRampStore().getFilterCompany() } }
           },
         },
         outboundTailNumber: {
@@ -274,7 +275,7 @@ export default function flightController() {
           value: '',
           type: 'input',
           props: {
-            //readonly: this.disabledReadonly,
+            readonly: disabledReadonly.value,
             label:  `${i18n.tr('ifly.cms.form.tail')}`,
             clearable: true,
             color: "primary"
@@ -294,7 +295,7 @@ export default function flightController() {
             clearable: true,
             color: "primary",
             format24h: true,
-            //suffix: this.timezoneAirport,
+            suffix: timezoneAirport.value,
           },
         },
       },
@@ -307,14 +308,14 @@ export default function flightController() {
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
             'place-holder': 'MM/DD/YYYY HH:mm',
-            //readonly: this.disabledReadonly,
+            readonly: disabledReadonly.value,
 
             label: `*${i18n.tr('ifly.cms.form.blockIn')}`,
             clearable: true,
             color: "primary",
             format24h: true,
             //options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundBlockIn),
-            //suffix: this.timezoneAirport,
+            suffix: timezoneAirport.value,
           },
         },
         outboundBlockOut: {
@@ -325,13 +326,13 @@ export default function flightController() {
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
             'place-holder': 'MM/DD/YYYY HH:mm',
-            //readonly: this.disabledReadonly,
+            readonly: disabledReadonly.value,
             label: `*${i18n.tr('ifly.cms.form.blockOut')}`,
             clearable: true,
             color: "primary",
             format24h: true,
             //options: this.validateDateOutboundBlockOut,
-            //suffix: this.timezoneAirport,
+            suffix: timezoneAirport.value,
           },
         },
       },
@@ -366,7 +367,6 @@ export default function flightController() {
       ...form.value,
       ...selectedData
     }
-    console.log(form.value)
   }
   async function searchFlightaware(field) {
     if(!['inboundFlightNumber', 'outboundFlightNumber'].includes(field) ) return;

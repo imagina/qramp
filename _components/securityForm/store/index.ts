@@ -6,6 +6,7 @@ import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
 import remarksStore from '../../remarks/store';
 import stepps from '../models/defaultModels/stepps';
+import signatureStore from 'src/modules/qramp/_components/signature/store/index.store'
 
 const state = reactive({
     refsGlobal: {},
@@ -104,6 +105,7 @@ const store = computed(() => ({
         return state.form;
     },
     set form(value: any) {
+        const flightBoundFormStatus = qRampStore().getFlightBoundFormStatus();
         if(value.id) {
             state.form.id = value.id;
         }
@@ -128,7 +130,12 @@ const store = computed(() => ({
         state.form.inboundBlockIn = qRampStore().dateFormatterFull(value.inboundBlockIn) || null;
         state.form.outboundBlockOut = qRampStore().dateFormatterFull(value.outboundBlockOut) || null;
         state.form.faFlightId = value.faFlightId || null;
-
+        flightBoundFormStatus.boundTailNumber = qRampStore().checkIfDataArrives(value.inboundTailNumber);
+        flightBoundFormStatus.outboundTailNumber = qRampStore().checkIfDataArrives(value.outboundTailNumber);
+        flightBoundFormStatus.boundScheduled = qRampStore().checkIfDataArrives(value.inboundScheduledArrival);
+        flightBoundFormStatus.boundScheduledDeparture = qRampStore().checkIfDataArrives(value.outboundScheduledDeparture);
+        flightBoundFormStatus.boundOriginAirportId = qRampStore().checkIfDataArrives(value.inboundOriginAirportId);
+        flightBoundFormStatus.boundDestinationAirport = qRampStore().checkIfDataArrives(value.outboundDestinationAirportId);
         qRampStore().setTypeWorkOrder(value.type)
         if(navigator.onLine) {
             qRampStore().setWorkOrderItems(value.workOrderItems);
@@ -162,9 +169,11 @@ const store = computed(() => ({
     async payload() {
         const serviceList = await serviceListStore().getServiceListSelected();
         const remarks = remarkStore().getForm();
+
         return {
             ...state.form,
             ...remarks,
+            ...signatureStore.form,
             workOrderItems: [
                 ...serviceList
             ],
