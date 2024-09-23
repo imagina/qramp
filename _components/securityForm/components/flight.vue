@@ -30,11 +30,12 @@
                 />
             </div>
         </div>
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6" v-if="isActualInAndActualOut">
         <collapseFly
           :title="$tr('isite.cms.label.inbound')"
           :flightNumber="form.inboundFlightNumber"
           :isComplete="validateBoundComplete('inboundLeft')"
+          v-if="!validateNoFligth"
         >
           <div v-for="(field, keyField) in formFields.inboundLeft" class="tw-px-4">
             <div>
@@ -48,10 +49,14 @@
         </collapseFly>
       </div>
 
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6" v-if="isActualInAndActualOut">
         <div>
-          <collapseFly :title="$tr('isite.cms.label.outbound')" :flightNumber="form.outboundFlightNumber"
-                       :isComplete="validateBoundComplete('outboundRight')">
+          <collapseFly 
+            :title="$tr('isite.cms.label.outbound')" 
+            :flightNumber="form.outboundFlightNumber"
+            :isComplete="validateBoundComplete('outboundRight')"
+            v-if="!validateNoFligth"
+          >
             <div v-for="(field, keyField) in formFields.outboundRight" class="tw-px-4">
               <div>
                 <dynamic-field
@@ -68,6 +73,7 @@
       </div>
       <div
         class="col-12"
+        v-if="isActualInAndActualOut"
       >
         <div class="tw-font-semibold
           lg:tw-grid

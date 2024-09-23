@@ -4,11 +4,10 @@ import {
     STATUS_SUBMITTED,
     modelFlightBoundFormStatus,
     BUSINESS_UNIT_PASSENGER,
-    COMPANY_PASSENGER,
-    COMPANY_RAMP,
-    BUSINESS_UNIT_LABOR,
-    LABOR,
-    NON_FLIGHT, SECURITY, BUSINESS_UNIT_SECURITY, COMPANY_SECURITY
+    OPERATION_TYPE_NON_FLIGHT,
+    NON_FLIGHT, SECURITY, 
+    BUSINESS_UNIT_SECURITY, 
+    COMPANY_SECURITY
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
@@ -48,6 +47,7 @@ const state = reactive({
     isNonFlight: false,
     billingDate: null,
     clonedWorkOrder: null,
+    businessUnitId: null,
 });
 
 export default function qRampStore() {
@@ -507,19 +507,21 @@ export default function qRampStore() {
         } catch (error) {
             console.log(error)
         }
+    }  
+    
+    function getBusinessUnitId() {
+        return state.businessUnitId
+    }
+    function setBusinessUnitId(value) {
+        state.businessUnitId = value
     }
 
-    function getBusinessUnitId() {
-        const isPassenger = getIsPassenger();
-        let businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : null;
-        if(isPassenger &&  getTypeWorkOrder() === LABOR) {
-            businessUnitId = BUSINESS_UNIT_LABOR
-        }
-        if(!isPassenger && getTypeWorkOrder() === SECURITY) {
-            businessUnitId = BUSINESS_UNIT_SECURITY
-        }
-        return businessUnitId
-    }
+    function getOperationTypeIdNonFlight() {
+        const businessUnitId = getBusinessUnitId()
+        if (businessUnitId === BUSINESS_UNIT_PASSENGER) return OPERATION_TYPE_NON_FLIGHT[0]
+        if (businessUnitId === BUSINESS_UNIT_SECURITY) return OPERATION_TYPE_NON_FLIGHT[1]
+    } 
+
     function getFilterCompany() {
         const isPassenger = getIsPassenger();
         let companies = isPassenger ? store.getSetting('ramp::passengerCompanies') : store.getSetting('ramp::rampCompanies');
@@ -678,6 +680,8 @@ export default function qRampStore() {
         getTypeWorkOrder,
         setTypeWorkOrder,
         getBusinessUnitId,
+        setBusinessUnitId,
+        getOperationTypeIdNonFlight,
         getBillingDate,
         setBillingDate,
         getClonedWorkOrder,

@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue';
-import { BUSINESS_UNIT_SECURITY, FUELING} from '../../model/constants';
+import { BUSINESS_UNIT_SECURITY } from '../../model/constants';
 import serviceListStore from '../../serviceList/store/serviceList'
 import remarkStore from '../../remarks/store';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
@@ -7,41 +7,57 @@ import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
 import remarksStore from '../../remarks/store';
 import stepps from '../models/defaultModels/stepps';
 import signatureStore from 'src/modules/qramp/_components/signature/store/index.store'
+import moment from 'moment';
+
+const MODEL_FORM = {
+    id: null,
+    customerId: null,
+    contractId: null,
+    statusId: null,
+    operationTypeId: 2,
+    type: null,
+    businessUnitId : BUSINESS_UNIT_SECURITY,
+    stationId: null,
+    acTypeId: null,
+    carrierId: null,
+    responsibleId: null,
+    inboundFlightNumber: null,
+    inboundOriginAirportId: null,
+    inboundTailNumber: null,
+    inboundScheduledArrival: null,
+    outboundFlightNumber: null,
+    outboundDestinationAirportId: null,
+    outboundTailNumber: null,
+    outboundScheduledDeparture: null,
+    inboundBlockIn: null,
+    outboundBlockOut: null,
+    faFlightId: null,
+    parentId: null,
+    scheduleDate: null,
+    preFlightNumber: null,
+}
+
+const dateFormatterFull = (rawDate) => {
+    if (!rawDate) return null
+    return moment(rawDate).format('MM/DD/YYYY HH:mm')
+}
 
 const state = reactive({
     refsGlobal: {},
     step: 1,
     showModal: false,
     titleModal: '',
+    lastTitle: ',',
     loading: false,
     updateModal: false,
     widthModal: '35vw',
     isUpdate: false,
+    isClone: false,
+    chip: null,
     dialogTable: false,
     dataTable: [],
     form: {
-        id: null,
-        customerId: null,
-        contractId: null,
-        statusId: null,
-        operationTypeId: 2,
-        type: null,
-        businessUnitId : BUSINESS_UNIT_SECURITY,
-        stationId: null,
-        acTypeId: null,
-        carrierId: null,
-        responsibleId: null,
-        inboundFlightNumber: null,
-        inboundOriginAirportId: null,
-        inboundTailNumber: null,
-        inboundScheduledArrival: null,
-        outboundFlightNumber: null,
-        outboundDestinationAirportId: null,
-        outboundTailNumber: null,
-        outboundScheduledDeparture: null,
-        inboundBlockIn: null,
-        outboundBlockOut: null,
-        faFlightId: null,
+        ...MODEL_FORM
     },
     emitEvent: {},
 })
@@ -71,11 +87,29 @@ const store = computed(() => ({
     set isUpdate(value: boolean) {
         state.isUpdate = value;
     },
+    get isClone(): boolean {
+        return state.isClone;
+    },
+    set isClone(value: boolean) {
+        state.isClone = value;
+    },
+    get chip(): { label: string } | null {
+        return state.chip;
+    },
+    set chip(value: { label: string } | null) {
+        state.chip = value;
+    },
     get titleModal(): string {
         return state.titleModal;
     },
     set titleModal(value: string) {
         state.titleModal = value;
+    },
+    get lastTitle(): string {
+        return state.lastTitle;
+    },
+    set lastTitle(value: string) {
+        state.lastTitle = value;
     },
     get widthModal(): string {
         return state.widthModal;
@@ -130,12 +164,15 @@ const store = computed(() => ({
         state.form.inboundBlockIn = qRampStore().dateFormatterFull(value.inboundBlockIn) || null;
         state.form.outboundBlockOut = qRampStore().dateFormatterFull(value.outboundBlockOut) || null;
         state.form.faFlightId = value.faFlightId || null;
+        state.form.parentId = value.parentId || null;
+        state.form.preFlightNumber = value.preFlightNumber || null;
         flightBoundFormStatus.boundTailNumber = qRampStore().checkIfDataArrives(value.inboundTailNumber);
         flightBoundFormStatus.outboundTailNumber = qRampStore().checkIfDataArrives(value.outboundTailNumber);
         flightBoundFormStatus.boundScheduled = qRampStore().checkIfDataArrives(value.inboundScheduledArrival);
         flightBoundFormStatus.boundScheduledDeparture = qRampStore().checkIfDataArrives(value.outboundScheduledDeparture);
         flightBoundFormStatus.boundOriginAirportId = qRampStore().checkIfDataArrives(value.inboundOriginAirportId);
         flightBoundFormStatus.boundDestinationAirport = qRampStore().checkIfDataArrives(value.outboundDestinationAirportId);
+
         qRampStore().setTypeWorkOrder(value.type)
         if(navigator.onLine) {
             qRampStore().setWorkOrderItems(value.workOrderItems);
@@ -158,6 +195,9 @@ const store = computed(() => ({
                 })),
             }))
             qRampStore().setWorkOrderItems(workOrderItemCamelCase);
+        }
+        if (qRampStore().isNonFlight()) {
+            state.form.scheduleDate = dateFormatterFull(value.scheduleDate)
         }
         serviceListStore().init().then();
         remarksStore().setForm(value);
@@ -185,35 +225,21 @@ const store = computed(() => ({
     set emitEvent(value) {
       state.emitEvent = {...value}
     },
+    resetForm() {
+        state.form = {
+            ...MODEL_FORM
+        }
+    },
     reset() {
         state.step = 1;
         state.showModal = false;
         state.titleModal = '';
         state.isUpdate = false;
         state.loading = false;
+        state.isClone = false;
+        state.chip = null;
         state.form = {
-            id: null,
-            customerId: null,
-            contractId: null,
-            statusId: null,
-            operationTypeId: 2,
-            type: null,
-            businessUnitId : BUSINESS_UNIT_SECURITY,
-            stationId: null,
-            acTypeId: null,
-            carrierId: null,
-            responsibleId: null,
-            inboundFlightNumber: null,
-            inboundOriginAirportId: null,
-            inboundTailNumber: null,
-            inboundScheduledArrival: null,
-            outboundFlightNumber: null,
-            outboundDestinationAirportId: null,
-            outboundTailNumber: null,
-            outboundScheduledDeparture: null,
-            inboundBlockIn: null,
-            outboundBlockOut: null,
-            faFlightId: null
+            ...MODEL_FORM
         }
         stepps.forEach(item => {
          item.error = false;

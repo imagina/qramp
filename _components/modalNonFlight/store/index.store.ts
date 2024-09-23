@@ -1,5 +1,5 @@
 import {computed, reactive} from "vue";
-import { NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT } from "../../model/constants";
+import { NON_FLIGHT } from "../../model/constants";
 import qRampStore from 'src/modules/qramp/_store/qRampStore'
 import { mergeColumnDateWithCurrentTime } from '../actions/mergeColumnDateWithCurrentTime'
 import { Form, Store } from '../contracts'
@@ -17,7 +17,7 @@ const state = reactive<Store>({
     stationId: null,
     scheduleDate: null,
     responsibleId: null,
-    operationTypeId: OPERATION_TYPE_NON_FLIGHT,
+    operationTypeId: null,
     preFlightNumber: null,
   },
   seletedDateColumn: null,
@@ -86,6 +86,7 @@ export default computed(() => ({
       ...state.form,  
       businessUnitId,
       type: NON_FLIGHT,
+      operationTypeId: qRampStore().getOperationTypeIdNonFlight(),
       titleOffline: 'New non-flight',
     };
   },
@@ -101,7 +102,7 @@ export default computed(() => ({
       stationId: null,
       scheduleDate: null,
       responsibleId: null,
-      operationTypeId: OPERATION_TYPE_NON_FLIGHT,
+      operationTypeId: null,
       preFlightNumber: null,
     } 
     state.seletedDateColumn = null
