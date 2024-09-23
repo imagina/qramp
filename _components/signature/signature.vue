@@ -82,6 +82,7 @@ import { computed, inject, onMounted  } from 'vue'
 import responsive from '../../_mixins/responsive.js'
 import store from './store/index.store'
 import { fields } from './model/fields'
+import qRampStore from "../../_store/qRampStore";
 
 export default {
   props: {
@@ -100,7 +101,7 @@ export default {
     })
     const isDesktop = computed(() => window.innerWidth >= '900')
     const readonly = computed(() => props.readonly)
-    const disabledReadonly = inject('disabledReadonly')
+    const disabledReadonly = qRampStore().disabledReadonly();
 
     onMounted(() => {
       store.disabledReadonly = disabledReadonly.value

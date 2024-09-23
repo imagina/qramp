@@ -71,7 +71,7 @@ export default {
       await workOrderList().getCustomerWithContract()
     })
   },
-  beforeDestroy() {
+  beforeUnmount() {
     qRampStore().setFlightList([]);
     qRampStore().setFlightId(null);
   },
