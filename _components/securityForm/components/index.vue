@@ -10,7 +10,7 @@
           @hide="clear"
         >
             <div>
-                <createForm ref="refCreateForm" v-if="!isUpdate" @refresh-data="getDataTable()"/>
+                <simpleWorkOrders v-if="!isUpdate" ref="refCreateForm" @refreshData="getDataTable()"/>
                 <stepper  ref="refStepper" v-else />
             </div>
         </master-modal>
@@ -20,13 +20,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import modalFormController from "../controllers/modalForm";
-import createForm from '../components/create.vue';
 import stepper from '../components/stepper.vue';
+import simpleWorkOrders from '../../simpleWorkOrders.vue'
 
 export default defineComponent({
     components: {
-        createForm,
         stepper,
+        simpleWorkOrders,
     },
     emits: ['refresh-data'],
     props: {

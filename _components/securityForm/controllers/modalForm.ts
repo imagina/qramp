@@ -4,7 +4,7 @@ import {
   WritableComputedRef,
   ComputedRef,
   onBeforeUnmount,
-  onMounted
+  onMounted, provide
 } from 'vue';
 import storeFueling from '../store/index';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
@@ -15,9 +15,12 @@ import serviceListStore from '../../serviceList/store/serviceList';
 import baseService from "src/modules/qcrud/_services/baseService.js";
 import { alert, store, i18n } from 'src/plugins/utils';
 import { useQuasar } from 'quasar';
+import showWorkOrder from '../services/showWorkOrder'
 
 export default function modalFormController(props: any = null, emit: any = null) {
   const $q = useQuasar();
+  provide('closeModal', clear);
+  provide('showWorkOrder', showWorkOrder);
   const refCreateForm: any = ref(null);
   const refStepper: any = ref(null);
   const loading: ComputedRef<boolean> = computed(() => storeFueling.loading);
@@ -37,7 +40,7 @@ export default function modalFormController(props: any = null, emit: any = null)
         label: i18n.tr('isite.cms.label.save'),
       },
       action: async () => {
-        qRampStore().setTitleOffline('New fueling')
+        qRampStore().setTitleOffline('New Security')
         save()
       }
     },
@@ -133,10 +136,10 @@ export default function modalFormController(props: any = null, emit: any = null)
   }
 
   function save() {
-    refCreateForm.value.$refs.formFueling.
+    refCreateForm.value.$refs.formSimpleWorkOrders.
       validate().then(async (success) => {
         if (success) {
-          refCreateForm.value.save()
+          refCreateForm.value.saveSimpleWorkOrder()
         }
       })
   }

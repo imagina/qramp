@@ -106,16 +106,10 @@ export default {
         permission: 'ramp.security-work-orders',
         create: {
           method: async () => {
-            await qRampStore().setTitleOffline(this.$tr('ifly.cms.form.newWorkOrder'));
-            await qRampStore().setTypeWorkOrder(SECURITY);
-            await qRampStore().setIsPassenger(false);
-            this.$refs.formOrders.loadform({
-              modalProps: {
-                title: this.$tr('ifly.cms.form.newWorkOrder'),
-                update: false,
-                width: '35vw'
-              }
-            })
+            securityFormStore.showModal = true;
+            securityFormStore.isUpdate = false;
+            securityFormStore.titleModal = 'Create security'
+            securityFormStore.widthModal = '35vw';
           },
         },
         read: {

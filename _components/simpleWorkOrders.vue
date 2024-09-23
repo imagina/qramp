@@ -243,6 +243,7 @@ export default {
             label: 'Go out to the list',
             color: 'grey-6',
             handler: async () => {
+              await this.$emit('refreshData');
               await this.closeModal();
             }
           },
