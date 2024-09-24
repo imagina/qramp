@@ -4,7 +4,12 @@ import storeKanban from '../store/kanban.store'
 import _ from "lodash";
 import getCurrentColumn from '../actions/getCurrentColumn';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
-import { FLIGHT, LABOR, NON_FLIGHT } from 'src/modules/qramp/_components/model/constants'
+import { 
+  FLIGHT, 
+  NON_FLIGHT, 
+  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_SECURITY,
+} from 'src/modules/qramp/_components/model/constants'
 import modalNonFlightStore from 'src/modules/qramp/_components/modalNonFlight/store/index.store'
 import { i18n } from 'src/plugins/utils'
 
@@ -13,7 +18,14 @@ export default function useCompletedSchedule(props: any, emit: any) {
   const scheduleType = computed(() => props.scheduleType);
   const dateColumn = computed(() => props.column.date.format('YYYY-MM-DD'));
   const cards = computed(() => props.column.cards)
-  const isPassenger = computed(() => qRampStore().getIsPassenger())
+  const moduleWithNonFlight = computed(() => {
+    const businessUnitId = qRampStore().getBusinessUnitId()
+    const modulesWithNonFlight = [
+      BUSINESS_UNIT_PASSENGER,
+      BUSINESS_UNIT_SECURITY
+    ]
+    return modulesWithNonFlight.includes(businessUnitId)
+  })
   const refModalNonFlight: any = inject('refModalNonFlight')
   const dropdownItems = [
     { label: 'Create Flight', action: () => openForm(FLIGHT) },
@@ -46,7 +58,11 @@ export default function useCompletedSchedule(props: any, emit: any) {
   const completed = computed(() => props.column.completed)
   const uncompleted = computed(() => props.column.uncompleted)  
 
-  const createNonFlight = computed(() => !isBlank.value && !showInline.value && isPassenger.value && qRampStore().getTypeWorkOrder() !== LABOR)
+  const createNonFlight = computed(() => {
+    return  !isBlank.value && 
+            !showInline.value && 
+            moduleWithNonFlight.value
+  })
 
   const createFlight = computed(() => {
     return !isBlank.value && !showInline.value
@@ -88,7 +104,6 @@ export default function useCompletedSchedule(props: any, emit: any) {
     completed,
     uncompleted,
     cards,
-    isPassenger,
     FLIGHT,
     NON_FLIGHT,
     createNonFlight,
