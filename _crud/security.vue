@@ -1,7 +1,7 @@
 <template>
   <div>
-    <securityForm 
-      @refresh-data="getDataTable(true)" 
+    <securityForm
+      @refresh-data="getDataTable(true)"
       ref="modalCreate"
     />
     <flightDetail />
@@ -413,6 +413,7 @@ export default {
                 securityFormStore.isUpdate = true;
                 securityFormStore.titleModal = 'Update security' + (item.id ? ` Id: ${item.id}` : '')
                 securityFormStore.widthModal = '90vw';
+                qRampStore().setWorkOrderId(item.id);
                 this.showWorkOrder(item);
               }
             },

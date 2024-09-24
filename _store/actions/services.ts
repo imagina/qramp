@@ -135,26 +135,42 @@ function getDynamicField(product) {
         const productoType = product.type || null;
         const att = product.attributes || [];
         const optionAtt = product.options?.attributes || [];
+
         const result = {};
         const organizedData = optionAtt.length > 0 ? _.sortBy(att, item => optionAtt.indexOf(String(item.id))) : att;
         for (let i = 0; i < organizedData.length; i++) {
             const currentValue = organizedData[i];
+            const propsOptions = currentValue.options?.props || {}
+            const loadOptions = currentValue.options?.loadOptions ? {
+              loadOptions : {
+                ...currentValue.options?.loadOptions,
+                requestParams: {
+                  filter: {
+                    workOrderId: qRampStore().getWorkOrderId(),
+                  }
+                }
+              },
+            } : {};
             const props = setProps(
             currentValue.type,
             currentValue.name,
             currentValue.values,
             productoType,
-            i
+            i,
             );
             const key = `${currentValue.type}${currentValue.name ? currentValue.name : ""}`;
             const type = currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
-            const value = currentValue.value ? currentValue.type === 'checkbox' ? Number(currentValue.value) : currentValue.value : currentValue.type === 'checkbox' ? 0 : null
+            let value = currentValue.value ? currentValue.type === 'checkbox' ? Number(currentValue.value) : currentValue.value : currentValue.type === 'checkbox' ? 0 : null
+            if(propsOptions.multiple) {
+              value = value || [];
+            }
             result[key] = {
                 name: currentValue.name,
                 value,
                 type,
                 id: currentValue.id,
-                props: { ...props },
+                props: { ...props, ...propsOptions },
+                ...loadOptions
             };
         }
 
@@ -235,9 +251,14 @@ export function getListOfSelectedServices(data, isType = true) {
     try {
         const service = data.filter(item => {
             for (let key in item.formField) {
-                if (item.formField[key].value) {
-                    return true;
-                }
+              const value = item.formField[key].value;
+              if (Array.isArray(value) && value.length > 0) {
+                return true;
+              }
+
+              if (!Array.isArray(value) && value) {
+                return true;
+              }
             }
             return false;
         });
