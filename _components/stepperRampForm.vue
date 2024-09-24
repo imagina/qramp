@@ -303,8 +303,9 @@ export default {
       await request.then(async res => {
         this.clean()
         if (!this.data.parent) this.$emit('close-modal', false)
-        const message = this.data.update ? `${this.$tr('isite.cms.message.recordUpdated')}`
-            : `${this.$tr('isite.cms.message.recordCreated')}`;
+        const message = this.data.update && !this.data?.isClone
+          ? `${this.$tr('isite.cms.message.recordUpdated')}`
+          : `${this.$tr('isite.cms.message.recordCreated')}`;
         this.$alert.info({message})
         this.$emit('loading', false)
         this.disabled = false;
