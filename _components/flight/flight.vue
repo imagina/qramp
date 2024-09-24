@@ -138,12 +138,12 @@ import {
   OPERATION_TYPE_OTHER,
   NON_FLIGHT,
   FLIGHT,
-  LABOR,
+  BUSINESS_UNIT_LABOR,
+  BUSINESS_UNIT_SECURITY,
   OPERATION_TYPE_NON_FLIGHT,
   THIRTY_MINUTES,
   OPERATION_TYPE_TURN_PASSENGER,
-  FIFTEEN_MINUTES,
-  SECURITY
+  FIFTEEN_MINUTES
 } from '../model/constants.js'
 import workOrderList from '../../_store/actions/workOrderList.ts';
 import collapse from './collapse.vue'
@@ -225,8 +225,8 @@ export default {
       deep: true
     },
     'form.operationTypeId'(newVal) {
-      if(qRampStore().getTypeWorkOrder() !== LABOR) {
-        if(newVal == OPERATION_TYPE_NON_FLIGHT) {
+      if(qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR) {
+        if(newVal == OPERATION_TYPE_NON_FLIGHT[0]) {
           qRampStore().setTypeWorkOrder(NON_FLIGHT);
         } else {
           qRampStore().setTypeWorkOrder(FLIGHT);
@@ -258,8 +258,8 @@ export default {
     },
     operationTypeList() {
       const data = structuredClone(workOrderList().getOperationTypeList())
-      if (Number(this.form.operationTypeId) === OPERATION_TYPE_NON_FLIGHT) return data
-      if (this.isPassenger) return data.filter(item => item.id !== OPERATION_TYPE_NON_FLIGHT)
+      if (Number(this.form.operationTypeId) === OPERATION_TYPE_NON_FLIGHT[0]) return data
+      if (this.isPassenger) return data.filter(item => item.id !== OPERATION_TYPE_NON_FLIGHT[0])
       return data
     },
     disabledReadonly() {
@@ -388,13 +388,13 @@ export default {
     },
     readonlyOperationType() {
       const { parentId, preFlightNumber, operationTypeId } = this.dataCompoment || {};
-      const isOther = Number(operationTypeId) === OPERATION_TYPE_NON_FLIGHT
+      const isOther = Number(operationTypeId) === OPERATION_TYPE_NON_FLIGHT[0]
       const createdInNonFlight = (Boolean(parentId) || !Boolean(preFlightNumber)) && isOther;
       return this.readonly || this.disabledReadonly || createdInNonFlight;
     },
     showFieldScheduleDate() {
       const operationTypeId = Number(this.form.operationTypeId)
-      return this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR && operationTypeId === OPERATION_TYPE_NON_FLIGHT
+      return this.isPassenger && qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR && operationTypeId === OPERATION_TYPE_NON_FLIGHT[0]
     },
     isActualInAndActualOut() {
       const isNonFlight = Number(this.dataCompoment.type) === NON_FLIGHT
@@ -597,7 +597,7 @@ export default {
             value: null,
             type: this.readonly ? 'inputStandard' : 'select',
             props: {
-              vIf: !this.isPassenger && qRampStore().getTypeWorkOrder() !== SECURITY,
+              vIf: !this.isPassenger && qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_SECURITY,
               rules: [
                 val => this.validateSpecialCharacters(val)
               ],
@@ -932,6 +932,10 @@ export default {
           },
         }
       }
+    },
+    showFieldScheduleDate() {
+      const operationTypeId = Number(this.form.operationTypeId)
+      return this.isPassenger && operationTypeId === OPERATION_TYPE_NON_FLIGHT[0]
     },
     delayList: {
       get: () => cargoStore().getDelayList(),

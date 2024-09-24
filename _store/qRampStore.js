@@ -5,8 +5,8 @@ import {
     modelFlightBoundFormStatus,
     BUSINESS_UNIT_PASSENGER,
     OPERATION_TYPE_NON_FLIGHT,
-    NON_FLIGHT, SECURITY, 
-    BUSINESS_UNIT_SECURITY, 
+    NON_FLIGHT,
+    BUSINESS_UNIT_SECURITY,
     COMPANY_SECURITY
 } from '../_components/model/constants.js'
 import moment from 'moment';
@@ -507,25 +507,25 @@ export default function qRampStore() {
         } catch (error) {
             console.log(error)
         }
-    }  
-    
+    }
+
     function getBusinessUnitId() {
         return state.businessUnitId
     }
     function setBusinessUnitId(value) {
-        state.businessUnitId = value
+        state.businessUnitId = Number(value)
     }
 
     function getOperationTypeIdNonFlight() {
         const businessUnitId = getBusinessUnitId()
         if (businessUnitId === BUSINESS_UNIT_PASSENGER) return OPERATION_TYPE_NON_FLIGHT[0]
         if (businessUnitId === BUSINESS_UNIT_SECURITY) return OPERATION_TYPE_NON_FLIGHT[1]
-    } 
+    }
 
     function getFilterCompany() {
         const isPassenger = getIsPassenger();
         let companies = isPassenger ? store.getSetting('ramp::passengerCompanies') : store.getSetting('ramp::rampCompanies');
-        if(!isPassenger && getTypeWorkOrder() === SECURITY) {
+        if(!isPassenger && getBusinessUnitId() === BUSINESS_UNIT_SECURITY) {
             companies = COMPANY_SECURITY
         }
         return companies;

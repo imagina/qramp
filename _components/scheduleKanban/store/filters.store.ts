@@ -5,7 +5,7 @@ import filterModel from '../models/filters.model'
 import moment from 'moment';
 import { State } from '../contracts/filtersStore.contract';
 import storeKanban from '../store/kanban.store';
-import { LABOR } from "src/modules/qramp/_components/model/constants";
+import { LABOR, BUSINESS_UNIT_LABOR } from "src/modules/qramp/_components/model/constants";
 import qRampStore from "src/modules/qramp/_store/qRampStore";
 
 const state = reactive<State>({
@@ -111,7 +111,7 @@ const store = computed(() => ({
     },
     get payload(){
       let businessUnitId: any = qRampStore().getBusinessUnitId();
-      const typeWorkOrder = qRampStore().getTypeWorkOrder() === LABOR ? {type: [LABOR]} : {};
+      const typeWorkOrder = qRampStore().getBusinessUnitId() === BUSINESS_UNIT_LABOR ? {type: [LABOR]} : {};
       const filters = {...state.form, ...typeWorkOrder, businessUnitId };
       delete filters.time;
       delete filters.scheduleType;

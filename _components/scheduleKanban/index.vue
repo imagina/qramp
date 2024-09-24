@@ -13,7 +13,14 @@ import kanbanStore from './store/kanban.store'
 import { router } from 'src/plugins/utils'
 let routeName = router.route.path;
 import serviceListStore from "../serviceList/store/serviceList";
-import { LABOR, SECURITY } from "../model/constants";
+import { 
+  LABOR, 
+  SECURITY, 
+  BUSINESS_UNIT_SECURITY, 
+  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_LABOR,
+  BUSINESS_UNIT_RAMP
+} from "../model/constants";
 
 export default defineComponent({
   components: {
@@ -50,17 +57,19 @@ export default defineComponent({
         await workOrderList().setStationList([]);
         if(isRamp) {
           await qRampStore().setIsPassenger(false);
+          qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
         }
         if(isSecurity) {
           await qRampStore().setIsPassenger(false);
-          await qRampStore().setTypeWorkOrder(SECURITY)
+          qRampStore().setBusinessUnitId(BUSINESS_UNIT_SECURITY);
         }
         if(isPassenger) {
           await qRampStore().setIsPassenger(true);
+          qRampStore().setBusinessUnitId(BUSINESS_UNIT_PASSENGER);
         }
         if(isLabor) {
           await qRampStore().setIsPassenger(true);
-          await qRampStore().setTypeWorkOrder(LABOR)
+          qRampStore().setBusinessUnitId(BUSINESS_UNIT_LABOR);
         }
         await workOrderList().getAllList(refresh);
         await workOrderList().getCustomerWithContract();
