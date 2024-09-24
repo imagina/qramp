@@ -8,14 +8,15 @@ export const constructionWorkOrder = async (data) => {
     const remarks = remarkStore().getForm();
     const serviceList = await serviceListStore().getServiceListSelected();
     const dataCargo = cargoStore().payload();
-    data.form.statusId = qRampStore().getStatusId();
+    const workOrderData = structuredClone(data)
+    workOrderData.form.statusId = qRampStore().getStatusId();
 
     const formatData = {
-        ...data.form,
+        ...workOrderData.form,
         ...dataCargo.cargo,
         ...remarks,
-        adHoc: data.form.adHoc == 1,
-        customCustomer: data.form.customCustomer == 1,
+        adHoc: workOrderData.form.adHoc == 1,
+        customCustomer: workOrderData.form.customCustomer == 1,
         delay: dataCargo.delay,
         ourDelay: dataCargo.ourDelay,
         delayComment: dataCargo.delayComment,
