@@ -171,12 +171,10 @@ export default function flightController() {
   })
 
   const reFilterFavorites = async (key: string, value) => {
-    storeFueling.loading = true;
     storeFlight().setForm({ ...storeFlight().getForm(), [key]: value });
     await workOrderList().getFavourites(true);
     const servicesList = serviceListStore().getServiceList();
     updateFavoriteServicesList(servicesList);
-    storeFueling.loading = false;
   }
 
   const handleChange = async (key, event) => {

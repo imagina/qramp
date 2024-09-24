@@ -319,5 +319,20 @@ export default {
       refresh: true,
     }
   },
+  paxOperationTypes: {
+    permission: 'ramp.pax-operation-types.manage',
+    activated: true,
+    authenticated: true,
+    path: '/passenger/pax-operation-types/index',
+    name: 'qramp.admin.paxOperationTypes',
+    crud: import('../_crud/paxOperationTypes.vue'),
+    page: () => import('src/modules/qcrud/_pages/admin/crudPage'),
+    layout: () => import('layouts/master.vue'),
+    title: 'Pax Operation Types',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
 }
 

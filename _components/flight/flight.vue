@@ -224,22 +224,6 @@ export default {
       },
       deep: true
     },
-    'form.inboundFlightNumber' (val) {
-      if (!val) {
-        this.form.inboundFlightNumber = null,
-          this.form.inboundOriginAirportId = null,
-          this.form.inboundTailNumber = null,
-          this.form.inboundScheduledArrival = null
-      }
-    },
-    'form.outboundFlightNumber'(val) {
-      if (!val) {
-        this.form.outboundFlightNumber = null,
-          this.form.outboundDestinationAirportId = null,
-          this.form.outboundTailNumber = null,
-          this.form.outboundScheduledDeparture = null
-      }
-    },
     'form.operationTypeId'(newVal) {
       if(qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR) {
         if(newVal == OPERATION_TYPE_NON_FLIGHT[0]) {
@@ -394,7 +378,7 @@ export default {
       return rules;
     },
     validateRulesField() {
-      return val => this.isPassenger || this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
+      return val => this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
     },
     timezoneAirport() {
       const station = workOrderList().getStationList().find(item => item.id == this.form.stationId);
@@ -531,6 +515,22 @@ export default {
             },
             label: this.$tr('ifly.cms.form.operation'),
           },
+          charterRate: {
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.isPassenger && this.isCharterRate,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              step: "0.1",
+              mask: "###################",
+              type: "number",
+              label: '*Charter Rate',
+              clearable: true,
+              color:"primary"
+            },
+          },
           cancellationType: {
             value: null,
             type: 'select',
@@ -558,6 +558,18 @@ export default {
               type: 'number',
             },
             label: this.$tr('ifly.cms.form.operation'),
+          },
+          paxOperationTypeId: {
+            value: '',
+            type: 'select',
+            props: {
+              vIf: this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR,
+              label: 'Pax Operation',
+              clearable: true,
+              color:"primary",
+              'hide-bottom-space': false,
+              options: this.paxOperationTypeList
+            },
           },
         },
         flyFormRight: {
@@ -836,6 +848,9 @@ export default {
               clearable: true,
               color: "primary",
               format24h: true,
+              ...((this.isbound[0] && this.isbound[1]) && {
+                options: this.validateDateOutbound,
+              }),
               suffix: this.timezoneAirport,
             },
             label: this.$tr('ifly.cms.form.scheduledDeparture'),
@@ -930,7 +945,21 @@ export default {
     },
     isCollapse() {
       return store().getIsLoading();
-    }
+    },
+    isCharterRate() {
+      if(this.form.operationTypeId) {
+        const operationType = this.operationTypeList
+          .find(item => item.id === Number(this.form.operationTypeId));
+        return operationType?.options?.charter || false;
+      }
+      return false;
+    },
+    paxOperationTypeList() {
+      return workOrderList().getPaxOperationTypeList().map(item => ({
+        label: item.name,
+        value: item.id
+      }))
+    },
   },
   methods: {
     init() {
@@ -996,6 +1025,8 @@ export default {
             this.form.outboundGateDeparture = updateForm.outboundGateDeparture;
             this.flightBoundFormStatus.inboundGateArrival = this.checkIfDataArrives(updateForm.inboundGateArrival);
             this.flightBoundFormStatus.outboundGateDeparture = this.checkIfDataArrives(updateForm.outboundGateDeparture);
+            this.form.paxOperationTypeId = updateForm.paxOperationTypeId;
+            this.form.charterRate = updateForm.charterRate;
           }
           this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
           this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)
@@ -1332,21 +1363,6 @@ export default {
       this.resetBound();
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
-    validateDate(dateTime, dateMin = null) {
-      const date = this.form.inboundScheduledArrival
-        ? this.$moment(this.form.inboundScheduledArrival) : this.$moment();
-      const today = date.format('YYYY/MM/DD');
-      const hour = date.format('H');
-      const min = date.format('mm');
-      const validateDate = today === this.$moment(this.form.inboundBlockIn).format('YYYY/MM/DD');
-      if (isNaN(dateTime)) {
-        return dateTime <= this.$moment().format('YYYY/MM/DD') && dateTime >= today;
-      }
-      if (dateMin) {
-        return validateDate ? Number(dateMin) <= min : true;
-      }
-      return validateDate ? dateTime <= hour : true;
-    },
     validateDateOutboundBlockOut(dateTime, dateMin = null) {
       const outboundScheduledDepartureDate = this.form.outboundBlockOut
         ? this.$moment(this.form.outboundBlockOut) : this.$moment();
@@ -1360,11 +1376,35 @@ export default {
 
       if (isNaN(dateTime)) {
         if (this.form.inboundBlockIn) {
-          return dateTime <= this.$moment().format('YYYY/MM/DD')
-            && dateTime >= todayIn;
+          return dateTime >= todayIn;
         }
-        return dateTime <= this.$moment().format('YYYY/MM/DD')
-          && dateTime >= today;
+        return dateTime >= today;
+      }
+      if (dateMin) {
+        return validateDate ? Number(dateMin) >= Number(minIn) : true;
+      }
+      return validateDate ? Number(dateTime) >= Number(hourIn) : true;
+    },
+    validateDateOutbound(dateTime, dateMin = null) {
+      const inboundScheduledArrival = this.form.inboundScheduledArrival
+      const outboundScheduledDeparture = this.form.outboundScheduledDeparture
+
+      const outboundScheduledDepartureDate = outboundScheduledDeparture
+        ? this.$moment(outboundScheduledDeparture) : this.$moment();
+      const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
+
+      const inboundScheduledArrivalDate = inboundScheduledArrival
+        ? this.$moment(inboundScheduledArrival) : this.$moment();
+      const todayIn = inboundScheduledArrivalDate.format('YYYY/MM/DD')
+      const hourIn = inboundScheduledArrivalDate.format('H');
+      const minIn = inboundScheduledArrivalDate.format('mm');
+      const validateDate = today === todayIn;
+
+      if (isNaN(dateTime)) {
+        if (inboundScheduledArrival) {
+          return dateTime >= todayIn;
+        }
+        return dateTime >= today;
       }
       if (dateMin) {
         return validateDate ? Number(dateMin) >= Number(minIn) : true;
@@ -1442,7 +1482,7 @@ export default {
       return dataForm.every(item => item === true);
     },
     async reFilterFavorites() {
-      store().setForm(this.form);
+      store().setForm(structuredClone(this.form));
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
       await workOrderList().getFavourites(true)
       const servicesList = serviceListStore().getServiceList()

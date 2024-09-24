@@ -47,6 +47,8 @@ export interface FormContarct {
     parentId: number | string | null;
     scheduleDate: string | null;
     type: number | null;
+    paxOperationTypeId: number | null;
+    charterRate: number | null;
 }
 export interface StateContarct {
     form: FormContarct;
@@ -112,6 +114,8 @@ const state = reactive<StateContarct>({
         parentId: null,
         scheduleDate: null,
         type: null,
+        paxOperationTypeId: null,
+        charterRate: null,
     },
     responsibles: {},
     differenceTimeMinute: {
@@ -188,6 +192,8 @@ export default function flightStore(): FlightStoreContract {
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;
             state.form.outboundGateDeparture = flight.outboundGateDeparture || null;
+            state.form.paxOperationTypeId = flight.paxOperationTypeId ? flight.paxOperationTypeId : null;
+            state.form.charterRate = flight.charterRate || null;
         }
     }
     /**

@@ -47,5 +47,6 @@ export default {
   passengerBulkExportCsv: `${urlBase}/work-orders/passenger-bulk-export-csv`,
   bulkReloadTransactions: `${urlBase}/work-orders/bulk-reload-transactions`,
   workOrderItems: `${urlBase}/work-order-items`,
-  favourites: `${urlBase}/favourites`
+  favourites: `${urlBase}/favourites`,
+  paxOperationTypes : `${urlBase}/pax-operation-types`
 }

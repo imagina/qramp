@@ -368,7 +368,7 @@ export default {
         const operationType = workOrderList().getOperationTypeList()
           .find(item => item.id === Number(flightForm.operationTypeId));
         const type = operationType?.options?.type;
-
+        const charter = operationType?.options?.charter || false;
         if(type) {
           if(type === 'full'){
             const bount = halfTurnInBount.concat(halfTurnOutBount);
@@ -380,6 +380,9 @@ export default {
           if(type === 'outbound') {
             flightformField = flightformField.concat(halfTurnOutBount);
           }
+        }
+        if(charter) {
+          flightformField = flightformField.concat(['charterRate']);
         }
         const cancellationType =  flightForm.cancellationType;
         if(cancellationType) {
