@@ -564,7 +564,7 @@ export default {
             value: '',
             type: 'select',
             props: {
-              vIf: this.$hasAccess('ramp.pax-operation-types.index') && this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR,
+              vIf: this.$hasAccess('ramp.pax-operation-types.index') && this.isPassenger && qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR,
               label: 'Pax Operation',
               clearable: true,
               color:"primary",
