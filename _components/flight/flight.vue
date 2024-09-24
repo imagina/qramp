@@ -519,7 +519,7 @@ export default {
             value: '',
             type: 'input',
             props: {
-              vIf: this.isPassenger && this.isCharterRate && false,
+              vIf: this.isPassenger && this.isCharterRate,
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
