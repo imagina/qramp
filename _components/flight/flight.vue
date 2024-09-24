@@ -519,7 +519,7 @@ export default {
             value: '',
             type: 'input',
             props: {
-              vIf: this.isPassenger && this.isCharterRate,
+              vIf: this.isPassenger && this.isCharterRate && false,
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
@@ -563,7 +563,7 @@ export default {
             value: '',
             type: 'select',
             props: {
-              vIf: this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR,
+              vIf: this.$hasAccess('ramp.pax-operation-types.index') && this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR,
               label: 'Pax Operation',
               clearable: true,
               color:"primary",
