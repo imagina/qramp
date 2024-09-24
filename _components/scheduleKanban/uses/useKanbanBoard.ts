@@ -18,10 +18,9 @@ import getTitleFilter from "../actions/getTitleFilter";
 import workOrderList from "modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
-import {LABOR} from "src/modules/qramp/_components/model/constants";
 import { store, i18n, helper, cache, router } from 'src/plugins/utils'
 import { useQuasar } from 'quasar';
-import { SECURITY } from "../../model/constants.js";
+import { BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR } from '../../model/constants.js';
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
@@ -123,7 +122,7 @@ export default function useKanbanBoard(props) {
           const { routeName, hrefSplit } = determineRouteAndSplitHref()
           let routeNameLocal = routeName
 
-          if (qRampStore().getTypeWorkOrder() ===  SECURITY) {
+          if (qRampStore().getBusinessUnitId() ===  BUSINESS_UNIT_SECURITY) {
             routeNameLocal = "security";
           }
           let tinyUrl =
@@ -210,7 +209,7 @@ export default function useKanbanBoard(props) {
 
   function determineRouteAndSplitHref() {
     let routeName = isPassenger.value ? "passenger" : "ramp";
-    if(qRampStore().getTypeWorkOrder() === LABOR) {
+    if(qRampStore().getBusinessUnitId() === BUSINESS_UNIT_LABOR) {
       routeName = "labor";
     }
     let hrefSplit = window.location.href.split("?");

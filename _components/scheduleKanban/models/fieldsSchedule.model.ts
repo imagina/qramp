@@ -1,5 +1,8 @@
 import { computed, ComputedRef } from 'vue';
-import { OPERATION_TYPE_NON_FLIGHT, SECURITY } from '../../model/constants.js'
+import { 
+  OPERATION_TYPE_NON_FLIGHT, 
+  BUSINESS_UNIT_SECURITY 
+} from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
 import store from '../store/modalSchedule.store'
@@ -55,8 +58,8 @@ export default function modelFields() {
 
     const operationTypeList =  computed(() => {
       const data = structuredClone(workOrderList().getOperationTypeList())
-      if (Number(form.value.operationTypeId) === OPERATION_TYPE_NON_FLIGHT) return data
-      if (isPassenger.value) return data.filter(item => item.id !== OPERATION_TYPE_NON_FLIGHT)
+      if (OPERATION_TYPE_NON_FLIGHT.includes(Number(form.value.operationTypeId))) return data
+      if (isPassenger.value) return data.filter(item => !OPERATION_TYPE_NON_FLIGHT.includes(Number(item.id)))
       return data
     });
     const fields: ComputedRef<any> = computed(() => ({
@@ -95,7 +98,7 @@ export default function modelFields() {
               value: null,
               type: 'select',
               props: {
-                vIf: !isPassenger.value && qRampStore().getTypeWorkOrder() !== SECURITY,
+                vIf: !isPassenger.value && qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_SECURITY,
                 readonly: isBlank.value,
                 label: `${i18n.tr('ifly.cms.form.gate')}`,
                 clearable: true,

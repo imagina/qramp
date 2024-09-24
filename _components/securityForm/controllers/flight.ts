@@ -7,7 +7,7 @@ import storeFlight from '../../flight/store'
 import serviceListStore from '../../serviceList/store/serviceList'
 import { store, i18n, alert } from 'src/plugins/utils';
 import { updateFavoriteServicesList } from '../../serviceList/actions/updateFavoriteServicesList';
-import { NON_FLIGHT, LABOR, OPERATION_TYPE_NON_FLIGHT } from '../../model/constants';
+import { NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT, BUSINESS_UNIT_LABOR } from '../../model/constants';
 
 export default function flightController() {
   const refFlight: any = ref(null);
@@ -55,7 +55,7 @@ export default function flightController() {
   })
   const showFieldScheduleDate = computed(() => {
     const operationTypeId = Number(storeFueling.form.operationTypeId)
-    return qRampStore().getTypeWorkOrder() !== LABOR && operationTypeId === OPERATION_TYPE_NON_FLIGHT[1]
+    return qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR && OPERATION_TYPE_NON_FLIGHT.includes(operationTypeId)
   })
   const formFields = computed(() => {
     return {

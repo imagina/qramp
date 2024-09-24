@@ -45,12 +45,11 @@ import {
   STEP_SIGNATURE,
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
+  BUSINESS_UNIT_SECURITY,
   OPERATION_TYPE_OTHER,
   OPERATION_TYPE_NON_FLIGHT,
   STEP_DELAY,
-  STATIONS_DELAY,
   FlightFormFieldSecurityModel,
-  SECURITY
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import serviceListStore from './serviceList/store/serviceList.ts';
@@ -349,7 +348,7 @@ export default {
         ?  HalfTurnInBountPassengerModel : HalfTurnInBountModel;
         let halfTurnOutBount = this.isPassenger || flightForm.operationTypeId == OPERATION_TYPE_OTHER
         ? HalfTurnOutBountPassengerModel : HalfTurnOutBountModel;
-        if(this.isPassenger && flightForm.operationTypeId == OPERATION_TYPE_NON_FLIGHT) {
+        if(this.isPassenger && flightForm.operationTypeId == OPERATION_TYPE_NON_FLIGHT[0]) {
           halfTurnInBount = [];
           halfTurnOutBount = [];
           flightformField = flightformField.concat(['scheduleDate']);
@@ -362,7 +361,7 @@ export default {
           flightformField = flightformField.concat(['customerId']);
         }
 
-        if(!this.isPassenger && qRampStore().getTypeWorkOrder() === SECURITY) {
+        if(!this.isPassenger && qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY) {
           flightformField = FlightFormFieldSecurityModel;
         }
 

@@ -23,13 +23,14 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
         const offlineId = new Date().valueOf();
         const form = { ...modalScheduleStore.form };
         let type: any = qRampStore().getTypeWorkOrder();
-        let businessUnitId: any = qRampStore().getBusinessUnitId();
+        const businessUnitId: number = qRampStore().getBusinessUnitId();
 
-        if(qRampStore().getTypeWorkOrder() === LABOR) {
-          type = LABOR
-        }
-        if(form.operationTypeId == OPERATION_TYPE_NON_FLIGHT && qRampStore().getTypeWorkOrder() !== LABOR) {
-          type = form.operationTypeId == OPERATION_TYPE_NON_FLIGHT ? NON_FLIGHT : FLIGHT
+        if(businessUnitId === BUSINESS_UNIT_LABOR) type = LABOR
+        if(
+          OPERATION_TYPE_NON_FLIGHT.includes(Number(form.operationTypeId)) && 
+          businessUnitId !== BUSINESS_UNIT_LABOR
+        ) {
+          type = OPERATION_TYPE_NON_FLIGHT.includes(Number(form.operationTypeId)) ? NON_FLIGHT : FLIGHT
         }
 
         try {
