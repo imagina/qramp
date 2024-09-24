@@ -5,7 +5,7 @@ import {
   ComputedRef,
   onMounted, provide
 } from 'vue';
-import storeFueling from '../store/index';
+import store from '../store/index';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import { 
   STATUS_CLOSED, 
@@ -21,7 +21,7 @@ import updateWorkOrders from '../services/updateWorkOrders';
 import stepps from '../models/defaultModels/stepps'
 import serviceListStore from '../../serviceList/store/serviceList';
 import baseService from "src/modules/qcrud/_services/baseService.js";
-import { alert, store, i18n } from 'src/plugins/utils';
+import { alert, store as storeUtil, i18n } from 'src/plugins/utils';
 import { useQuasar } from 'quasar';
 import showWorkOrder from '../services/showWorkOrder'
 import workOrderList from '../../../_store/actions/workOrderList';
@@ -36,15 +36,15 @@ export default function modalFormController(props: any = null, emit: any = null)
   provide('showWorkOrder', showWorkOrder);
   const refCreateForm: any = ref(null);
   const refStepper: any = ref(null);
-  const loading: ComputedRef<boolean> = computed(() => storeFueling.loading);
-  const isUpdate = computed(() => storeFueling.isUpdate);
-  const titleModal: ComputedRef<string> = computed(() => storeFueling.titleModal);
-  const widthModal: ComputedRef<string> = computed(() => storeFueling.widthModal);
-  const chip: ComputedRef<{ label: string } | null> = computed(() => storeFueling.chip);
+  const loading: ComputedRef<boolean> = computed(() => store.loading);
+  const isUpdate = computed(() => store.isUpdate);
+  const titleModal: ComputedRef<string> = computed(() => store.titleModal);
+  const widthModal: ComputedRef<string> = computed(() => store.widthModal);
+  const chip: ComputedRef<{ label: string } | null> = computed(() => store.chip);
   const showModal: WritableComputedRef<boolean> = computed({
-    get: () => storeFueling.showModal,
+    get: () => store.showModal,
     set: (value: boolean) => {
-      storeFueling.showModal = value;
+      store.showModal = value;
     }
   });
   const actionsCreate = ref([
@@ -60,25 +60,25 @@ export default function modalFormController(props: any = null, emit: any = null)
     },
   ])
   const actions = computed(() => {
-    const statusId = storeFueling.form.statusId;
-    const parentId = storeFueling.form.parentId;
+    const statusId = store.form.statusId;
+    const parentId = store.form.parentId;
     const showOpenSourceWorkOrder = Boolean(parentId);
     const workOrder = qRampStore().getClonedWorkOrder();
     const actionsUpdate = [
       {
         props: {
-          vIf: store.hasAccess('ramp.work-orders.destroy'),
+          vIf: storeUtil.hasAccess('ramp.work-orders.destroy'),
           icon: 'fa-regular fa-trash',
           class: 'btn-action-fueling',
           label: $q.screen.lt.sm ? null : i18n.tr('isite.cms.label.delete'),
-          loading: storeFueling.loading,
+          loading: store.loading,
         },
         action: async() => {
-          storeFueling.loading = true;
-          await baseService.delete('apiRoutes.qramp.workOrders', storeFueling.form.id);
-          storeFueling.reset();
+          store.loading = true;
+          await baseService.delete('apiRoutes.qramp.workOrders', store.form.id);
+          store.reset();
           await emit('refresh-data');
-          storeFueling.loading = false;
+          store.loading = false;
         }
       },
       {
@@ -98,7 +98,7 @@ export default function modalFormController(props: any = null, emit: any = null)
           class: 'btn-action-form-orders',
           label: $q.screen.lt.sm ? null : 'Open source work order',
           vIf: showOpenSourceWorkOrder,
-          loading: storeFueling.loading,
+          loading: store.loading,
         },
         action: async () => {
           await loadParentData();
@@ -110,10 +110,10 @@ export default function modalFormController(props: any = null, emit: any = null)
           label: $q.screen.lt.sm ? null : 'Save to Draft',
           class: 'btn-action-fueling',
           vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
-          loading: storeFueling.loading,
+          loading: store.loading,
         },
         action: async () => {
-          storeFueling.changeStatus(STATUS_DRAFT)
+          store.changeStatus(STATUS_DRAFT)
           await update();
         }
       },
@@ -124,10 +124,10 @@ export default function modalFormController(props: any = null, emit: any = null)
           'text-color': 'positive',
           label: 'Close',
           vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
-          loading: storeFueling.loading,
+          loading: store.loading,
         },
         action: async () => {
-          storeFueling.changeStatus(STATUS_CLOSED)
+          store.changeStatus(STATUS_CLOSED)
           await update();
         }
       },
@@ -137,7 +137,7 @@ export default function modalFormController(props: any = null, emit: any = null)
           label: i18n.tr('isite.cms.label.save'),
           class: 'btn-action-fueling',
           vIf: statusId == null || statusId == STATUS_POSTED || (statusId == STATUS_SUBMITTED && qRampStore().editPermissionseSubmitted()),
-          loading: storeFueling.loading,
+          loading: store.loading,
         },
         action: async () => {
           await update();
@@ -145,7 +145,7 @@ export default function modalFormController(props: any = null, emit: any = null)
       },
       {
         props: {
-          vIf: storeFueling.step > 1,
+          vIf: store.step > 1,
           color: 'white',
           'text-color': 'primary',
           icon: 'fas fa-arrow-left',
@@ -156,7 +156,7 @@ export default function modalFormController(props: any = null, emit: any = null)
       },
       {
         props: {
-          vIf: storeFueling.step < 3,
+          vIf: store.step < 3,
           'text-color': 'white',
           style: 'background-color: #3865C2',
           'icon-right': 'fas fa-arrow-right',
@@ -169,7 +169,7 @@ export default function modalFormController(props: any = null, emit: any = null)
     return isUpdate.value ? actionsUpdate : actionsCreate.value;
   });
   function clear(): void {
-    storeFueling.reset();
+    store.reset();
     serviceListStore().setShowFavourite(false)
     serviceListStore().setErrorList([]);
     if (isUpdate.value) emit('refresh-data');
@@ -184,9 +184,9 @@ export default function modalFormController(props: any = null, emit: any = null)
       })
   }
   async function update() {
-    const validateFlight = await (storeFueling.refsGlobal as any).refFlight.validate();
+    const validateFlight = await (store.refsGlobal as any).refFlight.validate();
     if (!validateFlight) {
-      storeFueling.step = STEP_FLIGHT;
+      store.step = STEP_FLIGHT;
       const step: any = stepps.find(item => item.step === STEP_FLIGHT);
       step.error = true;
       alert.error({ message: i18n.tr('isite.cms.message.formInvalid') })
@@ -202,14 +202,14 @@ export default function modalFormController(props: any = null, emit: any = null)
             label: i18n.tr('isite.cms.label.cancel'),
             color: 'grey-8',
             handler: async () => {
-              storeFueling.loading = false;
+              store.loading = false;
             },
           },
           {
             label: i18n.tr("isite.cms.label.yes"),
             color: "primary",
             handler: async () => {
-              storeFueling.isClone ? await createService() : await updateService()
+              store.isClone ? await createService() : await updateService()
             },
           },
         ],
@@ -218,17 +218,17 @@ export default function modalFormController(props: any = null, emit: any = null)
     }
     const filterList = await serviceListStore().filterServicesListByQuantity();
     if (filterList.length > 0) {
-      storeFueling.step = STEP_SERVICE;
+      store.step = STEP_SERVICE;
       const step: any = stepps.find(item => item.step === STEP_SERVICE);
       step.error = true;
       alert.error({ message: i18n.tr('You have services to correct') })
       return;
     }
-    storeFueling.isClone ? await createService() : await updateService()
+    store.isClone ? await createService() : await updateService()
   }
 
   async function handleActionsAfterUpdatingOrCreating(message: string) {
-    storeFueling.reset();
+    store.reset();
     serviceListStore().setShowFavourite(false);
     await emit('refresh-data');
     alert.info({ message })
@@ -250,49 +250,49 @@ export default function modalFormController(props: any = null, emit: any = null)
   function loadform({ data, modalProps }) {
     const { isClone, title, update, width, lastTitle, chip } = modalProps
 
-    storeFueling.showModal = true;
-    storeFueling.loading = true;
-    storeFueling.isUpdate = update;
-    storeFueling.titleModal = title;
-    storeFueling.lastTitle = lastTitle;
-    storeFueling.widthModal = width;
-    storeFueling.isClone = isClone;
-    storeFueling.form = data;
-    storeFueling.chip = showChipForNoFlight(data.type, chip);
-    storeFueling.loading = false;
+    store.showModal = true;
+    store.loading = true;
+    store.isUpdate = update;
+    store.titleModal = title;
+    store.lastTitle = lastTitle;
+    store.widthModal = width;
+    store.isClone = isClone;
+    store.form = data;
+    store.chip = showChipForNoFlight(data.type, chip);
+    store.loading = false;
   }
   async function loadChildData() {
-    storeFueling.loading = true;
-    storeFueling.resetForm()
+    store.loading = true;
+    store.resetForm()
     const flight = qRampStore().getClonedWorkOrder()
-    storeFueling.form = { ...flight }
+    store.form = { ...flight }
     await workOrderList().getFavourites()
 
     const modalProps = {
       ...modalFullProps,
-      title: storeFueling.lastTitle,
+      title: store.lastTitle,
       isClone: true
     }
 
     loadform({ data: flight, modalProps })
   }
   async function loadParentData() {
-    storeFueling.loading = true;
-    const data = storeFueling.form;
+    store.loading = true;
+    const data = store.form;
     const formData = structuredClone(await constructionWorkOrder({ form: data }))
     qRampStore().setClonedWorkOrder(formData)
 
-    storeFueling.resetForm()
+    store.resetForm()
     const workOrder = await getWorkOrder(formData?.parentId)
     workOrder.data.parentId = null
-    storeFueling.form = { ...workOrder.data }
+    store.form = { ...workOrder.data }
     await workOrderList().getFavourites()
     const workOrderId = workOrder.data.id
 
     const modalProps = {
       ...modalFullProps,
       title: `${i18n.tr('ifly.cms.form.updateWorkOrder')} ${workOrderId ? `Id: ${workOrderId}` : ''}`,
-      lastTitle: storeFueling.titleModal,
+      lastTitle: store.titleModal,
       chip: {
         label: "Parent",
       },
@@ -302,7 +302,7 @@ export default function modalFormController(props: any = null, emit: any = null)
     loadform({ data: workOrder.data, modalProps })
   }
   onMounted(async () => {
-    storeFueling.emitEvent.refreshData = getDataTable();
+    storeUtil.emitEvent.refreshData = getDataTable();
   })
   return {
     showModal,
