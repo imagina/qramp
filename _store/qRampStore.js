@@ -513,7 +513,7 @@ export default function qRampStore() {
         return state.businessUnitId
     }
     function setBusinessUnitId(value) {
-        state.businessUnitId = Number(value)
+        state.businessUnitId = value
     }
 
     function getOperationTypeIdNonFlight() {

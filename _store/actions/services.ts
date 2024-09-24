@@ -20,7 +20,7 @@ export const getCategories = async (company?: null | []): Promise<any[]> => {
     if (store.hasAccess('ramp.categories.index')) {
         try {
             const companyId = company ? company : qRampStore().getFilterCompany();
-            
+
             let requestParams = {
                 params: {
                     include:
@@ -72,7 +72,11 @@ export async function buildServiceList(): Promise<any[]> {
 
         const build = categoryList.filter(item => {
             const types = item.types || [];
-            return types.includes(String(qRampStore().getTypeWorkOrder()));
+            let businessUnitId = qRampStore().getBusinessUnitId();
+            if (businessUnitId === 'null') {
+              businessUnitId = null;
+            }
+            return item.businessUnitId == businessUnitId && types.includes(String(qRampStore().getTypeWorkOrder()));
         }).map(buildService);
         return build;
     } catch (error) {
@@ -93,7 +97,7 @@ export async function buildServiceList(): Promise<any[]> {
  */
 export const getIfItIsTypeListOrDynamicField = (product) => {
     try {
-        
+
         const products = product || [];
         const data: any = [];
         const dynamicFieldModel: any = {
@@ -307,10 +311,10 @@ function setAttr(obj) {
  * }
  */
 function validationDataAttr(obj: any, key: any) {
-    const value = obj[key].type === 'quantity' 
-        ? !obj[key].value || obj[key].value == 0  ? null 
+    const value = obj[key].type === 'quantity'
+        ? !obj[key].value || obj[key].value == 0  ? null
         : Math.abs(obj[key].value) : obj[key].value;
-    
+
     let data: any = {
         name: obj[key].name,
         value,
