@@ -1,10 +1,10 @@
 import { 
     NON_FLIGHT, 
-    OPERATION_TYPE_NON_FLIGHT, 
     STATUS_SCHEDULE,
     DEFAULT_STATION_ID 
 } from '../../model/constants'
 import store from '../store/index.store'
+import qRampStore from '../../../_store/qRampStore'
 
 export const cloneFlight = (flight) => {
     return {
@@ -38,7 +38,7 @@ export const cloneFlight = (flight) => {
         statusId: STATUS_SCHEDULE,
         updatedAt: flight.updatedAt,
         updatedBy: flight.updatedBy,
-        operationTypeId: OPERATION_TYPE_NON_FLIGHT,
+        operationTypeId: qRampStore().getOperationTypeIdNonFlight(),
         type: NON_FLIGHT,
         scheduleDate: store.seletedDateColumn,
         parentId: flight.id,

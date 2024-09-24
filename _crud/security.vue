@@ -1,7 +1,15 @@
 <template>
   <div>
-    <securityForm @refresh-data="getDataTable(true)" />
+    <securityForm 
+      @refresh-data="getDataTable(true)" 
+      ref="modalCreate"
+    />
     <flightDetail />
+    <modalNonFlight
+      ref="refModalNonFlight"
+      :refFormOrders="refModalCreate"
+      @getWorkOrderFilter="getDataTable(true)"
+    />
     <inner-loading :visible="loadingBulk" />
     <crud
       :crud-data="import('./baseCrud.vue')"
@@ -18,8 +26,9 @@ import {
   STATUS_DRAFT,
   STATUS_SCHEDULE,
   COMPANY_SECURITY,
-  SECURITY,
-  BUSINESS_UNIT_SECURITY
+  BUSINESS_UNIT_SECURITY,
+  NON_FLIGHT,
+  FLIGHT
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -29,18 +38,23 @@ import { store } from 'src/plugins/utils'
 import securityForm from '../_components/securityForm/components/index'
 import securityFormStore from '../_components/securityForm/store/index.ts'
 import storeFlight from '../_components/flight/store'
+import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index.vue';
+import { showChipForNoFlight } from 'src/modules/qramp/_store/actions/showChipForNoFlight.ts'
+import { ref } from 'vue'
 
 export default {
   name: 'RampCrud',
   components: {
     securityForm,
     flightDetail,
+    modalNonFlight
   },
   data() {
     return {
       crudId: this.$uid(),
       areaId: null,
       loadingBulk: false,
+      refModalCreate: null,
     }
   },
   provide() {
@@ -69,9 +83,14 @@ export default {
   async created() {
     this.$nextTick(async () => {
       await qRampStore().setIsPassenger(false);
-      await qRampStore().setTypeWorkOrder(SECURITY);
+      qRampStore().setBusinessUnitId(BUSINESS_UNIT_SECURITY);
       await workOrderList().getAllList(true);
       await workOrderList().getCustomerWithContract()
+    })
+  },
+  mounted() {
+    this.$nextTick(async () => {
+      this.refModalCreate = this.$refs.modalCreate;
     })
   },
   beforeUnmount() {
@@ -105,12 +124,20 @@ export default {
         apiRoute: 'apiRoutes.qramp.workOrders',
         permission: 'ramp.security-work-orders',
         create: {
-          method: async () => {
-            securityFormStore.showModal = true;
-            securityFormStore.isUpdate = false;
-            securityFormStore.titleModal = 'Create security'
-            securityFormStore.widthModal = '35vw';
-          },
+          actions: [
+            {
+              label: 'Create Flight',
+              action: async () => {
+                await this.openCreateMode(FLIGHT)
+              }
+            },
+            {
+              label: 'Create Non Flight',
+              action: async () => {
+                await this.openCreateMode(NON_FLIGHT);
+              }
+            },
+          ]
         },
         read: {
           columns: [
@@ -651,9 +678,25 @@ export default {
           this.$root.$emit('crud.data.refresh')
         })
     },
+    async openCreateMode(setTypeWorkOrder) {
+      qRampStore().setTitleOffline('Create security');
+      qRampStore().setTypeWorkOrder(setTypeWorkOrder);
+      qRampStore().setIsPassenger(false);
+      if (setTypeWorkOrder === FLIGHT) {
+        securityFormStore.showModal = true;
+        securityFormStore.isUpdate = false;
+        securityFormStore.titleModal = 'Create security'
+        securityFormStore.widthModal = '35vw';
+      }
+
+      if (setTypeWorkOrder === NON_FLIGHT) {
+        this.$refs.refModalNonFlight.handleModalChange()
+      }
+    },
     async openModal(item) {
       await qRampStore().setIsPassenger(false);
       securityFormStore.form = { ...item };
+      securityFormStore.chip = showChipForNoFlight(item.type);
       storeFlight().setForm({ ...item });
       qRampStore().setTitleOffline(securityFormStore.titleModal);
       securityFormStore.loading = false;

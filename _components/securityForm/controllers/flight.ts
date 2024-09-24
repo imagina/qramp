@@ -7,6 +7,7 @@ import storeFlight from '../../flight/store'
 import serviceListStore from '../../serviceList/store/serviceList'
 import { store, i18n, alert } from 'src/plugins/utils';
 import { updateFavoriteServicesList } from '../../serviceList/actions/updateFavoriteServicesList';
+import { NON_FLIGHT, LABOR, OPERATION_TYPE_NON_FLIGHT } from '../../model/constants';
 
 export default function flightController() {
   const refFlight: any = ref(null);
@@ -51,6 +52,10 @@ export default function flightController() {
   });
   const readStatus = computed(() => {
     return !store.hasAccess('ramp.work-orders.edit-status') || disabledReadonly.value
+  })
+  const showFieldScheduleDate = computed(() => {
+    const operationTypeId = Number(storeFueling.form.operationTypeId)
+    return qRampStore().getTypeWorkOrder() !== LABOR && operationTypeId === OPERATION_TYPE_NON_FLIGHT[1]
   })
   const formFields = computed(() => {
     return {
@@ -171,6 +176,36 @@ export default function flightController() {
             requestParams: { filter: { companyId: qRampStore().getFilterCompany() } }
           },
         },
+        scheduleDate: {
+          name: "scheduleDate",
+          value: '',
+          type: 'fullDate',
+          props: {
+            vIf: showFieldScheduleDate.value,
+            rules: [
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+            ],
+            hint:'Format: MM/DD/YYYY HH:mm',
+            mask:'MM/DD/YYYY HH:mm',
+            'place-holder': 'MM/DD/YYYY HH:mm',
+            readonly: disabledReadonly.value,
+            label: '*Date Entered',
+            clearable: true,
+            color:"primary",
+            format24h: true,
+          },
+        },
+        preFlightNumber: {
+          value: '',
+          type: 'input',
+          props: {
+            vIf: showFieldScheduleDate.value,
+            color: 'primary',
+            readonly: !!storeFueling.form.parentId,
+            clearable: true,
+            label: 'Flight Number',
+          },
+        }
       },
       inboundLeft: {
         inboundFlightNumber: {
@@ -338,6 +373,16 @@ export default function flightController() {
       },
     }
   })
+  
+  const isActualInAndActualOut = computed(() => {
+    const isNonFlight = Number(storeFueling.form.type) === NON_FLIGHT
+    const isParentId = Boolean(storeFueling.form.parentId)
+    return isNonFlight ? isParentId : true
+  })
+
+  const validateNoFligth = computed(() => {
+    return qRampStore().getTypeWorkOrder() === NON_FLIGHT;
+  })
 
   const reFilterFavorites = async (key: string, value) => {
     storeFueling.loading = true;
@@ -438,5 +483,7 @@ export default function flightController() {
     loadingBound,
     validateBoundComplete,
     differenceHour,
+    isActualInAndActualOut,
+    validateNoFligth
   }
 }

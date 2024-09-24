@@ -7,6 +7,7 @@
           :loading="loading"
           :width="widthModal"
           :actions="actions"
+          :chip="chip"
           @hide="clear"
         >
             <div>
