@@ -62,6 +62,14 @@ export default function modelFields() {
       if (isPassenger.value) return data.filter(item => !OPERATION_TYPE_NON_FLIGHT.includes(Number(item.id)))
       return data
     });
+
+    const isOperationType = computed(() => {
+      const businessUnitId: any = qRampStore().getBusinessUnitId()
+      const modulesWithoutOperationType = [
+        BUSINESS_UNIT_SECURITY
+      ]
+      return !modulesWithoutOperationType.includes(businessUnitId)
+    })
     const fields: ComputedRef<any> = computed(() => ({
         form: {
             inboundFlightNumber: {
@@ -111,6 +119,7 @@ export default function modelFields() {
               value: '',
               type: 'select',
               props: {
+                vIf: isOperationType.value,
                 rules: [
                   val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                 ],
