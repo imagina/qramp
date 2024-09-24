@@ -437,6 +437,7 @@ export interface State {
     workOrderDelays: WorkOrderDelays[];
     responsibleList: any[];
     workOrderItems: any[];
+    paxOperationTypeList: any[];
 }
 
 export interface WorkOrderList {
@@ -484,4 +485,7 @@ export interface WorkOrderList {
     getSearchFlightNumber: (search: string, type: "workorder" | "flightaware", refresh: boolean) => Promise<any>;
     getWorkOrderConditionally: (refresh: boolean) => Promise<any>;
     getWorkOrdersItemsList: () => any;
+    getPaxOperationTypeList : () => any[]
+    setPaxOperationTypeList : (data: any) => any
+    getPaxOperationType: (refresh: boolean) => any
 }

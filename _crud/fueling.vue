@@ -95,6 +95,8 @@ export default {
           && this.editPermissionseSubmitted)
     },
     crudData() {
+      const routeParams = this.$helper.getInfoFromPermission(this.$route.meta?.permission)
+      const bulkActionsPermission = `${routeParams?.module}.${routeParams?.entity}.bulk-actions`
       return {
         crudId: this.crudId,
         entityName: config("main.qramp.entityNames.workOrders"),
@@ -398,7 +400,7 @@ export default {
           ],
           bulkActions: [
             {
-              apiRoute: "/ramp/v1/work-orders/bulk-submit",
+              bulkActionType: "postWorkOrders",
               permission: "ramp.fueling-work-orders.bulk-submit",
               criteria: "id",
               props: {

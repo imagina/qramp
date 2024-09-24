@@ -515,6 +515,22 @@ export default {
             },
             label: this.$tr('ifly.cms.form.operation'),
           },
+          charterRate: {
+            value: '',
+            type: 'input',
+            props: {
+              vIf: this.isPassenger && this.isCharterRate,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              step: "0.1",
+              mask: "###################",
+              type: "number",
+              label: '*Charter Rate',
+              clearable: true,
+              color:"primary"
+            },
+          },
           cancellationType: {
             value: null,
             type: 'select',
@@ -542,6 +558,18 @@ export default {
               type: 'number',
             },
             label: this.$tr('ifly.cms.form.operation'),
+          },
+          paxOperationTypeId: {
+            value: '',
+            type: 'select',
+            props: {
+              vIf: this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR,
+              label: 'Pax Operation',
+              clearable: true,
+              color:"primary",
+              'hide-bottom-space': false,
+              options: this.paxOperationTypeList
+            },
           },
         },
         flyFormRight: {
@@ -905,10 +933,6 @@ export default {
         }
       }
     },
-    showFieldScheduleDate() {
-      const operationTypeId = Number(this.form.operationTypeId)
-      return this.isPassenger && operationTypeId === OPERATION_TYPE_NON_FLIGHT
-    },
     delayList: {
       get: () => cargoStore().getDelayList(),
       set: (delayList) => {
@@ -917,7 +941,21 @@ export default {
     },
     isCollapse() {
       return store().getIsLoading();
-    }
+    },
+    isCharterRate() {
+      if(this.form.operationTypeId) {
+        const operationType = this.operationTypeList
+          .find(item => item.id === Number(this.form.operationTypeId));
+        return operationType?.options?.charter || false;
+      }
+      return false;
+    },
+    paxOperationTypeList() {
+      return workOrderList().getPaxOperationTypeList().map(item => ({
+        label: item.name,
+        value: item.id
+      }))
+    },
   },
   methods: {
     init() {
@@ -983,6 +1021,8 @@ export default {
             this.form.outboundGateDeparture = updateForm.outboundGateDeparture;
             this.flightBoundFormStatus.inboundGateArrival = this.checkIfDataArrives(updateForm.inboundGateArrival);
             this.flightBoundFormStatus.outboundGateDeparture = this.checkIfDataArrives(updateForm.outboundGateDeparture);
+            this.form.paxOperationTypeId = updateForm.paxOperationTypeId;
+            this.form.charterRate = updateForm.charterRate;
           }
           this.form.inboundBlockIn = this.dateFormatterFull(updateForm.inboundBlockIn)
           this.form.inboundScheduledArrival = this.dateFormatterFull(updateForm.inboundScheduledArrival)

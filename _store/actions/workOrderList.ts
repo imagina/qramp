@@ -50,6 +50,7 @@ const state = reactive<State>({
   workOrderDelays: [],
   responsibleList: [],
   workOrderItems: [],
+  paxOperationTypeList: [],
   /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
   workOrderList: {
     data: [],
@@ -92,6 +93,14 @@ export default function workOrderList(): WorkOrderList {
    * This function returns the workOrderList property of the state object.
    * @returns the state.workOrderList.
    */
+  function getPaxOperationTypeList(): any[] {
+    return state.paxOperationTypeList;
+  }
+
+  function setPaxOperationTypeList(data: any) {
+    return state.paxOperationTypeList = data;
+  }
+
   function getCustomerWithContractLists() {
     return state.customerWithContractList;
   }
@@ -691,14 +700,16 @@ export default function workOrderList(): WorkOrderList {
     }
   }
 
-    function getCustomerWithContract(refresh = false): Promise<any[] | void> {
+    function getCustomerWithContract(refresh = false, fullContract = false): Promise<any[] | void> {
       return new Promise(async (resolve) => {
         if (hasAccess('setup.contracts.index') && hasAccess('setup.customers.index')) {
 
         const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
         const companyId = qRampStore().getFilterCompany();
-        let businessUnitId: any = qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP;
-
+        let businessUnitId: any = { businessUnitId : qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP };
+        if(fullContract) {
+            businessUnitId = {}
+        }
         const custemerParams = {
             refresh,
             params: {
@@ -713,7 +724,7 @@ export default function workOrderList(): WorkOrderList {
             params: {
                 filter: {
                     contractStatusId: 1,
-                    businessUnitId,
+                    ...businessUnitId,
                 }
             },
         }
@@ -873,6 +884,23 @@ export default function workOrderList(): WorkOrderList {
       }
     }
 
+  async function getPaxOperationType(refresh = false) {
+    if (!hasAccess('ramp.pax-operation-types.index')) return [];
+    const API_ROUTE = 'apiRoutes.qramp.paxOperationTypes'
+    try {
+      const response = await baseService.index(
+        API_ROUTE,
+        {
+          refresh,
+        }
+      )
+      setPaxOperationTypeList(response.data)
+      return response
+    } catch(error) {
+      console.error(error)
+      return error
+    }
+  }
 
   /**
    * The function getAllList() returns a Promise that resolves to void.
@@ -893,6 +921,7 @@ export default function workOrderList(): WorkOrderList {
       getListDelays(refresh),
       getResponsibleList(refresh),
       getAirports(refresh),
+      getPaxOperationType(refresh)
     ]);
   }
 
@@ -984,6 +1013,9 @@ export default function workOrderList(): WorkOrderList {
         getSearchFlightNumber,
         getBillingClosedDate,
         getWorkOrderConditionally,
-        getWorkOrdersItemsList
+        getWorkOrdersItemsList,
+        setPaxOperationTypeList,
+        getPaxOperationTypeList,
+        getPaxOperationType
     }
 }
