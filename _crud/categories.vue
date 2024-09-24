@@ -153,6 +153,18 @@ export default {
               ]
             },
           },
+          businessUnitId: {
+            value: null,
+            type: "select",
+            loadOptions: {
+              apiRoute: "apiRoutes.qsetupagione.businessUnits",
+              select: { label: "workdayWid", id: "id" },
+            },
+            props: {
+              label: "Business Unit Id",
+              clearable: true,
+            },
+          },
         }
       }
     },
