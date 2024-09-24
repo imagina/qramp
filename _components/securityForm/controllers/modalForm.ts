@@ -302,7 +302,7 @@ export default function modalFormController(props: any = null, emit: any = null)
     loadform({ data: workOrder.data, modalProps })
   }
   onMounted(async () => {
-    storeUtil.emitEvent.refreshData = getDataTable();
+    store.emitEvent.refreshData = await getDataTable();
   })
   return {
     showModal,
