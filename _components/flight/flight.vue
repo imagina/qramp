@@ -563,7 +563,7 @@ export default {
             value: '',
             type: 'select',
             props: {
-              vIf: this.isPassenger && qRampStore().getTypeWorkOrder() !== LABOR,
+              vIf: this.isPassenger && qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR,
               label: 'Pax Operation',
               clearable: true,
               color:"primary",
