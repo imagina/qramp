@@ -19,7 +19,6 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
             loading.value = true;
             const response = await getWorkOrderItemsActions(props.workOrderId);
             workOrdersItems.value = response.data;
-            console.log(workOrdersItems.value);
             workOrdersItems.value.forEach(list => {
               list.workOrderItemAttributes.forEach(async item => {
                 if(item.name === 'Employees' && Array.isArray(item.value)) {
