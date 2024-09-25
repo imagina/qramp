@@ -2,6 +2,7 @@
 </template>
 <script>
 import {COMPANY_RAMP} from '../_components/model/constants.js'
+import {store} from "../../../plugins/utils";
 export default {
   data() {
     return {
@@ -102,7 +103,10 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              config: {options: {label: 'fullName', value: 'id'}},
+              config: {
+                options: {label: 'fullName', value: 'id'},
+                requestParams: {filter: {id: store.getSetting('ramp::rampCompanies')}}
+              },
             },
           },
           options: {

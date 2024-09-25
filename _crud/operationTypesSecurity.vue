@@ -103,7 +103,10 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              config: {options: {label: 'fullName', value: 'id'}},
+              config: {
+                options: {label: 'fullName', value: 'id'},
+                requestParams: {filter: {id: COMPANY_SECURITY}}
+              },
             },
           },
           options: {

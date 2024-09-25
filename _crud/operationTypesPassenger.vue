@@ -1,7 +1,8 @@
 <template>
 </template>
 <script>
-import {COMPANY_PASSENGER} from '../_components/model/constants.js'
+import {COMPANY_PASSENGER, COMPANY_SECURITY} from '../_components/model/constants.js'
+import {store} from "../../../plugins/utils";
 export default {
   data() {
     return {
@@ -102,7 +103,10 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              config: {options: {label: 'fullName', value: 'id'}},
+              config: {
+                options: {label: 'fullName', value: 'id'},
+                requestParams: {filter: {id: store.getSetting('ramp::passengerCompanies')}}
+              },
             },
           },
           options: {
