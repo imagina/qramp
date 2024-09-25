@@ -332,10 +332,12 @@ function setAttr(obj) {
  * }
  */
 function validationDataAttr(obj: any, key: any) {
-    const value = obj[key].type === 'quantity'
+    let value = obj[key].type === 'quantity'
         ? !obj[key].value || obj[key].value == 0  ? null
         : Math.abs(obj[key].value) : obj[key].value;
-
+    if(obj[key].type === 'select' && obj[key].props?.multiple) {
+      value = JSON.stringify(obj[key].value);
+    }
     let data: any = {
         name: obj[key].name,
         value,
@@ -376,6 +378,7 @@ export function productDataTransformation(data = [], isType = false) {
     try {
         const products: any = [];
         data.forEach((items: any) => {
+            console.log(items)
             if (items.id || isDelete(items.formField)) {
                 const productType = isType ? {product_type: items.productType, name: items.title }: {};
                 products.push({

@@ -220,7 +220,7 @@ export default function serviceListStore(): ServiceListStoreContract {
        serviceList = serviceList.filter(item => {
         if (item.product_type == 2 || item.product_type == 3) {
             return item.work_order_item_attributes.some(attr => attr.value === null ||
-              attr.value === undefined || (Array.isArray(attr.value) && attr.value.length > 0));
+              attr.value === undefined);
         }
         return false;
        })
