@@ -177,7 +177,7 @@ export default function useKanbanBoard(props) {
         return validateMatchCompanyStation(item)
       });
 
-    if (!station) {
+    if (!station || !storeFilter.stationId) {
       storeFilter.stationId = null;
       storeFilter.showModalStation = true;
       return;
@@ -228,7 +228,9 @@ export default function useKanbanBoard(props) {
       const newPath = currentValue.path
       const oldPath = oldValue.path
       if (newPath !== oldPath) {
-        await setStations()
+        workOrderList().setStationList([]);
+        storeFilter.stationId = null;
+        storeFilter.showModalStation = true;
         refPageActions.value.search = null;
         storeKanban.search = null;
       }
