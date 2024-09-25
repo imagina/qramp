@@ -171,25 +171,7 @@ export default {
             loading: this.loadingComputed,
           },
           action: async () => {
-            const route = 'apiRoutes.qramp.workOrders';
-            await cacheOffline.deleteItem(this.modalProps.workOrderId, route)
-            try {
-              await this.$crud.delete(route, this.modalProps.workOrderId, {
-                data: {
-                  attributes: {
-                    id: this.modalProps.workOrderId,
-                    titleOffline: 'Delete Work Order'
-                  }
-                }
-              });
-
-            } catch (e) {
-              console.error(e)
-            }
-            await this.getWorkOrders();
-            this.clear()
-            this.$emit('refresh-data')
-            await qRampStore().hideLoading();
+            this.promptDeleteWorkOrder()
           }
         },
         {
@@ -486,6 +468,46 @@ export default {
       cargoStore().reset();
       remarksStore().reset();
       this.$refs.stepper.sp = STEP_FLIGHT;
+    },
+    promptDeleteWorkOrder() {
+      this.$alert.error({
+        mode: 'modal',
+        title: 'Delete',
+        message: 'Are you sure you want to delete this work order?',
+        actions: [
+          {
+            label: this.$tr('isite.cms.label.cancel'),
+            color: 'grey',
+          },
+          {
+            label: this.$tr("isite.cms.label.yes"),
+            color: 'red',
+            handler: async () => {
+              await this.deleteWorkOrder()
+            },
+          },
+        ],
+      });
+    },
+    async deleteWorkOrder() {
+      const route = 'apiRoutes.qramp.workOrders';
+      await cacheOffline.deleteItem(this.modalProps.workOrderId, route)
+      try {
+        await this.$crud.delete(route, this.modalProps.workOrderId, {
+          data: {
+            attributes: {
+              id: this.modalProps.workOrderId,
+              titleOffline: 'Delete Work Order'
+            }
+          }
+        });
+      } catch (e) {
+        console.error(e)
+      }
+      await this.getWorkOrders();
+      this.clear()
+      this.$emit('refresh-data')
+      qRampStore().hideLoading();
     }
   },
 }
