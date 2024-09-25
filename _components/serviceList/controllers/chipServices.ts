@@ -4,6 +4,7 @@ import findDynamicFieldTitle from '../services/findDynamicFieldTitle';
 import searchAndCreateDynamicField from '../services/searchAndCreateDynamicField';
 import deleteChipRecursive from '../services/deleteChipRecursive';
 import { store } from 'src/plugins/utils'
+import baseService from 'modules/qcrud/_services/baseService.js'
 
 const chipServicesController = (props: any = {}, emit: any = null) => {
     let lists: any = ref([]);
@@ -25,6 +26,20 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     }
     const updateLists = async () : Promise<void> => {
         lists.value = await serviceListStore().getServiceListSelected();
+        lists.value.forEach(list => {
+          list.work_order_item_attributes.forEach(async item => {
+            if(item.type === 'select' && Array.isArray(JSON.parse(item.value))) {
+              const response = await baseService.index('apiRoutes.qsetupagione.employees', {
+                params: {
+                  filter:{
+                    id: JSON.parse(item.value)
+                  }
+                }
+              })
+              item.value = response.data.map((item) => item.name)
+            }
+          })
+        })
     }
 
     function deleteChip(productId: string): void {
@@ -61,4 +76,4 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
         isAppOffline
     }
 }
-export default chipServicesController;  
+export default chipServicesController;
