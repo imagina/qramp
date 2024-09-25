@@ -378,7 +378,6 @@ export function productDataTransformation(data = [], isType = false) {
     try {
         const products: any = [];
         data.forEach((items: any) => {
-            console.log(items)
             if (items.id || isDelete(items.formField)) {
                 const productType = isType ? {product_type: items.productType, name: items.title }: {};
                 products.push({
