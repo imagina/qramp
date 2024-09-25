@@ -27,7 +27,8 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     const updateLists = async () : Promise<void> => {
         lists.value = await serviceListStore().getServiceListSelected();
         lists.value.forEach(list => {
-          list.work_order_item_attributes.forEach(async item => {
+          const workOrderItemAttributes = list.work_order_item_attributes || [];
+          workOrderItemAttributes.forEach(async item => {
             if(item.type === 'select' && Array.isArray(JSON.parse(item.value))) {
               const response = await baseService.index('apiRoutes.qsetupagione.employees', {
                 params: {
