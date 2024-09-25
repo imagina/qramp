@@ -1,7 +1,7 @@
 import { computed, ref, onMounted, watch, reactive } from 'vue'
 import qRampStore from '../../../_store/qRampStore';
 import workOrderList from '../../../_store/actions/workOrderList';
-import momentTimezone from 'moment-timezone';
+import moment from 'moment-timezone';
 import storeFueling from '../store/index'
 import storeFlight from '../../flight/store'
 import serviceListStore from '../../serviceList/store/serviceList'
@@ -48,7 +48,7 @@ export default function flightController() {
     const station = workOrderList().getStationList().find(item => item.id == form.value.stationId);
     const airportId = station?.airportId;
     const airport = workOrderList().getAirportsList().find(item => item.id == airportId) || null
-    return airport ? momentTimezone.tz(airport.timezone).format("z") : '';
+    return airport ? moment.tz(airport.timezone).format("z") : '';
   });
   const readStatus = computed(() => {
     return !store.hasAccess('ramp.work-orders.edit-status') || disabledReadonly.value
@@ -57,6 +57,54 @@ export default function flightController() {
     const operationTypeId = Number(storeFueling.form.operationTypeId)
     return qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR && OPERATION_TYPE_NON_FLIGHT.includes(operationTypeId)
   })
+  const validateDateOutboundBlockOut = (dateTime, dateMin = null) => {
+    const outboundScheduledDepartureDate = form.value.outboundBlockOut
+      ? moment(form.value.outboundBlockOut) : moment();
+    const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
+    const inboundBlockIn = form.value.inboundBlockIn
+      ? moment(form.value.inboundBlockIn) : moment();
+    const todayIn = inboundBlockIn.format('YYYY/MM/DD')
+    const hourIn = inboundBlockIn.format('H');
+    const minIn = inboundBlockIn.format('mm');
+    const validateDate = today === todayIn;
+
+    if (isNaN(dateTime)) {
+      if (form.value.inboundBlockIn) {
+        return dateTime >= todayIn;
+      }
+      return dateTime >= today;
+    }
+    if (dateMin) {
+      return validateDate ? Number(dateMin) >= Number(minIn) : true;
+    }
+    return validateDate ? Number(dateTime) >= Number(hourIn) : true;
+  }
+  const validateDateOutbound = (dateTime, dateMin = null) => {
+    const inboundScheduledArrival = form.value.inboundScheduledArrival
+    const outboundScheduledDeparture = form.value.outboundScheduledDeparture
+
+    const outboundScheduledDepartureDate = outboundScheduledDeparture
+      ? moment(outboundScheduledDeparture) : moment();
+    const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
+
+    const inboundScheduledArrivalDate = inboundScheduledArrival
+      ? moment(inboundScheduledArrival) : moment();
+    const todayIn = inboundScheduledArrivalDate.format('YYYY/MM/DD')
+    const hourIn = inboundScheduledArrivalDate.format('H');
+    const minIn = inboundScheduledArrivalDate.format('mm');
+    const validateDate = today === todayIn;
+
+    if (isNaN(dateTime)) {
+      if (inboundScheduledArrival) {
+        return dateTime >= todayIn;
+      }
+      return dateTime >= today;
+    }
+    if (dateMin) {
+      return validateDate ? Number(dateMin) >= Number(minIn) : true;
+    }
+    return validateDate ? Number(dateTime) >= Number(hourIn) : true;
+  }
   const formFields = computed(() => {
     return {
       flyFormLeft: {
@@ -330,6 +378,7 @@ export default function flightController() {
             clearable: true,
             color: "primary",
             format24h: true,
+            options: validateDateOutbound,
             suffix: timezoneAirport.value,
           },
         },
@@ -349,7 +398,7 @@ export default function flightController() {
             clearable: true,
             color: "primary",
             format24h: true,
-            //options: (date, min) => this.validateFutureDateTime(date, min, this.form.inboundBlockIn),
+            options: (date, min) => qRampStore().validateFutureDateTime(date, min, form.value.inboundBlockIn),
             suffix: timezoneAirport.value,
           },
         },
@@ -366,7 +415,7 @@ export default function flightController() {
             clearable: true,
             color: "primary",
             format24h: true,
-            //options: this.validateDateOutboundBlockOut,
+            options: validateDateOutboundBlockOut,
             suffix: timezoneAirport.value,
           },
         },
