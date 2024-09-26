@@ -10,14 +10,14 @@ export const saveWorkOrders = async () => {
     const payload: any = store.payload();
     let response = { data: { id: null } }
 
-    const payloadOffline = { 
-        ...payload, 
+    const payloadOffline = {
+        ...payload,
         offline: isOffline,
         id: offlineId,
         statusId: 5,
         calendar: {
             title: '(Non-flight)',
-            tos: moment(payload.scheduleDate).add(1, 'hour').format('HH:mm:ss'),
+            tos: moment(payload.scheduleDate, 'MM/DD/YYYY HH:mm').add(1, 'hour').format('HH:mm:ss'),
         }
     }
 
