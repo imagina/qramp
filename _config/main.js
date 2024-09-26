@@ -10,7 +10,8 @@ export default {
     flightScheduleLeg: 'flightScheduleLeg',
     airlport: 'airlport',
     flight: 'flights',
-    workOrders: 'workOrders'
+    workOrders: 'workOrders',
+    security: 'security'
   },
   quickCards: [
     {
