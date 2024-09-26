@@ -302,8 +302,17 @@ export default {
             date: {
               value: {},
               type: 'dateRange',
+              quickFilter: true,
               props: {
                 label: "Scheduled date",
+                field: 'schedule_date_local',
+              },
+            },
+            comparisonDate: {
+              value: {},
+              type: 'dateRange',
+              props: {
+                label: "Comparison date",
                 field: 'schedule_date_local',
               },
             },
@@ -382,7 +391,6 @@ export default {
             adHoc: {
               value: null,
               type: 'select',
-              quickFilter: true,
               props: {
                 label: 'Ad Hoc',
                 clearable: true,
