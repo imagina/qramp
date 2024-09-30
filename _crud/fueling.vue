@@ -145,22 +145,16 @@ export default {
               align: 'left'
             },
             {
-              name: "flightStatus",
-              label: 'Flight Status',
-              field: "flightStatus",
-              align: "left",
-              formatColumn: row => {
-                const response = workOrderList().getFlightStatusesList()
-                  .find(flightStatus => flightStatus.id === row.flightStatusId) || {};
-                return {
-                  bgTextColor: response && response.color ? `tw-bg-${response.color}` : ''
-                }
-              },
-              formatAsync: async item => {
-                const response = await workOrderList().getFlightStatusesList()
-                  .find(flightStatus => flightStatus.id === item.flightStatusId) || {};
-                return `${response.name || '-'}`;
-              },
+              name: "fuelingTicketNumber",
+              label: 'Ticket Number',
+              field: "fuelingTicketNumber",
+              align: "left"
+            },
+            {
+              name: "fuelingRegistration",
+              label: 'Registration Number',
+              field: "fuelingRegistration",
+              align: "left"
             },
             {
               name: 'statusName',
