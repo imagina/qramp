@@ -1,6 +1,7 @@
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import stepps from '../models/defaultModels/stepps';
 import store from '../store/index';
+import workOrderList from 'modules/qramp/_store/actions/workOrderList';
 
 export default function stepperController() {
   const refStepper: any = ref(null);
@@ -18,6 +19,9 @@ export default function stepperController() {
       store.step = value;
     }
   });
+  onMounted(async () => {
+    await workOrderList().getFavourites(true);
+  })
   return {
     step,
     stepps,

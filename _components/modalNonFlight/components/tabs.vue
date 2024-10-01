@@ -10,8 +10,8 @@ export default {
     <q-btn-toggle
         v-if="validateNoFligth"
         rounded unelevated
-        :value="selectedTab"
-        @input="handleChangesTab"
+        :modelValue="selectedTab"
+        @update:modelValue="handleChangesTab"
         toggle-color="secondary"
         color="grey-2" 
         size="14px"
@@ -22,6 +22,9 @@ export default {
         spread
     >
         <template v-slot:one>
+            <q-tooltip v-if="isAppOffline">
+                Disabled in offline mode
+            </q-tooltip>
             <help-text
                 class="tw-ml-2"
                 @click.native.stop

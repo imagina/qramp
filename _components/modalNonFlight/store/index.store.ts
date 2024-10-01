@@ -1,31 +1,13 @@
 import {computed, reactive} from "vue";
-import { NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT } from "../../model/constants";
+import { NON_FLIGHT } from "../../model/constants";
 import qRampStore from 'src/modules/qramp/_store/qRampStore'
+import { mergeColumnDateWithCurrentTime } from '../actions/mergeColumnDateWithCurrentTime'
+import { Form, Store } from '../contracts'
 
-interface StateInterface {
-  isLoadingSearch: boolean;
-  selectedTab: number;
-  showModal: boolean;
-  titleModal: string;
-  loading: boolean;
-  widthModal: string;
-  form: {
-    flightNumber: string | null,
-    customerId: string |  number | null,
-    stationId: string |  number | null,
-    scheduleDate: string | null,
-    responsibleId: string | number | null,
-    operationTypeId: number,
-    preFlightNumber: string | null;
-  },
-  isOpenTableModal: boolean;
-}
-
-const state = reactive<StateInterface>({
+const state = reactive<Store>({
   selectedTab: 1,
   isLoadingSearch: false,
   showModal: false,
-  titleModal: 'Create Non-flight',
   loading: false,
   widthModal: '35vw',
   isOpenTableModal: false,
@@ -35,9 +17,11 @@ const state = reactive<StateInterface>({
     stationId: null,
     scheduleDate: null,
     responsibleId: null,
-    operationTypeId: OPERATION_TYPE_NON_FLIGHT,
+    operationTypeId: null,
     preFlightNumber: null,
   },
+  seletedDateColumn: null,
+  stationId: null,
 })
 
 export default computed(() => ({
@@ -59,12 +43,6 @@ export default computed(() => ({
   set showModal(value: boolean) {
     state.showModal = value;
   },
-  get titleModal(): string {
-    return state.titleModal;
-  },
-  set titleModal(value: string) {
-    state.titleModal = value;
-  },
   get loading(): boolean {
     return state.loading;
   },
@@ -83,11 +61,23 @@ export default computed(() => ({
   set isOpenTableModal(value: boolean) {
     state.isOpenTableModal = value;
   },
-  get form() {
+  get form(): Form {
     return state.form;
   },
-  set form(value) {
+  set form(value: Form) {
     state.form = value;
+  },
+  get seletedDateColumn() {
+    return mergeColumnDateWithCurrentTime(state.seletedDateColumn);
+  },
+  set seletedDateColumn(value) {
+    state.seletedDateColumn = value;
+  },
+  get stationId() {
+    return state.stationId
+  },
+  set stationId(value) {
+    state.stationId = value
   },
   payload() {
     const businessUnitId = qRampStore().getBusinessUnitId()
@@ -96,24 +86,26 @@ export default computed(() => ({
       ...state.form,  
       businessUnitId,
       type: NON_FLIGHT,
+      operationTypeId: qRampStore().getOperationTypeIdNonFlight(),
       titleOffline: 'New non-flight',
     };
   },
   reset() {
     state.selectedTab = 1
-    state.isLoadingSearch = false,
-    state.showModal = false,
-    state.titleModal = '',
-    state.loading = false,
-    state.widthModal = '35vw',
+    state.isLoadingSearch = false
+    state.showModal = false
+    state.loading = false
+    state.widthModal = '35vw'
     state.form = {
       flightNumber: '',
       customerId: null,
       stationId: null,
       scheduleDate: null,
       responsibleId: null,
-      operationTypeId: OPERATION_TYPE_NON_FLIGHT,
+      operationTypeId: null,
       preFlightNumber: null,
-    }
+    } 
+    state.seletedDateColumn = null
+    state.stationId = null
   }
 })).value

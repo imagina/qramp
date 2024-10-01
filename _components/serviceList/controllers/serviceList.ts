@@ -1,7 +1,7 @@
-import Vue, { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import serviceListStore from "../store/serviceList";
 import { ServiceModelContract } from '../contracts/index.contract';
-
+import { i18n } from 'src/plugins/utils';
 
 /**
  * @param props - This is an object that contains the props that are passed to the component.
@@ -23,11 +23,11 @@ export default function useServiceList(props = {}, emit = null) {
      * @constant {any} trans - computed
      * component variable list
      */
-    const trans = computed((): any => Vue.prototype.$tr);
+    const trans = computed((): any =>  i18n.tr);
     const showFavourite = computed(() => serviceListStore().getShowFavourite());
     const favouritesList: any = computed(() => {
         const serviceList = searchAndCreateDynamicField(serviceListModel.value);
-        return serviceListStore().getFavouriteList().filter(item => serviceList.map(item => item.id).includes(item.id));
+        return serviceListStore().getFavouriteList().filter(item => serviceList.map(service => service.id).includes(item.productId));
     });
     const loading = computed((): Boolean => serviceListStore().getLoading());
     const errorList = computed(() => serviceListStore().getErrorList())
@@ -35,8 +35,18 @@ export default function useServiceList(props = {}, emit = null) {
         serviceListStore().getServiceList()
     );
     const search = ref<string>("");
-    const selectService = ref<ServiceModelContract>({});
-    const breadcrumbs = ref<ServiceModelContract[]>([]);
+    const selectService = computed<ServiceModelContract>({
+        get: () => serviceListStore().getSelectService(),
+        set: (value: ServiceModelContract) => {
+            serviceListStore().setSelectService(value);
+        }
+    });
+    const breadcrumbs = computed<ServiceModelContract[]>({
+        get: () => serviceListStore().getBreadcrumbs(),
+        set: (value: ServiceModelContract[]) => {
+            serviceListStore().setBreadcrumbs(value);
+        }
+    });
     const showServiceList = computed(
         (): boolean =>
             !loading.value &&
@@ -146,7 +156,7 @@ export default function useServiceList(props = {}, emit = null) {
             };
         }
         if (showFavourite.value && errorList.length === 0) {
-            const favourites = favouritesList.value.map(item => item.id);
+            const favourites = favouritesList.value.map(item => item.productId);
             const filteredDynamicFields = searchAndCreateDynamicField(serviceListModel.value || []).filter((dynamicItem) =>
                 favourites.includes(dynamicItem.id)
             );
@@ -184,6 +194,10 @@ export default function useServiceList(props = {}, emit = null) {
                 documentBody.activeElement.blur();
             }
         });
+    })
+    onBeforeUnmount(() => {
+        serviceListStore().setBreadcrumbs([]);
+        serviceListStore().setSelectService({});
     })
     return {
         serviceListModel,

@@ -15,8 +15,8 @@
       />
     </q-form>
     <modalComments
-      v-if="card.id"
-      :commentableId="card.id"
+      v-if="card?.id"
+      :commentableId="card?.id"
     />
     <div class="tw-space-x-2 tw-my-1">
       <button
@@ -26,25 +26,13 @@
           tw-px-2 tw-py-1
           tw-text-white"
         @click.prevent="saveForm"
+        :disabled="loading"
       >
-        <i class="fa-light fa-floppy-disk" />
+        <i v-if="!loading" class="fa-light fa-floppy-disk" />
+        <i v-if="loading" class="fa-solid fa-spinner-third fa-spin"></i>
         <q-tooltip>
-          {{ $tr("isite.cms.label.save") }}
+          {{ i18n.tr("isite.cms.label.save") }}
         </q-tooltip>
-      </button>
-      <button
-        class="
-          tw-bg-blue-800
-          tw-rounded-lg
-          tw-px-2 tw-py-1
-          tw-text-white"
-          v-if="card.id && !storeKanban.isAppOffline"
-          @click.prevent="showModalComments"
-        >
-          <i class="fa-light fa-comment" />
-          <q-tooltip>
-            {{ $tr("isite.cms.label.comment") }}
-          </q-tooltip>
       </button>
       <button
         @click.prevent="hideInline"
@@ -54,6 +42,7 @@
           tw-px-2
           tw-py-1
           tw-text-white"
+        :disabled="loading"
       >
         <i class="fa-light fa-xmark"></i>
         <q-tooltip> Discard </q-tooltip>
@@ -68,7 +57,6 @@ import useModalSchedule from '../uses/useModalSchedule'
 import scheduleFields from './scheduleFields.vue'
 import modalComments from './modalComments.vue'
 import useModalComments from '../uses/useModalComments';
-import storeKanban from '../store/kanban.store';
 
 export default defineComponent({
   components: {

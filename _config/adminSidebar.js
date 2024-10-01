@@ -1,4 +1,4 @@
-const pages = config('pages') // Get Pages from config
+import pages from 'src/setup/pages' // Get Pages from config
 
 //Blog
 export default [
@@ -9,7 +9,6 @@ export default [
       pages.qramp.workOrders,
       pages.qramp.schedule,
       pages.qramp.operationType,
-      pages.qramp.flightMap,
     ]
   },
   {
@@ -19,7 +18,6 @@ export default [
       pages.qramp.passenger,
       pages.qramp.passengerSchedule,
       pages.qramp.operationTypePassenger,
-      pages.qramp.passengerFlightMap,
       pages.qramp.fueling,
       {
         title: 'Labor',
@@ -28,7 +26,16 @@ export default [
           pages.qramp.labor,
           pages.qramp.laborSchedule
         ]
-      }
+      },
+    ]
+  },
+  {
+    title: 'Security',
+    icon: 'fa-light fa-shield-halved',
+    children: [
+      pages.qramp.security,
+      pages.qramp.securitySchedule,
+      pages.qramp.securityOperationType
     ]
   },
   {
@@ -38,5 +45,4 @@ export default [
       pages.qramp.oagStations
     ]
   },
-  
 ]

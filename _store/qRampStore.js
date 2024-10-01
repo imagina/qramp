@@ -4,19 +4,19 @@ import {
     STATUS_SUBMITTED,
     modelFlightBoundFormStatus,
     BUSINESS_UNIT_PASSENGER,
-    BUSINESS_UNIT_RAMP,
-    COMPANY_PASSENGER,
-    COMPANY_RAMP,
-    BUSINESS_UNIT_LABOR,
-    LABOR,
-    NON_FLIGHT
+    OPERATION_TYPE_NON_FLIGHT,
+    NON_FLIGHT,
+    BUSINESS_UNIT_SECURITY,
+    COMPANY_SECURITY
 } from '../_components/model/constants.js'
 import moment from 'moment';
-import baseService from '@imagina/qcrud/_services/baseService.js'
-import Vue, {reactive} from "vue";
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline';
+import baseService from 'modules/qcrud/_services/baseService.js'
+import { cacheOffline, i18n, store } from 'src/plugins/utils';
+import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
+import workOrderList from "./actions/workOrderList";
+
 
 const state = reactive({
     titleOffline: '',
@@ -47,9 +47,17 @@ const state = reactive({
     isNonFlight: false,
     billingDate: null,
     clonedWorkOrder: null,
+    businessUnitId: null,
+    workOrderId: null,
 });
 
 export default function qRampStore() {
+    function setWorkOrderId(value) {
+      state.workOrderId = value;
+    }
+    function getWorkOrderId() {
+      return state.workOrderId;
+    }
     function setIsPassenger(value) {
         state.isPassenger = value;
     }
@@ -65,7 +73,7 @@ export default function qRampStore() {
     function setTypeWorkOrder(value) {
         state.typeWorkOrder = value;
     }
-    
+
     function getWorkOrder() {
         return state.workOrder;
     }
@@ -200,7 +208,8 @@ export default function qRampStore() {
     }
 
     function validateFutureDateTime(dateTime, dateMin = null, currentDate) {
-        const current = moment(currentDate).format('YYYY/MM/DD');
+        const DATE_FORMAT = 'MM/DD/YYYY HH:mm';
+        const current = moment(currentDate, DATE_FORMAT).format('YYYY/MM/DD');
         const date = moment();
         const today = date.format('YYYY/MM/DD');
         const hour = date.format('H');
@@ -285,9 +294,9 @@ export default function qRampStore() {
 
     function getDifferenceInHours(start, end) {
         if (start) {
-            const format = 'MM/DD/YYYY HH:mm';
-            const dateStart = moment(start, format);
-            const dateEnd = moment(end, format);
+            const DATE_FORMAT = 'MM/DD/YYYY HH:mm';
+            const dateStart = moment(start, DATE_FORMAT);
+            const dateEnd = moment(end, DATE_FORMAT);
             const hour = dateEnd.diff(dateStart, 'minutes') / 60;
             return Math.round(hour * 100) / 100;
         }
@@ -324,6 +333,7 @@ export default function qRampStore() {
                 flight.gateDestination = items.gateDestination || '';
                 flight.gateOrigin = items.gateOrigin || '';
             }
+
             dataTable.push(flight)
         })
         return dataTable;
@@ -410,7 +420,7 @@ export default function qRampStore() {
     }
 
     function editPermissionseSubmitted() {
-        return Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-when-submitted');
+        return store.hasAccess('ramp.work-orders.edit-when-submitted');
     }
 
     function setAttr(obj) {
@@ -486,8 +496,7 @@ export default function qRampStore() {
 
     async function getFlights() {
         try {
-            const isPassenger = getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+            const companyId = getFilterCompany();
             const workOrderId = state.flightId;
             const params = {
                 refresh: true,
@@ -508,15 +517,26 @@ export default function qRampStore() {
     }
 
     function getBusinessUnitId() {
-        const isPassenger = getIsPassenger();
-        let businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-        if(getTypeWorkOrder() === LABOR) {
-            businessUnitId = BUSINESS_UNIT_LABOR
-        }
-
-        return businessUnitId
+        return state.businessUnitId
+    }
+    function setBusinessUnitId(value) {
+        state.businessUnitId = value
     }
 
+    function getOperationTypeIdNonFlight() {
+        const businessUnitId = getBusinessUnitId()
+        if (businessUnitId === BUSINESS_UNIT_PASSENGER) return OPERATION_TYPE_NON_FLIGHT[0]
+        if (businessUnitId === BUSINESS_UNIT_SECURITY) return OPERATION_TYPE_NON_FLIGHT[1]
+    }
+
+    function getFilterCompany() {
+        const isPassenger = getIsPassenger();
+        let companies = isPassenger ? store.getSetting('ramp::passengerCompanies') : store.getSetting('ramp::rampCompanies');
+        if(!isPassenger && getBusinessUnitId() === BUSINESS_UNIT_SECURITY) {
+            companies = COMPANY_SECURITY
+        }
+        return companies;
+    }
     async function changeStatus(statusId, workOrderId) {
         try {
             const API_ROUTE = 'apiRoutes.qramp.workOrderChangeStatus';
@@ -527,11 +547,10 @@ export default function qRampStore() {
             }
 
             if (storeKanban.isAppOffline) {
-                payload.titleOffline = `${Vue.prototype.$tr("ifly.cms.form.updateWorkOrder")} Id: ${workOrderId}`;
+                payload.titleOffline = i18n.tr("ifly.cms.form.updateWorkOrder");
             }
 
-            await cacheOffline.updateRecord(CACHE_PATH, payload, payload ?.id
-        ),
+            await cacheOffline.updateRecord(CACHE_PATH, payload, payload?.id),
             await baseService.update(API_ROUTE, workOrderId, payload);
         } catch (error) {
             console.log('Error changeStatus Schedule', error);
@@ -548,6 +567,58 @@ export default function qRampStore() {
         return `${newDate}T${hour}`;
     }
 
+    function dateFormatterFull(rawDate) {
+      if (!rawDate) return null
+      return moment(rawDate).format('MM/DD/YYYY HH:mm')
+    }
+
+    function isbound(operationTypeId) {
+      if (operationTypeId) {
+        const operationType = workOrderList().getOperationTypeList()
+          .find(item => item.id === Number(operationTypeId));
+        const type = operationType?.options?.type;
+        if (type) {
+          if (type === 'full') {
+            return [true, true];
+          }
+          if (type === 'inbound') {
+            return [true, false]
+          }
+          if (type === 'outbound') {
+            return [false, true];
+          }
+        }
+      }
+      return [false, false];
+    }
+
+    function getFormTable(data) {
+      const {
+        ident,
+        destinationAirport,
+        estimatedOff,
+        registration,
+        originAirport,
+        estimatedOn
+      } = data;
+
+      const destinationAirportId = destinationAirport?.id || null;
+      const originAirportId = originAirport?.id || null;
+
+      const result = {};
+      result.inboundFlightNumber = ident;
+      result.inboundOriginAirportId = originAirportId;
+      result.inboundScheduledArrival = this.dateFormatterFull(estimatedOn);
+      result.inboundTailNumber = registration;
+      result.outboundFlightNumber = ident;
+      result.outboundDestinationAirportId = destinationAirportId;
+      result.outboundScheduledDeparture = this.dateFormatterFull(estimatedOff);
+      result.outboundTailNumber = registration;
+      return result;
+    }
+    function checkIfDataArrives(data) {
+      return (data === null || data === '') ? false : true;
+    }
     return {
         getTitleOffline,
         setTitleOffline,
@@ -616,10 +687,18 @@ export default function qRampStore() {
         getTypeWorkOrder,
         setTypeWorkOrder,
         getBusinessUnitId,
+        setBusinessUnitId,
+        getOperationTypeIdNonFlight,
         getBillingDate,
         setBillingDate,
         getClonedWorkOrder,
         setClonedWorkOrder,
         isNonFlight,
+        getFilterCompany,
+        dateFormatterFull,
+        getFormTable,
+        checkIfDataArrives,
+        getWorkOrderId,
+        setWorkOrderId
     }
 }

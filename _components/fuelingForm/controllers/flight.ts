@@ -1,14 +1,25 @@
-import Vue, { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import qRampStore from '../../../_store/qRampStore';
 import workOrderList from '../../../_store/actions/workOrderList';
 import momentTimezone from 'moment-timezone';
-import store from '../store/index'
+import storeFueling from '../store/index'
+import storeFlight from '../../flight/store'
+import serviceListStore from '../../serviceList/store/serviceList'
+import { store, i18n } from 'src/plugins/utils';
+import { updateFavoriteServicesList } from '../../serviceList/actions/updateFavoriteServicesList';
 
 export default function flightController() {
   const refFlight: any = ref(null);
-  const form: any = computed(() => store.form);
+  const form: any = computed(() => storeFueling.form);
   const disabledReadonly = computed(() => {
     return qRampStore().disabledReadonly();
+  })
+  const validateComponentCustomerOffline = computed(() => {
+    if(navigator.onLine) {
+      return true;
+    } else {
+      return !storeFueling.loading
+    }
   })
   const timezoneAirport = computed(() => {
     const station = workOrderList().getStationList().find(item => item.id == form.value.stationId);
@@ -17,7 +28,7 @@ export default function flightController() {
     return airport ? momentTimezone.tz(airport.timezone).format("z") : '';
   });
   const readStatus = computed(() => {
-    return !Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-status') || disabledReadonly.value
+    return !store.hasAccess('ramp.work-orders.edit-status') || disabledReadonly.value
   })
   const formFields = computed(() => {
     return {
@@ -28,11 +39,11 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             selectByDefault: true,
             readonly: disabledReadonly.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.station')}`,
+            label: `*${i18n.tr('ifly.cms.form.station')}`,
             clearable: true,
             color: "primary",
             options: workOrderList()
@@ -51,10 +62,10 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             readonly: disabledReadonly.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.acType')}`,
+            label: `*${i18n.tr('ifly.cms.form.acType')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -67,14 +78,14 @@ export default function flightController() {
                 })
               )
           },
-          label: Vue.prototype.$tr('ifly.cms.form.acType'),
+          label: i18n.tr('ifly.cms.form.acType'),
         },
         scheduleDate: {
           value: null,
           type: 'date',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             hint:'Format: MM/DD/YYYY',
             mask:'MM/DD/YYYY',
@@ -93,10 +104,10 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             readonly: disabledReadonly.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.carrier')}`,
+            label: `*${i18n.tr('ifly.cms.form.carrier')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -109,19 +120,19 @@ export default function flightController() {
                 })
               )
           },
-          label: Vue.prototype.$tr('ifly.cms.form.carrier'),
+          label: i18n.tr('ifly.cms.form.carrier'),
         },
         statusId: {
           name: 'statusId',
           value: 1,
           type: 'select',
           props: {
-            vIf: Vue.prototype.$auth.hasAccess('ramp.work-orders.edit-status'),
+            vIf: store.hasAccess('ramp.work-orders.edit-status'),
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             readonly: readStatus.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.status')}`,
+            label: `*${i18n.tr('ifly.cms.form.status')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -134,7 +145,7 @@ export default function flightController() {
               )
 
           },
-          label: Vue.prototype.$tr('ifly.cms.form.status'),
+          label: i18n.tr('ifly.cms.form.status'),
         },
         fuelingTicketNumber: {
           value: null,
@@ -142,7 +153,7 @@ export default function flightController() {
           props: {
             readonly: disabledReadonly.value,
             rules: [
-              val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             label: '*Fueling ticket number',
           },
@@ -158,8 +169,30 @@ export default function flightController() {
       },
     }
   })
+
+  const reFilterFavorites = async (key: string, value) => {
+    storeFlight().setForm({ ...storeFlight().getForm(), [key]: value });
+    await workOrderList().getFavourites(true);
+    const servicesList = serviceListStore().getServiceList();
+    updateFavoriteServicesList(servicesList);
+  }
+
+  const handleChange = async (key, event) => {
+    if (form.value[key] == event) return 
+    if (!event) return
+    
+    if (key === 'stationId') await reFilterFavorites(key, event)
+    if (key === 'carrierId') await reFilterFavorites(key, event)
+  }
+
+  watch(() => form.value.customerId, async (value, oldValue) => {
+    if (value != oldValue) {
+      reFilterFavorites('customerId', value)
+    }
+  }, { deep: true })
+
   onMounted(() => {
-    store.refsGlobal = { refFlight: refFlight.value };
+    storeFueling.refsGlobal = { refFlight: refFlight.value };
   })
-  return { formFields, form, refFlight, disabledReadonly }
+  return { formFields, form, refFlight, disabledReadonly, handleChange, validateComponentCustomerOffline }
 }

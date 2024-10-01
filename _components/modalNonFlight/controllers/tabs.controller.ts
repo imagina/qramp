@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance } from 'vue'
+import { computed, getCurrentInstance, onMounted, watch } from 'vue'
 import qRampStore from 'src/modules/qramp/_store/qRampStore'
 import store from '../store/index.store'
 import { 
@@ -8,6 +8,10 @@ import {
 
 export default function tabController(props: any = null, emit: any = null) {
     const handleChangesTab = (value) => {
+        if (isAppOffline.value) { 
+            store.selectedTab = NON_FLIGHT
+            return
+        };
         store.selectedTab = value;
     }
 
@@ -39,6 +43,14 @@ export default function tabController(props: any = null, emit: any = null) {
             },
             { label: 'Non Flight Services', value: NON_FLIGHT, slot: 'two' },
         ]
+    })
+    
+    watch(isAppOffline, (value) => {
+        if (value) store.selectedTab = NON_FLIGHT
+    })
+
+    onMounted(() => {
+        if (isAppOffline.value) store.selectedTab = NON_FLIGHT
     })
 
     return {

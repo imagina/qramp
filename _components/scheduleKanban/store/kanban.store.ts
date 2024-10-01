@@ -1,9 +1,7 @@
-import {reactive, computed, ComputedRef} from 'vue';
-import moment, { Moment } from 'moment';
+import { reactive, computed } from 'vue';
+import moment from 'moment';
 import {Columns, State} from '../contracts/kanbanStore.contract'
-import { COMPANY_PASSENGER, COMPANY_RAMP } from '../../model/constants';
-import qRampStore from 'src/modules/qramp/_store/qRampStore';
-
+import qRampStore from 'modules/qramp/_store/qRampStore';
 
 const state: State = reactive({
   selectedDate: moment().format('YYYY/MM/DD'),
@@ -15,9 +13,8 @@ const state: State = reactive({
   dragDate: '',
   isBlank: false,
   isAppOffline: false,
+  search: null,
 });
-
-const isPassenger = computed(() => qRampStore().getIsPassenger());
 
 const store: State = computed(() => ({
   get scheduleType(): string {
@@ -69,7 +66,13 @@ const store: State = computed(() => ({
     state.isAppOffline = value;
   },
   get filterCompany(): any {
-    return isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP;
+    return qRampStore().getFilterCompany();
+  },
+  get search(): string | null {
+    return state.search;
+  },
+  set search(value: string | null) {
+    state.search = value;
   },
 })).value;
 

@@ -87,6 +87,8 @@ export interface ReactiveStoreContract {
     favouriteList: any[],
     showFavourite: boolean,
     errorList: [],
+    breadcrumbs: any[],
+    selectService: ServiceModelContract
 }
 
 export interface ServiceListStoreContract {
@@ -123,4 +125,8 @@ export interface ServiceListStoreContract {
     setShowFavourite(value: boolean): void;
 
     filterServicesListByQuantity(): Promise<any>;
+    getBreadcrumbs(): any[];
+    setBreadcrumbs(value: any[]): void;
+    setSelectService(value: ServiceModelContract): void;
+    getSelectService(): ServiceModelContract;
 }

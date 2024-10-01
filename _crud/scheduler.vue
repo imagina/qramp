@@ -1,6 +1,8 @@
 <template>
   <div>
-    <schedulerModal />
+    <schedulerModal @refreshData="getDataTable(true)" />
+    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+          :title="$route.meta.title" />
   </div>
 </template>
 <script>
@@ -9,7 +11,10 @@ import schedulerStore from '../_components/scheduler/store/index.store.ts'
 import schedulerModal from '../_components/scheduler/index.vue';
 import show from '../_components/scheduler/actions/show.ts';
 import {
-  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER, COMPANY_PASSENGER, COMPANY_RAMP, LABOR, BUSINESS_UNIT_LABOR
+  BUSINESS_UNIT_RAMP,
+  BUSINESS_UNIT_PASSENGER,
+  LABOR,
+  BUSINESS_UNIT_LABOR
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
@@ -22,14 +27,23 @@ export default {
       crudId: this.$uid(),
     }
   },
-  created() {
+  beforeMount() {
     this.$nextTick(async () => {
+      const urlSchedule = localStorage.getItem("urlSchedule");
+      if (urlSchedule.includes('/ramp')) {
+        await qRampStore().setIsPassenger(false);
+      } else if (urlSchedule.includes('/passenger')) {
+        await qRampStore().setIsPassenger(true)
+      } else if (urlSchedule.includes('/labor')) {
+        await qRampStore().setIsPassenger(true)
+        await qRampStore().setTypeWorkOrder(LABOR)
+      }
       await workOrderList().getAllList();
     })
   },
   computed: {
     filterBusinessUnit() {
-      if(qRampStore().getTypeWorkOrder() === LABOR) {
+      if(qRampStore().getBusinessUnitId() === BUSINESS_UNIT_LABOR) {
         return [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER]
       }
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
@@ -38,7 +52,7 @@ export default {
       return qRampStore().getIsPassenger();
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     crudData() {
       return {
@@ -55,8 +69,8 @@ export default {
         },
         extraActions: [{
           label: 'Back to schedule',
-          props:{
-            icon: 'fa-duotone fa-calendar-plus',
+          props: {
+            icon: 'fa-light fa-calendar-plus',
             label: 'Back to schedule',
           },
           action: () => {
@@ -70,7 +84,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'customerId',
@@ -206,11 +219,16 @@ export default {
               type: "select",
               props: {
                 label: "Station",
-                options: workOrderList().getStationList().map(item => ({
-                  label: item.fullName,
-                  value: item.id
-                })),
                 clearable: true,
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getStationList().map(item => ({
+                    label: item.fullName,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
               },
             },
             carrierId: {
@@ -219,11 +237,16 @@ export default {
               props: {
                 vIf: false,
                 label: 'Carrier',
-                options: workOrderList().getAirlinesList().map(item => ({
-                  label: item.airlineName,
-                  value: item.id
-                })),
                 clearable: true,
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getAirlinesList().map(item => ({
+                    label: item.airlineName,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
               },
             },
             customerId: {
@@ -231,17 +254,17 @@ export default {
               type: 'select',
               quickFilter: true,
               loadOptions: {
-                  apiRoute: 'apiRoutes.qramp.setupCustomers',
-                  select: {'label': 'customerName', 'id': 'id'},
-                  requestParams: {
-                      filter: {
-                          companyId: this.filterCompany,
-                      },
+                apiRoute: 'apiRoutes.qramp.setupCustomers',
+                select: { 'label': 'customerName', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
                   },
+                },
               },
               props: {
-                  label: 'Customer',
-                  'clearable': true
+                label: 'Customer',
+                'clearable': true
               },
             },
             acTypeId: {
@@ -249,11 +272,16 @@ export default {
               type: 'select',
               props: {
                 label: this.$tr('ifly.cms.sidebar.aircraftType'),
-                options: workOrderList().getACTypesList().map(item => ({
-                  label: item.model,
-                  value: item.id
-                })),
                 clearable: true,
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getACTypesList().map(item => ({
+                    label: item.model,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
               },
             },
             operationTypeId: {
@@ -262,12 +290,17 @@ export default {
               props: {
                 label: this.$tr('ifly.cms.form.operation'),
                 clearable: true,
-                color:"primary",
+                color: "primary",
                 'hide-bottom-space': false,
-                options: workOrderList().getOperationTypeList().map(item => ({
-                  label: item.operationName,
-                  value: item.id
-                }))
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getOperationTypeList().map(item => ({
+                    label: item.operationName,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
               },
               label: this.$tr('ifly.cms.form.operation'),
             },
@@ -289,7 +322,7 @@ export default {
             },
           }
         },
-        update: false,
+        update: true,
         delete: true,
         formLeft: {},
         formRight: {}
@@ -316,15 +349,17 @@ export default {
       };
 
       const namesOfDays = numbersDays.map(number => daysOfWeek[number]);
-     
+
       return namesOfDays.join(', ');
     },
     getUrlSchedule() {
       const url = localStorage.getItem('urlSchedule');
       window.location.href = url;
     },
+    async getDataTable(refresh) {
+      await this.$refs.crudComponent.getDataTable(refresh);
+    },
   }
 }
 </script>
-<style lang="stylus">
-</style>
+<style lang="scss"></style>

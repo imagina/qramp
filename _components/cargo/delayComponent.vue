@@ -1,29 +1,31 @@
 <template>
-  <div class="tw-w-full tw-mb-10 tw-mt-5">
+  <div class="tw-w-full tw-mb-20 tw-mt-5">
     <delayForm />
     <div class="tw-px-6 tw-mb-8">
       <q-toggle
         v-model="delay"
         color="primary"
         label="Delay"
-        @input="resetDelayList"
+        @update:modelValue="resetDelayList"
+        v-if="!disableToggle"
       />
+      <span class="tw-pl-6" v-else> Delay </span>
       <q-btn
         v-if="delay"
         class="q-ml-sm"
         flat
         round
-        icon="add"
+        icon="fa-light fa-plus"
         color="primary"
         @click="addDelay()"
       />
     </div>
+    <q-form ref="cargoDelay">
     <div v-if="delay" class="tw-px-6">
       <div class="row">
-        <template v-for="(field, keyField) in delayFields">
+        <template v-for="(field, keyField) in delayFields" :key="keyField">
           <dynamic-field
             class="col-12 col-md-5 q-pr-sm"
-            :key="keyField"
             :field="field"
             v-model="
               delayList[
@@ -38,7 +40,7 @@
             style="width: 40px; height: 38px"
             class="col-12 btn-stick col-md-1"
             round
-            icon="delete"
+            icon="fa-light fa-trash-can"
             flat
             size="12px"
             color="primary"
@@ -47,16 +49,18 @@
         </template>
       </div>
     </div>
+    </q-form>
   </div>
 </template>
 
 <script>
-import Vue, { defineComponent, computed, ref, onMounted, onBeforeUnmount } from "vue";
+import { defineComponent, computed, onMounted } from "vue";
 import cargoStore from "./store/cargo";
 import workOrderList from "../../_store/actions/workOrderList";
 import qRampStore from "../../_store/qRampStore.js";
-import { COMPANY_PASSENGER, COMPANY_RAMP } from "../model/constants.js";
 import delayForm from './delayForm.vue';
+import { i18n } from 'src/plugins/utils'
+import flightStore from "src/modules/qramp/_components/flight/store";
 
 export default defineComponent({
   components: {
@@ -65,6 +69,7 @@ export default defineComponent({
   setup() {
     const disabledReadonly = computed(() => qRampStore().disabledReadonly());
     const isPassenger = computed(() => qRampStore().getIsPassenger());
+    const disableToggle = computed(() => flightStore().getDifferenceTimeMinute().inbound > 0 || flightStore().getDifferenceTimeMinute().outbound > 0);
     const delay = computed({
       get() {
         return cargoStore().getDelay();
@@ -75,9 +80,6 @@ export default defineComponent({
     });
 
     const delayList = computed(() => cargoStore().getDelayList());
-    const filterCompany = computed(() =>
-      isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP
-    );
     const delayFields = computed(() => {
       const obj = {};
       delayList.value.forEach((delay, index) => {
@@ -85,28 +87,40 @@ export default defineComponent({
           value: delay.code,
           type: "select",
           props: {
+            hint: "if you don't know the delay code, please ask the airline representative",
+            rules: [
+              val => {
+                const hoursField = obj["hours" + index]?.value;
+                if (hoursField && !val) {
+                  return 'This field is required because one flight has delay';
+                }
+                return true;
+              }
+            ],
             options: workOrderList().getWorkOrderDelays(),
             readonly: disabledReadonly.value,
-            label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
+            label: i18n.tr("isite.cms.label.code"),
             clearable: true,
             color: "primary",
             "hide-bottom-space": false,
           },
-          label: Vue.prototype.$tr("icommerce.cms.sidebar.code"),
         };
         obj["hours" + index] = {
           value: delay.hours,
-          type: "inputStandard",
+          type: "input",
           props: {
+            rules: [
+              val => obj["code" + index].value && val == 0 ?
+                  false || 'The value cannot be 0 or void' : true
+            ],
             hint: "Enter the Time in minutes",
             mask: "###################",
             readonly: disabledReadonly.value,
-            label: Vue.prototype.$tr("isite.cms.label.time"),
+            label: i18n.tr("isite.cms.label.time"),
             clearable: true,
             color: "primary",
-            "hide-bottom-space": false,
+            "hide-bottom-space": false
           },
-          label: Vue.prototype.$tr("isite.cms.label.time"),
         };
       });
       return obj;
@@ -126,35 +140,7 @@ export default defineComponent({
         hours: "",
       });
     }
-
-    function getCodeList() {
-      const API_ROUTE = 'apiRoutes.qramp.workOrderDelays'
-      const params = {
-        refresh: true,
-        params: {
-          filter: {
-            companyId: filterCompany.value,
-          },
-        },
-      };
-      Vue.prototype.$crud
-        .index(API_ROUTE, params)
-        .then((res) => {
-          const data = res.data || [];    
-          const codeList = data.map((item) => ({
-            id: item.id,
-            label: item.name,
-            value: item.name,
-          }));
-          workOrderList().setWorkOrderDelays(codeList);
-        })
-        .catch((err) => {
-          workOrderList().setWorkOrderDelays([]);
-          console.log("ERROR WHILE OBTAINING THE LIST OF CODES:", err);
-        });
-    }
     onMounted(() => {
-      getCodeList();
       delay.value = delayList.value.length > 0;
     })
     return {
@@ -163,8 +149,8 @@ export default defineComponent({
       delDelay,
       delay,
       resetDelayList,
-      getCodeList,
       addDelay,
+      disableToggle,
     };
   },
 });

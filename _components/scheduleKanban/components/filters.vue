@@ -6,7 +6,7 @@
     bordered
     :width="300"
     :breakpoint="500"
-    class="bg-grey-3"
+    class="tw-bg-white"
   >
     <!--Title-->
     <div class="
@@ -30,7 +30,7 @@
           text-primary
           text-weight-bold"
         >
-          {{ $trp('isite.cms.label.filter', {capitalize: true}) }}
+          {{ i18n.trp('isite.cms.label.filter', {capitalize: true}) }}
         </label>
         </div>
         <!-- Close icon -->
@@ -87,7 +87,7 @@
       ref="footerContent"
     >
       <q-btn
-        :label="$tr('isite.cms.label.search')"
+        :label="i18n.tr('isite.cms.label.search')"
         unelevated
         color="primary"
         no-caps class="tw-w-full"

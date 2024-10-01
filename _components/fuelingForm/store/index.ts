@@ -3,6 +3,7 @@ import { BUSINESS_UNIT_FUELING, FUELING } from '../../model/constants';
 import serviceListStore from '../../serviceList/store/serviceList'
 import remarkStore from '../../remarks/store';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
 import remarksStore from '../../remarks/store';
 import stepps from '../models/defaultModels/stepps';
 import moment from 'moment';
@@ -29,7 +30,8 @@ const state = reactive({
         fuelingTicketNumber: null,
         fuelingRegistration: null,
         scheduleDate: null,
-    }
+    },
+    emitEvent: {},
 })
 
 const store = computed(() => ({
@@ -84,7 +86,7 @@ const store = computed(() => ({
         }
         state.form.customerId = value.customerId || null;
         state.form.contractId = value.contractId || null;
-        state.form.stationId = value.stationId || null;
+        state.form.stationId = Number(value.stationId) || null;
         state.form.acTypeId = value.acTypeId || null;
         state.form.carrierId = value.carrierId || null;
         state.form.statusId = value.statusId || null;
@@ -92,7 +94,28 @@ const store = computed(() => ({
         state.form.fuelingRegistration = value.fuelingRegistration || null;
         (state.form as any).scheduleDate = value.scheduleDate ? moment(value.scheduleDate).format('MM/DD/YYYY') : null;
         qRampStore().setTypeWorkOrder(value.type)
-        qRampStore().setWorkOrderItems(value.workOrderItems);
+        if(navigator.onLine) {
+            qRampStore().setWorkOrderItems(value.workOrderItems);
+        } else {
+            const storedWorkOrderServices = workOrderList().getWorkOrdersItemsList()?.filter(
+                item => item.workorderId == value?.workOrderId
+            );
+            
+            const workOrderItems = value.workOrderItems?.length > 0
+                ? value.workOrderItems
+                : storedWorkOrderServices;
+        
+
+            if (!workOrderItems) return 
+            const workOrderItemCamelCase = workOrderItems?.map(item => ({
+                productId: item?.product_id,
+                workOrderItemAttributes: item?.work_order_item_attributes?.map((attribute) => ({
+                    attributeId: attribute?.attribute_id, 
+                    ...attribute
+                })),
+            }))
+            qRampStore().setWorkOrderItems(workOrderItemCamelCase);
+        }
         serviceListStore().init().then();
         remarksStore().setForm(value);
         qRampStore().setStatusId(state.form.statusId);
@@ -110,6 +133,12 @@ const store = computed(() => ({
                 ...serviceList
             ],
         }
+    },
+    get emitEvent() {
+      return state.emitEvent
+    },
+    set emitEvent(value) {
+      state.emitEvent = {...value}
     },
     reset() {
         state.step = 1;
@@ -133,7 +162,7 @@ const store = computed(() => ({
         }
         stepps.forEach(item => {
          item.error = false;
-        }) 
+        })
     }
 })).value
 

@@ -1,8 +1,10 @@
-import Vue, { computed } from "vue";
+import { computed } from "vue";
 import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
-import {FLIGHT, FUELING, LABOR, NON_FLIGHT} from "src/modules/qramp/_components/model/constants";
+import { i18n } from 'src/plugins/utils'
+import { FLIGHT, NON_FLIGHT, BUSINESS_UNIT_SECURITY } from "src/modules/qramp/_components/model/constants";
+import qRampStore from "src/modules/qramp/_store/qRampStore";
 
 
 export default function filterModel() {
@@ -84,6 +86,7 @@ export default function filterModel() {
       value: [],
       type: 'select',
       props: {
+        vif: qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_SECURITY,
         label: 'Work Order Types',
         multiple: true,
         useChips: true,
@@ -99,13 +102,13 @@ export default function filterModel() {
       value: null,
       type: 'select',
       props: {
-        label: `${Vue.prototype.$tr('ifly.cms.form.operation')} type`,
+        label: `${i18n.tr('ifly.cms.form.operation')} type`,
         clearable: true,
         color:"primary",
         'hide-bottom-space': false,
         options: workOrderList().getOperationTypeList()
       },
-      label: Vue.prototype.$tr('ifly.cms.form.operation'),
+      label: i18n.tr('ifly.cms.form.operation'),
     },
     flightStatusId: {
       value: null,
@@ -133,8 +136,8 @@ export default function filterModel() {
         clearable: true,
         readonly: kanbanStore.isAppOffline,
         options: [
-          { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
-          { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
+          { label: i18n.tr("isite.cms.label.yes"), value: true },
+          { label: i18n.tr("isite.cms.label.no"), value: false },
         ],
       },
     },

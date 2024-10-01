@@ -1,4 +1,4 @@
-import moment, { Moment } from "moment";
+import { Moment } from "moment";
 
 export interface Columns {
   isDrag: boolean;
@@ -21,4 +21,5 @@ export interface State {
   isBlank: boolean;
   filterCompany?: number;
   isAppOffline: boolean;
+  search: string | null;
 }

@@ -1,6 +1,6 @@
 <template></template>
 <script>
-import colorTailwind from '@imagina/qsite/_resources/models/colorTailwind.js'
+import colorTailwind from 'modules/qsite/_resources/models/colorTailwind.js'
 export default {
   name: 'scheduleStatus',
   data() {
@@ -25,7 +25,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'name',
@@ -96,5 +95,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

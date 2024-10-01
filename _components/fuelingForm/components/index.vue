@@ -1,8 +1,8 @@
 <template>
     <div>
-        <master-modal 
-          v-model="showModal" 
-          :title="titleModal" 
+        <master-modal
+          v-model="showModal"
+          :title="titleModal"
           :persistent="true"
           :loading="loading"
           :width="widthModal"
@@ -10,7 +10,7 @@
           @hide="clear"
         >
             <div>
-                <createForm ref="refCreateForm" v-if="!isUpdate" class="tw-px-4"/>
+                <createForm ref="refCreateForm" v-if="!isUpdate" @refresh-data="getDataTable()"/>
                 <stepper  ref="refStepper" v-else />
             </div>
         </master-modal>
@@ -28,8 +28,9 @@ export default defineComponent({
         createForm,
         stepper,
     },
-    setup() {
-        return { ...modalFormController() };
+    emits: ['refresh-data'],
+    setup(props, {emit}) {
+        return { ...modalFormController(props, emit) };
     },
 });
 </script>

@@ -1,4 +1,4 @@
-import Vue, {computed, inject } from 'vue';
+import {computed, inject } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
@@ -17,6 +17,7 @@ import scheduleTypeModel from "../models/scheduleType.model";
 import selectFlightNumberStore from '../../modal/selectFlightNumber/store/selectFlightNumber'
 import validateOperationType from '../actions/validateOperationType'
 import moment from 'moment';
+import { i18n } from 'src/plugins/utils'
 
 export default function useKanbanCard(props: any = {}) {
   const refFormOrders: any = inject('refFormOrders');
@@ -78,7 +79,7 @@ export default function useKanbanCard(props: any = {}) {
     modalScheduleStore.titleModal = `Edit schedule Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
-      const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
+      const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
       const response = await showWorkOrder(props.card.id);
       await refFormOrders.value.loadform({
         modalProps: {
@@ -106,18 +107,18 @@ export default function useKanbanCard(props: any = {}) {
     if(isbound.inbound && !isbound.outbound) {
         const flightNumberInbound = props.card.faFlightId ? props.card.faFlightId.split('-')[0] : null;
         workOrder = {
-          workOrderId: props.card.id, 
-          faFlightId: props.card.faFlightId, 
+          workOrderId: props.card.id,
+          faFlightId: props.card.faFlightId,
           flightNumber: flightNumberInbound || props.card.inboundFlightNumber,
           boundScheduleDate: props.card.inboundScheduleArrival || moment().format('YYYY-MM-DDTHH:mm:ss'),
           type: 'inbound',
-        }                           
+        }
     }
     if(!isbound.inbound && isbound.outbound) {
       const flightNumberoutbound = props.card.outboundFaFlightId ? props.card.outboundFaFlightId.split('-')[0] : null;
       workOrder = {
-        workOrderId: props.card.id, 
-        faFlightId: props.card.outboundFaFlightId, 
+        workOrderId: props.card.id,
+        faFlightId: props.card.outboundFaFlightId,
         flightNumber: flightNumberoutbound || props.card.outboundFlightNumber,
         boundScheduleDate: props.card.outboundScheduledDeparture || moment().format('YYYY-MM-DDTHH:mm:ss'),
         type: 'outbound',
@@ -125,7 +126,7 @@ export default function useKanbanCard(props: any = {}) {
     }
     qRampStore().setWorkOrder(workOrder);
     qRampStore().showVisibleMapModal();
-    
+
   }
   return {
     colorCheckSchedule,
@@ -139,5 +140,6 @@ export default function useKanbanCard(props: any = {}) {
     storeKanban,
     openModalSelectFlightNumber,
     isNonFlight,
+    moment
   };
 }

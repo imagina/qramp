@@ -8,10 +8,10 @@
     <dynamic-field
       :field="fields.customerId"
       v-model="state.selectCustomers"
-      @input="setCustomer"
+      @update:modelValue="setCustomer"
       @filter="setCustomerName"
     >
-      <div slot="before-options" v-if="addNewOptions">
+      <template #before-options v-if="addNewOptions">
         <div class="q-py-md q-px-md" @click="addCustumers">
           <div class="row cursor-pointer">
             <div class="q-pr-md">
@@ -24,7 +24,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </template>
     </dynamic-field>
   </div>
 </template>
@@ -42,11 +42,11 @@ export default defineComponent({
     addNewOptions: {
       type: Boolean,
       default: () => true,
-    }, 
+    },
     readonly: {
       type: Boolean,
       default: () => false,
-    }, 
+    },
   },
   setup(props) {
     return { ...useCustomerField(props) };

@@ -1,14 +1,12 @@
-import Vue, { computed } from 'vue'
+import { computed } from 'vue'
 import storeKanban from 'src/modules/qramp/_components/scheduleKanban/store/kanban.store'
 import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
-import { mergeColumnDateWithCurrentTime } from 'src/modules/qramp/_store/actions/mergeColumnDateWithCurrentTime'
 import qRampStore from 'src/modules/qramp/_store/qRampStore'
-import { COMPANY_PASSENGER, COMPANY_RAMP, FLIGHT, NON_FLIGHT } from '../../model/constants'
+import { FLIGHT, NON_FLIGHT } from '../../model/constants'
 import store from '../store/index.store'
-import modalScheduleStore from 'src/modules/qramp/_components/scheduleKanban/store/modalSchedule.store'
+import { i18n, store as auth } from 'src/plugins/utils'
 
 const isBlank = computed(() => storeKanban.isBlank);
-const isPassenger = computed(() =>  qRampStore().getIsPassenger());
 const isLoadingSearch = computed(() => store.isLoadingSearch)
 
 const filterStation = computed(() => {
@@ -32,17 +30,17 @@ const filterResponsible = computed(() => {
   })
 
 const filterCompany = computed(() => {
-    return isPassenger.value ? COMPANY_PASSENGER : COMPANY_RAMP;
+    return qRampStore().getFilterCompany();
 })
 
 const manageResponsiblePermissions = computed(() => {
-    return Vue.prototype.$auth.hasAccess('ramp.work-orders.manage-responsible');
+    return auth.hasAccess('ramp.work-orders.manage-responsible');
 })
 
 const isActiveNonFlightServices = computed(() => store.selectedTab === NON_FLIGHT)
 
 const isAppOffline = computed(() => {
-    return storeKanban.isAppOffline
+    return auth.state.qofflineMaster.isAppOffline
 })
 
 export const fields = computed(() => ({
@@ -54,12 +52,12 @@ export const fields = computed(() => ({
             vIf: store.selectedTab === FLIGHT,
             rules: [
                 (val) => {
-                    return !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                    return !!val || i18n.tr('isite.cms.message.fieldRequired')
                 } 
             ],
             hint: 'Enter the fight number and press enter or press the search icon',
             loading: isLoadingSearch.value,
-            label: `*${Vue.prototype.$tr('ifly.cms.form.flight')}`,
+            label: `*${i18n.tr('ifly.cms.form.flight')}`,
             clearable: true,
             maxlength: 7,
             color: 'primary',
@@ -77,15 +75,15 @@ export const fields = computed(() => ({
     },
     stationId: {
         name:'stationId',
-        value: modalScheduleStore.stationId, //TO-DO: Don't take stationId from this store
+        value: store.stationId,
         type: 'select',
         props: {
             vIf: isActiveNonFlightServices.value,
             readonly: isBlank.value,
             rules: [
-                val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
-            label: `*${Vue.prototype.$tr('ifly.cms.form.station')}`,
+            label: `*${i18n.tr('ifly.cms.form.station')}`,
             selectByDefault: true,
             clearable: true,
             color:"primary",
@@ -93,12 +91,12 @@ export const fields = computed(() => ({
         },
     },
     scheduleDate: {
-        value: mergeColumnDateWithCurrentTime(),
+        value: store.seletedDateColumn,
         type: 'fullDate',
         props: {
             vIf: isActiveNonFlightServices.value,
             rules: [
-                val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+                val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
             hint:'Format: MM/DD/YYYY HH:mm',
             mask:'MM/DD/YYYY HH:mm',
@@ -127,7 +125,7 @@ export const fields = computed(() => ({
             filterByQuery: !isAppOffline.value,
             requestParams: {
                 filter: {
-                companyId: filterCompany.value
+                    companyId: filterCompany.value
                 }
             }
         },

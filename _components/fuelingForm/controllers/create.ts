@@ -1,4 +1,4 @@
-import Vue, { computed, ref, getCurrentInstance } from 'vue'
+import { computed, ref } from 'vue'
 import {
   BUSINESS_UNIT_FUELING,
   COMPANY_PASSENGER,
@@ -7,16 +7,18 @@ import {
 } from '../../model/constants';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from '../../../_store/qRampStore';
-import alert from '@imagina/qsite/_plugins/alert.js';
-import store from '../store/index'
+import storeFlueling from '../store/index'
+import { store, i18n } from 'src/plugins/utils';
+import baseService from "src/modules/qcrud/_services/baseService.js";
 import showWorkOrder from '../services/showWorkOrder'
+import { cacheOffline } from 'src/plugins/utils'
+import moment from 'moment-timezone'
 
-export default function createController() {
+export default function createController(props: any = null, emit: any = null) {
   const formFueling: any = ref(null);
   const refCustomer: any = ref(null);
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const manageResponsiblePermissions = computed(() => {
-    return Vue.prototype.$auth.hasAccess('ramp.work-orders.manage-responsible');
+    return store.hasAccess('ramp.work-orders.manage-responsible');
   })
   const form = ref({
     customerId: null,
@@ -30,7 +32,7 @@ export default function createController() {
         type: 'input',
         props: {
           rules: [
-            val => !!val || Vue.prototype.$tr('isite.cms.message.fieldRequired')
+            val => !!val || i18n.tr('isite.cms.message.fieldRequired')
           ],
           label: '*Fueling ticket number',
         },
@@ -40,10 +42,10 @@ export default function createController() {
         type: "select",
         props: {
           rules: [
-            (val) => !!val || Vue.prototype.$tr("isite.cms.message.fieldRequired"),
+            (val) => !!val || i18n.tr("isite.cms.message.fieldRequired"),
           ],
           selectByDefault: true,
-          label: `*${Vue.prototype.$tr("ifly.cms.form.station")}`,
+          label: `*${i18n.tr("ifly.cms.form.station")}`,
           clearable: true,
           color: "primary",
           options: workOrderList()
@@ -80,26 +82,45 @@ export default function createController() {
   }))
   async function save() {
     try {
-      store.loading = true;
+      storeFlueling.loading = true;
       const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
+      const CACHE_PATH = 'apiRoutes.qramp.workOrders';
       const businessUnitId = { businessUnitId: BUSINESS_UNIT_FUELING };
+      const isOffline = !navigator.onLine;
+      const offlineId = new Date().valueOf()
+      let response = { data: {} }
+
       const dataForm = {
         ...form.value,
         titleOffline: qRampStore().getTitleOffline(),
         ...businessUnitId,
-        type: FUELING
+        type: FUELING,
+        offlineId: isOffline ? offlineId : null,
+        ...(isOffline ? { apiRoute: CACHE_PATH, } : {})
       };
+
+      const payloadOffline = { 
+        ...dataForm, 
+        offline: isOffline,
+        id: offlineId,
+        scheduleDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      }
+
       try {
-        const response = await Vue.prototype.$crud.create(
+        response = await baseService.create(
           API_ROUTE,
           dataForm,
         )
-        await showWorkOrder(response.data)
-        await proxy.$root.$emit('crud.data.refresh');
-        store.loading = false;
       } catch (err) {
+        if (isOffline) response.data = payloadOffline
         console.log(err)
+      } finally {
+        await cacheOffline.addNewRecord(CACHE_PATH, { ...response.data })
+        await emit('refresh-data');
+        await showWorkOrder(response.data)
+        storeFlueling.loading = false;
       }
+      
 
     } catch (error) {
       console.error(error);
@@ -111,7 +132,7 @@ export default function createController() {
       contractId: null,
       statusId: STATUS_DRAFT
     };
-    store.showModal = false;
+    storeFlueling.showModal = false;
   }
   return {
     fields,

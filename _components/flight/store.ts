@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import qRampStore from '../../_store/qRampStore.js'
 export interface FormContarct {
-    operationTypeId: string;
+    operationTypeId: string | null;
     statusId: string;
     inboundCustomFlightNumber: string;
     outboundCustomFlightNumber: string;
@@ -14,7 +14,6 @@ export interface FormContarct {
     adHoc: number | string;
     carrierId: string;
     stationId: string;
-    // id: number | string | null;
     inboundTailNumber: string;
     inboundBlockIn: string;
     inboundScheduledArrival: string;
@@ -48,23 +47,33 @@ export interface FormContarct {
     parentId: number | string | null;
     scheduleDate: string | null;
     type: number | null;
+    paxOperationTypeId: number | null;
+    charterRate: number | null;
 }
 export interface StateContarct {
     form: FormContarct;
-    responsibles: any,
+    responsibles: any;
+    differenceTimeMinute: {
+        inbound: number;
+        outbound: number;
+    };
+    isLoading: boolean;
 }
 
 export interface FlightStoreContract {
     getForm(): FormContarct,
     setForm(flight: FormContarct): void,
     reset(): void,
-    payload(): void,
     getReponsible(): any;
+    getDifferenceTimeMinute(): any;
+    setDifferenceTimeMinute(value: any): any;
+    setIsLoading(value: boolean): any;
+    getIsLoading(): any;
 }
 
 const state = reactive<StateContarct>({
     form: {
-        operationTypeId: '',
+        operationTypeId: null,
         statusId: '',
         inboundCustomFlightNumber: '',
         outboundCustomFlightNumber: '',
@@ -77,7 +86,6 @@ const state = reactive<StateContarct>({
         adHoc: '',
         carrierId: '',
         stationId: '',
-        // id: null,
         inboundTailNumber: '',
         inboundBlockIn: '',
         inboundScheduledArrival: '',
@@ -106,10 +114,15 @@ const state = reactive<StateContarct>({
         parentId: null,
         scheduleDate: null,
         type: null,
+        paxOperationTypeId: null,
+        charterRate: null,
     },
-    responsibles: {
-
-    }
+    responsibles: {},
+    differenceTimeMinute: {
+        inbound: 0,
+        outbound: 0,
+    },
+    isLoading: false,
 });
 /**
  * Creates a FlightStore object.
@@ -132,7 +145,7 @@ export default function flightStore(): FlightStoreContract {
    * @returns {void}
    */
     function setForm(flight: FormContarct): void {
-        state.form.operationTypeId = flight['operationTypeId'] ? flight['operationTypeId'].toString() : ''
+        state.form.operationTypeId = flight['operationTypeId'] ? flight['operationTypeId'].toString() : null;
         state.form.statusId = flight['statusId'] ? flight['statusId'].toString() : ''
         state.form.inboundCustomFlightNumber = flight['inboundCustomFlightNumber'] ? flight['inboundCustomFlightNumber'] : ''
         state.form.outboundCustomFlightNumber = flight['outboundCustomFlightNumber'] ? flight['outboundCustomFlightNumber'] : ''
@@ -179,6 +192,8 @@ export default function flightStore(): FlightStoreContract {
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;
             state.form.outboundGateDeparture = flight.outboundGateDeparture || null;
+            state.form.paxOperationTypeId = flight.paxOperationTypeId ? flight.paxOperationTypeId : null;
+            state.form.charterRate = flight.charterRate || null;
         }
     }
     /**
@@ -189,8 +204,20 @@ export default function flightStore(): FlightStoreContract {
     function getReponsible() {
         return state.responsibles;
     }
-    function payload(): void {
+    function getDifferenceTimeMinute() {
+        return state.differenceTimeMinute
+    }
 
+    function setDifferenceTimeMinute(value) {
+        state.differenceTimeMinute = value;
+    }
+
+    function setIsLoading(value: boolean) {
+        state.isLoading = value;
+    }
+
+    function getIsLoading() {
+        return state.isLoading;
     }
     /**
      * Resets the form data to its default values.
@@ -198,12 +225,19 @@ export default function flightStore(): FlightStoreContract {
      * @returns {void}
     */
     function reset(): void {
+        state.differenceTimeMinute = {
+            inbound: 0,
+            outbound: 0,
+        }
     }
     return {
         getForm,
         setForm,
         reset,
-        payload,
-        getReponsible
+        getReponsible,
+        getDifferenceTimeMinute,
+        setDifferenceTimeMinute,
+        setIsLoading,
+        getIsLoading
     }
 }

@@ -1,7 +1,7 @@
 import store from '../store/index.store'
 import workOrderList from 'src/modules/qramp/_store/actions/workOrderList'
 import qRampStore from 'src/modules/qramp/_store/qRampStore'
-import alert from '@imagina/qsite/_plugins/alert.js'
+import { alert } from 'src/plugins/utils'
 
 export const getBillingDateData = async () => {
     try {

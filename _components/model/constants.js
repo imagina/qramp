@@ -1,9 +1,10 @@
 import moment from 'moment'
-import Vue from 'vue'
+import { i18n } from 'src/plugins/utils'
 export const STEP_FLIGHT = 1;
 export const STEP_SERVICE = 2;
 export const STEP_REMARKS = 3;
 export const STEP_SIGNATURE = 4;
+export const STEP_DELAY = 3;
 export const STATUS_DRAFT = 1; //No completed
 export const STATUS_POSTED = 2;
 export const STATUS_POSTING = 6;
@@ -13,17 +14,33 @@ export const STATUS_SCHEDULE = 5; //No completed
 export const BUSINESS_UNIT_PASSENGER = 8;
 export const BUSINESS_UNIT_FUELING = 9;
 export const BUSINESS_UNIT_LABOR = 2;
-export const BUSINESS_UNIT_RAMP = { operator: '!=', value: 8};
+export const BUSINESS_UNIT_SECURITY = 4;
+export const BUSINESS_UNIT_RAMP = 'null';
 export const COMPANY_PASSENGER = [30,33,34];
 export const COMPANY_RAMP = [26,34];
+export const COMPANY_SECURITY = [35,36];
 export const NON_FLIGHT = 2;
 export const FLIGHT = 1;
 export const LABOR = 4;
 export const FUELING = 3;
+export const SECURITY = 5;
 export const OPERATION_TYPE_OTHER = 6;
-export const OPERATION_TYPE_NON_FLIGHT = 13;
+export const OPERATION_TYPE_PASSENGER_NON_FLIGHT = 13
+export const OPERATION_TYPE_SECURITY_NON_FLIGHT = 6
+export const OPERATION_TYPE_NON_FLIGHT = [
+  OPERATION_TYPE_PASSENGER_NON_FLIGHT, 
+  OPERATION_TYPE_SECURITY_NON_FLIGHT
+];
 export const ADDITIONAL_FLIGHT_SERVICES = [STATUS_POSTED, STATUS_POSTING];
+export const DEFAULT_STATION_ID = 28;
 
+export const STATION_BNA = 33;
+export const STATION_PBI = 50;
+export const STATIONS_DELAY = [STATION_BNA, STATION_PBI]
+export const OPERATION_TYPE_TURN_PASSENGER = 7
+export const FIFTEEN_MINUTES = 15;
+export const THIRTY_MINUTES = 30;
+export const CODE_DELAY_99 = 77;
 export const modelDataBound = {
     destinationAirport: {
         id: null,
@@ -59,6 +76,14 @@ export const FlightformFieldModel = [
     'statusId',
   ];
 
+    export const FlightFormFieldSecurityModel = [
+        'stationId',
+        'acTypeId',
+        'operationTypeId',
+        'carrierId',
+        'statusId',
+    ];
+
   export const HalfTurnInBountModel = [
     'inboundFlightNumber',
     //'inboundOriginAirportId',
@@ -74,7 +99,7 @@ export const FlightformFieldModel = [
   ];
 
   export const HalfTurnInBountPassengerModel = [
-    //'inboundFlightNumber',
+    'inboundFlightNumber',
     //'inboundOriginAirportId',
     //'inboundTailNumber',
     'inboundScheduledArrival',
@@ -82,7 +107,7 @@ export const FlightformFieldModel = [
   ];
 
   export const HalfTurnOutBountPassengerModel = [
-    //'outboundFlightNumber',
+    'outboundFlightNumber',
     //'outboundDestinationAirportId',
     //'outboundTailNumber',
     'outboundScheduledDeparture',
@@ -373,7 +398,7 @@ export const columnsWorkOrders = [
     label: 'Inbound Scheduled Arrival', 
     field: 'inboundScheduledArrival' , 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   },
   { name: 'outboundFlightNumber', label: 'Outbound Flight Number', field: 'outboundFlightNumber' , align: 'left'},
   { 
@@ -381,13 +406,20 @@ export const columnsWorkOrders = [
     label: 'Outbound Scheduled Departure', 
     field: 'outboundScheduledDeparture' , 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   },
   { 
     name: 'scheduleDateLocal', 
     label: 'Service Date Created', 
     field: 'scheduleDateLocal', 
     align: 'left',
-    format: (val) => (val ? Vue.prototype.$trdT(val) : "-"),
+    format: (val) => (val ? i18n.trdT(val) : "-"),
   }
 ]
+
+export const modalFullProps = {
+  title: '',
+  update: true,
+  workOrderId: null,
+  width: '90vw',
+}

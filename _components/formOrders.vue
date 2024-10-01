@@ -1,39 +1,17 @@
 <template>
   <div>
-    <master-modal 
-      id="formRampComponent" 
-      v-model="show" 
-      v-bind="modalProps" 
-      :persistent="true" 
-      :loading="loading"
-      @hide="clear" 
-      :actions="actions" 
-      :width="modalProps.width" 
-      :maximized="$q.screen.lt.md"
-    >
-    <stepper-ramp-form 
-      v-if="modalProps.update" 
-      @sp="sp = $event" 
-      @loading="setLoading" 
-      ref="stepper" 
-      :steps="steppers"
-      :data="modalProps" 
-      @close-modal="close($event)"
-      @getWorkOrders="getWorkOrders" 
-    />
-    <simpleWorkOrders 
-      v-if="!modalProps.update" 
-      ref="simpleWorkOrder"
-      @loading="setLoading" 
-    />
-  </master-modal>
+    <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true" :loading="loading"
+      @hide="clear" :actions="actions" :width="modalProps.width" :maximized="$q.screen.lt.md">
+      <stepper-ramp-form v-if="modalProps.update" @sp="sp = $event" @loading="setLoading" ref="stepper"
+        :steps="steppers" :data="modalProps" @close-modal="close($event)" @getWorkOrders="getWorkOrders" />
+      <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" @loading="setLoading" @refreshData="$emit('refresh-data')"/>
+    </master-modal>
   </div>
 </template>
 <script>
 import { computed } from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
-import services from '../_mixins/services.js';
 import {
   STATUS_DRAFT,
   STATUS_POSTED,
@@ -45,6 +23,7 @@ import {
   STEP_REMARKS,
   STEP_SIGNATURE,
   NON_FLIGHT,
+  modalFullProps
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
@@ -53,20 +32,23 @@ import cargoStore from './cargo/store/cargo.ts';
 import storeFlight from './flight/store.ts';
 import iFlight from './flight/flight.vue'
 import iRemarks from './remarks/index.vue'
-import iSignature from '../_components/signature.vue';
+import iSignature from '../_components/signature/signature.vue';
 import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
 import { constructionWorkOrder } from 'src/modules/qramp/_store/actions/constructionWorkOrder'
-// import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
+import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
+import { cacheOffline } from 'src/plugins/utils';
+import signatureStore from 'src/modules/qramp/_components/signature/store/index.store.ts'
 
 export default {
+  emits: ['getWorkOrderFilter', 'refresh-data'],
   components: {
     stepperRampForm,
     simpleWorkOrders,
   },
-  mixins: [responsive, services],
+  mixins: [responsive],
   data() {
     return {
       show: false,
@@ -124,13 +106,13 @@ export default {
         {
           ref: "signature",
           title: this.$tr('ifly.cms.label.signature'),
-          icon: 'draw',
+          icon: 'fa-solid fa-pen-line',
           step: STEP_SIGNATURE,
           form: this.signature,
           component: iSignature,
         }
       ].filter(item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
-      if(this.isPassenger) {
+      if (this.isPassenger) {
         const delay = {
           ref: "delay",
           title: "Delay",
@@ -182,17 +164,14 @@ export default {
       const actions = [
         {
           props: {
-            vIf: this.$auth.hasAccess('ramp.work-orders.destroy'),
+            vIf: this.$hasAccess('ramp.work-orders.destroy'),
             class: 'btn-action-form-orders',
             label: this.$q.screen.lt.sm ? null : this.$tr('isite.cms.label.delete'),
             icon: 'fa-regular fa-trash',
+            loading: this.loadingComputed,
           },
-          action: async() => {
-            await this.$crud.delete('apiRoutes.qramp.workOrders', this.modalProps.workOrderId)
-            await this.getWorkOrders();
-            this.clear()
-            this.$root.$emit('crud.data.refresh')
-            await qRampStore().hideLoading();
+          action: async () => {
+            this.promptDeleteWorkOrder()
           }
         },
         {
@@ -203,16 +182,7 @@ export default {
             icon: 'fa-regular fa-arrow-left',
           },
           action: async() => {
-            this.loading = true;
-            const flight = qRampStore().getClonedWorkOrder()
-            const modalProps = {
-              title: `Non-flight based on Work Order #${flight.parentId}`,
-              update: true,
-              workOrderId: flight.id,
-              width: '90vw',
-              isClone: true
-            }
-            this.loadform({ data: flight, modalProps })
+            this.loadChildData();
           }
         },
         {
@@ -224,45 +194,7 @@ export default {
             loading: this.loadingComputed,
           },
           action: async () => {
-            this.loading = true;
-            const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
-            const formData = structuredClone(await constructionWorkOrder(data))
-            console.log('store formData', formData)
-            qRampStore().setClonedWorkOrder(formData)
-
-            const url = this.$router.resolve({
-              name: 'qramp.admin.passenger',
-              params: this.$route.params,
-              query: { edit: formData?.parentId }
-            }).href;
-
-            window.open(url, '_blank');
-
-            this.loading = false;
-
-            // this.services = [];
-            // serviceListStore().setShowFavourite(false)
-            // serviceListStore().setErrorList([]);
-            // serviceListStore().resetStore()
-            // qRampStore().setWorkOrderItems([])
-            // cargoStore().reset();
-            // remarksStore().reset();
-
-            // const workOrder = await getWorkOrder(formData?.parentId)
-            // workOrder.data.parentId = null
-
-            // const modalProps = {
-            //   title: this.$tr('ifly.cms.form.updateWorkOrder') + (workOrder.data.id ? ` Id: ${workOrder.data.id}` : ''),
-            //   update: true,
-            //   workOrderId: workOrder.data.id,
-            //   width: '90vw',
-            //   chip: {
-            //     label: "Parent",
-            //   },
-            //   parent: true
-            // }
-
-            // this.loadform({ data: workOrder.data, modalProps })
+            await this.loadParentData();
           }
         },
         {
@@ -281,7 +213,7 @@ export default {
               await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
-              await workOrderList().getWorkOrders(true);
+              await workOrderList().getWorkOrderConditionally(true);
             };
             qRampStore().hideLoading()
           }
@@ -303,7 +235,7 @@ export default {
               await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
-              await workOrderList().getWorkOrders(true);
+              await workOrderList().getWorkOrderConditionally(true);
             }
             qRampStore().hideLoading()
           }
@@ -323,7 +255,7 @@ export default {
             await this.$refs.stepper.sendInfo();
             await qRampStore().setStatusId(null);
             if (!this.isAppOffline) {
-              workOrderList().getWorkOrders(true);
+              workOrderList().getWorkOrderConditionally(true);
             }
             qRampStore().hideLoading()
           }
@@ -365,11 +297,23 @@ export default {
      */
     close(show) {
       this.show = show
-      this.$root.$emit('crud.data.refresh')
+      this.$emit('refresh-data')
       this.services = [];
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
       qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
+      signatureStore.resetStore()
+    },
+    setSignature(data) {
+      signatureStore.form = {
+        customerSignature: data.customerSignature,
+        customerName: data.customerName,
+        customerTitle: data.customerTitle,
+        representativeSignature: data.representativeSignature,
+        representativeName: data.representativeName,
+        representativeTitle: data.representativeTitle,
+      }
     },
     /**
      * Loads the form asynchronously with the given parameters.
@@ -381,7 +325,6 @@ export default {
      */
     async loadform(params) {
       try {
-        qRampStore().showLoading();
         const updateData = this.$clone(params)
         this.show = true
 
@@ -404,23 +347,32 @@ export default {
         qRampStore().setWorkOrderItems([]);
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
-        if (!updateData.data) {
-          qRampStore().hideLoading();
-          return;
-        }
-        qRampStore().setTypeWorkOrder(updateData.data.type || null);
+        if (!updateData.data) return
+        this.setSignature(updateData.data)
+        qRampStore().setTypeWorkOrder(updateData.data?.type || null);
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
         storeFlight().setForm(updateData.data);
-        this.flight = storeFlight().getForm();
+        this.flight = structuredClone(storeFlight().getForm());
         qRampStore().setResponsible(updateData.data['responsible']);
         cargoStore().setForm(updateData.data);
         cargoStore().setDelayList(updateData.data);
         cargoStore().setDelayComment(updateData.data.delayComment || null)
         cargoStore().setOurDelay(updateData.data.ourDelay || null);
-        qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        if(navigator.onLine) {
+          qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        } else {
+          const workOrderItems = workOrderList().getWorkOrdersItemsList()?.filter(
+            item => item.workorderId == this.modalProps.workOrderId
+          );
+          const updatedItems = updateData.data['workOrderItems']?.length > 0
+            ? updateData.data['workOrderItems']
+            : workOrderItems;
+          qRampStore().setWorkOrderItems(updatedItems);
+        }
+
         await serviceListStore().init();
         remarksStore().setForm(updateData.data);
         this.signature.customerName = updateData.data['customerName']
@@ -453,6 +405,8 @@ export default {
       serviceListStore().setShowFavourite(false)
       serviceListStore().setErrorList([]);
       qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
+      signatureStore.resetStore()
     },
     /**
      * Set the loading state of the modal.
@@ -465,6 +419,95 @@ export default {
     },
     async getWorkOrders(data = null) {
       this.$emit('getWorkOrderFilter', data);
+    },
+    async loadChildData() {
+      this.loading = true;
+      this.resetFormModalFull()
+      const flight = qRampStore().getClonedWorkOrder()
+      storeFlight().setForm({ ...flight })
+      await workOrderList().getFavourites()
+
+      const modalProps = {
+        ...modalFullProps,
+        title: this.modalProps.lastTitle,
+        workOrderId: flight.id,
+        isClone: true
+      }
+
+      this.loadform({ data: flight, modalProps })
+    },
+    async loadParentData() {
+      this.loading = true;
+      const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
+      const formData = structuredClone(await constructionWorkOrder(data))
+      qRampStore().setClonedWorkOrder(formData)
+
+      this.resetFormModalFull();
+      const workOrder = await getWorkOrder(formData?.parentId)
+      workOrder.data.parentId = null
+      storeFlight().setForm({ ...workOrder.data })
+      await workOrderList().getFavourites()
+
+      const modalProps = {
+        ...modalFullProps,
+        title: this.$tr('ifly.cms.form.updateWorkOrder') + (workOrder.data.id ? ` Id: ${workOrder.data.id}` : ''),
+        lastTitle: this.modalProps.title,
+        workOrderId: workOrder.data.id,
+        chip: {
+          label: "Parent",
+        },
+        parent: true
+      }
+
+      this.loadform({ data: workOrder.data, modalProps })
+    },
+    resetFormModalFull() {
+      serviceListStore().setShowFavourite(false)
+      serviceListStore().setErrorList([]);
+      serviceListStore().resetStore();
+      cargoStore().reset();
+      remarksStore().reset();
+      this.$refs.stepper.sp = STEP_FLIGHT;
+    },
+    promptDeleteWorkOrder() {
+      this.$alert.error({
+        mode: 'modal',
+        title: 'Delete',
+        message: 'Are you sure you want to delete this work order?',
+        actions: [
+          {
+            label: this.$tr('isite.cms.label.cancel'),
+            color: 'grey',
+          },
+          {
+            label: this.$tr("isite.cms.label.yes"),
+            color: 'red',
+            handler: async () => {
+              await this.deleteWorkOrder()
+            },
+          },
+        ],
+      });
+    },
+    async deleteWorkOrder() {
+      const route = 'apiRoutes.qramp.workOrders';
+      await cacheOffline.deleteItem(this.modalProps.workOrderId, route)
+      try {
+        await this.$crud.delete(route, this.modalProps.workOrderId, {
+          data: {
+            attributes: {
+              id: this.modalProps.workOrderId,
+              titleOffline: 'Delete Work Order'
+            }
+          }
+        });
+      } catch (e) {
+        console.error(e)
+      }
+      await this.getWorkOrders();
+      this.clear()
+      this.$emit('refresh-data')
+      qRampStore().hideLoading();
     }
   },
 }
@@ -487,5 +530,3 @@ export default {
   background-color: #F1F4FA;
 }
 </style>
-
-

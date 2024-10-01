@@ -1,6 +1,10 @@
-import moment from "moment-timezone"
-import { NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT, STATUS_SCHEDULE } from "../../model/constants"
-import modalScheduleStore from 'src/modules/qramp/_components/scheduleKanban/store/modalSchedule.store'
+import { 
+    NON_FLIGHT, 
+    STATUS_SCHEDULE,
+    DEFAULT_STATION_ID 
+} from '../../model/constants'
+import store from '../store/index.store'
+import qRampStore from '../../../_store/qRampStore'
 
 export const cloneFlight = (flight) => {
     return {
@@ -30,13 +34,13 @@ export const cloneFlight = (flight) => {
         outboundTailNumber: flight.outboundTailNumber,
         preFlightNumber: flight.preFlightNumber,
         searchableFields: flight.searchableFields,
-        stationId: modalScheduleStore.stationId, //TO-DO: Don't take stationId from this store
+        stationId: store.stationId || DEFAULT_STATION_ID,
         statusId: STATUS_SCHEDULE,
         updatedAt: flight.updatedAt,
         updatedBy: flight.updatedBy,
-        operationTypeId: OPERATION_TYPE_NON_FLIGHT,
+        operationTypeId: qRampStore().getOperationTypeIdNonFlight(),
         type: NON_FLIGHT,
-        scheduleDate: moment().format('MM/DD/YYYY HH:mm'),
+        scheduleDate: store.seletedDateColumn,
         parentId: flight.id,
     }
 }

@@ -8,12 +8,11 @@ import {
     ServiceModelContract,
     ServiceListStoreContract,
     ReactiveStoreContract,
-    DynamicField
 } from '../contracts/index.contract';
-import qRampStore from '../../../_store//qRampStore';
+import qRampStore from '../../../_store/qRampStore';
 import _ from 'lodash';
+import { BUSINESS_UNIT_SECURITY } from "src/modules/qramp/_components/model/constants";
 
-const CATEGORY_SERVICES = 1;
 const dataModel: ServiceModelContract[] = [
     {
         id: 4,
@@ -27,6 +26,8 @@ const state = reactive<ReactiveStoreContract>({
     favouriteList: [],
     showFavourite: false,
     errorList: [],
+    breadcrumbs: [],
+    selectService: {},
 });
 
 
@@ -50,10 +51,9 @@ export default function serviceListStore(): ServiceListStoreContract {
      */
     async function getServiceData(): Promise<void> {
         try {
-            const isPassenger = qRampStore().getIsPassenger();
             const response = (await buildServiceList() as Array<any>).filter(item => item.id !== 4);
             let serviceList = [...response, ...dataModel].filter(item => {
-                if(qRampStore().getIsPassenger()) {
+                if(qRampStore().getIsPassenger() || qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY) {
                     return item.id !== 4;
                 }
                 return item;
@@ -68,22 +68,38 @@ export default function serviceListStore(): ServiceListStoreContract {
         state.serviceList = value;
     }
 
-    
+
     function getServiceList(): ServiceModelContract[] {
         return state.serviceList;
+    }
+
+    function getBreadcrumbs(): any[] {
+        return state.breadcrumbs;
+    };
+
+    function setBreadcrumbs(value: any[]): void {
+        state.breadcrumbs = value;
     }
 
     function getFavouriteList(): any[] {
         return state.favouriteList;
     }
 
-    function removeFromFavouriteList(data) {
-        state.favouriteList = state.favouriteList.filter(item => item.id !== data.id);
-    } 
+    function setSelectService(value: ServiceModelContract): void {
+        state.selectService = value;
+    }
+
+    function getSelectService(): ServiceModelContract {
+        return state.selectService;
+    }
+
+    function removeFromFavouriteList(id) {
+        state.favouriteList = state.favouriteList.filter(item => item.productId !== id);
+    }
 
     function pustFavouriteList(data) {
         state.favouriteList.push(data);
-    } 
+    }
 
     function setFavouriteList(value: any): void {
         state.favouriteList = value;
@@ -126,6 +142,8 @@ export default function serviceListStore(): ServiceListStoreContract {
      */
     function resetStore(): void {
         setServiceList([]);
+        setBreadcrumbs([]);
+        setSelectService({});
     }
 
     async function getServiceListSelected(isType = false): Promise<any> {
@@ -134,14 +152,14 @@ export default function serviceListStore(): ServiceListStoreContract {
         return await orderServicesWithTheStructureToSave(services, isType);
     }
 
-    
+
     function getAllServices(services: ServiceModelContract[]): ServiceModelContract[]  {
         const servicesData: any = [];
         services.forEach(obj => {
             const item: any = _.cloneDeep(obj);
             if (item.dynamicField) {
                 servicesData.push(item);
-            } 
+            }
             if (item.lists) {
                 item.lists.forEach(list => {
                     const listServicesData = getAllServices([list]);
@@ -201,7 +219,8 @@ export default function serviceListStore(): ServiceListStoreContract {
        let serviceList = await getServiceListSelected(true);
        serviceList = serviceList.filter(item => {
         if (item.product_type == 2 || item.product_type == 3) {
-            return item.work_order_item_attributes.some(attr => attr.value === null || attr.value === undefined);
+            return item.work_order_item_attributes.some(attr => attr.value === null ||
+              attr.value === undefined);
         }
         return false;
        })
@@ -228,6 +247,10 @@ export default function serviceListStore(): ServiceListStoreContract {
         setShowFavourite,
         filterServicesListByQuantity,
         setErrorList,
-        getErrorList
+        getErrorList,
+        getBreadcrumbs,
+        setBreadcrumbs,
+        getSelectService,
+        setSelectService,
     }
 }

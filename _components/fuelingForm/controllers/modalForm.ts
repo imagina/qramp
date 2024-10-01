@@ -1,74 +1,76 @@
-import Vue, {
+import {
   ref,
   computed,
   WritableComputedRef,
   ComputedRef,
   onBeforeUnmount,
-  getCurrentInstance
+  onMounted
 } from 'vue';
-import store from '../store/index';
+import storeFueling from '../store/index';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import { STATUS_CLOSED, STATUS_DRAFT, STATUS_POSTED, STATUS_SCHEDULE, STATUS_SUBMITTED, STEP_FLIGHT, STEP_SERVICE } from '../../model/constants';
 import updateWorkOrders from '../services/updateWorkOrders';
 import stepps from '../models/defaultModels/stepps'
 import serviceListStore from '../../serviceList/store/serviceList';
-import alert from '@imagina/qsite/_plugins/alert.js'
-import baseService from '@imagina/qcrud/_services/baseService.js'
+import baseService from "src/modules/qcrud/_services/baseService.js";
+import { alert, store, i18n } from 'src/plugins/utils';
+import { useQuasar } from 'quasar';
 
-export default function modalFormController() {
-  const proxy = (getCurrentInstance() as any).proxy as any;
+export default function modalFormController(props: any = null, emit: any = null) {
+  const $q = useQuasar();
   const refCreateForm: any = ref(null);
   const refStepper: any = ref(null);
-  const loading: ComputedRef<boolean> = computed(() => store.loading);
-  const isUpdate = computed(() => store.isUpdate);
-  const titleModal: ComputedRef<string> = computed(() => store.titleModal);
-  const widthModal: ComputedRef<string> = computed(() => store.widthModal);
+  const loading: ComputedRef<boolean> = computed(() => storeFueling.loading);
+  const isUpdate = computed(() => storeFueling.isUpdate);
+  const titleModal: ComputedRef<string> = computed(() => storeFueling.titleModal);
+  const widthModal: ComputedRef<string> = computed(() => storeFueling.widthModal);
   const showModal: WritableComputedRef<boolean> = computed({
-    get: () => store.showModal,
+    get: () => storeFueling.showModal,
     set: (value: boolean) => {
-      store.showModal = value;
+      storeFueling.showModal = value;
     }
   });
   const actionsCreate = ref([
     {
       props: {
         color: 'primary',
-        label: Vue.prototype.$tr('isite.cms.label.save'),
+        label: i18n.tr('isite.cms.label.save'),
       },
       action: async () => {
+        qRampStore().setTitleOffline('New fueling')
         save()
       }
     },
   ])
   const actions = computed(() => {
-    const statusId = store.form.statusId;
+    const statusId = storeFueling.form.statusId;
     const actionsUpdate = [
       {
         props: {
-          vIf: Vue.prototype.$auth.hasAccess('ramp.work-orders.destroy'),
+          vIf: store.hasAccess('ramp.work-orders.destroy'),
           icon: 'fa-regular fa-trash',
           class: 'btn-action-fueling',
-          label: Vue.prototype.$q.screen.lt.sm ? null : Vue.prototype.$tr('isite.cms.label.delete'),
-          loading: store.loading,
+          label: $q.screen.lt.sm ? null : i18n.tr('isite.cms.label.delete'),
+          loading: storeFueling.loading,
         },
         action: async() => {
-          store.loading = true;
-          await baseService.delete('apiRoutes.qramp.workOrders', store.form.id);
-          store.reset();
-          await proxy.$root.$emit('crud.data.refresh');
-          store.loading = false;
+          storeFueling.loading = true;
+          await baseService.delete('apiRoutes.qramp.workOrders', storeFueling.form.id);
+          storeFueling.reset();
+          await emit('refresh-data');
+          storeFueling.loading = false;
         }
       },
       {
         props: {
           icon: 'fa-regular fa-floppy-disk',
-          label: Vue.prototype.$q.screen.lt.sm ? null : 'Save to Draft',
+          label: $q.screen.lt.sm ? null : 'Save to Draft',
           class: 'btn-action-fueling',
           vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
-          loading: store.loading,
+          loading: storeFueling.loading,
         },
         action: async () => {
-          store.changeStatus(STATUS_DRAFT)
+          storeFueling.changeStatus(STATUS_DRAFT)
           await update();
         }
       },
@@ -77,22 +79,22 @@ export default function modalFormController() {
           icon: 'fal fa-check',
           class: 'close-btn-bg-color',
           'text-color': 'positive',
-          label: Vue.prototype.$tr('isite.cms.label.closeFlight'),
+          label: i18n.tr('isite.cms.label.closeFlight'),
           vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
-          loading: store.loading,
+          loading: storeFueling.loading,
         },
         action: async () => {
-          store.changeStatus(STATUS_CLOSED)
+          storeFueling.changeStatus(STATUS_CLOSED)
           await update();
         }
       },
       {
         props: {
           icon: 'fa-thin fa-floppy-disk',
-          label: Vue.prototype.$tr('isite.cms.label.save'),
+          label: i18n.tr('isite.cms.label.save'),
           class: 'btn-action-fueling',
           vIf: statusId == null || statusId == STATUS_POSTED || (statusId == STATUS_SUBMITTED && qRampStore().editPermissionseSubmitted()),
-          loading: store.loading,
+          loading: storeFueling.loading,
         },
         action: async () => {
           await update();
@@ -100,7 +102,7 @@ export default function modalFormController() {
       },
       {
         props: {
-          vIf: store.step > 1,
+          vIf: storeFueling.step > 1,
           color: 'white',
           'text-color': 'primary',
           icon: 'fas fa-arrow-left',
@@ -111,7 +113,7 @@ export default function modalFormController() {
       },
       {
         props: {
-          vIf: store.step < 3,
+          vIf: storeFueling.step < 3,
           'text-color': 'white',
           style: 'background-color: #3865C2',
           'icon-right': 'fas fa-arrow-right',
@@ -124,10 +126,10 @@ export default function modalFormController() {
     return isUpdate.value ? actionsUpdate : actionsCreate.value;
   });
   function clear(): void {
-    store.reset();
+    storeFueling.reset();
     serviceListStore().setShowFavourite(false)
     serviceListStore().setErrorList([]);
-    if (isUpdate.value) proxy.$root.$emit('crud.data.refresh');
+    if (isUpdate.value) emit('refresh-data');
   }
 
   function save() {
@@ -139,12 +141,12 @@ export default function modalFormController() {
       })
   }
   async function update() {
-    const validateFlight = await (store.refsGlobal as any).refFlight.validate();
+    const validateFlight = await (storeFueling.refsGlobal as any).refFlight.validate();
     if (!validateFlight) {
-      store.step = STEP_FLIGHT;
+      storeFueling.step = STEP_FLIGHT;
       const step: any = stepps.find(item => item.step === STEP_FLIGHT);
       step.error = true;
-      alert.error({ message: Vue.prototype.$tr('isite.cms.message.formInvalid') })
+      alert.error({ message: i18n.tr('isite.cms.message.formInvalid') })
       return;
     }
     const service = await serviceListStore().getServiceItems();
@@ -154,14 +156,14 @@ export default function modalFormController() {
         message: 'Surely you want to save the work order without services',
         actions: [
           {
-            label: Vue.prototype.$tr('isite.cms.label.cancel'),
+            label: i18n.tr('isite.cms.label.cancel'),
             color: 'grey-8',
             handler: async () => {
-              store.loading = false;
+              storeFueling.loading = false;
             },
           },
           {
-            label: Vue.prototype.$tr("isite.cms.label.yes"),
+            label: i18n.tr("isite.cms.label.yes"),
             color: "primary",
             handler: async () => {
               await updateService()
@@ -173,24 +175,30 @@ export default function modalFormController() {
     }
     const filterList = await serviceListStore().filterServicesListByQuantity();
     if (filterList.length > 0) {
-      store.step = STEP_SERVICE;
+      storeFueling.step = STEP_SERVICE;
       const step: any = stepps.find(item => item.step === STEP_SERVICE);
       step.error = true;
-      alert.error({ message: Vue.prototype.$tr('You have services to correct') })
+      alert.error({ message: i18n.tr('You have services to correct') })
       return;
     }
     await updateService()
   }
   async function updateService() {
     await updateWorkOrders()
-    store.reset();
+    storeFueling.reset();
     serviceListStore().setShowFavourite(false);
-    await proxy.$root.$emit('crud.data.refresh');
-    const message = Vue.prototype.$tr('isite.cms.message.recordUpdated')
+    await emit('refresh-data');
+    const message = i18n.tr('isite.cms.message.recordUpdated')
     alert.info({ message })
   }
+  async function getDataTable() {
+    await emit('refresh-data')
+  }
+  onMounted(async () => {
+    storeFueling.emitEvent.refreshData = getDataTable();
+  })
   onBeforeUnmount(() => {
-    store.reset();
+    storeFueling.reset();
     serviceListStore().setErrorList([]);
     serviceListStore().setShowFavourite(false)
   })
@@ -205,5 +213,6 @@ export default function modalFormController() {
     save,
     isUpdate,
     refStepper,
+    getDataTable
   };
 }

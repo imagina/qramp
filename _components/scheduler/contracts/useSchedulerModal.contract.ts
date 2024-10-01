@@ -1,5 +1,5 @@
 import { WritableComputedRef, ComputedRef, Ref } from 'vue';
-import { Action, ModelActionsModalResult } from './modelActionsModal.contract'
+import { Action } from './modelActionsModal.contract'
 
 /**
  * Reference to the form fields for the scheduler modal.

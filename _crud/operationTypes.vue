@@ -2,6 +2,7 @@
 </template>
 <script>
 import {COMPANY_RAMP} from '../_components/model/constants.js'
+import {store} from "../../../plugins/utils";
 export default {
   data() {
     return {
@@ -26,7 +27,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'operationName',
@@ -103,7 +103,10 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              config: {options: {label: 'fullName', value: 'id'}},
+              config: {
+                options: {label: 'fullName', value: 'id'},
+                requestParams: {filter: {id: store.getSetting('ramp::rampCompanies')}}
+              },
             },
           },
           options: {
@@ -126,5 +129,5 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

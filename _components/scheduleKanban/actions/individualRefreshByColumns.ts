@@ -5,7 +5,6 @@ import modalScheduleStore from '../store/modalSchedule.store'
 import getIndividualWorkOrders from './getIndividualWorkOrders';
 import getWorkOrdersStatistics from './getWorkOrderStatistics';
 import storeFilters from "../store/filters.store";
-import qRampStore from 'src/modules/qramp/_store/qRampStore';
 
 
 export default async function individualRefreshByColumns(): Promise<void> {

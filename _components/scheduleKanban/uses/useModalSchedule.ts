@@ -1,4 +1,4 @@
-import Vue, { computed, ComputedRef, ref, onBeforeUnmount, inject } from 'vue';
+import { computed, ComputedRef, ref, onBeforeUnmount, inject } from 'vue';
 import store from '../store/modalSchedule.store'
 import fieldsSchedule from '../models/fieldsSchedule.model'
 import validateOperationType from '../actions/validateOperationType'
@@ -15,6 +15,7 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
+import { store as pluginStore, i18n, alert } from 'src/plugins/utils'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -50,8 +51,8 @@ export default function useModalSchedule(props: any, emit: any) {
         color: 'primary',
         icon: 'fa-light fa-pen-to-square',
         label: store.isEdit
-          ? Vue.prototype.$tr("isite.cms.label.update")
-          : Vue.prototype.$tr("isite.cms.label.save"),
+          ? i18n.tr("isite.cms.label.update")
+          : i18n.tr("isite.cms.label.save"),
       },
       action: async () => {
         await saveForm()
@@ -59,24 +60,24 @@ export default function useModalSchedule(props: any, emit: any) {
     },
     {
       props: {
-        vIf: Vue.prototype.$auth.hasAccess(`ramp.work-orders.destroy`) && store.isEdit && !kanbanStore.isBlank,
+        vIf: pluginStore.hasAccess(`ramp.work-orders.destroy`) && store.isEdit && !kanbanStore.isBlank,
         color: "red",
         icon: 'fa-light fa-trash',
-        label: Vue.prototype.$tr("isite.cms.label.delete"),
+        label: i18n.tr("isite.cms.label.delete"),
       },
       action: async () => {
         try {
-          Vue.prototype.$alert.error({
+          alert.error({
             mode: "modal",
             title: `${form.value.preFlightNumber}`,
-            message: Vue.prototype.$tr('isite.cms.message.deleteRecord'),
+            message: i18n.tr('isite.cms.message.deleteRecord'),
             actions: [
               {
-                label: Vue.prototype.$tr('isite.cms.label.cancel'),
+                label: i18n.tr('isite.cms.label.cancel'),
                 color: 'grey',
               },
               {
-                label: Vue.prototype.$tr('isite.cms.label.delete'),
+                label: i18n.tr('isite.cms.label.delete'),
                 color: 'red',
                 handler: async () => {
                   store.loading = true;
@@ -99,7 +100,7 @@ export default function useModalSchedule(props: any, emit: any) {
       },
     },
   ]);
-  const permisionComments = computed(() => Vue.prototype.$auth.hasAccess(`ramp.work-orders-comments.index`))
+  const permisionComments = computed(() => pluginStore.hasAccess(`ramp.work-orders-comments.index`))
   const flightStatus = computed(() => fieldsSchedule().flightStatus.value);
   const isbound = computed(() => validateOperationType(form.value.operationTypeId));
   const fields = computed(() => fieldsSchedule().fields.value);
@@ -124,11 +125,11 @@ export default function useModalSchedule(props: any, emit: any) {
           }
         }
         hideInline();
-        
+
         if(!store.isEdit) {
-          individualRefreshByColumns(); 
+          individualRefreshByColumns();
         }
-        
+
         await setIndividualCards(form.value.id);
         await hideModal();
 
@@ -136,11 +137,16 @@ export default function useModalSchedule(props: any, emit: any) {
       }
     });
   }
-  
+
   async function tranformData() {
-    form.value.inboundScheduledArrival = `${moment(form.value.inboundScheduledArrival || store.seletedDateColumn).format('MM/DD/YYYY')} ${form.value.sta || '00:00'}`;
+    const DEFAULT_DATE_FORMAT = 'MM/DD/YYYY HH:mm'
+    form.value.inboundScheduledArrival = `${moment(
+      form.value.inboundScheduledArrival || store.seletedDateColumn
+    ).format('MM/DD/YYYY')} ${form.value.sta || '00:00'}`;
     form.value.outboundScheduledDeparture = form.value.outboundScheduledDeparture;
-    form.value.std = form.value.outboundScheduledDeparture ? moment(form.value.outboundScheduledDeparture).format('HH:mm') : null;
+    form.value.std = form.value.outboundScheduledDeparture
+      ? moment(form.value.outboundScheduledDeparture, DEFAULT_DATE_FORMAT).format('HH:mm')
+      : null;
     form.value.preFlightNumber = form.value.inboundFlightNumber;
     const isbound = validateOperationType(form.value.operationTypeId);
     if (isbound.inbound && isbound.outbound) {
@@ -187,7 +193,7 @@ export default function useModalSchedule(props: any, emit: any) {
     store.showInline = false;
   }
   async function showModalFull() {
-    const titleModal = Vue.prototype.$tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
+    const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (form.value.id ? ` Id: ${form.value.id}` : '')
     const response = await showWorkOrder(form.value.id);
     await refFormOrders.value.loadform({
       modalProps: {
@@ -219,5 +225,6 @@ export default function useModalSchedule(props: any, emit: any) {
     saveForm,
     showCommentsComponent,
     storeKanban,
+    i18n
   }
 }

@@ -27,7 +27,7 @@
             v-if="isNonFlight" 
             class="fa-regular fa-plane-slash tw-mr-2" 
           />
-          <p>{{ card.calendar.title }}</p>
+          <p>{{ card.calendar?.title }}</p>
         </div>
         <div class="
           tw-flex
@@ -47,7 +47,7 @@
               fa-solid
               fa-arrow-down-right
               tw-mr-2"
-            />STA: {{ card.calendar.sta ? $moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
+            />STA: {{ card.calendar.sta ? moment(card.calendar.sta, 'HHmm').format('HH:mm') : '' }}
           </div>
           <div v-if="card.calendar.std && !card.calendar.tos">
             <i class="
@@ -55,11 +55,11 @@
               fa-arrow-up-right
               tw-ml-4
               tw-mr-1"
-            />STD: {{ card.calendar.std ? $moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
+            />STD: {{ card.calendar.std ? moment(card.calendar.std,'HHmm').format('HH:mm') : '' }}
           </div>
           <div v-if="card.calendar.tos">
             <q-tooltip>Time of Service</q-tooltip>
-            TOS: {{ card.calendar.tos ? $moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
+            TOS: {{ card.calendar.tos ? moment(card.calendar.tos,'HHmm').format('HH:mm') : '' }}
           </div>
         </div>
         <div class="
@@ -178,7 +178,7 @@
   </div>
 </template>
 <script lang="ts">
-import Vue, {defineComponent} from 'vue';
+import {defineComponent} from 'vue';
 import kanbanCardActions from './KanbanCardActions.vue'
 import useKanbanCard from '../uses/useKanbanCard';
 import lastComments from './lastComments.vue'
@@ -207,7 +207,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .icons {
-  color: #1F294F99  
+  color: #1F294F99
 }
 .h-200 {
     height: 60vh;

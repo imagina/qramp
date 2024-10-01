@@ -1,14 +1,13 @@
-import Vue, { ref, computed, ComputedRef, getCurrentInstance } from 'vue';
+import { ref, computed, ComputedRef } from 'vue';
 import store from '../store/filters.store'
 import modalStationFields from '../models/modalStation.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
 import setUrlParams from '../actions/setUrlParams';
-import cache from '@imagina/qsite/_plugins/cache';
+import { cache } from 'src/plugins/utils';
 import getTitleFilter from '../actions/getTitleFilter';
 import storeKanban from '../store/kanban.store';
 
 export default function useModalStation() {
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const refModalStation: any = ref(null);
   const fields = computed(() => {
     return modalStationFields().fields.value
@@ -19,12 +18,12 @@ export default function useModalStation() {
     get: () => store.showModalStation,
     set: (value) => (store.showModalStation = value),
   });
-  
+
   const stationId = computed({
     get: () => store.stationId,
     set: (value) => (store.stationId = value),
-  });  
-  
+  });
+
   const actions = computed(()=> {
     return [
       {
@@ -32,14 +31,14 @@ export default function useModalStation() {
           color: "primary",
           label: "filters",
         },
-        action: async () => {          
+        action: async () => {
           saveStationId();
         },
       },
     ];
-  }) 
+  })
 
-  async function saveStationId() {    
+  async function saveStationId() {
     try {
       refModalStation.value.validate().then(async (success) => {
         if (success) {
@@ -47,20 +46,21 @@ export default function useModalStation() {
             await cache.set("stationId", store.stationId);
             store.form.stationId = store.stationId;
           }
-          //await checkUrlParams(proxy);
+          //await checkUrlParams();
           storeKanban.scheduleType = store.scheduleType;
-          getTitleFilter();
-          await setUrlParams(proxy);
-          await buildKanbanStructure();
           store.showModalStation = false;
+          getTitleFilter();
+          await setUrlParams();
+          await buildKanbanStructure();
+
         }
       });
     } catch (error) {
       console.log(error);
     }
   }
-  
-  return {    
+
+  return {
     loading,
     showModalStation,
     stationId,

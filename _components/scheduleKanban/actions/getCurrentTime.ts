@@ -1,5 +1,5 @@
 import modelHoursFilter from '../models/hoursFilter.model'
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import {HoursFilter} from '../contracts/hourFilter.contract'
 
 export default function getCurrentTime(): string | null {
