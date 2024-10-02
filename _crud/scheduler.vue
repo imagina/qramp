@@ -14,7 +14,7 @@ import {
   BUSINESS_UNIT_RAMP,
   BUSINESS_UNIT_PASSENGER,
   LABOR,
-  BUSINESS_UNIT_LABOR
+  BUSINESS_UNIT_LABOR, BUSINESS_UNIT_SECURITY
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
@@ -32,21 +32,24 @@ export default {
       const urlSchedule = localStorage.getItem("urlSchedule");
       if (urlSchedule.includes('/ramp')) {
         await qRampStore().setIsPassenger(false);
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
       } else if (urlSchedule.includes('/passenger')) {
         await qRampStore().setIsPassenger(true)
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_PASSENGER);
       } else if (urlSchedule.includes('/labor')) {
         await qRampStore().setIsPassenger(true)
         await qRampStore().setTypeWorkOrder(LABOR)
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_LABOR);
+      } else if (urlSchedule.includes('/security')) {
+        await qRampStore().setIsPassenger(false);
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_SECURITY);
       }
       await workOrderList().getAllList();
     })
   },
   computed: {
     filterBusinessUnit() {
-      if(qRampStore().getBusinessUnitId() === BUSINESS_UNIT_LABOR) {
-        return [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER]
-      }
-      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+      return qRampStore().getBusinessUnitId();
     },
     isPassenger() {
       return qRampStore().getIsPassenger();
