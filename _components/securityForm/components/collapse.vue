@@ -95,4 +95,7 @@ export default defineComponent({
 .expandible-ramp-ctn .q-expansion-item {
   @apply tw-border tw-border-gray-100 tw-rounded-t-md;
 }
+.expandible-ramp-ctn .q-expansion-item .q-expansion-item__container .boundColor {
+  background-color: #F1F4FA;
+}
 </style>
