@@ -488,7 +488,7 @@ export default {
               format: item => (
                 {
                   //must have the specific re-post permission, the work order can't be Ad Hoc and must be un status posted
-                  vIf: store.hasAccess('ramp.work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
+                  vIf: store.hasAccess('ramp.security-work-orders.re-post') && !item.adHoc && item.statusId == STATUS_POSTED
                 }),
             },
             {
