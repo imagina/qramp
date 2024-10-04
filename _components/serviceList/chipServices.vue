@@ -51,7 +51,7 @@ export default defineComponent({
       </q-badge>
       <q-popup-proxy
         ref="popupProxyRef"
-        content-class="
+        class="
           popover-w-490
           lg:tw-bg-white
           tw-shadow-2xl
