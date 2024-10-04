@@ -37,7 +37,7 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
                   }
                 }
               })
-              item.value = response.data.map((item) => item.name)
+              item.value = response.data.map((item) => item.name).join(',')
             }
           })
         })
