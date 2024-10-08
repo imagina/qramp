@@ -1,7 +1,7 @@
 import { computed, ComputedRef } from 'vue';
-import { 
-  OPERATION_TYPE_NON_FLIGHT, 
-  BUSINESS_UNIT_SECURITY 
+import {
+  OPERATION_TYPE_NON_FLIGHT,
+  BUSINESS_UNIT_SECURITY
 } from '../../model/constants.js'
 import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
@@ -119,7 +119,6 @@ export default function modelFields() {
               value: '',
               type: 'select',
               props: {
-                vIf: isOperationType.value,
                 rules: [
                   val => !!val || i18n.tr('isite.cms.message.fieldRequired')
                 ],
