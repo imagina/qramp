@@ -107,6 +107,12 @@ export default function flightController() {
     }
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
+  const readonlyOperationType= computed(() => {
+    const { parentId, preFlightNumber, operationTypeId } = form.value || {};
+    const isOther = OPERATION_TYPE_NON_FLIGHT.includes(Number(operationTypeId))
+    const createdInNonFlight = (Boolean(parentId) || !Boolean(preFlightNumber)) && isOther;
+    return disabledReadonly.value || createdInNonFlight;
+  })
   const formFields = computed(() => {
     return {
       flyFormLeft: {
@@ -164,7 +170,7 @@ export default function flightController() {
             rules: [
               val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
-            //readonly: this.readonlyOperationType,
+            readonly: readonlyOperationType.value,
             label: `*${i18n.tr('ifly.cms.form.operation')}`,
             clearable: true,
             color: "primary",
