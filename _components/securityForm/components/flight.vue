@@ -30,6 +30,7 @@
                 />
             </div>
         </div>
+
       <div class="col-12 col-md-6" v-if="isBound[0] && isActualInAndActualOut">
         <collapseFly
           :title="$tr('isite.cms.label.inbound')"

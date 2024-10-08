@@ -7,7 +7,7 @@ import storeFlight from '../../flight/store'
 import serviceListStore from '../../serviceList/store/serviceList'
 import { store, i18n, alert } from 'src/plugins/utils';
 import { updateFavoriteServicesList } from '../../serviceList/actions/updateFavoriteServicesList';
-import { NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT, BUSINESS_UNIT_LABOR } from '../../model/constants';
+import {NON_FLIGHT, OPERATION_TYPE_NON_FLIGHT, BUSINESS_UNIT_LABOR, FLIGHT} from '../../model/constants';
 
 export default function flightController() {
   const refFlight: any = ref(null);
@@ -562,6 +562,14 @@ export default function flightController() {
       reFilterFavorites('customerId', value)
     }
   }, { deep: true })
+
+  watch(() => form.value.operationTypeId, async (value) => {
+    if(value) {
+      const isNonFlight: number = OPERATION_TYPE_NON_FLIGHT.includes(Number(storeFueling.form.operationTypeId)) ? NON_FLIGHT : FLIGHT;
+      storeFueling.form.type =  isNonFlight;
+      qRampStore().setTypeWorkOrder(isNonFlight)
+    }
+  })
 
   onMounted(() => {
     storeFueling.refsGlobal = { refFlight: refFlight.value };
