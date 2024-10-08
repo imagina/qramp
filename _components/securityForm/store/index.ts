@@ -147,7 +147,7 @@ const store = computed(() => ({
         state.form.customerId = value.customerId || null;
         state.form.contractId = value.contractId || null;
         state.form.statusId = value.statusId || null;
-        state.form.operationTypeId = value.operationTypeId || 2;
+        state.form.operationTypeId = value.operationTypeId || null;
         state.form.type = value.type || null;
         state.form.stationId = Number(value.stationId) || null;
         state.form.acTypeId = value.acTypeId || null;
