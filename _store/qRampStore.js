@@ -699,6 +699,7 @@ export default function qRampStore() {
         getFormTable,
         checkIfDataArrives,
         getWorkOrderId,
-        setWorkOrderId
+        setWorkOrderId,
+        isbound
     }
 }

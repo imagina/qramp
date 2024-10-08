@@ -21,6 +21,7 @@ export default function flightController() {
   });
   const differenceHour = computed(() => qRampStore().getDifferenceInHours(form.value.inboundBlockIn, form.value.outboundBlockOut) || 0)
   const loadingBound = ref(false);
+  const nameField = ref(null);
   const dialogTable = computed({
     get: () => storeFueling.dialogTable,
     set: (value) => {
@@ -57,6 +58,7 @@ export default function flightController() {
     const operationTypeId = Number(storeFueling.form.operationTypeId)
     return qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR && OPERATION_TYPE_NON_FLIGHT.includes(operationTypeId)
   })
+  const isBound = computed(() => qRampStore().isbound(storeFueling.form.operationTypeId))
   const validateDateOutboundBlockOut = (dateTime, dateMin = null) => {
     const outboundScheduledDepartureDate = form.value.outboundBlockOut
       ? moment(form.value.outboundBlockOut) : moment();
@@ -154,6 +156,21 @@ export default function flightController() {
               )
           },
           label: i18n.tr('ifly.cms.form.acType'),
+        },
+        operationTypeId: {
+          value: null,
+          type: 'select',
+          props: {
+            rules: [
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+            ],
+            //readonly: this.readonlyOperationType,
+            label: `*${i18n.tr('ifly.cms.form.operation')}`,
+            clearable: true,
+            color: "primary",
+            'hide-bottom-space': false,
+            options: workOrderList().getOperationTypeList()
+          },
         },
       },
       flyFormRight: {
@@ -456,7 +473,37 @@ export default function flightController() {
     const selectedFligth = mainDataFligthaware.value.find((item, index) => {
       return index === select.index
     })
-    const selectedData = qRampStore().getFormTable(selectedFligth);
+    const formTable = qRampStore().getFormTable(selectedFligth);
+    const selectedData: any = {};
+    if(isBound.value[0] && !isBound.value[1]) {
+      selectedData.inboundFlightNumber = formTable.inboundFlightNumber;
+      selectedData.inboundOriginAirportId = formTable.inboundOriginAirportId;
+      selectedData.inboundScheduledArrival = formTable.inboundScheduledArrival;
+      selectedData.inboundTailNumber = formTable.inboundTailNumber;
+    }
+    if(!isBound.value[0] && isBound.value[1]) {
+      selectedData.outboundFlightNumber = formTable.outboundFlightNumber;
+      selectedData.outboundDestinationAirportId = formTable.outboundDestinationAirportId;
+      selectedData.outboundScheduledDeparture = formTable.outboundScheduledDeparture;
+      selectedData.outboundTailNumber = formTable.outboundTailNumber;
+    }
+    if(isBound.value[0] && isBound.value[1]) {
+      if(nameField.value === 'inboundFlightNumber') {
+        selectedData.inboundFlightNumber = formTable.inboundFlightNumber;
+        selectedData.inboundOriginAirportId = formTable.inboundOriginAirportId;
+        selectedData.inboundScheduledArrival = formTable.inboundScheduledArrival;
+        selectedData.inboundTailNumber = formTable.inboundTailNumber;
+        selectedData.outboundFlightNumber = formTable.outboundFlightNumber;
+        selectedData.outboundDestinationAirportId = formTable.outboundDestinationAirportId;
+        selectedData.outboundScheduledDeparture = formTable.outboundScheduledDeparture;
+        selectedData.outboundTailNumber = formTable.outboundTailNumber;
+      } else {
+        selectedData.outboundFlightNumber = formTable.outboundFlightNumber;
+        selectedData.outboundDestinationAirportId = formTable.outboundDestinationAirportId;
+        selectedData.outboundScheduledDeparture = formTable.outboundScheduledDeparture;
+        selectedData.outboundTailNumber = formTable.outboundTailNumber;
+      }
+    }
     form.value = {
       ...form.value,
       ...selectedData
@@ -464,6 +511,7 @@ export default function flightController() {
   }
   async function searchFlightaware(field) {
     if(!['inboundFlightNumber', 'outboundFlightNumber'].includes(field) ) return;
+    nameField.value = field;
     const search = form.value[field];
     loadingBound.value = true;
     const response = await workOrderList().getFlightawareSearch(search, true);
@@ -533,6 +581,7 @@ export default function flightController() {
     validateBoundComplete,
     differenceHour,
     isActualInAndActualOut,
-    validateNoFligth
+    validateNoFligth,
+    isBound
   }
 }

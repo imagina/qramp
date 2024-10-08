@@ -26,9 +26,9 @@ export const FUELING = 3;
 export const SECURITY = 5;
 export const OPERATION_TYPE_OTHER = 6;
 export const OPERATION_TYPE_PASSENGER_NON_FLIGHT = 13
-export const OPERATION_TYPE_SECURITY_NON_FLIGHT = 6
+export const OPERATION_TYPE_SECURITY_NON_FLIGHT = 39
 export const OPERATION_TYPE_NON_FLIGHT = [
-  OPERATION_TYPE_PASSENGER_NON_FLIGHT, 
+  OPERATION_TYPE_PASSENGER_NON_FLIGHT,
   OPERATION_TYPE_SECURITY_NON_FLIGHT
 ];
 export const ADDITIONAL_FLIGHT_SERVICES = [STATUS_POSTED, STATUS_POSTING];
@@ -366,22 +366,22 @@ export const columnsFlightAware = [
 ]
 
 export const columnsWorkOrders = [
-  { 
-    name: 'id', 
-    label: 'ID', 
-    field: 'id' , 
+  {
+    name: 'id',
+    label: 'ID',
+    field: 'id' ,
     align: 'left',
     format: (val, row) => {
       if (row.type === NON_FLIGHT) {
         return `
           <span>${val}</span>
-          <span 
+          <span
             class="
-              tw-border 
-              tw-py-0.5 
-              tw-px-1 
-              tw-rounded-md 
-              tw-text-xs 
+              tw-border
+              tw-py-0.5
+              tw-px-1
+              tw-rounded-md
+              tw-text-xs
               tw-ml-2
             "
           />
@@ -393,25 +393,25 @@ export const columnsWorkOrders = [
     },
   },
   { name: 'inboundFlightNumber', label: 'Inbound Flight Number', field: 'inboundFlightNumber', align: 'left'},
-  { 
-    name: 'inboundScheduledArrival', 
-    label: 'Inbound Scheduled Arrival', 
-    field: 'inboundScheduledArrival' , 
+  {
+    name: 'inboundScheduledArrival',
+    label: 'Inbound Scheduled Arrival',
+    field: 'inboundScheduledArrival' ,
     align: 'left',
     format: (val) => (val ? i18n.trdT(val) : "-"),
   },
   { name: 'outboundFlightNumber', label: 'Outbound Flight Number', field: 'outboundFlightNumber' , align: 'left'},
-  { 
-    name: 'outboundScheduledDeparture', 
-    label: 'Outbound Scheduled Departure', 
-    field: 'outboundScheduledDeparture' , 
+  {
+    name: 'outboundScheduledDeparture',
+    label: 'Outbound Scheduled Departure',
+    field: 'outboundScheduledDeparture' ,
     align: 'left',
     format: (val) => (val ? i18n.trdT(val) : "-"),
   },
-  { 
-    name: 'scheduleDateLocal', 
-    label: 'Service Date Created', 
-    field: 'scheduleDateLocal', 
+  {
+    name: 'scheduleDateLocal',
+    label: 'Service Date Created',
+    field: 'scheduleDateLocal',
     align: 'left',
     format: (val) => (val ? i18n.trdT(val) : "-"),
   }

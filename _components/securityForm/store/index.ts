@@ -14,7 +14,7 @@ const MODEL_FORM = {
     customerId: null,
     contractId: null,
     statusId: null,
-    operationTypeId: 2,
+    operationTypeId: null,
     type: null,
     businessUnitId : BUSINESS_UNIT_SECURITY,
     stationId: null,
