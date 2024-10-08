@@ -567,7 +567,7 @@ export default function flightController() {
     if(value) {
       const isNonFlight: number = OPERATION_TYPE_NON_FLIGHT.includes(Number(storeFueling.form.operationTypeId)) ? NON_FLIGHT : FLIGHT;
       storeFueling.form.type =  isNonFlight;
-      qRampStore().setTypeWorkOrder(isNonFlight)
+      qRampStore().setTypeWorkOrder(isNonFlight);
     }
   })
 
