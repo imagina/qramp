@@ -2,7 +2,7 @@ import qRampStore from 'src/modules/qramp/_store/qRampStore';
 import {
     BUSINESS_UNIT_LABOR,
     FLIGHT,
-    LABOR, NON_FLIGHT, 
+    LABOR, NON_FLIGHT,
     OPERATION_TYPE_NON_FLIGHT,
 } from '../../model/constants.js';
 import modalScheduleStore from '../store/modalSchedule.store'
@@ -23,11 +23,11 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
         const offlineId = new Date().valueOf();
         const form = { ...modalScheduleStore.form };
         let type: any = qRampStore().getTypeWorkOrder();
-        const businessUnitId: number = qRampStore().getBusinessUnitId();
-
+        let businessUnitId: any = qRampStore().getBusinessUnitId();
+        businessUnitId =  businessUnitId !== 'null' ? {businessUnitId} : {};
         if(businessUnitId === BUSINESS_UNIT_LABOR) type = LABOR
         if(
-          OPERATION_TYPE_NON_FLIGHT.includes(Number(form.operationTypeId)) && 
+          OPERATION_TYPE_NON_FLIGHT.includes(Number(form.operationTypeId)) &&
           businessUnitId !== BUSINESS_UNIT_LABOR
         ) {
           type = OPERATION_TYPE_NON_FLIGHT.includes(Number(form.operationTypeId)) ? NON_FLIGHT : FLIGHT
@@ -40,7 +40,7 @@ export default async function saveSimpleWorkOrders(): Promise<WorkOrders> {
               ...form,
               offlineId: storeKanban.isAppOffline ? offlineId: null,
               titleOffline: i18n.tr('ifly.cms.form.newWorkOrder'),
-              businessUnitId,
+              ...businessUnitId,
               type,
               ...(modeOffline ? { apiRoute: CACHE_PATH, } : {})
             }
