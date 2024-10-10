@@ -170,6 +170,7 @@ export default {
     async sendInfo() {
       try {
         let businessUnitId = qRampStore().getBusinessUnitId();
+        businessUnitId =  businessUnitId !== 'null' ? {businessUnitId} : {};
         const remarks = remarkStore().getForm();
         const serviceList = await serviceListStore().getServiceListSelected();
         const filterList = await serviceListStore().filterServicesListByQuantity();
@@ -201,7 +202,7 @@ export default {
           workOrderItems: [
             ...serviceList
           ],
-          businessUnitId,
+          ...businessUnitId,
         }
 
         if (this.data.update) {

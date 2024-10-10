@@ -319,14 +319,15 @@ export default {
         let response = null;
 
         qRampStore().showLoading();
-        const businessUnitId = qRampStore().getBusinessUnitId();
+        let businessUnitId = qRampStore().getBusinessUnitId();
+        businessUnitId =  businessUnitId !== 'null' ? {businessUnitId} : {};
         const offlineId = new Date().valueOf()
 
         const dataForm = {
           ...this.form,
           offlineId: this.isAppOffline ? offlineId : null,
           titleOffline: qRampStore().getTitleOffline(),
-          businessUnitId,
+          ...businessUnitId,
           type: qRampStore().getTypeWorkOrder(),
           ...(this.isAppOffline ? { apiRoute: CACHE_PATH, } : {})
         };
