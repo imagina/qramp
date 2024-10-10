@@ -400,7 +400,6 @@ export default {
                         include: 'responsible,contract,customer',
                         filter: {
                             withoutDefaultInclude: true,
-                            businessUnitId: BUSINESS_UNIT_RAMP,
                             type: [FLIGHT, NON_FLIGHT]
                         },
                     },
@@ -685,19 +684,19 @@ export default {
           await this.$refs.crudComponent.getDataTable(refresh);
         },
         flightChip(item) {
-            return item 
+            return item
                 ? `
-                    <span 
+                    <span
                         class="
-                            tw-border 
-                            tw-p-1 
-                            tw-rounded-md 
+                            tw-border
+                            tw-p-1
+                            tw-rounded-md
                             tw-font-medium
                             ${this.isAppOffline ? 'tw-cursor-auto' : ''}
                         "
                     />
                         ${item}
-                    </span>`  
+                    </span>`
                 : ''
         },
     }
