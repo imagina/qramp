@@ -8,7 +8,6 @@ export default [
     children: [
       pages.qramp.workOrders,
       pages.qramp.schedule,
-      pages.qramp.operationType,
     ]
   },
   {
@@ -17,7 +16,6 @@ export default [
     children: [
       pages.qramp.passenger,
       pages.qramp.passengerSchedule,
-      pages.qramp.operationTypePassenger,
       pages.qramp.fueling,
       {
         title: 'Labor',
@@ -35,7 +33,6 @@ export default [
     children: [
       pages.qramp.security,
       pages.qramp.securitySchedule,
-      pages.qramp.securityOperationType
     ]
   },
   {

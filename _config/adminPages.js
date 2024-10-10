@@ -202,36 +202,6 @@ export default {
       refresh: true,
     }
   },
-  operationType: {
-    permission: 'ramp.operation-types.manage',
-    activated: true,
-    authenticated: true,
-    path: '/ramp/operation-types/index',
-    name: 'qramp.admin.passengerOperationTypes',
-    crud: import('../_crud/operationTypes.vue'),
-    page: () => import('modules/qcrud/_pages/admin/crudPage'),
-    layout: () => import('layouts/master.vue'),
-    title: 'Operation Types',
-    icon: 'fa-light fa-briefcase',
-    subHeader: {
-      refresh: true,
-    }
-  },
-  operationTypePassenger: {
-    permission: 'ramp.operation-types.manage',
-    activated: true,
-    authenticated: true,
-    path: '/passenger/operation-types/index',
-    name: 'qramp.admin.operationTypesPassenger',
-    crud: import('../_crud/operationTypesPassenger.vue'),
-    page: () => import('modules/qcrud/_pages/admin/crudPage'),
-    layout: () => import('layouts/master.vue'),
-    title: 'Operation Types',
-    icon: 'fa-light fa-briefcase',
-    subHeader: {
-      refresh: true,
-    }
-  },
   fueling: {
     permission: 'ramp.fueling-work-orders.manage',
     activated: true,
@@ -304,21 +274,6 @@ export default {
       refresh: true,
     }
   },
-  securityOperationType: {
-    permission: 'ramp.operation-types.manage',
-    activated: true,
-    authenticated: true,
-    path: '/security/operation-types/index',
-    name: 'qramp.admin.securityOperationTypes',
-    crud: import('../_crud/operationTypesSecurity.vue'),
-    page: () => import('src/modules/qcrud/_pages/admin/crudPage'),
-    layout: () => import('layouts/master.vue'),
-    title: 'Operation Types',
-    icon: 'fa-light fa-briefcase',
-    subHeader: {
-      refresh: true,
-    }
-  },
   paxOperationTypes: {
     permission: 'ramp.pax-operation-types.manage',
     activated: true,
@@ -329,6 +284,21 @@ export default {
     page: () => import('src/modules/qcrud/_pages/admin/crudPage'),
     layout: () => import('layouts/master.vue'),
     title: 'Pax Operation Types',
+    icon: 'fa-light fa-briefcase',
+    subHeader: {
+      refresh: true,
+    }
+  },
+  operationType: {
+    permission: 'ramp.operation-types.manage',
+    activated: true,
+    authenticated: true,
+    path: '/ramp/operation-types/index',
+    name: 'qramp.admin.operationTypes',
+    crud: import('../_crud/operationTypes.vue'),
+    page: () => import('src/modules/qcrud/_pages/admin/crudPage'),
+    layout: () => import('layouts/master.vue'),
+    title: 'Operation Types',
     icon: 'fa-light fa-briefcase',
     subHeader: {
       refresh: true,

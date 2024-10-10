@@ -1,8 +1,6 @@
 <template>
 </template>
 <script>
-import {COMPANY_RAMP} from '../_components/model/constants.js'
-import {store} from "../../../plugins/utils";
 export default {
   data() {
     return {
@@ -27,6 +25,7 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
+              action: (item) => false
             },
             {
               name: 'operationName',
@@ -71,15 +70,15 @@ export default {
           filters: {},
           actions: [],
           requestParams: {
-            include: 'company',
+            include: 'companies',
             filter: {
               withoutDefaultInclude: true,
-              companyId: COMPANY_RAMP
             },
           }
         },
         update: {
-          title: 'Update Operation type'
+          title: 'Update Operation type',
+          requestParams: {include: 'companies'},
         },
         delete: true,
         formLeft: {
@@ -91,21 +90,23 @@ export default {
               rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
             },
           },
-          companyId: {
-            value: null,
+          companies: {
+            value: [],
             type: 'crud',
             props: {
               crudType: 'select',
               crudData: import('../../qsetupagione/_crud/companies'),
               crudProps: {
                 label: 'Company Name',
+                multiple: true,
+                useChips: true,
+                clearable: true,
               },
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
               config: {
                 options: {label: 'fullName', value: 'id'},
-                requestParams: {filter: {id: store.getSetting('ramp::rampCompanies')}}
               },
             },
           },
@@ -129,5 +130,5 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="stylus">
 </style>

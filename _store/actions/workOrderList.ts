@@ -304,13 +304,14 @@ export default function workOrderList(): WorkOrderList {
   async function getOperationType(refresh = false): Promise<OperationType[] | void> {
     if (hasAccess('ramp.operation-types.index')) {
       try {
-        const companyId = qRampStore().getFilterCompany();
+        const companies = qRampStore().getFilterCompany();
         const params = {
           refresh,
           cacheTime: cacheTimeForThirtyDays,
           params: {
+            includes: 'companies',
             filter: {
-              companyId,
+              companies,
             }
           },
         }
@@ -333,9 +334,9 @@ export default function workOrderList(): WorkOrderList {
     if (hasAccess('setup.stations.index')) {
       try {
         const isPassenger = qRampStore().getIsPassenger();
-        const companyId = qRampStore().getFilterCompany();
-        const filterRamp = isPassenger ? {companyId} : {
-          companyId,
+        const companies = qRampStore().getFilterCompany();
+        const filterRamp = isPassenger ? {companies} : {
+          companies,
           "allTranslations": true
         };
         const params = {
