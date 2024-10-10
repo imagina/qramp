@@ -111,8 +111,9 @@ const store = computed(() => ({
     },
     get payload(){
       let businessUnitId: any = qRampStore().getBusinessUnitId();
+      businessUnitId = businessUnitId !== 'null' ? {businessUnitId} : {};
       const typeWorkOrder = qRampStore().getBusinessUnitId() === BUSINESS_UNIT_LABOR ? {type: [LABOR]} : {};
-      const filters = {...state.form, ...typeWorkOrder, businessUnitId };
+      const filters = {...state.form, ...typeWorkOrder, ...businessUnitId };
       delete filters.time;
       delete filters.scheduleType;
       Object.keys(filters).forEach(
