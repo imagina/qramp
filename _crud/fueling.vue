@@ -212,12 +212,12 @@ export default {
           ],
           filters: {
             date: {
+              value: {},
+              type: 'dateRange',
               props: {
-                label: "Scheduled date"
+                label: "Scheduled date",
+                field: 'schedule_date_local',
               },
-              name: "scheduleDateLocal",
-              field: {value: 'schedule_date_local'},
-              quickFilter: true
             },
             customerId: {
               value: null,
