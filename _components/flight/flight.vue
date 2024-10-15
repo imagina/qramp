@@ -554,7 +554,7 @@ export default {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              label: 'Cancellation Notice time entered in Hours',
+              label: '*Cancellation Notice time entered in Hours',
               vIf: this.validateCancellationNoticeTime && !this.validateNoFligth,
               type: 'number',
             },
