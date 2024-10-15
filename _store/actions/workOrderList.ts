@@ -705,7 +705,7 @@ export default function workOrderList(): WorkOrderList {
 
         const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
         const companyId = qRampStore().getFilterCompany();
-        let businessUnitId: any = { businessUnitId : qRampStore().getBusinessUnitId() || BUSINESS_UNIT_RAMP };
+        let businessUnitId: any = { businessUnitId : qRampStore().getBusinessUnitId() === 'null' ? {"operator":"!=","value":8} : qRampStore().getBusinessUnitId() };
         if(fullContract) {
             businessUnitId = {}
         }
@@ -731,6 +731,7 @@ export default function workOrderList(): WorkOrderList {
             baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
             baseService.index('apiRoutes.qramp.setupContracts', contractParams)
         ]);
+        console.log(customersData, contractParams)
         const customerList = factoryCustomerWithContracts(customersData, allowContractName);
         setCustomerWithContractLists(customerList);
         return resolve(customerList);
