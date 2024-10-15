@@ -731,7 +731,7 @@ export default function workOrderList(): WorkOrderList {
             baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
             baseService.index('apiRoutes.qramp.setupContracts', contractParams)
         ]);
-        console.log(customersData, contractParams)
+
         const customerList = factoryCustomerWithContracts(customersData, allowContractName);
         setCustomerWithContractLists(customerList);
         return resolve(customerList);
