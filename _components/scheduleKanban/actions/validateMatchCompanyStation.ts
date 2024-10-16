@@ -7,7 +7,7 @@ export default function validateMatchCompanyStation(item) {
     const matchStation = Number(item.id) === Number(storeFilter.stationId);
 
     if (Array.isArray(storeKanban.filterCompany)) {
-        validatorCompany = storeKanban.filterCompany.includes(Number(item.companyId))
+        validatorCompany = storeKanban.filterCompany.includes(String(item.companyId))
     } else validatorCompany = matchCompany
 
     return matchStation && validatorCompany

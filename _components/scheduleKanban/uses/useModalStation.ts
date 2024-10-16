@@ -1,4 +1,4 @@
-import { ref, computed, ComputedRef } from 'vue';
+import { ref, computed, ComputedRef, onUnmounted } from 'vue';
 import store from '../store/filters.store'
 import modalStationFields from '../models/modalStation.model';
 import buildKanbanStructure from '../actions/buildKanbanStructure';
@@ -59,7 +59,9 @@ export default function useModalStation() {
       console.log(error);
     }
   }
-
+  onUnmounted(() => {
+    store.showModalStation = false;
+  })
   return {
     loading,
     showModalStation,
