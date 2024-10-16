@@ -228,7 +228,9 @@ export default function useKanbanBoard(props) {
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
+
       if (newPath !== oldPath) {
+        storeFilter.stationId = null;
         await setStations()
         workOrderList().setStationList([]);
         refPageActions.value.search = null;
