@@ -407,13 +407,10 @@ export default {
           flightformField = flightformField.concat(['cancellationNoticeTime']);
         }
 
-        const inboundScheduledArrival = flightForm.inboundScheduledArrival;
-        const outboundScheduledDeparture = flightForm.outboundScheduledDeparture;
-
-        if (inboundScheduledArrival && outboundScheduledDeparture) {
+        if (type === 'full') {
           const isOutboundAfterInbound = this.validateBetweenDates(
-            inboundScheduledArrival, 
-            outboundScheduledDeparture
+            flightForm.inboundScheduledArrival, 
+            flightForm.outboundScheduledDeparture
           );
 
           if (isOutboundAfterInbound) {
