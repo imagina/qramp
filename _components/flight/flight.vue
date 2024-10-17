@@ -1419,6 +1419,7 @@ export default {
       this.validateTimeWithField('inboundScheduledArrival', field.name, 'inbound');
       this.validateTimeWithField('outboundScheduledDeparture', field.name, 'outbound');
       this.setTimeDelayList();
+      this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
     optionResponsible(item) {
       return item ? [{ id: String(item.id), label: item.fullName, value: item.id }] : [];
