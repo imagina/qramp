@@ -10,15 +10,15 @@
 <script>
 import formOrders from "../_components/formOrders.vue"
 import {
-    STATUS_POSTED,
-    STATUS_SUBMITTED,
-    STATUS_CLOSED,
-    STATUS_DRAFT,
-    STATUS_SCHEDULE,
-    BUSINESS_UNIT_RAMP,
-    COMPANY_RAMP,
-    NON_FLIGHT,
-    FLIGHT
+  STATUS_POSTED,
+  STATUS_SUBMITTED,
+  STATUS_CLOSED,
+  STATUS_DRAFT,
+  STATUS_SCHEDULE,
+  BUSINESS_UNIT_RAMP,
+  COMPANY_RAMP,
+  NON_FLIGHT,
+  FLIGHT, BUSINESS_UNIT_PASSENGER
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
@@ -400,7 +400,8 @@ export default {
                         include: 'responsible,contract,customer',
                         filter: {
                             withoutDefaultInclude: true,
-                            type: [FLIGHT, NON_FLIGHT]
+                            type: [FLIGHT, NON_FLIGHT],
+                            businessUnitId: {"operator":"!=","value":8}
                         },
                     },
                     actions: [
