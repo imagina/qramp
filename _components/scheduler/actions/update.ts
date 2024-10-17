@@ -6,6 +6,7 @@ import { BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER, LABOR } from '../../model
 export default async function updateScheduler(): Promise<void> {
     try {
         let businessUnitId: any = qRampStore().getBusinessUnitId();
+        businessUnitId = qRampStore().getBusinessUnitId() !== 'null' ? {businessUnitId} : {};
         store.loading = true;
         store.validateOperationType();
         const payload = {...store.form, businessUnitId}

@@ -4,7 +4,7 @@ import {
   provide,
   watch,
   onMounted,
-  onUnmounted
+  onUnmounted,
 } from "vue";
 import storeKanban from "../store/kanban.store";
 import storeFilter from "../store/filters.store";
@@ -21,6 +21,7 @@ import validateMatchCompanyStation from "../actions/validateMatchCompanyStation"
 import { store, i18n, helper, cache, router } from 'src/plugins/utils'
 import { useQuasar } from 'quasar';
 import { BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR } from '../../model/constants.js';
+import kanbanStore from "../store/kanban.store";
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
@@ -54,7 +55,7 @@ export default function useKanbanBoard(props) {
   const isSecurity = computed(() => qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY);
   const title = computed(() => isPassenger.value ? 'Passenger Schedule' : 'Ramp Schedule')
   const selectedDate = computed(() => storeFilter.selectedDate);
-
+  const showModalStation = computed(() => storeFilter.showModalStation);
   const scheduleType = computed({
     get: () => storeKanban.scheduleType,
     set: (value) => (storeKanban.scheduleType = value),
@@ -171,13 +172,13 @@ export default function useKanbanBoard(props) {
       null;
     storeFilter.form.stationId = storeFilter.stationId;
 
-    const station = await workOrderList()
+    const station = workOrderList()
       .getStationList()
       .find((item) => {
         return validateMatchCompanyStation(item)
       });
 
-    if (!station || !storeFilter.stationId) {
+    if (!station) {
       storeFilter.stationId = null;
       storeFilter.showModalStation = true;
       return;
@@ -227,10 +228,11 @@ export default function useKanbanBoard(props) {
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
+
       if (newPath !== oldPath) {
-        workOrderList().setStationList([]);
         storeFilter.stationId = null;
-        storeFilter.showModalStation = true;
+        await setStations()
+        workOrderList().setStationList([]);
         refPageActions.value.search = null;
         storeKanban.search = null;
       }
@@ -252,6 +254,7 @@ export default function useKanbanBoard(props) {
   })
   onUnmounted(() => {
     storeKanban.columns = [];
+    storeFilter.showModalStation = false;
   })
   return {
     selectedDate,
@@ -274,6 +277,7 @@ export default function useKanbanBoard(props) {
     search,
     changeSearch,
     refPageActions,
-    isSecurity
+    isSecurity,
+    showModalStation
   };
 }

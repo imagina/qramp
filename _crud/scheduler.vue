@@ -322,6 +322,7 @@ export default {
             filter: {
               withoutDefaultInclude: true,
               businessUnitId: this.filterBusinessUnit,
+              stationCompanies: this.filterCompany
             },
           }
         },

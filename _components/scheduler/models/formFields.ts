@@ -5,13 +5,14 @@ import store from '../store/index.store'
 import {ModelFields, FormFields} from '../contracts/formFields.contract'
 import { i18n } from 'src/plugins/utils'
 import qRampStore from 'modules/qramp/_store/qRampStore'
-
+import moment from 'moment'
 
 export default function modelFields(): ModelFields {
     const updateModal: ComputedRef<boolean> = computed(() => store.updateModal);
     const filterCompany = computed(() =>
         qRampStore().getFilterCompany()
     );
+    const isbound = computed(() => qRampStore().isbound(store.form.operationTypeId))
     const formFields: ComputedRef<FormFields> = computed(() => ({
         left: {
             carrierId: {
@@ -156,7 +157,7 @@ export default function modelFields(): ModelFields {
                 type: 'hour',
                 props: {
                     rules: [
-                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
                     ],
                     label: `* Inbound Schedule Arrival`,
                     clearable: true,
@@ -186,7 +187,19 @@ export default function modelFields(): ModelFields {
                 type: 'hour',
                 props: {
                     rules: [
-                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
+                        val => {
+                          if (isbound.value[0] && isbound.value[1] && !store.form.depDays && store.form.outboundScheduleDeparture) {
+
+                            const arrivalTime = moment(store.form.inboundScheduleArrival, 'HH:mm');
+                            const departureTime = moment(val, 'HH:mm');
+
+                            if (departureTime.isBefore(arrivalTime)) {
+                              return 'inboundScheduleArrival cannot be less than outboundScheduleDeparture'
+                            }
+                          }
+                          return true;
+                        }
                     ],
                     label: `*Outbound Schedule Departure `,
                     clearable: true,
@@ -201,6 +214,15 @@ export default function modelFields(): ModelFields {
                 value: null,
                 type: "input",
                 props: {
+                  rules: [
+                    val => {
+                      if (store.refFormScheduler &&
+                        store.form.depDays &&
+                        store.form.outboundScheduleDeparture) {
+                        store.refFormScheduler.reset();
+                      }
+                    }
+                  ],
                     type: 'number',
                     label: `Dep. +Days`,
                     clearable: true,

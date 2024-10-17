@@ -1,9 +1,9 @@
-import { 
-  computed, 
-  ref, 
-  Ref, 
-  ComputedRef, 
-  onMounted 
+import {
+  computed,
+  ref,
+  Ref,
+  ComputedRef,
+  onMounted
 } from "vue";
 import store from "../store/index.store";
 import modelFormFields from "../models/formFields";
@@ -43,6 +43,7 @@ export default function useForm(): UseForm {
   const isbound: ComputedRef<{ inbound: boolean; outbound: boolean }> =
     computed(() => {
       if (form.value.operationTypeId) {
+        store.refFormScheduler.reset();
         const operationType = workOrderList()
           .getOperationTypeList()
           .find((item) => item.id === Number(form.value.operationTypeId));

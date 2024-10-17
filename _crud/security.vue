@@ -421,6 +421,7 @@ export default {
             filter: {
               withoutDefaultInclude: true,
               businessUnitId: [BUSINESS_UNIT_SECURITY],
+              stationCompanies: qRampStore().getFilterCompany()
             },
           },
           actions: [

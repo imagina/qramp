@@ -80,6 +80,10 @@ export default function useKanbanColumn(props: any = {}) {
       if(props.column.loading || props.column.total === cards.value.length) return;
       isLoading.value = true;
       props.column.page = props.column.page + 1;
+      if(!storeFilters.stationId) {
+        isLoading.value = false;
+        return;
+      }
       const response = await getIndividualWorkOrders(true, props.column.page, date.value);
       cards.value.push(...response.data);
       isLoading.value = false;
