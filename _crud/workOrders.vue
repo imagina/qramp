@@ -401,7 +401,8 @@ export default {
                         filter: {
                             withoutDefaultInclude: true,
                             type: [FLIGHT, NON_FLIGHT],
-                            businessUnitId: {"operator":"!=","value":8}
+                            stationCompanies: qRampStore().getFilterCompany(),
+                            businessUnitId: {"operator":"!=","value":[2,4,8,9] }
                         },
                     },
                     actions: [

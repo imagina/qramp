@@ -300,7 +300,7 @@ export default {
           ],
           filters: {
             date: {
-              value: {},
+              value: {"type":"currentMonth"},
               type: 'dateRange',
               quickFilter: true,
               props: {
@@ -415,7 +415,7 @@ export default {
               }
             },
             type: {
-              value: [],
+              value: [FLIGHT, NON_FLIGHT],
               type: 'select',
               props: {
                 label: 'Work Order Types',
@@ -436,7 +436,8 @@ export default {
             filter: {
               withoutDefaultInclude: true,
               businessUnitId: BUSINESS_UNIT_PASSENGER,
-              type: [FLIGHT, NON_FLIGHT]
+              type: [String(FLIGHT), String(NON_FLIGHT)],
+              stationCompanies: qRampStore().getFilterCompany(),
             },
           },
           actions: [

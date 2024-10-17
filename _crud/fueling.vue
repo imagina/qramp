@@ -247,7 +247,8 @@ export default {
                 requestParams: {
                   filter: {
                     contractStatusId: 1,
-                    businessUnitId: BUSINESS_UNIT_FUELING
+                    businessUnitId: BUSINESS_UNIT_FUELING,
+                    stationCompanies: qRampStore().getFilterCompany(),
                   },
                 },
               },

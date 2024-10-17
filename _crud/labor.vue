@@ -374,7 +374,8 @@ export default {
             filter: {
               withoutDefaultInclude: true,
               businessUnitId: [BUSINESS_UNIT_LABOR, BUSINESS_UNIT_PASSENGER],
-              type: [LABOR]
+              type: [LABOR],
+              stationCompanies: qRampStore().getFilterCompany(),
             },
           },
           actions: [
