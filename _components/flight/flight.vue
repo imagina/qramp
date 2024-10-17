@@ -371,12 +371,9 @@ export default {
         }))
     },
     validateRulesBlock() {
-      const rules = !this.isPassenger ? {
-        rules: [
-          val => !!val || this.$tr('isite.cms.message.fieldRequired')
-        ]
-      } : {};
-      return rules;
+      let rules = []
+      if (!this.isPassenger) rules.push(val => !!val || this.$tr('isite.cms.message.fieldRequired'))
+      return rules
     },
     validateRulesField() {
       return val => this.form.operationTypeId == OPERATION_TYPE_OTHER ? true : !!val || this.$tr('isite.cms.message.fieldRequired');
@@ -838,7 +835,8 @@ export default {
             type: this.readonly ? 'inputStandard' : 'fullDate',
             props: {
               rules: [
-                val => val => !!val || this.$tr('isite.cms.message.fieldRequired')
+                val => !!val || this.$tr('isite.cms.message.fieldRequired'),
+                val => this.validateDateRule(val, this.form.inboundScheduledArrival)
               ],
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
@@ -854,7 +852,6 @@ export default {
               }),
               suffix: this.timezoneAirport,
             },
-            label: this.$tr('ifly.cms.form.scheduledDeparture'),
           },
           outboundGateDeparture: {
             name: 'outboundGateDeparture',
@@ -875,7 +872,7 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard' : 'fullDate',
             props: {
-              ...this.validateRulesBlock,
+              rules: this.validateRulesBlock,
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
@@ -896,7 +893,10 @@ export default {
             value: '',
             type: this.readonly ? 'inputStandard' : 'fullDate',
             props: {
-              ...this.validateRulesBlock,
+              rules: [
+                ...this.validateRulesBlock,
+                val => this.validateDateRule(val, this.form.inboundBlockIn)
+              ],
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
               'place-holder': 'MM/DD/YYYY HH:mm',
@@ -1411,6 +1411,20 @@ export default {
         return validateDate ? Number(dateMin) >= Number(minIn) : true;
       }
       return validateDate ? Number(dateTime) >= Number(hourIn) : true;
+    },
+    validateDateRule(val, dateIn) {
+      if (!val) return true
+      
+      const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+      const dateInFormat = dateIn
+        ? this.$moment(dateIn, FORMAT_DATE) 
+        : this.$moment(FORMAT_DATE)
+    
+      const date = this.$moment(val, FORMAT_DATE)
+
+      const diff = date.diff(dateInFormat)
+
+      return diff >= 0 || 'Wrong date'
     },
     changeDate(field) {
       if (field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
