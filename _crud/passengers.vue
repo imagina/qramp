@@ -300,7 +300,7 @@ export default {
           ],
           filters: {
             date: {
-              value: {"type":"currentMonth"},
+              value: {},
               type: 'dateRange',
               quickFilter: true,
               props: {
