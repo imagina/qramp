@@ -12,6 +12,48 @@ export default defineComponent({
 <template>
   <div class="tw-flex tw-items-center">
     <q-btn
+      icon="fa-light fa-circle-exclamation fa-shake"
+      class="tw-text-yellow-500"
+      size="sm"
+      round
+      flat
+      v-if="servicesAlertSetting"
+    >
+      <q-popup-proxy
+        ref="popupProxyRef"
+        class="
+          popover-w-490
+          lg:tw-bg-white
+          tw-shadow-2xl
+          tw-rounded-2xl
+          tw-max-h-72
+          lg:tw-overflow-x-hidden
+          tw-py-5
+          tw-px-2.5"
+      >
+        <div
+          class="
+            popover-w-490
+            tw-bg-white
+            lg:tw-max-w-4xl
+            tw-text-xs
+            lg:tw-text-base
+            tw-max-h-72
+            tw-pb-3
+            sm:tw-pb-0
+          "
+        >
+          <div class="tw-mt-5 sm:tw-mt-0 tw-mb-4 tw-ml-3.5">
+           <p v-html="servicesAlertSetting" />
+          </div>
+        </div>
+      </q-popup-proxy>
+    </q-btn>
+    <hr
+      v-if="(favouritesList.length > 0 || lists.length > 0) && !isAppOffline && servicesAlertSetting"
+      class="tw-h-5 tw-w-0.5 tw-mx-2 hr-bg-color"
+    />
+    <q-btn
       icon="fa-regular fa-star"
       :class="`${showFavourite ? 'color-icon-active' : 'color-icon'}`"
       size="sm"
