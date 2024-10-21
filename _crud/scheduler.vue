@@ -321,7 +321,7 @@ export default {
           requestParams: {
             filter: {
               withoutDefaultInclude: true,
-              businessUnitId: this.filterBusinessUnit,
+              ...(this.filterBusinessUnit === 'null' ? {}: {businessUnitId:this.filterBusinessUnit}),
               stationCompanies: this.filterCompany
             },
           }
