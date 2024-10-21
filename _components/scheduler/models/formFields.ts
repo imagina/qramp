@@ -195,7 +195,7 @@ export default function modelFields(): ModelFields {
                             const departureTime = moment(val, 'HH:mm');
 
                             if (departureTime.isBefore(arrivalTime)) {
-                              return 'inboundScheduleArrival cannot be less than outboundScheduleDeparture'
+                              return 'Outbound cannot be behind Inbound'
                             }
                           }
                           return true;
