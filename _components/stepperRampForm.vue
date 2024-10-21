@@ -343,10 +343,9 @@ export default {
       })
     },
     validateBetweenDates(dateIn, dateOut) {
-      const FORMAT_DATE = 'YYYY/MM/DD HH:mm'
-      const inFormat = this.$moment(dateIn, FORMAT_DATE)
-    
-      const date = this.$moment(dateOut, FORMAT_DATE)
+      const inFormat = this.$moment(dateIn)
+      const date = this.$moment(dateOut)
+
       const diff = date.diff(inFormat)
 
       return diff < 0
