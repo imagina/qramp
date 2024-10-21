@@ -402,7 +402,6 @@ export default {
                             withoutDefaultInclude: true,
                             type: [FLIGHT, NON_FLIGHT],
                             stationCompanies: qRampStore().getFilterCompany()
-                          }
                         },
                     },
                     actions: [
