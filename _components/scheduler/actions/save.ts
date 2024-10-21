@@ -9,7 +9,7 @@ export default async function saveScheduler(): Promise<void> {
         businessUnitId = qRampStore().getBusinessUnitId() !== 'null' ? {businessUnitId} : {};
         store.loading = true;
         store.validateOperationType();
-        await baseService.create('apiRoutes.qramp.schedulers', {...store.form, businessUnitId});
+        await baseService.create('apiRoutes.qramp.schedulers', {...store.form, ...businessUnitId});
         store.loading = false;
     } catch (error) {
       store.loading = false;
