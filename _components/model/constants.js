@@ -24,6 +24,7 @@ export const FLIGHT = 1;
 export const LABOR = 4;
 export const FUELING = 3;
 export const SECURITY = 5;
+export const CARGO_PAX = 6;
 export const OPERATION_TYPE_OTHER = 6;
 export const OPERATION_TYPE_PASSENGER_NON_FLIGHT = 13
 export const OPERATION_TYPE_SECURITY_NON_FLIGHT = 39

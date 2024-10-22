@@ -5,8 +5,9 @@ import filterModel from '../models/filters.model'
 import moment from 'moment';
 import { State } from '../contracts/filtersStore.contract';
 import storeKanban from '../store/kanban.store';
-import { LABOR, BUSINESS_UNIT_LABOR } from "src/modules/qramp/_components/model/constants";
+import { LABOR, BUSINESS_UNIT_LABOR, FLIGHT } from "src/modules/qramp/_components/model/constants";
 import qRampStore from "src/modules/qramp/_store/qRampStore";
+import { CARGO_PAX } from '../../model/constants';
 
 const state = reactive<State>({
     showModal: false,
@@ -110,11 +111,25 @@ const store = computed(() => ({
       return state.fullDay.split('-');
     },
     get payload(){
+      const typeWorkOrderFromStore = qRampStore().getTypeWorkOrder();
       let businessUnitId: any = qRampStore().getBusinessUnitId();
       businessUnitId = businessUnitId !== 'null' ? {businessUnitId} : {};
-      const typeWorkOrder = qRampStore().getBusinessUnitId() === BUSINESS_UNIT_LABOR ? {type: [LABOR]} : {};
+      let typeWorkOrder = {};
+      if (businessUnitId === BUSINESS_UNIT_LABOR) {
+        typeWorkOrder = { type: [LABOR] };
+      } else if (qRampStore().getBusinessUnitId() == 'null' && typeWorkOrderFromStore === CARGO_PAX) {
+        typeWorkOrder = { type: [CARGO_PAX] };
+      } else if (qRampStore().getBusinessUnitId() == 'null' && typeWorkOrderFromStore !== CARGO_PAX) {
+        typeWorkOrder = { type: [FLIGHT] };
+      }
+
       const stationCompanies = qRampStore().getFilterCompany();
-      const filters = {...state.form, ...typeWorkOrder, ...businessUnitId, stationCompanies };
+      const filters = {
+        ...state.form,
+        ...typeWorkOrder,
+        ...businessUnitId,
+        stationCompanies
+      };
       delete filters.time;
       delete filters.scheduleType;
       Object.keys(filters).forEach(

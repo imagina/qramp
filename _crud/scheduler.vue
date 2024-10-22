@@ -14,7 +14,7 @@ import {
   BUSINESS_UNIT_RAMP,
   BUSINESS_UNIT_PASSENGER,
   LABOR,
-  BUSINESS_UNIT_LABOR, BUSINESS_UNIT_SECURITY
+  BUSINESS_UNIT_LABOR, BUSINESS_UNIT_SECURITY, CARGO_PAX
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
@@ -43,6 +43,10 @@ export default {
       } else if (urlSchedule.includes('/security')) {
         await qRampStore().setIsPassenger(false);
         qRampStore().setBusinessUnitId(BUSINESS_UNIT_SECURITY);
+      } else if (urlSchedule.includes('/cargo')) {
+        await qRampStore().setIsPassenger(false);
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
+        qRampStore().setTypeWorkOrder(CARGO_PAX);
       }
       await workOrderList().getAllList();
     })
@@ -322,7 +326,8 @@ export default {
             filter: {
               withoutDefaultInclude: true,
               ...(this.filterBusinessUnit === 'null' ? {}: {businessUnitId:this.filterBusinessUnit}),
-              stationCompanies: this.filterCompany
+              stationCompanies: this.filterCompany,
+              ...(qRampStore().getTypeWorkOrder() === CARGO_PAX) ? {type: CARGO_PAX} : {}
             },
           }
         },
