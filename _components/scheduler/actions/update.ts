@@ -9,7 +9,7 @@ export default async function updateScheduler(): Promise<void> {
         businessUnitId = qRampStore().getBusinessUnitId() !== 'null' ? {businessUnitId} : {};
         store.loading = true;
         store.validateOperationType();
-        const payload = {...store.form, businessUnitId}
+        const payload = {...store.form, ...businessUnitId}
         await baseService.update('apiRoutes.qramp.schedulers', store.form.id, payload);
         store.loading = false;
     } catch (error) {

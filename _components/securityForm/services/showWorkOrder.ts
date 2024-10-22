@@ -7,7 +7,7 @@ export default async function showWorkOrder(data) {
         store.showModal = true;
         store.loading = true;
         store.isUpdate = true;
-        store.titleModal = 'Update fueling'
+        store.titleModal = 'Update Security'
         store.widthModal = '90vw';
         const response = await baseService.show('apiRoutes.qramp.workOrders', data.id,
             {
@@ -18,7 +18,7 @@ export default async function showWorkOrder(data) {
             })
         store.form = {...response.data};
     } catch (error) {
-       console.info(error); 
+       console.info(error);
     } finally {
       store.loading = false;
       if (!navigator.onLine) store.form = {...data }

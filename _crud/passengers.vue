@@ -300,7 +300,7 @@ export default {
           ],
           filters: {
             date: {
-              value: {"type":"currentMonth"},
+              value: {},
               type: 'dateRange',
               quickFilter: true,
               props: {
@@ -602,7 +602,7 @@ export default {
                 field: val => {
                   const quantity = val.quantity || 0;
                   const rate = val.contractLine?.rate || 0;
-                  return quantity * rate;
+                  return Math.round(quantity * rate);
                 }
               },
               {

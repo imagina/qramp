@@ -93,21 +93,18 @@ export default {
           },
           companyId: {
             value: null,
-            type: 'crud',
+            type: 'select',
             props: {
-              crudType: 'select',
-              crudData: import('../../qsetupagione/_crud/companies'),
-              crudProps: {
-                label: 'Company Name',
-              },
+              label: 'Company Name',
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              config: {
-                options: {label: 'fullName', value: 'id'},
-                requestParams: {filter: {id: store.getSetting('ramp::passengerCompanies')}}
-              },
             },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qsetupagione.setupCompanies',
+              select: {label: 'fullName', id: 'id'},
+              requestParams: {filter: {id: store.getSetting('ramp::rampCompanies')}}
+            }
           },
           options: {
             value: null,

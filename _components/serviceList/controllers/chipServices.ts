@@ -13,6 +13,7 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
         const serviceList: any[] = searchAndCreateDynamicField(serviceListStore().getServiceList());
         return serviceListStore().getFavouriteList().filter(item => serviceList.map(service => service.id).includes(item.productId));
     })
+    const servicesAlertSetting = computed(() => store.getSetting('ramp::servicesAlert'))
     const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline);
     const permissionFavourite = computed(() => ({
         create: store.hasAccess('isite.favourites.create'),
@@ -75,7 +76,8 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
         favouritesList,
         favourites,
         permissionFavourite,
-        isAppOffline
+        isAppOffline,
+        servicesAlertSetting
     }
 }
 export default chipServicesController;
