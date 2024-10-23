@@ -73,14 +73,19 @@ export default defineComponent({
       }
 
       const startDate = formField.fullDateStart?.value
-        ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm').format('YYYY/MM/DD')
+        ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
         : null;
 
       if (startDate) {
-        const options = {
-          options: (dateTime) => dateTime >= startDate,
-        };
 
+        const options = {
+          options: (dateTime, dateMin) => {
+            if(!Number.isInteger(dateTime)) {
+              return dateTime >= startDate.format('YYYY/MM/DD')
+            }
+            return true
+          },
+        };
         return {
           ...field,
           props: {
