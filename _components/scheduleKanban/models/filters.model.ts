@@ -5,9 +5,19 @@ import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
 import { i18n } from 'src/plugins/utils'
 import { FLIGHT, NON_FLIGHT, BUSINESS_UNIT_SECURITY } from "src/modules/qramp/_components/model/constants";
 import qRampStore from "src/modules/qramp/_store/qRampStore";
+import { CARGO_PAX } from "../../model/constants";
 
 
 export default function filterModel() {
+  const validateSection = computed(() => {
+    if(qRampStore().getBusinessUnitId() === 'null' && qRampStore().getTypeWorkOrder() === CARGO_PAX) {
+      return false;
+    }
+    if(qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_SECURITY && qRampStore().getTypeWorkOrder() !== CARGO_PAX){
+      return false;
+    }
+    return true;
+  })
   return computed(() => ({
     time: {
       value: null,
@@ -86,7 +96,7 @@ export default function filterModel() {
       value: [],
       type: 'select',
       props: {
-        vif: qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_SECURITY,
+        vIf: validateSection.value,
         label: 'Work Order Types',
         multiple: true,
         useChips: true,

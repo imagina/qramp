@@ -14,10 +14,10 @@ import { router } from 'src/plugins/utils'
 let routeName = router.route.path;
 import serviceListStore from "../serviceList/store/serviceList";
 import {
-  BUSINESS_UNIT_SECURITY, 
-  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_SECURITY,
+  BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_LABOR,
-  BUSINESS_UNIT_RAMP
+  BUSINESS_UNIT_RAMP, CARGO_PAX, FLIGHT
 } from "../model/constants";
 
 export default defineComponent({
@@ -51,10 +51,12 @@ export default defineComponent({
         let isLabor = currentRoutePath.indexOf('labor') !== -1;
         let isRamp = currentRoutePath.indexOf('ramp') !== -1;
         let isSecurity = currentRoutePath.indexOf('security') !== -1;
+        let isCargo = currentRoutePath.indexOf('cargo') !== -1;
         qRampStore().setTypeWorkOrder(null);
         if(isRamp) {
           await qRampStore().setIsPassenger(false);
           qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
+          qRampStore().setTypeWorkOrder(FLIGHT);
         }
         if(isSecurity) {
           await qRampStore().setIsPassenger(false);
@@ -67,6 +69,11 @@ export default defineComponent({
         if(isLabor) {
           await qRampStore().setIsPassenger(true);
           qRampStore().setBusinessUnitId(BUSINESS_UNIT_LABOR);
+        }
+        if(isCargo) {
+          await qRampStore().setIsPassenger(false);
+          qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
+          qRampStore().setTypeWorkOrder(CARGO_PAX);
         }
         await workOrderList().getAllList(refresh);
         await workOrderList().getCustomerWithContract();
