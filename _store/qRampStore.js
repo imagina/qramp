@@ -125,7 +125,7 @@ export default function qRampStore() {
         if (statusId === STATUS_SUBMITTED && !editPermissionseSubmitted()) {
             return true;
         }
-        if (statusId === STATUS_POSTED) {
+        if (statusId === STATUS_POSTED && !store.hasAccess('ramp.work-orders.edit-when-posted')) {
             return true;
         }
         return false;
