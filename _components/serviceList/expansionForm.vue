@@ -6,6 +6,8 @@ import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
 import storeFlight from '../flight/store';
 import { alert, store } from 'src/plugins/utils';
+import qRampStore from "../../_store/qRampStore";
+import moment from "moment-timezone";
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -56,7 +58,38 @@ export default defineComponent({
         return data.value
       }
     }
+    const differenceHour = (formField) => {
+      const startDate = formField.fullDateStart?.value;
+      const endDate = formField.fullDateEnd?.value;
+      if (startDate && endDate) {
+        return qRampStore().getDifferenceInHours(startDate, endDate);
+      }
+      return 0
+    };
+    const traformerFields = (field, productType, formField) => {
+      let options = {};
 
+      if(productType === 4 && field.name === 'End' && field.type === 'fullDate') {
+        const startDate = moment(formField.fullDateStart?.value, 'MM/DD/YYYY HH:mm');
+        const endDate = moment(formField.fullDateEnd?.value, 'MM/DD/YYYY HH:mm');
+        if(startDate) {
+          options = {
+            options: () => {
+              console.log(startDate, endDate)
+              return startDate <= endDate;
+            }}
+        }
+
+      }
+
+      //console.log({...field, props: {...field.props, ...options} });
+      return {...field, props: {...field.props, ...options} }
+    }
+
+    const validateDate = (dateEnd) => {
+      //return dateEnd >= dateStart
+      return 0;
+    }
     return {
       isDesktop,
       showValue,
@@ -65,7 +98,9 @@ export default defineComponent({
       selectFavourite,
       refData,
       permissionFavourite,
-      isAppOffline
+      isAppOffline,
+      differenceHour,
+      traformerFields
     }
   },
 })
@@ -103,7 +138,7 @@ export default defineComponent({
                 <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
                   :field="field" />
               </label>
-              <div class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden" v-if="field.type === 'fullDate'
+              <div class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center" v-if="field.type === 'fullDate'
       && field.props.typeIndexDate === 1">
                 Difference (hours): {{ 1 }}
               </div>
@@ -164,9 +199,14 @@ export default defineComponent({
             :key="keyfield"
           >
             <div>
-              <dynamic-field v-model="data[index]['formField'][keyfield]['value']" :field="field" />
+              <dynamic-field v-model="data[index]['formField'][keyfield]['value']" :field="traformerFields(field, item.productType, item.formField)" />
             </div>
           </div>
+          <p>
+            <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+              Difference (hours): {{ differenceHour(item.formField) }}
+            </span>
+          </p>
         </div>
       </div>
     </div>
