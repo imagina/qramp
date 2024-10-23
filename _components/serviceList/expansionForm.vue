@@ -76,10 +76,9 @@ export default defineComponent({
         ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
         : null;
 
-      if (startDate) {
-
         const options = {
           options: (dateTime, dateMin) => {
+            if(!formField.fullDateStart.value) return false;
             if(!Number.isInteger(dateTime)) {
               return dateTime >= startDate.format('YYYY/MM/DD')
             }
@@ -93,11 +92,7 @@ export default defineComponent({
             ...options,
           },
         };
-      }
-
-      return field;
-    };
-
+    }
     return {
       isDesktop,
       showValue,
