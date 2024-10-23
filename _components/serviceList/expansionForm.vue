@@ -67,29 +67,32 @@ export default defineComponent({
       return 0
     };
     const traformerFields = (field, productType, formField) => {
-      let options = {};
 
-      if(productType === 4 && field.name === 'End' && field.type === 'fullDate') {
-        const startDate = moment(formField.fullDateStart?.value, 'MM/DD/YYYY HH:mm');
-        const endDate = moment(formField.fullDateEnd?.value, 'MM/DD/YYYY HH:mm');
-        if(startDate) {
-          options = {
-            options: () => {
-              console.log(startDate, endDate)
-              return startDate <= endDate;
-            }}
-        }
-
+      if (!(productType === 4 && field.name === 'End' && field.type === 'fullDate')) {
+        return field;
       }
 
-      //console.log({...field, props: {...field.props, ...options} });
-      return {...field, props: {...field.props, ...options} }
-    }
+      const startDate = formField.fullDateStart?.value
+        ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm').format('YYYY/MM/DD')
+        : null;
 
-    const validateDate = (dateEnd) => {
-      //return dateEnd >= dateStart
-      return 0;
-    }
+      if (startDate) {
+        const options = {
+          options: (dateTime) => dateTime >= startDate,
+        };
+
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            ...options,
+          },
+        };
+      }
+
+      return field;
+    };
+
     return {
       isDesktop,
       showValue,
