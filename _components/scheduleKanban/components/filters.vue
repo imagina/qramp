@@ -81,7 +81,7 @@
       text-center
       bg-white
       tw-p-3
-      tw-absolute 
+      tw-absolute
       tw-bottom-0
       w-97"
       ref="footerContent"
