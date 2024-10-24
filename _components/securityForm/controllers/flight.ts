@@ -107,6 +107,20 @@ export default function flightController() {
     }
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
+  const validateDateRule = (val, dateIn) => {
+    if (!val) return true
+    
+    const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+    const dateInFormat = dateIn
+      ? moment(dateIn, FORMAT_DATE) 
+      : moment(FORMAT_DATE)
+  
+    const date = moment(val, FORMAT_DATE)
+
+    const diff = date.diff(dateInFormat)
+
+    return diff >= 0 || 'Wrong date'
+  }
   const readonlyOperationType= computed(() => {
     const { parentId, preFlightNumber, operationTypeId } = form.value || {};
     const isOther = OPERATION_TYPE_NON_FLIGHT.includes(Number(operationTypeId))
@@ -392,7 +406,8 @@ export default function flightController() {
           type: 'fullDate',
           props: {
             rules: [
-              val => val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+              val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
+              val => validateDateRule(val, form.value.inboundScheduledArrival)
             ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
@@ -429,7 +444,9 @@ export default function flightController() {
           value: '',
           type: 'fullDate',
           props: {
-            //...this.validateRulesBlock,
+            rules: [
+              val => validateDateRule(val, form.value.inboundBlockIn)
+            ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
             'place-holder': 'MM/DD/YYYY HH:mm',

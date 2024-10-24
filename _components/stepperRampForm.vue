@@ -342,6 +342,21 @@ export default {
         return resolve(validate);
       })
     },
+    validateBetweenDates(dateIn, dateOut) {
+      const inFormat = this.$moment(dateIn)
+      const date = this.$moment(dateOut)
+
+      const diff = date.diff(inFormat)
+
+      return diff < 0
+    },
+    async showErrorMessage(message, step) {
+      this.error = true;
+      await this.setStep(step);
+      qRampStore().hideLoading();
+      await this.setData();
+      this.$alert.error({ message });
+    },
     async validateAllFieldsRequiredByStep() {
       try {
         const flightForm = this.$store.state.qrampApp.form;
@@ -390,14 +405,47 @@ export default {
         if(cancellationType) {
           flightformField = flightformField.concat(['cancellationNoticeTime']);
         }
+
+        if (type === 'full') {
+          const isOutboundAfterInbound = this.validateBetweenDates(
+            flightForm.inboundScheduledArrival, 
+            flightForm.outboundScheduledDeparture
+          );
+
+          if (isOutboundAfterInbound) {
+            this.showErrorMessage(
+              'The outbound scheduled departure must be greater than the inbound scheduled arrival', 
+              STEP_FLIGHT
+            );
+            return true;
+          }
+        }
+
+        const inboundBlockIn = flightForm.inboundBlockIn;
+        const outboundBlockOut = flightForm.outboundBlockOut;
+
+        if (inboundBlockIn && outboundBlockOut) {
+          const isBlockOutAfterBlockIn = this.validateBetweenDates(
+            flightForm.inboundBlockIn, 
+            flightForm.outboundBlockOut
+          );
+          
+          if (isBlockOutAfterBlockIn) {
+            this.showErrorMessage(
+              'Block-out must be greater than block-in', 
+              STEP_FLIGHT
+            );
+            return true;
+          }
+        }
+
         const validateflightform = flightformField
             .some(item => flightForm[item] === null || flightForm[item] === '')
         if (validateflightform) {
-          this.error = true;
-          await this.setStep(STEP_FLIGHT);
-          qRampStore().hideLoading();
-          await this.setData();
-          this.$alert.error({message: this.$tr('isite.cms.message.formInvalid')})
+          this.showErrorMessage(
+            this.$tr('isite.cms.message.formInvalid'), 
+            STEP_FLIGHT
+          );
           return true;
         }
         const validateDateService = await this.validateFulldate();
