@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+import {defineComponent, computed, ref} from 'vue';
 import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
 import storeFlight from '../flight/store';
-import { alert, store } from 'src/plugins/utils';
+import {alert, store} from 'src/plugins/utils';
 import qRampStore from "../../_store/qRampStore";
 import moment from "moment-timezone";
 
@@ -27,17 +27,18 @@ export default defineComponent({
       index: store.hasAccess(`isite.favourites.index`),
       destroy: store.hasAccess(`isite.favourites.destroy`),
     }));
+
     async function selectFavourite(data: any) {
       data.favourite = !data.favourite;
       if (!data.favourite) {
-        if(!permissionFavourite.value.destroy) return;
+        if (!permissionFavourite.value.destroy) return;
         const favoriteData = serviceListStore().getFavouriteList().find(item => item.productId === data.id);
         await deleteFavourites(favoriteData?.id);
         serviceListStore().removeFromFavouriteList(data.id);
-        alert.success({ message: `Favorite deleted successfully Product:${data.title}` });
+        alert.success({message: `Favorite deleted successfully Product:${data.title}`});
       } else {
-        if(!permissionFavourite.value.create) return;
-        const { stationId, contractId, customerId, carrierId, operationTypeId } = storeFlight().getForm();
+        if (!permissionFavourite.value.create) return;
+        const {stationId, contractId, customerId, carrierId, operationTypeId} = storeFlight().getForm();
         const response: any = await postFavourites({
           productId: data.id,
           stationId,
@@ -46,18 +47,21 @@ export default defineComponent({
           carrierId,
           operationTypeId
         });
-        serviceListStore().pustFavouriteList({ ...response });
+        serviceListStore().pustFavouriteList({...response});
         alert.success(`Favorite created successfully Product:${data.title}`);
       }
       await workOrderList().getFavourites(true);
     }
+
     const favourite = ref(false);
     const refData = ref({});
+
     function showValue(data: any) {
       if (data) {
         return data.value
       }
     }
+
     const differenceHour = (formField) => {
       const startDate = formField.fullDateStart?.value;
       const endDate = formField.fullDateEnd?.value;
@@ -72,32 +76,36 @@ export default defineComponent({
         return field;
       }
 
-        const startDate = formField.fullDateStart?.value
+      const startDate = formField.fullDateStart?.value
         ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
         : null;
-        const endDate = formField.fullDateEnd?.value
+      const endDate = formField.fullDateEnd?.value
         ? moment(formField.fullDateEnd.value, 'MM/DD/YYYY HH:mm')
         : null;
-        const options = {
-          options: (dateTime, dateMin) => {
-            if(!formField.fullDateStart.value) return false;
-            if (isNaN(dateTime)) {
-              return dateTime >= startDate.format('YYYY/MM/DD')
-            }
-            if(!formField.fullDateEnd.value) return false;
-            if (dateMin) {
-              return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD') ? dateMin >= Number(startDate.format('m')) : true;
-            }
-            return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD') ? dateTime >= startDate.format('H') : true;
-          },
-        };
-        return {
-          ...field,
-          props: {
-            ...field.props,
-            ...options,
-          },
-        };
+      const options = {
+        options: (dateTime, dateMin) => {
+          if (!formField.fullDateStart.value) return false;
+          if (isNaN(dateTime)) {
+            return dateTime >= startDate.format('YYYY/MM/DD')
+          }
+          if (!formField.fullDateEnd.value) return false;
+          if (dateMin) {
+            return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+              ? dateMin >= Number(startDate.format('m'))
+              : true;
+          }
+          return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+            ? dateTime >= startDate.format('H')
+            : true;
+        },
+      };
+      return {
+        ...field,
+        props: {
+          ...field.props,
+          ...options,
+        },
+      };
     }
     return {
       isDesktop,
@@ -122,9 +130,9 @@ export default defineComponent({
           <template v-slot:header>
             <q-item-section v-if="permissionFavourite.create" avatar class="q-pr-none " style="min-width: 45px;">
               <i
-                  class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
-                  @click="selectFavourite(data[index])"
-                  :class="{
+                class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
+                @click="selectFavourite(data[index])"
+                :class="{
                     'fa-solid': data[index].favourite,
                     'fa-light': !data[index].favourite,
                   }"
@@ -145,7 +153,7 @@ export default defineComponent({
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
                 <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
-                  :field="field" />
+                               :field="field"/>
               </label>
               <div class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center" v-if="field.type === 'fullDate'
       && field.props.typeIndexDate === 1">
@@ -158,14 +166,15 @@ export default defineComponent({
       </q-list>
     </div>
     <div v-else>
-      <div v-for="(item, index) in data" :key="index" class="
-          tw-flex
+      <div v-for="(item, index) in data" :key="index"
+
+      >
+        <div class="tw-flex
           color-bg-blue-gray-custom
           tw-py-2
-          tw-rounded-lg"
-        >
-        <div
-          class="
+          tw-rounded-lg">
+          <div
+            class="
             tw-flex
             tw-w-2/5
             tw-break-words
@@ -173,29 +182,31 @@ export default defineComponent({
             text-services
             tw-pl-2"
           >
-              <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
-                <i
-                  class="fa-star color-icon-star tw-cursor-pointer"
-                  @click="selectFavourite(data[index])"
-                  :class="{
+            <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
+              <i
+                class="fa-star color-icon-star tw-cursor-pointer"
+                @click="selectFavourite(data[index])"
+                :class="{
                     'fa-solid': data[index].favourite,
                     'fa-light': !data[index].favourite,
                   }"
-                />
-              </div>
-              <div>
-                <p>
-                  {{ item.title }}
-                </p>
-                <p
-                    v-if="item.helpText"
-                    class="tw-text-xs tw-text-gray-500">
-                  {{ item.helpText }}
-                </p>
-              </div>
-        </div>
-        <div
-          class="
+              />
+            </div>
+            <div>
+              <p>
+                {{ item.title }}
+              </p>
+              <p
+                v-if="item.helpText"
+                class="tw-text-xs tw-text-gray-500">
+                {{ item.helpText }}
+              </p>
+            </div>
+
+          </div>
+
+          <div
+            class="
             tw-w-3/5
             tw-mx-2
             tw-truncate
@@ -203,18 +214,22 @@ export default defineComponent({
             tw-flex-wrap
             tw-justify-end tw-gap-4"
           >
-          <div
-            v-for="(field, keyfield) in item.formField"
-            :key="keyfield"
-          >
-            <div>
-              <dynamic-field v-model="data[index]['formField'][keyfield]['value']" :field="traformerFields(field, item.productType, item.formField)" />
+            <div
+              v-for="(field, keyfield) in item.formField"
+              :key="keyfield"
+            >
+              <div>
+                <dynamic-field v-model="data[index]['formField'][keyfield]['value']"
+                               :field="traformerFields(field, item.productType, item.formField)"/>
+              </div>
             </div>
           </div>
+        </div>
+        <div class="tw-relative tw-float-right tw-top-[-26px] tw-pr-1">
           <p>
-            <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
-              Difference (hours): {{ differenceHour(item.formField) }}
-            </span>
+              <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+                Difference (hours): {{ differenceHour(item.formField) }}
+              </span>
           </p>
         </div>
       </div>
