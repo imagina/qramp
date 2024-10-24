@@ -72,17 +72,23 @@ export default defineComponent({
         return field;
       }
 
-      const startDate = formField.fullDateStart?.value
+        const startDate = formField.fullDateStart?.value
         ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
         : null;
-
+        const endDate = formField.fullDateEnd?.value
+        ? moment(formField.fullDateEnd.value, 'MM/DD/YYYY HH:mm')
+        : null;
         const options = {
           options: (dateTime, dateMin) => {
             if(!formField.fullDateStart.value) return false;
-            if(!Number.isInteger(dateTime)) {
+            if (isNaN(dateTime)) {
               return dateTime >= startDate.format('YYYY/MM/DD')
             }
-            return true
+            if(!formField.fullDateEnd.value) return false;
+            if (dateMin) {
+              return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD') ? dateMin >= Number(startDate.format('m')) : true;
+            }
+            return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD') ? dateTime >= startDate.format('H') : true;
           },
         };
         return {
