@@ -70,7 +70,6 @@
           today-btn
         />
       </div>
-      <pre>{{filters}}</pre>
       <div class="tw-px-4 text-primary">
         <div v-for="(field, keyField) in filters" :key="keyField" >
           <dynamic-field v-model="form[keyField]" :field="field" />
