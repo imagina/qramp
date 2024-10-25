@@ -174,7 +174,8 @@ export default defineComponent({
       permissionFavourite,
       isAppOffline,
       differenceHour,
-      traformerFields
+      traformerFields,
+      refServiceList
     }
   },
 })

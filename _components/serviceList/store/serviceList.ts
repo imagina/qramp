@@ -234,6 +234,22 @@ export default function serviceListStore(): ServiceListStoreContract {
             return item.work_order_item_attributes.some(attr => attr.value === null ||
               attr.value === undefined);
         }
+        if(item.product_type == 4) {
+          return item.work_order_item_attributes.some(attr => {
+              const requiredFields = ['Employees', 'Start', 'End'];
+
+              const isValid = item => {
+                if (!requiredFields.includes(item.name)) return true;
+
+                return item.value !== null &&
+                  item.value !== "" &&
+                  (!Array.isArray(item.value) || item.value.length > 0) &&
+                  item.value !== "[]";
+              };
+              return item.work_order_item_attributes.some(attrItem => !isValid(attrItem))
+          }
+          );
+        }
         return false;
        })
        setErrorList(serviceList);

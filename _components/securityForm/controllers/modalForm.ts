@@ -7,13 +7,13 @@ import {
 } from 'vue';
 import store from '../store/index';
 import qRampStore from 'src/modules/qramp/_store/qRampStore';
-import { 
-  STATUS_CLOSED, 
-  STATUS_DRAFT, 
-  STATUS_POSTED, 
-  STATUS_SCHEDULE, 
-  STATUS_SUBMITTED, 
-  STEP_FLIGHT, 
+import {
+  STATUS_CLOSED,
+  STATUS_DRAFT,
+  STATUS_POSTED,
+  STATUS_SCHEDULE,
+  STATUS_SUBMITTED,
+  STEP_FLIGHT,
   STEP_SERVICE,
   modalFullProps,
 } from '../../model/constants';
@@ -192,6 +192,7 @@ export default function modalFormController(props: any = null, emit: any = null)
       alert.error({ message: i18n.tr('isite.cms.message.formInvalid') })
       return;
     }
+
     const service = await serviceListStore().getServiceItems();
     if (service.length === 0) {
       alert.warning({
@@ -221,6 +222,7 @@ export default function modalFormController(props: any = null, emit: any = null)
       store.step = STEP_SERVICE;
       const step: any = stepps.find(item => item.step === STEP_SERVICE);
       step.error = true;
+      await serviceListStore().getRefGlobal().refServiceList.validate();
       alert.error({ message: i18n.tr('You have services to correct') })
       return;
     }
@@ -233,7 +235,7 @@ export default function modalFormController(props: any = null, emit: any = null)
     await emit('refresh-data');
     alert.info({ message })
   }
-  
+
   async function updateService() {
     await updateWorkOrders()
     const message = i18n.tr('isite.cms.message.recordUpdated')
