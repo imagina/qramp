@@ -71,7 +71,7 @@ export default defineComponent({
       }
       return 0
     };
-    const traformerFields = (field, productType, formField) => {
+    const transformerFields = (field, productType, formField) => {
       if(productType === 4 && field.name === 'Employees' && field.type === 'select') {
         const rules = [val => {
           if (Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
@@ -174,7 +174,7 @@ export default defineComponent({
       permissionFavourite,
       isAppOffline,
       differenceHour,
-      traformerFields,
+      transformerFields,
       refServiceList
     }
   },
@@ -212,7 +212,7 @@ export default defineComponent({
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
                 <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
-                               :field="traformerFields(field, item.productType, item.formField)"/>
+                               :field="transformerFields(field, item.productType, item.formField)"/>
               </label>
             </q-card-section>
             <div class="tw-relative  tw-top-[-26px] tw-pr-1">
@@ -282,7 +282,7 @@ export default defineComponent({
             >
               <div>
                 <dynamic-field v-model="data[index]['formField'][keyfield]['value']"
-                               :field="traformerFields(field, item.productType, item.formField)"/>
+                               :field="transformerFields(field, item.productType, item.formField)"/>
               </div>
             </div>
           </div>
