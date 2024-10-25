@@ -212,13 +212,16 @@ export default defineComponent({
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
                 <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
-                               :field="field"/>
+                               :field="traformerFields(field, item.productType, item.formField)"/>
               </label>
-              <div class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center" v-if="field.type === 'fullDate'
-      && field.props.typeIndexDate === 1">
-                Difference (hours): {{ 1 }}
-              </div>
             </q-card-section>
+            <div class="tw-relative  tw-top-[-26px] tw-pr-1">
+              <p>
+              <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+                Difference (hours): {{ differenceHour(item.formField) }}
+              </span>
+              </p>
+            </div>
           </q-card>
         </q-expansion-item>
         <!-- <q-separator color="red" />-->
