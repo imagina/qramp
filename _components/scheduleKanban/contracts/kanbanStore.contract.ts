@@ -9,6 +9,7 @@ export interface Columns {
   total: number;
   completed: number;
   uncompleted: number;
+  title: string | null;
 }
 
 export interface State {
@@ -22,4 +23,5 @@ export interface State {
   filterCompany?: number;
   isAppOffline: boolean;
   search: string | null;
+  title: string | null;
 }

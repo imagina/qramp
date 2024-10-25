@@ -14,9 +14,16 @@ const state: State = reactive({
   isBlank: false,
   isAppOffline: false,
   search: null,
+  title: 'Ramp Schedule'
 });
 
 const store: State = computed(() => ({
+  get title(): string {
+    return state.title;
+  },
+  set title(value: string) {
+    state.title = value;
+  },
   get scheduleType(): string {
     return state.scheduleType;
   },

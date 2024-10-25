@@ -57,23 +57,28 @@ export default defineComponent({
           await qRampStore().setIsPassenger(false);
           qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
           qRampStore().setTypeWorkOrder(FLIGHT);
+          kanbanStore.title = 'Ramp Schedule';
         }
         if(isSecurity) {
           await qRampStore().setIsPassenger(false);
           qRampStore().setBusinessUnitId(BUSINESS_UNIT_SECURITY);
+          kanbanStore.title = 'Security Schedule';
         }
         if(isPassenger) {
           await qRampStore().setIsPassenger(true);
           qRampStore().setBusinessUnitId(BUSINESS_UNIT_PASSENGER);
+          kanbanStore.title = 'Passenger Schedule';
         }
         if(isLabor) {
           await qRampStore().setIsPassenger(true);
           qRampStore().setBusinessUnitId(BUSINESS_UNIT_LABOR);
+          kanbanStore.title = 'Labor Schedule';
         }
         if(isCargo) {
           await qRampStore().setIsPassenger(false);
           qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
           qRampStore().setTypeWorkOrder(CARGO_PAX);
+          kanbanStore.title = 'Cargo Schedule';
         }
         await workOrderList().getAllList(refresh);
         await workOrderList().getCustomerWithContract();
