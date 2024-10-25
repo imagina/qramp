@@ -28,6 +28,9 @@ const state = reactive<ReactiveStoreContract>({
     errorList: [],
     breadcrumbs: [],
     selectService: {},
+    refGlobal: {
+      refServiceList: null,
+    }
 });
 
 
@@ -118,6 +121,15 @@ export default function serviceListStore(): ServiceListStoreContract {
     function getErrorList() {
         return state.errorList;
     }
+
+    function setRefGlobal(value: any): void {
+      state.refGlobal = {...state.refGlobal, ...value};
+    };
+
+    function getRefGlobal() {
+      return state.refGlobal;
+    }
+
 
     /**
      * This function takes a boolean value and sets the loading property of the state object to that
@@ -252,5 +264,7 @@ export default function serviceListStore(): ServiceListStoreContract {
         setBreadcrumbs,
         getSelectService,
         setSelectService,
+        getRefGlobal,
+        setRefGlobal
     }
 }

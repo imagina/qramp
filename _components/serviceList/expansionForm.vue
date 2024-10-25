@@ -1,11 +1,11 @@
 <script lang="ts">
-import {defineComponent, computed, ref} from 'vue';
+import {defineComponent, computed, ref, onMounted} from 'vue';
 import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
 import storeFlight from '../flight/store';
-import {alert, store} from 'src/plugins/utils';
+import {alert, i18n, store} from 'src/plugins/utils';
 import qRampStore from "../../_store/qRampStore";
 import moment from "moment-timezone";
 
@@ -18,6 +18,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const refServiceList = ref(null);
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
     const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
@@ -70,23 +71,38 @@ export default defineComponent({
       }
       return 0
     };
-    const traformerFields = (field, productType, formField) => {
-
-      if (!(productType === 4 && field.name === 'End' && field.type === 'fullDate')) {
-        return field;
+    const getRules = (formField) => [val => {
+      if (Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
+        console.log('Array condition met, val length:', val.length);
+        if (val.length === 0) {
+          console.log('Returning fieldRequired message for empty array');
+          return i18n.tr('isite.cms.message.fieldRequired');
+        }
       }
 
+      if (!Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
+        console.log('Non-array condition met, val:', val);
+        if (!val) {
+          console.log('Returning fieldRequired message for empty value');
+          return i18n.tr('isite.cms.message.fieldRequired');
+        }
+      }
+      return true
+    }];
+
+    const getOptionsForEndDate = (formField) => {
       const startDate = formField.fullDateStart?.value
         ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
         : null;
       const endDate = formField.fullDateEnd?.value
         ? moment(formField.fullDateEnd.value, 'MM/DD/YYYY HH:mm')
         : null;
-      const options = {
+
+      return {
         options: (dateTime, dateMin) => {
           if (!formField.fullDateStart.value) return false;
           if (isNaN(dateTime)) {
-            return dateTime >= startDate.format('YYYY/MM/DD')
+            return dateTime >= startDate.format('YYYY/MM/DD');
           }
           if (!formField.fullDateEnd.value) return false;
           if (dateMin) {
@@ -99,14 +115,50 @@ export default defineComponent({
             : true;
         },
       };
-      return {
-        ...field,
-        props: {
-          ...field.props,
-          ...options,
-        },
-      };
-    }
+    };
+
+    const getRulesForEndDate = (formField) => [val => {
+      if (!val) return true;
+
+      const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
+      const dateInFormat = formField.fullDateStart?.value
+        ? moment(formField.fullDateStart?.value, FORMAT_DATE)
+        : moment(FORMAT_DATE);
+      const date = moment(val, FORMAT_DATE);
+      const diff = date.diff(dateInFormat);
+
+      return diff >= 0 || 'The end date cannot be less than the start date';
+    }];
+
+    const traformerFields = (field, productType, formField) => {
+      if (productType === 4) {
+        if (['Employees', 'Start'].includes(field.name) && field.type === 'select' || field.type === 'fullDate') {
+          return {
+            ...field,
+            props: {
+              ...field.props,
+              rules: getRules(formField, field),
+            },
+          };
+        }
+
+        if (field.name === 'End' && field.type === 'fullDate') {
+          return {
+            ...field,
+            props: {
+              ...field.props,
+              rules: getRulesForEndDate(formField),
+              ...getOptionsForEndDate(formField),
+            },
+          };
+        }
+      }
+
+      return field;
+    };
+    onMounted(() => {
+      serviceListStore().setRefGlobal({ refServiceList: refServiceList.value });
+    })
     return {
       isDesktop,
       showValue,
@@ -123,7 +175,8 @@ export default defineComponent({
 })
 </script>
 <template>
-  <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
+  <q-form ref="refServiceList">
+    <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
     <div v-if="!isDesktop">
       <q-list v-for="(item, index) in data" :key="index">
         <q-expansion-item header-class="text-white">
@@ -235,6 +288,7 @@ export default defineComponent({
       </div>
     </div>
   </div>
+  </q-form>
 </template>
 
 <style>
