@@ -74,13 +74,11 @@ export default defineComponent({
     const traformerFields = (field, productType, formField) => {
       if(productType === 4 && field.name === 'Employees' && field.type === 'select') {
         const rules = [val => {
-          const anyFieldFilled = Object.values(formField).some(field => {
-            return field.value && (
-              (Array.isArray(field.value) && field.value.length > 0) ||
-              (!Array.isArray(field.value) && field.value !== '' && field.value !== null)
-            );
-          });
-          if(anyFieldFilled) return i18n.tr('isite.cms.message.fieldRequired')
+          if (Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
+            if (val.length === 0) {
+              return i18n.tr('isite.cms.message.fieldRequired');
+            }
+          }
           return true;
         }]
         return {
@@ -93,13 +91,9 @@ export default defineComponent({
       }
       if(productType === 4 && field.name === 'Start' && field.type === 'fullDate') {
         const rules = [val => {
-          const anyFieldFilled = Object.values(formField).some(field => {
-            return field.value && (
-              (Array.isArray(field.value) && field.value.length > 0) ||
-              (!Array.isArray(field.value) && field.value !== '' && field.value !== null)
-            );
-          });
-          if(anyFieldFilled) return i18n.tr('isite.cms.message.fieldRequired')
+          if (!val && (formField.checkboxHoliday.value || formField.fullDateEnd.value || formField.selectEmployees.value.length > 0)) {
+            return i18n.tr('isite.cms.message.fieldRequired');
+          }
           return true;
         }]
         return {
@@ -135,18 +129,24 @@ export default defineComponent({
           },
         };
         const rules = [val => {
-          if (!val) return true
+          if (!val && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.selectEmployees.value.length > 0)) {
+            return i18n.tr('isite.cms.message.fieldRequired');
+          }
+          if (!val && (!formField.checkboxHoliday.value || !formField.fullDateStart.value || formField.selectEmployees.value.length === 0)) {
+            return true;
+          }
+          if(formField.fullDateStart?.value) {
+            const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+            const dateInFormat = formField.fullDateStart?.value
+              ? moment(formField.fullDateStart?.value, FORMAT_DATE)
+              : moment(FORMAT_DATE)
 
-          const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
-          const dateInFormat = formField.fullDateStart?.value
-            ? moment(formField.fullDateStart?.value, FORMAT_DATE)
-            : moment(FORMAT_DATE)
+            const date = moment(val, FORMAT_DATE)
 
-          const date = moment(val, FORMAT_DATE)
+            const diff = date.diff(dateInFormat)
 
-          const diff = date.diff(dateInFormat)
-
-          return diff >= 0 || 'The end date cannot be less than the start date'
+            return diff >= 0 || 'The end date cannot be less than the start date'
+          }
         }]
         return {
           ...field,
