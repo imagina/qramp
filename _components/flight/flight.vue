@@ -689,7 +689,7 @@ export default {
           inboundFlightNumber: {
             name: 'inboundFlightNumber',
             value: '',
-            type: this.readonly ? 'inputStandard' : 'search',
+            type: 'search',
             props: {
               rules: [
                 val => this.validateRulesField(val)
@@ -1048,6 +1048,7 @@ export default {
           this.validateTimeWithField('outboundScheduledDeparture', 'outboundScheduledDeparture', 'outbound');
 
           store().setIsLoading(true);
+          this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
         }, 1000)
       }
     },
@@ -1414,12 +1415,12 @@ export default {
     },
     validateDateRule(val, dateIn) {
       if (!val) return true
-      
+
       const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
       const dateInFormat = dateIn
-        ? this.$moment(dateIn, FORMAT_DATE) 
+        ? this.$moment(dateIn, FORMAT_DATE)
         : this.$moment(FORMAT_DATE)
-    
+
       const date = this.$moment(val, FORMAT_DATE)
 
       const diff = date.diff(dateInFormat)
