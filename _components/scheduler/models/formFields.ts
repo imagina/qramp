@@ -75,7 +75,7 @@ export default function modelFields(): ModelFields {
                 type: 'date',
                 props: {
                     rules: [
-                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
                     ],
                     hint: 'Format: MM/DD/YYYY',
                     mask: 'MM/DD/YYYY',
@@ -93,7 +93,19 @@ export default function modelFields(): ModelFields {
                 type: 'date',
                 props: {
                     rules: [
-                        val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+                        val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
+                        val => {
+                          if(store.form.fromDate) {
+                            const FORMAT_DATE = 'MM/DD/YYYY'
+                            const dateInFormat = store.form.fromDate
+                              ? moment(store.form.fromDate, FORMAT_DATE)
+                              : moment(FORMAT_DATE)
+                            const date = moment(val, FORMAT_DATE)
+                            const diff = date.diff(dateInFormat)
+                            return diff >= 0 || 'The end date cannot be less than the start date'
+                          }
+                          return true;
+                        }
                     ],
                     hint: 'Format: MM/DD/YYYY',
                     mask: 'MM/DD/YYYY',
@@ -102,7 +114,13 @@ export default function modelFields(): ModelFields {
                     clearable: true,
                     color: "primary",
                     format24h: true,
-                    readonly: updateModal.value
+                    readonly: updateModal.value,
+                    options: (dateTime) => {
+                      if (!store.form.fromDate) return false;
+                      if (isNaN(dateTime)) {
+                        return dateTime >= moment(store.form.fromDate, 'MM/DD/YYYY').format('YYYY/MM/DD')
+                      }
+                    }
                 },
                 label: i18n.tr('ifly.cms.form.scheduledArrival'),
             },
