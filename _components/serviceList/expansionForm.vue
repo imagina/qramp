@@ -71,91 +71,96 @@ export default defineComponent({
       }
       return 0
     };
-    const getRules = (formField) => [val => {
-      if (Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
-        console.log('Array condition met, val length:', val.length);
-        if (val.length === 0) {
-          console.log('Returning fieldRequired message for empty array');
-          return i18n.tr('isite.cms.message.fieldRequired');
-        }
-      }
-
-      if (!Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
-        console.log('Non-array condition met, val:', val);
-        if (!val) {
-          console.log('Returning fieldRequired message for empty value');
-          return i18n.tr('isite.cms.message.fieldRequired');
-        }
-      }
-      return true
-    }];
-
-    const getOptionsForEndDate = (formField) => {
-      const startDate = formField.fullDateStart?.value
-        ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
-        : null;
-      const endDate = formField.fullDateEnd?.value
-        ? moment(formField.fullDateEnd.value, 'MM/DD/YYYY HH:mm')
-        : null;
-
-      return {
-        options: (dateTime, dateMin) => {
-          if (!formField.fullDateStart.value) return false;
-          if (isNaN(dateTime)) {
-            return dateTime >= startDate.format('YYYY/MM/DD');
-          }
-          if (!formField.fullDateEnd.value) return false;
-          if (dateMin) {
-            return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
-              ? dateMin >= Number(startDate.format('m'))
-              : true;
-          }
-          return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
-            ? dateTime >= startDate.format('H')
-            : true;
-        },
-      };
-    };
-
-    const getRulesForEndDate = (formField) => [val => {
-      if (!val) return true;
-
-      const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
-      const dateInFormat = formField.fullDateStart?.value
-        ? moment(formField.fullDateStart?.value, FORMAT_DATE)
-        : moment(FORMAT_DATE);
-      const date = moment(val, FORMAT_DATE);
-      const diff = date.diff(dateInFormat);
-
-      return diff >= 0 || 'The end date cannot be less than the start date';
-    }];
-
     const traformerFields = (field, productType, formField) => {
-      if (productType === 4) {
-        if (['Employees', 'Start'].includes(field.name) && field.type === 'select' || field.type === 'fullDate') {
-          return {
-            ...field,
-            props: {
-              ...field.props,
-              rules: getRules(formField, field),
-            },
-          };
-        }
-
-        if (field.name === 'End' && field.type === 'fullDate') {
-          return {
-            ...field,
-            props: {
-              ...field.props,
-              rules: getRulesForEndDate(formField),
-              ...getOptionsForEndDate(formField),
-            },
-          };
-        }
+      if(productType === 4 && field.name === 'Employees' && field.type === 'select') {
+        const rules = [val => {
+          const anyFieldFilled = Object.values(formField).some(field => {
+            return field.value && (
+              (Array.isArray(field.value) && field.value.length > 0) ||
+              (!Array.isArray(field.value) && field.value !== '' && field.value !== null)
+            );
+          });
+          if(anyFieldFilled) return i18n.tr('isite.cms.message.fieldRequired')
+          return true;
+        }]
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            rules,
+          },
+        };
       }
+      if(productType === 4 && field.name === 'Start' && field.type === 'fullDate') {
+        const rules = [val => {
+          const anyFieldFilled = Object.values(formField).some(field => {
+            return field.value && (
+              (Array.isArray(field.value) && field.value.length > 0) ||
+              (!Array.isArray(field.value) && field.value !== '' && field.value !== null)
+            );
+          });
+          if(anyFieldFilled) return i18n.tr('isite.cms.message.fieldRequired')
+          return true;
+        }]
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            rules,
+          },
+        };
+      }
+      if (productType === 4 && field.name === 'End' && field.type === 'fullDate') {
+        const startDate = formField.fullDateStart?.value
+          ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
+          : null;
+        const endDate = formField.fullDateEnd?.value
+          ? moment(formField.fullDateEnd.value, 'MM/DD/YYYY HH:mm')
+          : null;
+        const options = {
+          options: (dateTime, dateMin) => {
+            if (!formField.fullDateStart.value) return false;
+            if (isNaN(dateTime)) {
+              return dateTime >= startDate.format('YYYY/MM/DD')
+            }
+            if (!formField.fullDateEnd.value) return false;
+            if (dateMin) {
+              return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+                ? dateMin >= Number(startDate.format('m'))
+                : true;
+            }
+            return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+              ? dateTime >= startDate.format('H')
+              : true;
+          },
+        };
+        const rules = [val => {
+          if (!val) return true
 
+          const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+          const dateInFormat = formField.fullDateStart?.value
+            ? moment(formField.fullDateStart?.value, FORMAT_DATE)
+            : moment(FORMAT_DATE)
+
+          const date = moment(val, FORMAT_DATE)
+
+          const diff = date.diff(dateInFormat)
+
+          return diff >= 0 || 'The end date cannot be less than the start date'
+        }]
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            rules,
+            ...options,
+          },
+        };
+      }
       return field;
-    };
+    }
+
+
     onMounted(() => {
       serviceListStore().setRefGlobal({ refServiceList: refServiceList.value });
     })
