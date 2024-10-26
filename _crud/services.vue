@@ -186,7 +186,8 @@ export default {
               options:[
                 {label: 'Full Date', value: 1},
                 {label: 'Delay with Headcounts', value: 2},
-                {label: 'Price with Quantity', value: 3}
+                {label: 'Price with Quantity', value: 3},
+                {label: 'Employees + Range', value: 4}
               ]
             },
           },

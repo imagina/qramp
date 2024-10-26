@@ -88,7 +88,8 @@ export interface ReactiveStoreContract {
     showFavourite: boolean,
     errorList: [],
     breadcrumbs: any[],
-    selectService: ServiceModelContract
+    selectService: ServiceModelContract,
+    refGlobal: any,
 }
 
 export interface ServiceListStoreContract {
@@ -129,4 +130,6 @@ export interface ServiceListStoreContract {
     setBreadcrumbs(value: any[]): void;
     setSelectService(value: ServiceModelContract): void;
     getSelectService(): ServiceModelContract;
+    getRefGlobal(): any,
+    setRefGlobal(value: any): void;
 }

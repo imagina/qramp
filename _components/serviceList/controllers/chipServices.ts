@@ -31,7 +31,6 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
           const workOrderItemAttributes = list.work_order_item_attributes || [];
           workOrderItemAttributes.forEach(async item => {
             if(item.type === 'select' && Array.isArray(JSON.parse(item.value))) {
-              console.log(item.value)
               const response = await baseService.index('apiRoutes.qsetupagione.employees', {
                 params: {
                   filter:{

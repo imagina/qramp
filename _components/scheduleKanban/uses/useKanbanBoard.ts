@@ -53,7 +53,7 @@ export default function useKanbanBoard(props) {
     },
   });
   const isSecurity = computed(() => qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY);
-  const title = computed(() => isPassenger.value ? 'Passenger Schedule' : 'Ramp Schedule')
+  const title = computed(() => kanbanStore.title);
   const selectedDate = computed(() => storeFilter.selectedDate);
   const showModalStation = computed(() => storeFilter.showModalStation);
   const scheduleType = computed({

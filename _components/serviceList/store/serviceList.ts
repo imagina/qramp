@@ -28,6 +28,9 @@ const state = reactive<ReactiveStoreContract>({
     errorList: [],
     breadcrumbs: [],
     selectService: {},
+    refGlobal: {
+      refServiceList: null,
+    }
 });
 
 
@@ -118,6 +121,15 @@ export default function serviceListStore(): ServiceListStoreContract {
     function getErrorList() {
         return state.errorList;
     }
+
+    function setRefGlobal(value: any): void {
+      state.refGlobal = {...state.refGlobal, ...value};
+    };
+
+    function getRefGlobal() {
+      return state.refGlobal;
+    }
+
 
     /**
      * This function takes a boolean value and sets the loading property of the state object to that
@@ -222,6 +234,22 @@ export default function serviceListStore(): ServiceListStoreContract {
             return item.work_order_item_attributes.some(attr => attr.value === null ||
               attr.value === undefined);
         }
+        if(item.product_type == 4) {
+          return item.work_order_item_attributes.some(attr => {
+              const requiredFields = ['Employees', 'Start', 'End'];
+
+              const isValid = item => {
+                if (!requiredFields.includes(item.name)) return true;
+
+                return item.value !== null &&
+                  item.value !== "" &&
+                  (!Array.isArray(item.value) || item.value.length > 0) &&
+                  item.value !== "[]";
+              };
+              return item.work_order_item_attributes.some(attrItem => !isValid(attrItem))
+          }
+          );
+        }
         return false;
        })
        setErrorList(serviceList);
@@ -252,5 +280,7 @@ export default function serviceListStore(): ServiceListStoreContract {
         setBreadcrumbs,
         getSelectService,
         setSelectService,
+        getRefGlobal,
+        setRefGlobal
     }
 }

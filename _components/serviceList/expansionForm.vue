@@ -1,11 +1,13 @@
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+import {defineComponent, computed, ref, onMounted} from 'vue';
 import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
 import storeFlight from '../flight/store';
-import { alert, store } from 'src/plugins/utils';
+import {alert, i18n, store} from 'src/plugins/utils';
+import qRampStore from "../../_store/qRampStore";
+import moment from "moment-timezone";
 
 export default defineComponent({
   name: 'expansionComponent',
@@ -16,6 +18,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const refServiceList = ref(null);
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
     const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
@@ -25,17 +28,18 @@ export default defineComponent({
       index: store.hasAccess(`isite.favourites.index`),
       destroy: store.hasAccess(`isite.favourites.destroy`),
     }));
+
     async function selectFavourite(data: any) {
       data.favourite = !data.favourite;
       if (!data.favourite) {
-        if(!permissionFavourite.value.destroy) return;
+        if (!permissionFavourite.value.destroy) return;
         const favoriteData = serviceListStore().getFavouriteList().find(item => item.productId === data.id);
         await deleteFavourites(favoriteData?.id);
         serviceListStore().removeFromFavouriteList(data.id);
-        alert.success({ message: `Favorite deleted successfully Product:${data.title}` });
+        alert.success({message: `Favorite deleted successfully Product:${data.title}`});
       } else {
-        if(!permissionFavourite.value.create) return;
-        const { stationId, contractId, customerId, carrierId, operationTypeId } = storeFlight().getForm();
+        if (!permissionFavourite.value.create) return;
+        const {stationId, contractId, customerId, carrierId, operationTypeId} = storeFlight().getForm();
         const response: any = await postFavourites({
           productId: data.id,
           stationId,
@@ -44,19 +48,122 @@ export default defineComponent({
           carrierId,
           operationTypeId
         });
-        serviceListStore().pustFavouriteList({ ...response });
+        serviceListStore().pustFavouriteList({...response});
         alert.success(`Favorite created successfully Product:${data.title}`);
       }
       await workOrderList().getFavourites(true);
     }
+
     const favourite = ref(false);
     const refData = ref({});
+
     function showValue(data: any) {
       if (data) {
         return data.value
       }
     }
 
+    const differenceHour = (formField) => {
+      const startDate = formField.fullDateStart?.value;
+      const endDate = formField.fullDateEnd?.value;
+      if (startDate && endDate) {
+        return qRampStore().getDifferenceInHours(startDate, endDate);
+      }
+      return 0
+    };
+    const transformerFields = (field, productType, formField) => {
+      if(productType === 4 && field.name === 'Employees' && field.type === 'select') {
+        const rules = [val => {
+          if (Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
+            if (val.length === 0) {
+              return i18n.tr('isite.cms.message.fieldRequired');
+            }
+          }
+          return true;
+        }]
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            rules,
+          },
+        };
+      }
+      if(productType === 4 && field.name === 'Start' && field.type === 'fullDate') {
+        const rules = [val => {
+          if (!val && (formField.checkboxHoliday.value || formField.fullDateEnd.value || formField.selectEmployees.value.length > 0)) {
+            return i18n.tr('isite.cms.message.fieldRequired');
+          }
+          return true;
+        }]
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            rules,
+          },
+        };
+      }
+      if (productType === 4 && field.name === 'End' && field.type === 'fullDate') {
+        const startDate = formField.fullDateStart?.value
+          ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
+          : null;
+        const endDate = formField.fullDateEnd?.value
+          ? moment(formField.fullDateEnd.value, 'MM/DD/YYYY HH:mm')
+          : null;
+        const options = {
+          options: (dateTime, dateMin) => {
+            if (!formField.fullDateStart.value) return false;
+            if (isNaN(dateTime)) {
+              return dateTime >= startDate.format('YYYY/MM/DD')
+            }
+            if (!formField.fullDateEnd.value) return false;
+            if (dateMin) {
+              return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+                ? dateMin >= Number(startDate.format('m'))
+                : true;
+            }
+            return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+              ? dateTime >= startDate.format('H')
+              : true;
+          },
+        };
+        const rules = [val => {
+          if (!val && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.selectEmployees.value.length > 0)) {
+            return i18n.tr('isite.cms.message.fieldRequired');
+          }
+          if (!val && (!formField.checkboxHoliday.value || !formField.fullDateStart.value || formField.selectEmployees.value.length === 0)) {
+            return true;
+          }
+          if(formField.fullDateStart?.value) {
+            const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+            const dateInFormat = formField.fullDateStart?.value
+              ? moment(formField.fullDateStart?.value, FORMAT_DATE)
+              : moment(FORMAT_DATE)
+
+            const date = moment(val, FORMAT_DATE)
+
+            const diff = date.diff(dateInFormat)
+
+            return diff >= 0 || 'The end date cannot be less than the start date'
+          }
+        }]
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            rules,
+            ...options,
+          },
+        };
+      }
+      return field;
+    }
+
+
+    onMounted(() => {
+      serviceListStore().setRefGlobal({ refServiceList: refServiceList.value });
+    })
     return {
       isDesktop,
       showValue,
@@ -65,22 +172,26 @@ export default defineComponent({
       selectFavourite,
       refData,
       permissionFavourite,
-      isAppOffline
+      isAppOffline,
+      differenceHour,
+      transformerFields,
+      refServiceList
     }
   },
 })
 </script>
 <template>
-  <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
+  <q-form ref="refServiceList">
+    <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
     <div v-if="!isDesktop">
       <q-list v-for="(item, index) in data" :key="index">
         <q-expansion-item header-class="text-white">
           <template v-slot:header>
             <q-item-section v-if="permissionFavourite.create" avatar class="q-pr-none " style="min-width: 45px;">
               <i
-                  class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
-                  @click="selectFavourite(data[index])"
-                  :class="{
+                class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
+                @click="selectFavourite(data[index])"
+                :class="{
                     'fa-solid': data[index].favourite,
                     'fa-light': !data[index].favourite,
                   }"
@@ -101,27 +212,31 @@ export default defineComponent({
             <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
               <label class="flex no-wrap items-center ">
                 <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
-                  :field="field" />
+                               :field="transformerFields(field, item.productType, item.formField)"/>
               </label>
-              <div class="tw-px-3 tw-font-semibold tw-mt-5 tw-text-center tw-hidden" v-if="field.type === 'fullDate'
-      && field.props.typeIndexDate === 1">
-                Difference (hours): {{ 1 }}
-              </div>
             </q-card-section>
+            <div class="tw-relative  tw-top-[-26px] tw-pr-1">
+              <p>
+              <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+                Difference (hours): {{ differenceHour(item.formField) }}
+              </span>
+              </p>
+            </div>
           </q-card>
         </q-expansion-item>
         <!-- <q-separator color="red" />-->
       </q-list>
     </div>
     <div v-else>
-      <div v-for="(item, index) in data" :key="index" class="
-          tw-flex
+      <div v-for="(item, index) in data" :key="index"
+
+      >
+        <div class="tw-flex
           color-bg-blue-gray-custom
           tw-py-2
-          tw-rounded-lg"
-        >
-        <div
-          class="
+          tw-rounded-lg">
+          <div
+            class="
             tw-flex
             tw-w-2/5
             tw-break-words
@@ -129,29 +244,31 @@ export default defineComponent({
             text-services
             tw-pl-2"
           >
-              <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
-                <i
-                  class="fa-star color-icon-star tw-cursor-pointer"
-                  @click="selectFavourite(data[index])"
-                  :class="{
+            <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
+              <i
+                class="fa-star color-icon-star tw-cursor-pointer"
+                @click="selectFavourite(data[index])"
+                :class="{
                     'fa-solid': data[index].favourite,
                     'fa-light': !data[index].favourite,
                   }"
-                />
-              </div>
-              <div>
-                <p>
-                  {{ item.title }}
-                </p>
-                <p
-                    v-if="item.helpText"
-                    class="tw-text-xs tw-text-gray-500">
-                  {{ item.helpText }}
-                </p>
-              </div>
-        </div>
-        <div
-          class="
+              />
+            </div>
+            <div>
+              <p>
+                {{ item.title }}
+              </p>
+              <p
+                v-if="item.helpText"
+                class="tw-text-xs tw-text-gray-500">
+                {{ item.helpText }}
+              </p>
+            </div>
+
+          </div>
+
+          <div
+            class="
             tw-w-3/5
             tw-mx-2
             tw-truncate
@@ -159,18 +276,28 @@ export default defineComponent({
             tw-flex-wrap
             tw-justify-end tw-gap-4"
           >
-          <div
-            v-for="(field, keyfield) in item.formField"
-            :key="keyfield"
-          >
-            <div>
-              <dynamic-field v-model="data[index]['formField'][keyfield]['value']" :field="field" />
+            <div
+              v-for="(field, keyfield) in item.formField"
+              :key="keyfield"
+            >
+              <div>
+                <dynamic-field v-model="data[index]['formField'][keyfield]['value']"
+                               :field="transformerFields(field, item.productType, item.formField)"/>
+              </div>
             </div>
           </div>
+        </div>
+        <div class="tw-relative tw-float-right tw-top-[-26px] tw-pr-1">
+          <p>
+              <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+                Difference (hours): {{ differenceHour(item.formField) }}
+              </span>
+          </p>
         </div>
       </div>
     </div>
   </div>
+  </q-form>
 </template>
 
 <style>
