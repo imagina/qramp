@@ -59,6 +59,12 @@ export default function flightController() {
     return qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR && OPERATION_TYPE_NON_FLIGHT.includes(operationTypeId)
   })
   const isBound = computed(() => qRampStore().isbound(storeFueling.form.operationTypeId))
+  const type = computed(() => {
+    const operationType = workOrderList()
+      .getOperationTypeList()
+      .find(item => item.id === Number(form.value.operationTypeId));
+    return operationType?.options?.type;
+  })
   const validateDateOutboundBlockOut = (dateTime, dateMin = null) => {
     const outboundScheduledDepartureDate = form.value.outboundBlockOut
       ? moment(form.value.outboundBlockOut) : moment();
@@ -82,6 +88,8 @@ export default function flightController() {
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
   const validateDateOutbound = (dateTime, dateMin = null) => {
+    if (type.value !== 'full') return true
+
     const inboundScheduledArrival = form.value.inboundScheduledArrival
     const outboundScheduledDeparture = form.value.outboundScheduledDeparture
 
@@ -119,7 +127,14 @@ export default function flightController() {
 
     const diff = date.diff(dateInFormat)
 
-    return diff >= 0 || 'Wrong date'
+    return diff >= 0 || 'The departure date cannot be less than the arrival date'
+  }
+  const validateDateRuleOutbound = (val, dateIn) => {
+    if (type.value !== 'full') return true
+    return validateDateRule(val, dateIn)
+  }
+  const validateDateRuleOutIn = (val, dateIn) =>{
+    return validateDateRule(val, dateIn)
   }
   const readonlyOperationType= computed(() => {
     const { parentId, preFlightNumber, operationTypeId } = form.value || {};
@@ -407,7 +422,7 @@ export default function flightController() {
           props: {
             rules: [
               val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
-              val => validateDateRule(val, form.value.inboundScheduledArrival)
+              val => validateDateRuleOutbound(val, form.value.inboundScheduledArrival)
             ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
@@ -445,7 +460,7 @@ export default function flightController() {
           type: 'fullDate',
           props: {
             rules: [
-              val => validateDateRule(val, form.value.inboundBlockIn)
+              val => validateDateRuleOutIn(val, form.value.inboundBlockIn)
             ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',

@@ -836,7 +836,7 @@ export default {
             props: {
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired'),
-                val => this.validateDateRule(val, this.form.inboundScheduledArrival)
+                val => this.validateDateRuleOutbound(val, this.form.inboundScheduledArrival)
               ],
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
@@ -895,7 +895,7 @@ export default {
             props: {
               rules: [
                 ...this.validateRulesBlock,
-                val => this.validateDateRule(val, this.form.inboundBlockIn)
+                val => this.validateDateRuleOutIn(val, this.form.inboundBlockIn)
               ],
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
@@ -961,6 +961,12 @@ export default {
         value: item.id
       }))
     },
+    type() {
+      const operationType = workOrderList()
+        .getOperationTypeList()
+        .find(item => item.id === Number(this.form.operationTypeId));
+      return operationType?.options?.type;
+    }
   },
   methods: {
     init() {
@@ -1387,6 +1393,8 @@ export default {
       return validateDate ? Number(dateTime) >= Number(hourIn) : true;
     },
     validateDateOutbound(dateTime, dateMin = null) {
+      if (this.type !== 'full') return true
+
       const inboundScheduledArrival = this.form.inboundScheduledArrival
       const outboundScheduledDeparture = this.form.outboundScheduledDeparture
 
@@ -1424,7 +1432,14 @@ export default {
 
       const diff = date.diff(dateInFormat)
 
-      return diff >= 0 || 'Wrong date'
+      return diff >= 0 || 'The departure date cannot be less than the arrival date'
+    },
+    validateDateRuleOutbound(val, dateIn) {
+      if (this.type !== 'full') return true
+      return this.validateDateRule(val, dateIn)
+    },
+    validateDateRuleOutIn(val, dateIn) {
+      return this.validateDateRule(val, dateIn)
     },
     changeDate(field) {
       if (field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
