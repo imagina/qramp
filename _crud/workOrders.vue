@@ -400,7 +400,7 @@ export default {
                         include: 'responsible,contract,customer',
                         filter: {
                             withoutDefaultInclude: true,
-                            type: [FLIGHT, NON_FLIGHT],
+                            type: [FLIGHT],
                             stationCompanies: qRampStore().getFilterCompany()
                         },
                     },
