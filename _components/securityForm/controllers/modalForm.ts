@@ -218,11 +218,12 @@ export default function modalFormController(props: any = null, emit: any = null)
       return;
     }
     const filterList = await serviceListStore().filterServicesListByQuantity();
-    if (filterList.length > 0) {
+    const validateServices = await serviceListStore().getRefGlobal().refServiceList.validate();
+
+    if (filterList.length > 0 || !validateServices) {
       store.step = STEP_SERVICE;
       const step: any = stepps.find(item => item.step === STEP_SERVICE);
       step.error = true;
-      await serviceListStore().getRefGlobal().refServiceList.validate();
       alert.error({ message: i18n.tr('You have services to correct') })
       return;
     }

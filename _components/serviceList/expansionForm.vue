@@ -228,71 +228,44 @@ export default defineComponent({
       </q-list>
     </div>
     <div v-else>
-      <div v-for="(item, index) in data" :key="index"
-
-      >
-        <div class="tw-flex
-          color-bg-blue-gray-custom
-          tw-py-2
-          tw-rounded-lg">
-          <div
-            class="
-            tw-flex
-            tw-w-2/5
-            tw-break-words
-            tw-py-3
-            text-services
-            tw-pl-2"
-          >
+      <div v-for="(item, index) in data" :key="index">
+        <div class="tw-flex color-bg-blue-gray-custom tw-py-2 tw-rounded-lg tw-relative">
+          <div class="tw-flex tw-w-2/5 tw-break-words tw-py-3 text-services tw-pl-2">
             <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
               <i
                 class="fa-star color-icon-star tw-cursor-pointer"
                 @click="selectFavourite(data[index])"
                 :class="{
-                    'fa-solid': data[index].favourite,
-                    'fa-light': !data[index].favourite,
-                  }"
+            'fa-solid': data[index].favourite,
+            'fa-light': !data[index].favourite,
+          }"
               />
             </div>
             <div>
-              <p>
-                {{ item.title }}
-              </p>
-              <p
-                v-if="item.helpText"
-                class="tw-text-xs tw-text-gray-500">
-                {{ item.helpText }}
-              </p>
+              <p>{{ item.title }}</p>
+              <p v-if="item.helpText" class="tw-text-xs tw-text-gray-500">{{ item.helpText }}</p>
             </div>
-
           </div>
 
-          <div
-            class="
-            tw-w-3/5
-            tw-mx-2
-            tw-truncate
-            tw-flex
-            tw-flex-wrap
-            tw-justify-end tw-gap-4"
-          >
-            <div
-              v-for="(field, keyfield) in item.formField"
-              :key="keyfield"
-            >
+          <div class="tw-w-3/5 tw-mx-2 tw-truncate tw-flex tw-flex-wrap tw-justify-end tw-gap-4">
+            <div v-for="(field, keyfield) in item.formField" :key="keyfield">
               <div>
-                <dynamic-field v-model="data[index]['formField'][keyfield]['value']"
-                               :field="transformerFields(field, item.productType, item.formField)"/>
+                <dynamic-field
+                  v-model="data[index]['formField'][keyfield]['value']"
+                  :field="transformerFields(field, item.productType, item.formField)"
+                />
               </div>
             </div>
           </div>
-        </div>
-        <div class="tw-relative tw-float-right tw-top-[-26px] tw-pr-1">
-          <p>
-              <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
-                Difference (hours): {{ differenceHour(item.formField) }}
-              </span>
-          </p>
+
+          <!-- Alinear a la esquina inferior derecha -->
+          <div class="tw-absolute tw-right-1 tw-bottom-1">
+            <p>
+        <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+          Difference (hours): {{ differenceHour(item.formField) }}
+        </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>

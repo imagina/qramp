@@ -12,6 +12,7 @@ import {
 import qRampStore from '../../../_store/qRampStore';
 import _ from 'lodash';
 import { BUSINESS_UNIT_SECURITY } from "src/modules/qramp/_components/model/constants";
+import moment from 'moment';
 
 const dataModel: ServiceModelContract[] = [
     {
@@ -235,12 +236,24 @@ export default function serviceListStore(): ServiceListStoreContract {
               attr.value === undefined);
         }
         if(item.product_type == 4) {
+          const startAttr = item.work_order_item_attributes.find(attr => attr.name === 'Start');
+          const startValue = startAttr ? startAttr.value : null;
           return item.work_order_item_attributes.some(attr => {
               const requiredFields = ['Employees', 'Start', 'End'];
 
               const isValid = item => {
                 if (!requiredFields.includes(item.name)) return true;
+                if (item.name === 'End' && startValue) {
+                  const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
+                  const dateInFormat = startValue
+                    ? moment(startValue, FORMAT_DATE)
+                    : moment(FORMAT_DATE);
 
+                  const date = moment(item.value, FORMAT_DATE);
+                  const diff = date.diff(dateInFormat);
+
+                  return diff >= 0;
+                }
                 return item.value !== null &&
                   item.value !== "" &&
                   (!Array.isArray(item.value) || item.value.length > 0) &&
