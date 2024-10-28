@@ -72,7 +72,7 @@ export default defineComponent({
       return 0
     };
     const transformerFields = (field, productType, formField) => {
-      if(productType === 4 && field.name === 'Employees' && field.type === 'select') {
+      if (productType === 4 && field.name === 'Employees' && field.type === 'select') {
         const rules = [val => {
           if (Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
             if (val.length === 0) {
@@ -89,7 +89,7 @@ export default defineComponent({
           },
         };
       }
-      if(productType === 4 && field.name === 'Start' && field.type === 'fullDate') {
+      if (productType === 4 && field.name === 'Start' && field.type === 'fullDate') {
         const rules = [val => {
           if (!val && (formField.checkboxHoliday.value || formField.fullDateEnd.value || formField.selectEmployees.value.length > 0)) {
             return i18n.tr('isite.cms.message.fieldRequired');
@@ -135,7 +135,7 @@ export default defineComponent({
           if (!val && (!formField.checkboxHoliday.value || !formField.fullDateStart.value || formField.selectEmployees.value.length === 0)) {
             return true;
           }
-          if(formField.fullDateStart?.value) {
+          if (formField.fullDateStart?.value) {
             const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
             const dateInFormat = formField.fullDateStart?.value
               ? moment(formField.fullDateStart?.value, FORMAT_DATE)
@@ -162,7 +162,7 @@ export default defineComponent({
 
 
     onMounted(() => {
-      serviceListStore().setRefGlobal({ refServiceList: refServiceList.value });
+      serviceListStore().setRefGlobal({refServiceList: refServiceList.value});
     })
     return {
       isDesktop,
@@ -183,93 +183,92 @@ export default defineComponent({
 <template>
   <q-form ref="refServiceList">
     <div id="expansion-container" class="tw-mb-12" style="max-width: 100%">
-    <div v-if="!isDesktop">
-      <q-list v-for="(item, index) in data" :key="index">
-        <q-expansion-item header-class="text-white">
-          <template v-slot:header>
-            <q-item-section v-if="permissionFavourite.create" avatar class="q-pr-none " style="min-width: 45px;">
-              <i
-                class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
-                @click="selectFavourite(data[index])"
-                :class="{
+      <div v-if="!isDesktop">
+        <q-list v-for="(item, index) in data" :key="index">
+          <q-expansion-item header-class="text-white">
+            <template v-slot:header>
+              <q-item-section v-if="permissionFavourite.create" avatar class="q-pr-none " style="min-width: 45px;">
+                <i
+                  class="fa-star color-icon-star tw-cursor-pointer tw-text-2xl"
+                  @click="selectFavourite(data[index])"
+                  :class="{
                     'fa-solid': data[index].favourite,
                     'fa-light': !data[index].favourite,
                   }"
-              />
-            </q-item-section>
-            <q-item-section class="q-py-sm">
-              <p class="tw-text-base tw-font-bold" style="color:#1F294F;">
-                {{ item.title }}
-                <br>
-                <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
+                />
+              </q-item-section>
+              <q-item-section class="q-py-sm">
+                <p class="tw-text-base tw-font-bold" style="color:#1F294F;">
+                  {{ item.title }}
+                  <br>
+                  <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
                   {{ item.helpText }}
                 </span>
-              </p>
-              <span class="tw-text-sm" style="color:#8A98C3;">{{ showValue(item.formField.quantity) }}</span>
-            </q-item-section>
-          </template>
-          <q-card class="row card-color justify-center">
-            <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField" :key="keyfield">
-              <label class="flex no-wrap items-center ">
-                <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
-                               :field="transformerFields(field, item.productType, item.formField)"/>
-              </label>
-            </q-card-section>
-            <div class="tw-relative  tw-top-[-26px] tw-pr-1">
-              <p>
+                </p>
+                <span class="tw-text-sm" style="color:#8A98C3;">{{ showValue(item.formField.quantity) }}</span>
+              </q-item-section>
+            </template>
+            <q-card class="row card-color justify-center">
+              <q-card-section class=" q-py-md col-12 col-md" v-for="(field, keyfield) in item.formField"
+                              :key="keyfield">
+                <label class="flex no-wrap items-center ">
+                  <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
+                                 :field="transformerFields(field, item.productType, item.formField)"/>
+                </label>
+              </q-card-section>
+              <div class="tw-relative  tw-top-[-26px] tw-pr-1">
+                <p>
               <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
                 Difference (hours): {{ differenceHour(item.formField) }}
               </span>
-              </p>
-            </div>
-          </q-card>
-        </q-expansion-item>
-        <!-- <q-separator color="red" />-->
-      </q-list>
-    </div>
-    <div v-else>
-      <div v-for="(item, index) in data" :key="index">
-        <div class="tw-flex color-bg-blue-gray-custom tw-py-2 tw-rounded-lg tw-relative">
-          <div class="tw-flex tw-w-2/5 tw-break-words tw-py-3 text-services tw-pl-2">
-            <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
-              <i
-                class="fa-star color-icon-star tw-cursor-pointer"
-                @click="selectFavourite(data[index])"
-                :class="{
-            'fa-solid': data[index].favourite,
-            'fa-light': !data[index].favourite,
-          }"
-              />
-            </div>
-            <div>
-              <p>{{ item.title }}</p>
-              <p v-if="item.helpText" class="tw-text-xs tw-text-gray-500">{{ item.helpText }}</p>
-            </div>
-          </div>
-
-          <div class="tw-w-3/5 tw-mx-2 tw-truncate tw-flex tw-flex-wrap tw-justify-end tw-gap-4">
-            <div v-for="(field, keyfield) in item.formField" :key="keyfield">
-              <div>
-                <dynamic-field
-                  v-model="data[index]['formField'][keyfield]['value']"
-                  :field="transformerFields(field, item.productType, item.formField)"
+                </p>
+              </div>
+            </q-card>
+          </q-expansion-item>
+          <!-- <q-separator color="red" />-->
+        </q-list>
+      </div>
+      <div v-else>
+        <div v-for="(item, index) in data" :key="index">
+          <div class="tw-flex color-bg-blue-gray-custom tw-py-2 tw-rounded-lg tw-relative">
+            <div class="tw-flex tw-w-2/5 tw-break-words tw-py-3 text-services tw-pl-2">
+              <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
+                <i
+                  class="fa-star color-icon-star tw-cursor-pointer"
+                  @click="selectFavourite(data[index])"
+                  :class="{
+                    'fa-solid': data[index].favourite,
+                    'fa-light': !data[index].favourite,
+                  }"
                 />
               </div>
+              <div>
+                <p>{{ item.title }}</p>
+                <p v-if="item.helpText" class="tw-text-xs tw-text-gray-500">{{ item.helpText }}</p>
+              </div>
             </div>
-          </div>
 
-          <!-- Alinear a la esquina inferior derecha -->
-          <div class="tw-absolute tw-right-1 tw-bottom-1">
-            <p>
-        <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
-          Difference (hours): {{ differenceHour(item.formField) }}
-        </span>
-            </p>
+            <div class="tw-w-3/5 tw-mx-2 tw-truncate tw-flex tw-flex-wrap tw-justify-end tw-gap-4">
+              <div v-for="(field, keyfield) in item.formField" :key="keyfield">
+                <div>
+                  <dynamic-field
+                    v-model="data[index]['formField'][keyfield]['value']"
+                    :field="transformerFields(field, item.productType, item.formField)"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="tw-absolute tw-right-1 tw-bottom-1">
+              <p>
+                <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+                  Difference (hours): {{ differenceHour(item.formField) }}
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </q-form>
 </template>
 
