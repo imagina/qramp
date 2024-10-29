@@ -343,6 +343,7 @@ export default {
       })
     },
     validateBetweenDates(dateIn, dateOut) {
+      if (!dateIn) return true
       const inFormat = this.$moment(dateIn)
       const date = this.$moment(dateOut)
 
@@ -424,10 +425,10 @@ export default {
         const inboundBlockIn = flightForm.inboundBlockIn;
         const outboundBlockOut = flightForm.outboundBlockOut;
 
-        if (inboundBlockIn && outboundBlockOut) {
+        if (outboundBlockOut) {
           const isBlockOutAfterBlockIn = this.validateBetweenDates(
-            flightForm.inboundBlockIn, 
-            flightForm.outboundBlockOut
+            inboundBlockIn, 
+            outboundBlockOut
           );
           
           if (isBlockOutAfterBlockIn) {
