@@ -5,6 +5,7 @@ import {
     BUSINESS_UNIT_FUELING, BUSINESS_UNIT_LABOR,
     BUSINESS_UNIT_PASSENGER,
     BUSINESS_UNIT_RAMP,
+    BUSINESS_UNIT_CARGO,
     BUSINESS_UNIT_SECURITY,
     COMPANY_PASSENGER,
     COMPANY_RAMP,
@@ -412,6 +413,8 @@ export default function workOrderList(): WorkOrderList {
     if (hasAccess('ramp.operation-types.index')) {
       try {
         const companyId = qRampStore().getFilterCompany();
+        const businessUnitId = qRampStore().getBusinessUnitId();
+          
         const params = {
           refresh,
           cacheTime: cacheTimeForThirtyDays,
@@ -422,6 +425,12 @@ export default function workOrderList(): WorkOrderList {
             }
           },
         }
+
+          //extra filter when the busioness unit is cargo, this is because they want to see just cargo contracts (id = 1)
+          if(businessUnitId === BUSINESS_UNIT_CARGO) {
+              params.params.filter.businessUnitId = BUSINESS_UNIT_CARGO;
+          }
+          
         const response = await baseService.index('apiRoutes.qramp.setupContracts', params);
         const data = response.data;
         setContractList(data);
