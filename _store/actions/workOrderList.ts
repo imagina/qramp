@@ -414,7 +414,7 @@ export default function workOrderList(): WorkOrderList {
       try {
         const companyId = qRampStore().getFilterCompany();
         const businessUnitId = qRampStore().getBusinessUnitId();
-          
+
         const params = {
           refresh,
           cacheTime: cacheTimeForThirtyDays,
@@ -430,7 +430,7 @@ export default function workOrderList(): WorkOrderList {
           if(businessUnitId === BUSINESS_UNIT_CARGO) {
               params.params.filter.businessUnitId = BUSINESS_UNIT_CARGO;
           }
-          
+
         const response = await baseService.index('apiRoutes.qramp.setupContracts', params);
         const data = response.data;
         setContractList(data);
@@ -715,6 +715,7 @@ export default function workOrderList(): WorkOrderList {
         const allowContractName = hasAccess('ramp.work-orders.see-contract-name') || false;
         const companyId = qRampStore().getFilterCompany();
         let businessUnitId: any = { businessUnitId : qRampStore().getBusinessUnitId() === 'null' ? {"operator":"!=","value":8} : qRampStore().getBusinessUnitId() };
+
         if(fullContract) {
             businessUnitId = {}
         }
@@ -736,6 +737,7 @@ export default function workOrderList(): WorkOrderList {
                 }
             },
         }
+
         const customersData = await Promise.all([
             baseService.index('apiRoutes.qramp.setupCustomers', custemerParams),
             baseService.index('apiRoutes.qramp.setupContracts', contractParams)
