@@ -238,7 +238,7 @@ export default function modelFields(): ModelFields {
                         return true;
                       }
                       if (val < 0) {
-                        return 'The Dep Days cannot be zero or less than zero';
+                        return 'The Dep Days cannot be zero or less than zero, leave the field empty if you want to use the Zero logic';
                       }
                       if (store.refFormScheduler &&
                         store.form.depDays &&
