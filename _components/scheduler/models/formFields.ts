@@ -234,8 +234,8 @@ export default function modelFields(): ModelFields {
                 props: {
                   rules: [
                     val => {
-                      if (val <= 0) {
-                        return 'The Dep Days cannot be zero or less than zero';
+                      if (val < 0) {
+                        return 'The Dep Days cannot be less than zero';
                       }
                       if (store.refFormScheduler &&
                         store.form.depDays &&
