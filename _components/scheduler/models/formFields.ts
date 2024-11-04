@@ -237,7 +237,7 @@ export default function modelFields(): ModelFields {
                       if (val === null || val === undefined || val === '') {
                         return true;
                       }
-                      if (val <= 0) {
+                      if (val < 0) {
                         return 'The Dep Days cannot be zero or less than zero';
                       }
                       if (store.refFormScheduler &&
