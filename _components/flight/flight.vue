@@ -1440,6 +1440,7 @@ export default {
       return this.validateDateRule(val, dateIn)
     },
     validateDateRuleOutIn(val, dateIn) {
+      if (this.type !== 'full') return true
       return this.validateDateRule(val, dateIn)
     },
     changeDate(field) {
