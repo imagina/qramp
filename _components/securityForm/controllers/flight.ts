@@ -117,12 +117,12 @@ export default function flightController() {
   }
   const validateDateRule = (val, dateIn) => {
     if (!val) return true
-    
+
     const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
     const dateInFormat = dateIn
-      ? moment(dateIn, FORMAT_DATE) 
+      ? moment(dateIn, FORMAT_DATE)
       : moment(FORMAT_DATE)
-  
+
     const date = moment(val, FORMAT_DATE)
 
     const diff = date.diff(dateInFormat)
@@ -134,6 +134,7 @@ export default function flightController() {
     return validateDateRule(val, dateIn)
   }
   const validateDateRuleOutIn = (val, dateIn) =>{
+    if (type.value !== 'full') return true
     return validateDateRule(val, dateIn)
   }
   const readonlyOperationType= computed(() => {

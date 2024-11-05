@@ -17,7 +17,7 @@ import {
   BUSINESS_UNIT_SECURITY,
   BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_LABOR,
-  BUSINESS_UNIT_RAMP, CARGO_PAX, FLIGHT
+  BUSINESS_UNIT_RAMP, CARGO_PAX, FLIGHT, BUSINESS_UNIT_CARGO
 } from "../model/constants";
 
 export default defineComponent({
@@ -76,7 +76,7 @@ export default defineComponent({
         }
         if(isCargo) {
           await qRampStore().setIsPassenger(false);
-          qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
+          qRampStore().setBusinessUnitId(BUSINESS_UNIT_CARGO);
           qRampStore().setTypeWorkOrder(CARGO_PAX);
           kanbanStore.title = 'Cargo Schedule';
         }

@@ -12,6 +12,7 @@ import schedulerModal from '../_components/scheduler/index.vue';
 import show from '../_components/scheduler/actions/show.ts';
 import {
   BUSINESS_UNIT_RAMP,
+  BUSINESS_UNIT_CARGO,
   BUSINESS_UNIT_PASSENGER,
   LABOR,
   BUSINESS_UNIT_LABOR, BUSINESS_UNIT_SECURITY, CARGO_PAX
@@ -45,7 +46,7 @@ export default {
         qRampStore().setBusinessUnitId(BUSINESS_UNIT_SECURITY);
       } else if (urlSchedule.includes('/cargo')) {
         await qRampStore().setIsPassenger(false);
-        qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_CARGO);
         qRampStore().setTypeWorkOrder(CARGO_PAX);
       }
       await workOrderList().getAllList();

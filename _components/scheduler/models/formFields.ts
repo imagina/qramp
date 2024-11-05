@@ -234,6 +234,12 @@ export default function modelFields(): ModelFields {
                 props: {
                   rules: [
                     val => {
+                      if (val === null || val === undefined || val === '') {
+                        return true;
+                      }
+                      if (val < 0) {
+                        return 'The Dep Days cannot be zero or less than zero, leave the field empty if you want to use the Zero logic';
+                      }
                       if (store.refFormScheduler &&
                         store.form.depDays &&
                         store.form.outboundScheduleDeparture) {
