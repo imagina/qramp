@@ -408,6 +408,7 @@ export default {
         }
 
         if (type === 'full') {
+          // Validation for scheduled arrival and scheduled Departure
           const isOutboundAfterInbound = this.validateBetweenDates(
             flightForm.inboundScheduledArrival, 
             flightForm.outboundScheduledDeparture
@@ -420,12 +421,11 @@ export default {
             );
             return true;
           }
-        }
 
-        const inboundBlockIn = flightForm.inboundBlockIn;
-        const outboundBlockOut = flightForm.outboundBlockOut;
+          // Validation for ActualIn/BlockIn - ActualOut/BlockOut
+          const inboundBlockIn = flightForm.inboundBlockIn;
+          const outboundBlockOut = flightForm.outboundBlockOut;
 
-        if (outboundBlockOut) {
           const isBlockOutAfterBlockIn = this.validateBetweenDates(
             inboundBlockIn, 
             outboundBlockOut

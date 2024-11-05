@@ -847,7 +847,7 @@ export default {
               clearable: true,
               color: "primary",
               format24h: true,
-              ...((this.isbound[0] && this.isbound[1]) && {
+              ...(this.operationType === 'full' && {
                 options: this.validateDateOutbound,
               }),
               suffix: this.timezoneAirport,
@@ -895,7 +895,7 @@ export default {
             props: {
               rules: [
                 ...this.validateRulesBlock,
-                val => this.validateDateRuleOutIn(val, this.form.inboundBlockIn)
+                val => this.validateDateRuleOutbound(val, this.form.inboundBlockIn)
               ],
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
@@ -961,11 +961,11 @@ export default {
         value: item.id
       }))
     },
-    type() {
-      const operationType = workOrderList()
+    operationType() {
+      const type = workOrderList()
         .getOperationTypeList()
         .find(item => item.id === Number(this.form.operationTypeId));
-      return operationType?.options?.type;
+      return type?.options?.type;
     }
   },
   methods: {
@@ -1372,6 +1372,8 @@ export default {
       this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.$clone(this.form));
     },
     validateDateOutboundBlockOut(dateTime, dateMin = null) {
+      if (this.operationType !== 'full') return true
+
       const outboundScheduledDepartureDate = this.form.outboundBlockOut
         ? this.$moment(this.form.outboundBlockOut) : this.$moment();
       const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
@@ -1394,8 +1396,6 @@ export default {
       return validateDate ? Number(dateTime) >= Number(hourIn) : true;
     },
     validateDateOutbound(dateTime, dateMin = null) {
-      if (this.type !== 'full') return true
-
       const inboundScheduledArrival = this.form.inboundScheduledArrival
       const outboundScheduledDeparture = this.form.outboundScheduledDeparture
 
@@ -1436,10 +1436,7 @@ export default {
       return diff >= 0 || 'The departure date cannot be less than the arrival date'
     },
     validateDateRuleOutbound(val, dateIn) {
-      if (this.type !== 'full') return true
-      return this.validateDateRule(val, dateIn)
-    },
-    validateDateRuleOutIn(val, dateIn) {
+      if (this.operationType !== 'full') return true
       return this.validateDateRule(val, dateIn)
     },
     changeDate(field) {
