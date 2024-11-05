@@ -218,7 +218,7 @@ export default function modalFormController(props: any = null, emit: any = null)
       return;
     }
     const filterList = await serviceListStore().filterServicesListByQuantity();
-    const validateServices = await serviceListStore().getRefGlobal().refServiceList.validate();
+    const validateServices = await serviceListStore().getRefGlobal().refServiceList?.validate() || true;
 
     if (filterList.length > 0 || !validateServices) {
       store.step = STEP_SERVICE;
