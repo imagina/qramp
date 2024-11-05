@@ -1421,23 +1421,9 @@ export default {
       }
       return validateDate ? Number(dateTime) >= Number(hourIn) : true;
     },
-    validateDateRule(val, dateIn) {
-      if (!val) return true
-
-      const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
-      const dateInFormat = dateIn
-        ? this.$moment(dateIn, FORMAT_DATE)
-        : this.$moment(FORMAT_DATE)
-
-      const date = this.$moment(val, FORMAT_DATE)
-
-      const diff = date.diff(dateInFormat)
-
-      return diff >= 0 || 'The departure date cannot be less than the arrival date'
-    },
     validateDateRuleOutbound(val, dateIn) {
       if (this.operationType !== 'full') return true
-      return this.validateDateRule(val, dateIn)
+      return qRampStore().validateDateRule(val, dateIn)
     },
     changeDate(field) {
       if (field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
