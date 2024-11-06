@@ -25,6 +25,7 @@ import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts'
 import { cacheOffline } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
+import { avatarComponent } from '../common/avatarComponent'
 
 export default {
     name: 'RampCrud',
@@ -123,12 +124,12 @@ export default {
                             label: this.$tr('isite.cms.label.customer'),
                             field: item => item.customCustomerName || item.customer,
                             formatAsync: async item => {
-                                if (item.customCustomerName) {
-                                    return item.customCustomerName;
-                                }
                                 const response = await workOrderList().getCustomerList()
-                                    .find(customer => customer.id === item.customerId) || {};
-                                return `${response.customerName || '-'}`;
+                                .find(customer => customer.id === item.customerId) || {};
+
+                                const customerName = item.customCustomerName ? item.customCustomerName : response?.customerName;
+
+                                return customerName ? avatarComponent(response?.logo, customerName) : '-';
                             },
                             align: 'left'
                         },
