@@ -143,7 +143,9 @@ export default {
                 const response = await workOrderList().getCustomerList()
                 .find(customer => customer.id === item.customerId) || {};
 
-                return avatarComponent(response?.logo, response?.customerName);
+                const customerName = item.customCustomerName ? item.customCustomerName : response?.customerName;
+
+                return customerName ? avatarComponent(response?.logo, customerName) : '-';
               },
               align: 'left'
             },
