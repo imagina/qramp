@@ -592,6 +592,21 @@ export default function qRampStore() {
       return [false, false];
     }
 
+		function validateDateRule(val, dateIn) {
+			if (!val) return true
+
+			const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+			const dateInFormat = dateIn
+				? moment(dateIn, FORMAT_DATE)
+				: moment(FORMAT_DATE)
+
+			const date = moment(val, FORMAT_DATE)
+
+			const diff = date.diff(dateInFormat)
+
+			return diff >= 0 || 'The departure date cannot be less than the arrival date'
+		}
+
     function getFormTable(data) {
       const {
         ident,
@@ -700,6 +715,7 @@ export default function qRampStore() {
         checkIfDataArrives,
         getWorkOrderId,
         setWorkOrderId,
-        isbound
+        isbound,
+				validateDateRule
     }
 }
