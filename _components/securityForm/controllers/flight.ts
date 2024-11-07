@@ -429,15 +429,12 @@ export default function flightController() {
           value: '',
           type: 'fullDate',
           props: {
-            rules: [
-              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
-            ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
             'place-holder': 'MM/DD/YYYY HH:mm',
             readonly: disabledReadonly.value,
 
-            label: `*${i18n.tr('ifly.cms.form.blockIn')}`,
+            label: i18n.tr('ifly.cms.form.blockIn'),
             clearable: true,
             color: "primary",
             format24h: true,
@@ -450,14 +447,13 @@ export default function flightController() {
           type: 'fullDate',
           props: {
             rules: [
-              val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
               val => validateDateRuleOutbound(val, form.value.inboundBlockIn)
             ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
             'place-holder': 'MM/DD/YYYY HH:mm',
             readonly: disabledReadonly.value,
-            label: `*${i18n.tr('ifly.cms.form.blockOut')}`,
+            label: i18n.tr('ifly.cms.form.blockOut'),
             clearable: true,
             color: "primary",
             format24h: true,
