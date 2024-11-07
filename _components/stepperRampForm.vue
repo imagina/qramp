@@ -407,7 +407,7 @@ export default {
           flightformField = flightformField.concat(['cancellationNoticeTime']);
         }
 
-        if (type === 'full') {
+        if (type === 'full' && qRampStore().validateOperationsDoNotApply(flightForm.operationTypeId)) {
           // Validation for scheduled arrival and scheduled Departure
           const isOutboundAfterInbound = this.validateBetweenDates(
             flightForm.inboundScheduledArrival, 

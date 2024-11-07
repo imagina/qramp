@@ -118,7 +118,10 @@ export default function flightController() {
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
   const validateDateRuleOutbound = (val, dateIn) => {
-    if (operationType.value !== 'full') return true
+    if (
+      operationType.value !== 'full' || 
+      !qRampStore().validateOperationsDoNotApply(storeFueling.form.operationTypeId)
+    ) return true
     return qRampStore().validateDateRule(val, dateIn)
   }
   const readonlyOperationType= computed(() => {
