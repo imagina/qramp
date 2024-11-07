@@ -592,20 +592,30 @@ export default function qRampStore() {
       return [false, false];
     }
 
-		function validateDateRule(val, dateIn) {
-			if (!val) return true
+    function validateDateRule(val, dateIn) {
+      if (!val) return true
 
-			const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
-			const dateInFormat = dateIn
-				? moment(dateIn, FORMAT_DATE)
-				: moment(FORMAT_DATE)
+      const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+      const dateInFormat = dateIn
+        ? moment(dateIn, FORMAT_DATE)
+        : moment(FORMAT_DATE)
 
-			const date = moment(val, FORMAT_DATE)
+      const date = moment(val, FORMAT_DATE)
 
-			const diff = date.diff(dateInFormat)
+      const diff = date.diff(dateInFormat)
 
-			return diff >= 0 || 'The departure date cannot be less than the arrival date'
-		}
+      return diff >= 0 || 'The departure date cannot be less than the arrival date'
+    }
+
+    function validateOperationsDoNotApply(operationTypeId) {
+      if (!operationTypeId) return false
+      if (
+        (getBusinessUnitId() === BUSINESS_UNIT_PASSENGER ||
+        getBusinessUnitId() === BUSINESS_UNIT_SECURITY) &&
+        OPERATION_TYPE_NON_FLIGHT.includes(Number(operationTypeId))
+      ) return false
+      return true
+    }
 
     function getFormTable(data) {
       const {
@@ -716,6 +726,7 @@ export default function qRampStore() {
         getWorkOrderId,
         setWorkOrderId,
         isbound,
-				validateDateRule
+				validateDateRule,
+        validateOperationsDoNotApply
     }
 }
