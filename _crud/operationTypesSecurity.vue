@@ -2,6 +2,7 @@
 </template>
 <script>
 import {COMPANY_SECURITY} from '../_components/model/constants.js'
+import from ''
 export default {
   data() {
     return {
@@ -103,7 +104,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qsetupagione.setupCompanies',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {id: store.getSetting('ramp::rampCompanies')}}
+              requestParams: {filter: {id: this.$getSetting('ramp::rampCompanies')}}
             }
           },
           options: {
