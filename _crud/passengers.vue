@@ -31,6 +31,7 @@ import workOrderList from '../_store/actions/workOrderList.ts';
 import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index.vue';
 import { cacheOffline } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
+import { avatarComponent } from '../common/avatarComponent'
 
 export default {
   name: 'RampCrud',
@@ -140,8 +141,9 @@ export default {
               field: item => item.customCustomerName || item.customer,
               formatAsync: async item => {
                 const response = await workOrderList().getCustomerList()
-                  .find(customer => customer.id === item.customerId) || {};
-                return `${response.customerName || '-'}`;
+                .find(customer => customer.id === item.customerId) || {};
+
+                return avatarComponent(response?.logo, response?.customerName);
               },
               align: 'left'
             },
