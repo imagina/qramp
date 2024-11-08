@@ -12,7 +12,7 @@
     />
     <inner-loading :visible="loadingBulk" />
     <crud
-      :crud-data="import('./baseCrud.vue')"
+      :crud-data="import('modules/qramp/_crud/baseCrud.vue')"
       :custom-data="crudData" ref="crudComponent"
       :title="$route.meta.title"
     />
