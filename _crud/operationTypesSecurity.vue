@@ -2,7 +2,6 @@
 </template>
 <script>
 import {COMPANY_SECURITY} from '../_components/model/constants.js'
-import from ''
 export default {
   data() {
     return {
