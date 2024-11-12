@@ -68,7 +68,7 @@
           </collapse>
         </div>
       </div>
-      <div v-if="isbound[1] & !validateNoFligth" class="col-12 col-md-6">
+      <div v-if="isbound[1] && !validateNoFligth" class="col-12 col-md-6">
         <div v-if="isCollapse">
           <collapse :title="$tr('isite.cms.label.outbound')" :flightNumber="form.outboundFlightNumber"
             :isComplete="completedFormOutBound">
