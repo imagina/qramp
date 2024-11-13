@@ -103,7 +103,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qsetupagione.setupCompanies',
               select: {label: 'fullName', id: 'id'},
-              requestParams: {filter: {id: store.getSetting('ramp::rampCompanies')}}
+              requestParams: {filter: {id: this.$getSetting('ramp::rampCompanies')}}
             }
           },
           options: {

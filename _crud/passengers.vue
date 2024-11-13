@@ -8,7 +8,7 @@
     />
     <flightDetail />
     <inner-loading :visible="loadingBulk" />
-    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+    <crud :crud-data="import('modules/qramp/_crud/baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
           :title="$route.meta.title" />
   </div>
 </template>
@@ -143,7 +143,9 @@ export default {
                 const response = await workOrderList().getCustomerList()
                 .find(customer => customer.id === item.customerId) || {};
 
-                return avatarComponent(response?.logo, response?.customerName);
+                const customerName = item.customCustomerName ? item.customCustomerName : response?.customerName;
+
+                return customerName ? avatarComponent(response?.logo, customerName) : '-';
               },
               align: 'left'
             },

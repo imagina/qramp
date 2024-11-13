@@ -59,13 +59,15 @@ export default function flightController() {
     return qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_LABOR && OPERATION_TYPE_NON_FLIGHT.includes(operationTypeId)
   })
   const isBound = computed(() => qRampStore().isbound(storeFueling.form.operationTypeId))
-  const type = computed(() => {
-    const operationType = workOrderList()
+  const operationType = computed(() => {
+    const type = workOrderList()
       .getOperationTypeList()
       .find(item => item.id === Number(form.value.operationTypeId));
-    return operationType?.options?.type;
+    return type?.options?.type;
   })
   const validateDateOutboundBlockOut = (dateTime, dateMin = null) => {
+    if (operationType.value !== 'full') return true
+    
     const outboundScheduledDepartureDate = form.value.outboundBlockOut
       ? moment(form.value.outboundBlockOut) : moment();
     const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
@@ -88,7 +90,7 @@ export default function flightController() {
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
   const validateDateOutbound = (dateTime, dateMin = null) => {
-    if (type.value !== 'full') return true
+    if (operationType.value !== 'full') return true
 
     const inboundScheduledArrival = form.value.inboundScheduledArrival
     const outboundScheduledDeparture = form.value.outboundScheduledDeparture
@@ -115,27 +117,12 @@ export default function flightController() {
     }
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
-  const validateDateRule = (val, dateIn) => {
-    if (!val) return true
-
-    const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
-    const dateInFormat = dateIn
-      ? moment(dateIn, FORMAT_DATE)
-      : moment(FORMAT_DATE)
-
-    const date = moment(val, FORMAT_DATE)
-
-    const diff = date.diff(dateInFormat)
-
-    return diff >= 0 || 'The departure date cannot be less than the arrival date'
-  }
   const validateDateRuleOutbound = (val, dateIn) => {
-    if (type.value !== 'full') return true
-    return validateDateRule(val, dateIn)
-  }
-  const validateDateRuleOutIn = (val, dateIn) =>{
-    if (type.value !== 'full') return true
-    return validateDateRule(val, dateIn)
+    if (
+      operationType.value !== 'full' || 
+      !qRampStore().validateOperationsDoNotApply(storeFueling.form.operationTypeId)
+    ) return true
+    return qRampStore().validateDateRule(val, dateIn)
   }
   const readonlyOperationType= computed(() => {
     const { parentId, preFlightNumber, operationTypeId } = form.value || {};
@@ -442,13 +429,12 @@ export default function flightController() {
           value: '',
           type: 'fullDate',
           props: {
-            //...this.validateRulesBlock,
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
             'place-holder': 'MM/DD/YYYY HH:mm',
             readonly: disabledReadonly.value,
 
-            label: `*${i18n.tr('ifly.cms.form.blockIn')}`,
+            label: i18n.tr('ifly.cms.form.blockIn'),
             clearable: true,
             color: "primary",
             format24h: true,
@@ -461,13 +447,13 @@ export default function flightController() {
           type: 'fullDate',
           props: {
             rules: [
-              val => validateDateRuleOutIn(val, form.value.inboundBlockIn)
+              val => validateDateRuleOutbound(val, form.value.inboundBlockIn)
             ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
             'place-holder': 'MM/DD/YYYY HH:mm',
             readonly: disabledReadonly.value,
-            label: `*${i18n.tr('ifly.cms.form.blockOut')}`,
+            label: i18n.tr('ifly.cms.form.blockOut'),
             clearable: true,
             color: "primary",
             format24h: true,

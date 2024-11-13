@@ -343,6 +343,7 @@ export default {
       })
     },
     validateBetweenDates(dateIn, dateOut) {
+      if (!dateIn) return true
       const inFormat = this.$moment(dateIn)
       const date = this.$moment(dateOut)
 
@@ -406,7 +407,8 @@ export default {
           flightformField = flightformField.concat(['cancellationNoticeTime']);
         }
 
-        if (type === 'full') {
+        if (type === 'full' && qRampStore().validateOperationsDoNotApply(flightForm.operationTypeId)) {
+          // Validation for scheduled arrival and scheduled Departure
           const isOutboundAfterInbound = this.validateBetweenDates(
             flightForm.inboundScheduledArrival, 
             flightForm.outboundScheduledDeparture
@@ -419,15 +421,14 @@ export default {
             );
             return true;
           }
-        }
 
-        const inboundBlockIn = flightForm.inboundBlockIn;
-        const outboundBlockOut = flightForm.outboundBlockOut;
+          // Validation for ActualIn/BlockIn - ActualOut/BlockOut
+          const inboundBlockIn = flightForm.inboundBlockIn;
+          const outboundBlockOut = flightForm.outboundBlockOut;
 
-        if (inboundBlockIn && outboundBlockOut) {
           const isBlockOutAfterBlockIn = this.validateBetweenDates(
-            flightForm.inboundBlockIn, 
-            flightForm.outboundBlockOut
+            inboundBlockIn, 
+            outboundBlockOut
           );
           
           if (isBlockOutAfterBlockIn) {
