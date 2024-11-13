@@ -206,7 +206,7 @@ export default {
           }
 
         } else {
-          triggerErrorEvent()
+          this.triggerErrorEvent()
         }
       });
     },
@@ -388,7 +388,7 @@ export default {
                   if (success) {
                     this.orderConfirmationMessage()
                   } else {
-                    triggerErrorEvent()
+                    this.triggerErrorEvent()
                   }
                 });
               },
