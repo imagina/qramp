@@ -343,7 +343,8 @@ export default {
       })
     },
     validateBetweenDates(dateIn, dateOut) {
-      if (!dateIn) return true
+      if (!dateIn && !dateOut) return false
+      if (!dateIn && dateOut) return true
       const inFormat = this.$moment(dateIn)
       const date = this.$moment(dateOut)
 
@@ -399,6 +400,8 @@ export default {
             flightformField = flightformField.concat(halfTurnOutBount);
           }
         }
+        
+        // Passenger
         if(charter) {
           flightformField = flightformField.concat(['charterRate']);
         }
@@ -414,14 +417,6 @@ export default {
             flightForm.outboundScheduledDeparture
           );
 
-          if (isOutboundAfterInbound) {
-            this.showErrorMessage(
-              'The outbound scheduled departure must be greater than the inbound scheduled arrival', 
-              STEP_FLIGHT
-            );
-            return true;
-          }
-
           // Validation for ActualIn/BlockIn - ActualOut/BlockOut
           const inboundBlockIn = flightForm.inboundBlockIn;
           const outboundBlockOut = flightForm.outboundBlockOut;
@@ -430,13 +425,20 @@ export default {
             inboundBlockIn, 
             outboundBlockOut
           );
-          
-          if (isBlockOutAfterBlockIn) {
+
+          const out = this.isPassenger ? 'Actual-out' : 'Block-out';
+          const inb = this.isPassenger ? 'actual-in' : 'block-in';
+
+          const message = isOutboundAfterInbound 
+            ? 'The outbound scheduled departure must be greater than the inbound scheduled arrival'
+            : `${out} must be greater than ${inb}`
+
+          if (isOutboundAfterInbound || isBlockOutAfterBlockIn) {
             this.showErrorMessage(
-              'Block-out must be greater than block-in', 
+              message, 
               STEP_FLIGHT
             );
-            return true;
+            return true
           }
         }
 
