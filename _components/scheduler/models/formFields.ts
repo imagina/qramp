@@ -63,7 +63,7 @@ export default function modelFields(): ModelFields {
                     ],
                     label: i18n.tr('ifly.cms.sidebar.aircraftType'),
                     options: workOrderList().getACTypesList().map(item => ({
-                        label: item.model,
+                        label: item.fullName,
                         value: item.id
                     })),
                 },
