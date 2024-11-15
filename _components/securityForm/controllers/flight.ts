@@ -67,7 +67,7 @@ export default function flightController() {
   })
   const validateDateOutboundBlockOut = (dateTime, dateMin = null) => {
     if (operationType.value !== 'full') return true
-    
+
     const outboundScheduledDepartureDate = form.value.outboundBlockOut
       ? moment(form.value.outboundBlockOut) : moment();
     const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
@@ -119,7 +119,7 @@ export default function flightController() {
   }
   const validateDateRuleOutbound = (val, dateIn) => {
     if (
-      operationType.value !== 'full' || 
+      operationType.value !== 'full' ||
       !qRampStore().validateOperationsDoNotApply(storeFueling.form.operationTypeId)
     ) return true
     return qRampStore().validateDateRule(val, dateIn)
@@ -173,7 +173,7 @@ export default function flightController() {
               .getACTypesList()
               .map(
                 item => ({
-                  label: item.model,
+                  label: item.fullName,
                   value: item.id
                 })
               )
