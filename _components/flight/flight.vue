@@ -347,7 +347,7 @@ export default {
         .getACTypesList()
         .map(
           item => ({
-            label: item.model,
+            label: item.fullName,
             value: item.id
           })
         )
