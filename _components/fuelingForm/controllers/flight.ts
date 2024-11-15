@@ -73,7 +73,7 @@ export default function flightController() {
               .getACTypesList()
               .map(
                 item => ({
-                  label: item.model,
+                  label: item.fullName,
                   value: item.id
                 })
               )
@@ -178,9 +178,9 @@ export default function flightController() {
   }
 
   const handleChange = async (key, event) => {
-    if (form.value[key] == event) return 
+    if (form.value[key] == event) return
     if (!event) return
-    
+
     if (key === 'stationId') await reFilterFavorites(key, event)
     if (key === 'carrierId') await reFilterFavorites(key, event)
   }
