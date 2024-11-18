@@ -19,6 +19,7 @@ export default defineComponent({
   },
   setup(props) {
     const refServiceList = ref(null);
+    const indexMultiple = ref(null);
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
     const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
@@ -71,10 +72,11 @@ export default defineComponent({
       }
       return 0
     };
-    const differenceHourMultiple = (formField) => {
+    const differenceHourMultiple = (formField, index) => {
+      indexMultiple.value = index;
       const title = 'Difference (hours):';
-      const startDate = formField[1] || null;
-      const endDate = formField[2] || null;
+      const startDate = formField.Start || null;
+      const endDate = formField.End || null;
       if (startDate && endDate) {
         return `${title} ${qRampStore().getDifferenceInHours(startDate, endDate)}`;
       }
@@ -167,11 +169,88 @@ export default defineComponent({
         };
       }
       if(field.type === 'multiplier') {
+        if(indexMultiple.value != null) {
+          if (field.props.fields.Employees.props.label === 'Employees' && field.props.fields.Employees.type === 'select') {
+            const rules = [val => {
+              if (field.value[indexMultiple.value].Holiday || field.value[indexMultiple.value].Start || field.value[indexMultiple.value].End) {
+                if (!val) {
+                  return i18n.tr('isite.cms.message.fieldRequired');
+                }
+              }
+              return true;
+            }]
+
+            field.props.fields.Employees.props.rules = rules;
+          }
+
+          if (field.props.fields.Start.props.label === 'Start' && field.props.fields.Start === 'fullDate') {
+            const rules = [val => {
+              if (!val && (field.value[indexMultiple.value].Holiday || field.value[indexMultiple.value].End || field.value[indexMultiple.value].Employees)) {
+                return i18n.tr('isite.cms.message.fieldRequired');
+              }
+              return true;
+            }]
+            field.props.fields.Start.props.rules = rules;
+          }
+
+          if (field.props.fields.End.props.label === 'End' && field.props.fields.End.type === 'fullDate') {
+            const startDate = field.value[indexMultiple.value].Start
+              ? moment(field.value[indexMultiple.value].Start, 'MM/DD/YYYY HH:mm')
+              : null;
+            const endDate = field.value[indexMultiple.value].End
+              ? moment(field.value[indexMultiple.value].End, 'MM/DD/YYYY HH:mm')
+              : null;
+            const options = {
+              options: (dateTime, dateMin) => {
+                if (!field.value[indexMultiple.value].Start) return false;
+                if (isNaN(dateTime)) {
+                  return dateTime >= startDate.format('YYYY/MM/DD')
+                }
+                if (!field.value[indexMultiple.value].End) return false;
+                if (dateMin) {
+                  return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+                    ? dateMin >= Number(startDate.format('m'))
+                    : true;
+                }
+                return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+                  ? dateTime >= startDate.format('H')
+                  : true;
+              },
+            };
+            const rules = [val => {
+              if (!val && (field.value[indexMultiple.value].Holiday ||
+                field.value[indexMultiple.value].Start ||
+                field.value[indexMultiple.value].Employees)) {
+                return i18n.tr('isite.cms.message.fieldRequired');
+              }
+              if (!val && (!field.value[indexMultiple.value].Holiday ||
+                !field.value[indexMultiple.value].Start ||
+                !field.value[indexMultiple.value].Employees)) {
+                return true;
+              }
+              if (field.value[indexMultiple.value].Start) {
+                const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+                const dateInFormat = field.value[indexMultiple.value].Start
+                  ? moment(field.value[indexMultiple.value].Start, FORMAT_DATE)
+                  : moment(FORMAT_DATE)
+
+                const date = moment(val, FORMAT_DATE)
+
+                const diff = date.diff(dateInFormat)
+
+                return diff >= 0 || 'The end date cannot be less than the start date'
+              }
+            }]
+            field.props.fields.End.props.rules = rules;
+            field.props.fields.End.props.options = options.options;
+          }
+        }
+
         return {
           ...field,
           props: {
             ...field.props,
-            summary: differenceHourMultiple
+            summary: differenceHourMultiple,
           },
         };
       }
@@ -231,7 +310,9 @@ export default defineComponent({
                               :key="keyfield">
                 <label class="flex no-wrap items-center ">
                   <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
-                                 :field="transformerFields(field, item.productType, item.formField)"/>
+                                 :field="transformerFields(field, item.productType, item.formField)"
+                                 @indexFieldMultiple=""
+                  />
                 </label>
               </q-card-section>
               <div class="tw-relative  tw-top-[-26px] tw-pr-1">
@@ -278,7 +359,7 @@ export default defineComponent({
             </div>
             <div class="tw-absolute tw-right-1 tw-bottom-1">
               <p>
-                <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
+                <span class="tw-text-xs tw-text-gray-500" v-if="false">
                   Difference (hours): {{ differenceHour(item.formField) }}
                 </span>
               </p>

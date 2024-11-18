@@ -224,6 +224,7 @@ function setProps(type, name, options, productType, index, multipleFields= []) {
         };
     }
     if(type == "multiplier") {
+
       const fields = multipleFields.map((field, indexField) => {
         const propsOptions = field.options?.props || {}
         const loadOptions = field.options?.loadOptions ? {
@@ -253,7 +254,12 @@ function setProps(type, name, options, productType, index, multipleFields= []) {
           props: { ...props, ...propsOptions },
           ...loadOptions
         }
-      });
+      }).reduce((obj, item) => {
+        if (item.props && item.props.label) {
+          obj[item.props.label] = item;
+        }
+        return obj;
+      }, {});
       console.log(fields);
       return {
         type: type,
