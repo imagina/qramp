@@ -258,10 +258,7 @@ export default {
       return this.$store.state.qofflineMaster.isAppOffline;
     },
     operationTypeList() {
-      const data = structuredClone(workOrderList().getOperationTypeList())
-      if (Number(this.form.operationTypeId) === OPERATION_TYPE_NON_FLIGHT[0]) return data
-      if (this.isPassenger) return data.filter(item => item.id !== OPERATION_TYPE_NON_FLIGHT[0])
-      return data
+      return structuredClone(workOrderList().getOperationTypeList())
     },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
