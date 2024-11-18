@@ -5,6 +5,7 @@ import pluginsArray from 'src/plugins/array.js';
 import { store } from 'src/plugins/utils'
 import _ from 'lodash';
 import serviceListStore from '../../_components/serviceList/store/serviceList'
+import { fields } from "../../_components/signature/model/fields";
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -157,6 +158,7 @@ function getDynamicField(product) {
             currentValue.values,
             productoType,
             i,
+            currentValue.fields
             );
             const key = `${currentValue.type}${currentValue.name ? currentValue.name : ""}`;
             const type = currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
@@ -189,7 +191,7 @@ function getDynamicField(product) {
  * @param index
  * @returns {PropsDynamicField}
  */
-function setProps(type, name, options, productType, index) {
+function setProps(type, name, options, productType, index, multipleFields= []) {
     const readonly = qRampStore().disabledReadonly();
     if (type == "quantity" || type == "quantityFloat") {
         return {
@@ -220,6 +222,47 @@ function setProps(type, name, options, productType, index) {
             "place-holder": "MM/DD/YYYY HH:mm",
             format24h: true,
         };
+    }
+    if(type == "multiplier") {
+      const fields = multipleFields.map((field, indexField) => {
+        const propsOptions = field.options?.props || {}
+        const loadOptions = field.options?.loadOptions ? {
+          loadOptions : {
+            ...field.options?.loadOptions,
+            requestParams: {
+              filter: {
+                workOrderId: qRampStore().getWorkOrderId(),
+              }
+            }
+          },
+        } : {};
+        let value = field.value ? field.type === 'checkbox' ? Number(field.value) : field.value : field.type === 'checkbox' ? 0 : null
+        if(propsOptions.multiple) {
+          value = value || [];
+        }
+        const props = setProps(
+          field.type,
+          field.label,
+          [],
+          null,
+          indexField,
+        );
+        return {
+          type: field.type,
+          value: value,
+          props: { ...props, ...propsOptions },
+          ...loadOptions
+        }
+      });
+      console.log(fields);
+      return {
+        type: type,
+        readonly,
+        label: name,
+        isDraggable: true,
+        maxQuantity: 7,
+        fields
+      };
     }
     return {
         type: type,

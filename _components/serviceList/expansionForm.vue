@@ -71,6 +71,15 @@ export default defineComponent({
       }
       return 0
     };
+    const differenceHourMultiple = (formField) => {
+      const title = 'Difference (hours):';
+      const startDate = formField[1] || null;
+      const endDate = formField[2] || null;
+      if (startDate && endDate) {
+        return `${title} ${qRampStore().getDifferenceInHours(startDate, endDate)}`;
+      }
+      return `${title} 0`
+    };
     const transformerFields = (field, productType, formField) => {
       if (productType === 4 && field.name === 'Employees' && field.type === 'select') {
         const rules = [val => {
@@ -154,6 +163,15 @@ export default defineComponent({
             ...field.props,
             rules,
             ...options,
+          },
+        };
+      }
+      if(field.type === 'multiplier') {
+        return {
+          ...field,
+          props: {
+            ...field.props,
+            summary: differenceHourMultiple
           },
         };
       }
