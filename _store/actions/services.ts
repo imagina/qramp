@@ -227,7 +227,6 @@ function setProps(type, name, options, productType, index, multipleFields= []) {
 
       const fields = multipleFields.map((field, indexField) => {
         const propsOptions = field.options?.props || {};
-        console.log(field.options);
         const nameField = field.options?.name || '';
         const loadOptions = field.options?.loadOptions ? {
           loadOptions : {
