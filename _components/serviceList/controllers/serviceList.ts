@@ -165,7 +165,7 @@ export default function useServiceList(props = {}, emit = null) {
                 lists: []
             };
         }
-        
+
         if (errorList.length > 0) {
             const filteredDynamicFields = searchAndCreateDynamicField(serviceListModel.value || []).filter((dynamicItem) =>
                 errorList.includes(dynamicItem.id)
@@ -175,7 +175,6 @@ export default function useServiceList(props = {}, emit = null) {
                 lists: []
             };
         }
-
         return filteredServices;
     });
 
@@ -189,7 +188,7 @@ export default function useServiceList(props = {}, emit = null) {
     onMounted(() => {
         document.addEventListener("wheel", function(event){
             const documentBody: any = document;
-            if(documentBody.activeElement.type === "number") 
+            if(documentBody.activeElement.type === "number")
             {
                 documentBody.activeElement.blur();
             }

@@ -229,47 +229,69 @@ export default function serviceListStore(): ServiceListStoreContract {
 
 
     async function filterServicesListByQuantity(): Promise<any> {
-       let serviceList = await getServiceListSelected(true);
-       serviceList = serviceList.filter(item => {
-        if (item.product_type == 2 || item.product_type == 3) {
-            return item.work_order_item_attributes.some(attr => attr.value === null ||
-              attr.value === undefined);
-        }
-        if(item.product_type == 4) {
-          const attrMultiple = item.work_order_item_attributes.find(attr => attr.type === 'multiplier');
-          const parsedValue = attrMultiple ? attrMultiple.value : '[]';
+      serviceListStore().setLoading(true)
+      let serviceList = await getServiceListSelected(true);
+        serviceList = serviceList.filter(item => {
+          if (item.product_type == 2 || item.product_type == 3) {
+            return item.work_order_item_attributes.some(attr =>
+              attr.value === null || attr.value === undefined
+            );
+          }
 
-          const requiredFields = ['employees', 'start', 'end'];
-          const isValidField = (field) => {
-            return (field === null || field === "") &&
-              (!Array.isArray(field) || field.length > 0);
-          };
+          if (item.product_type == 4) {
+            return item.work_order_item_attributes.some(attr => {
+              const requiredFields = ['employees', 'start', 'end'];
 
-          const validateData = (data) => {
-            const parsedValue = JSON.parse(data);
+              const isValidField = (field) => {
+                return field === null || field === "" || field === undefined ||
+                  (Array.isArray(field) && field.length === 0);
+              };
 
-            return parsedValue.some((item) => {
-              const hasInvalidField = requiredFields.some((field) => {
-                const fieldValue = item[field];
-                return isValidField(fieldValue);
-              });
+              const validateData = (data) => {
+                let parsedData;
 
-              if (item.start && item.end) {
-                const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
-                const startDate = moment(item.start, FORMAT_DATE);
-                const endDate = moment(item.end, FORMAT_DATE);
-                return qRampStore().getDifferenceInHours(startDate, endDate) < 0
-              }
-              return hasInvalidField;
+                try {
+                  parsedData = JSON.parse(data);
+                } catch (e) {
+                  return true;
+                }
+
+                return parsedData.some((item) => {
+
+                  const hasInvalidField = requiredFields.some((field) => {
+                    const fieldValue = item[field];
+                    return isValidField(fieldValue);
+                  });
+                  if(hasInvalidField) return hasInvalidField;
+
+                  if (item.Start && item.End) {
+                    const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
+                    const startDate = moment(item.Start, FORMAT_DATE);
+                    const endDate = moment(item.End, FORMAT_DATE);
+
+
+                    if (!startDate.isValid() || !endDate.isValid()) {
+                      return true;
+                    }
+
+
+                    return qRampStore().getDifferenceInHours(startDate, endDate) < 0;
+                  }
+
+
+                });
+              };
+
+              return validateData(attr.value);
             });
-          };
-          return validateData(parsedValue);
+          }
 
-        }
-        return false;
-       })
+          return false;  // Para los demás casos, no se aplica el filtro
+        });
+
        setErrorList(serviceList);
-       return serviceList;
+      serviceListStore().setLoading(false)
+      return serviceList;
     }
 
     return {
