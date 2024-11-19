@@ -236,32 +236,35 @@ export default function serviceListStore(): ServiceListStoreContract {
               attr.value === undefined);
         }
         if(item.product_type == 4) {
-          const startAttr = item.work_order_item_attributes.find(attr => attr.name === 'Start');
-          const startValue = startAttr ? startAttr.value : null;
-          return item.work_order_item_attributes.some(attr => {
-              const requiredFields = ['Employees', 'Start', 'End'];
+          const attrMultiple = item.work_order_item_attributes.find(attr => attr.type === 'multiplier');
+          const parsedValue = attrMultiple ? attrMultiple.value : '[]';
 
-              const isValid = item => {
-                if (!requiredFields.includes(item.name)) return true;
-                if (item.name === 'End' && startValue) {
-                  const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
-                  const dateInFormat = startValue
-                    ? moment(startValue, FORMAT_DATE)
-                    : moment(FORMAT_DATE);
+          const requiredFields = ['employees', 'start', 'end'];
+          const isValidField = (field) => {
+            return (field === null || field === "") &&
+              (!Array.isArray(field) || field.length > 0);
+          };
 
-                  const date = moment(item.value, FORMAT_DATE);
-                  const diff = date.diff(dateInFormat);
+          const validateData = (data) => {
+            const parsedValue = JSON.parse(data);
 
-                  return diff >= 0;
-                }
-                return item.value !== null &&
-                  item.value !== "" &&
-                  (!Array.isArray(item.value) || item.value.length > 0) &&
-                  item.value !== "[]";
-              };
-              return item.work_order_item_attributes.some(attrItem => !isValid(attrItem))
-          }
-          );
+            return parsedValue.some((item) => {
+              const hasInvalidField = requiredFields.some((field) => {
+                const fieldValue = item[field];
+                return isValidField(fieldValue);
+              });
+
+              if (item.start && item.end) {
+                const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
+                const startDate = moment(item.start, FORMAT_DATE);
+                const endDate = moment(item.end, FORMAT_DATE);
+                return qRampStore().getDifferenceInHours(startDate, endDate) < 0
+              }
+              return hasInvalidField;
+            });
+          };
+          return validateData(parsedValue);
+
         }
         return false;
        })

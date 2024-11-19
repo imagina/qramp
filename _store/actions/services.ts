@@ -226,7 +226,9 @@ function setProps(type, name, options, productType, index, multipleFields= []) {
     if(type == "multiplier") {
 
       const fields = multipleFields.map((field, indexField) => {
-        const propsOptions = field.options?.props || {}
+        const propsOptions = field.options?.props || {};
+        console.log(field.options);
+        const nameField = field.options?.name || '';
         const loadOptions = field.options?.loadOptions ? {
           loadOptions : {
             ...field.options?.loadOptions,
@@ -251,16 +253,17 @@ function setProps(type, name, options, productType, index, multipleFields= []) {
         return {
           type: field.type,
           value: value,
+          name: nameField,
           props: { ...props, ...propsOptions },
           ...loadOptions
         }
       }).reduce((obj, item) => {
-        if (item.props && item.props.label) {
-          obj[item.props.label] = item;
+        if (item.name) {
+          obj[item.name] = item;
         }
         return obj;
       }, {});
-      console.log(fields);
+
       return {
         type: type,
         readonly,
@@ -385,6 +388,9 @@ function validationDataAttr(obj: any, key: any) {
         ? !obj[key].value || obj[key].value == 0  ? null
         : Math.abs(obj[key].value) : obj[key].value;
     if(obj[key].type === 'select' && obj[key].props?.multiple) {
+      value = JSON.stringify(obj[key].value);
+    }
+    if(obj[key].type === 'multiplier') {
       value = JSON.stringify(obj[key].value);
     }
     let data: any = {

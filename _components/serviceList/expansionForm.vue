@@ -1,11 +1,11 @@
 <script lang="ts">
-import {defineComponent, computed, ref, onMounted} from 'vue';
+import {defineComponent, computed, ref, onMounted, inject} from 'vue';
 import serviceListStore from './store/serviceList';
 import postFavourites from './services/postFavourites'
 import deleteFavourites from './services/deleteFavourites'
 import workOrderList from '../../_store/actions/workOrderList';
 import storeFlight from '../flight/store';
-import {alert, i18n, store} from 'src/plugins/utils';
+import {alert, i18n, store, lodash} from 'src/plugins/utils';
 import qRampStore from "../../_store/qRampStore";
 import moment from "moment-timezone";
 
@@ -22,14 +22,14 @@ export default defineComponent({
     const indexMultiple = ref(null);
     const data: any = computed(() => props.data);
     const isDesktop = computed(() => (window as any).innerWidth >= '900');
-    const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
+    const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline);
+    const dynamicRefs = ref({});
     const permissionFavourite: any = computed(() => ({
       create: store.hasAccess('isite.favourites.create'),
       edit: store.hasAccess('isite.favourites.edit'),
       index: store.hasAccess(`isite.favourites.index`),
       destroy: store.hasAccess(`isite.favourites.destroy`),
     }));
-
     async function selectFavourite(data: any) {
       data.favourite = !data.favourite;
       if (!data.favourite) {
@@ -75,10 +75,11 @@ export default defineComponent({
     const differenceHourMultiple = (formField, index) => {
       indexMultiple.value = index;
       const title = 'Difference (hours):';
-      const startDate = formField.Start || null;
-      const endDate = formField.End || null;
+      const startDate = formField.start || null;
+      const endDate = formField.end || null;
+      const employeesTotal = formField?.employees?.length || 1;
       if (startDate && endDate) {
-        return `${title} ${qRampStore().getDifferenceInHours(startDate, endDate)}`;
+        return `${title} ${qRampStore().getDifferenceInHours(startDate, endDate) * employeesTotal}`;
       }
       return `${title} 0`
     };
@@ -168,84 +169,19 @@ export default defineComponent({
           },
         };
       }
-      if(field.type === 'multiplier') {
-        if(indexMultiple.value != null) {
-          if (field.props.fields.Employees.props.label === 'Employees' && field.props.fields.Employees.type === 'select') {
-            const rules = [val => {
-              if (field.value[indexMultiple.value].Holiday || field.value[indexMultiple.value].Start || field.value[indexMultiple.value].End) {
-                if (!val) {
-                  return i18n.tr('isite.cms.message.fieldRequired');
-                }
-              }
-              return true;
-            }]
-
-            field.props.fields.Employees.props.rules = rules;
-          }
-
-          if (field.props.fields.Start.props.label === 'Start' && field.props.fields.Start === 'fullDate') {
-            const rules = [val => {
-              if (!val && (field.value[indexMultiple.value].Holiday || field.value[indexMultiple.value].End || field.value[indexMultiple.value].Employees)) {
+      if(field?.type === 'multiplier') {
+        /*if (indexMultiple.value && field.props?.fields?.employees?.props?.label === 'Employees' && field.props?.fields?.employees?.type === 'select') {
+          const rules = [val => {
+            if (field.value[indexMultiple.value].holiday || field.value[indexMultiple.value].start || field.value[indexMultiple.value].end) {
+              if (!val) {
                 return i18n.tr('isite.cms.message.fieldRequired');
               }
-              return true;
-            }]
-            field.props.fields.Start.props.rules = rules;
-          }
+            }
+            return true;
+          }]
 
-          if (field.props.fields.End.props.label === 'End' && field.props.fields.End.type === 'fullDate') {
-            const startDate = field.value[indexMultiple.value].Start
-              ? moment(field.value[indexMultiple.value].Start, 'MM/DD/YYYY HH:mm')
-              : null;
-            const endDate = field.value[indexMultiple.value].End
-              ? moment(field.value[indexMultiple.value].End, 'MM/DD/YYYY HH:mm')
-              : null;
-            const options = {
-              options: (dateTime, dateMin) => {
-                if (!field.value[indexMultiple.value].Start) return false;
-                if (isNaN(dateTime)) {
-                  return dateTime >= startDate.format('YYYY/MM/DD')
-                }
-                if (!field.value[indexMultiple.value].End) return false;
-                if (dateMin) {
-                  return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
-                    ? dateMin >= Number(startDate.format('m'))
-                    : true;
-                }
-                return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
-                  ? dateTime >= startDate.format('H')
-                  : true;
-              },
-            };
-            const rules = [val => {
-              if (!val && (field.value[indexMultiple.value].Holiday ||
-                field.value[indexMultiple.value].Start ||
-                field.value[indexMultiple.value].Employees)) {
-                return i18n.tr('isite.cms.message.fieldRequired');
-              }
-              if (!val && (!field.value[indexMultiple.value].Holiday ||
-                !field.value[indexMultiple.value].Start ||
-                !field.value[indexMultiple.value].Employees)) {
-                return true;
-              }
-              if (field.value[indexMultiple.value].Start) {
-                const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
-                const dateInFormat = field.value[indexMultiple.value].Start
-                  ? moment(field.value[indexMultiple.value].Start, FORMAT_DATE)
-                  : moment(FORMAT_DATE)
-
-                const date = moment(val, FORMAT_DATE)
-
-                const diff = date.diff(dateInFormat)
-
-                return diff >= 0 || 'The end date cannot be less than the start date'
-              }
-            }]
-            field.props.fields.End.props.rules = rules;
-            field.props.fields.End.props.options = options.options;
-          }
-        }
-
+          field.props.fields.employees.props.rules = lodash.cloneDeep(rules);
+        }*/
         return {
           ...field,
           props: {
@@ -257,6 +193,13 @@ export default defineComponent({
       return field;
     }
 
+    function setDynamicRef(index) {
+      return (el) => {
+        if (el) {
+          dynamicRefs.value[`refsFynamicField-${index}`] = el;
+        }
+      };
+    }
 
     onMounted(() => {
       serviceListStore().setRefGlobal({refServiceList: refServiceList.value});
@@ -272,7 +215,8 @@ export default defineComponent({
       isAppOffline,
       differenceHour,
       transformerFields,
-      refServiceList
+      refServiceList,
+      setDynamicRef
     }
   },
 })
@@ -311,7 +255,6 @@ export default defineComponent({
                 <label class="flex no-wrap items-center ">
                   <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
                                  :field="transformerFields(field, item.productType, item.formField)"
-                                 @indexFieldMultiple=""
                   />
                 </label>
               </q-card-section>
@@ -329,8 +272,14 @@ export default defineComponent({
       </div>
       <div v-else>
         <div v-for="(item, index) in data" :key="index">
-          <div class="tw-flex color-bg-blue-gray-custom tw-py-2 tw-rounded-lg tw-relative">
-            <div class="tw-flex tw-w-2/5 tw-break-words tw-py-3 text-services tw-pl-2">
+          <div
+            class="color-bg-blue-gray-custom tw-py-2 tw-rounded-lg tw-relative"
+            :class="{'tw-flex': item.productType != 4}"
+          >
+            <div
+              class="tw-flex tw-w-2/5 tw-break-words tw-py-3 text-services tw-pl-2"
+
+            >
               <div class="q-px-sm" v-if="permissionFavourite.create && !isAppOffline">
                 <i
                   class="fa-star color-icon-star tw-cursor-pointer"
@@ -347,22 +296,21 @@ export default defineComponent({
               </div>
             </div>
 
-            <div class="tw-w-3/5 tw-mx-2 tw-truncate tw-flex tw-flex-wrap tw-justify-end tw-gap-4">
+            <div
+              :class="{
+                'tw-w-full tw-px-3': item.productType == 4,
+                'tw-w-3/5 tw-mx-2 tw-truncate tw-flex tw-flex-wrap tw-justify-end tw-gap-4': item.productType != 4
+              }"
+            >
               <div v-for="(field, keyfield) in item.formField" :key="keyfield">
                 <div>
                   <dynamic-field
                     v-model="data[index]['formField'][keyfield]['value']"
                     :field="transformerFields(field, item.productType, item.formField)"
+                    :ref="setDynamicRef(index)"
                   />
                 </div>
               </div>
-            </div>
-            <div class="tw-absolute tw-right-1 tw-bottom-1">
-              <p>
-                <span class="tw-text-xs tw-text-gray-500" v-if="false">
-                  Difference (hours): {{ differenceHour(item.formField) }}
-                </span>
-              </p>
             </div>
           </div>
         </div>
