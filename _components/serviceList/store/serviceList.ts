@@ -229,7 +229,6 @@ export default function serviceListStore(): ServiceListStoreContract {
 
 
     async function filterServicesListByQuantity(): Promise<any> {
-      serviceListStore().setLoading(true)
       let serviceList = await getServiceListSelected(true);
         serviceList = serviceList.filter(item => {
           if (item.product_type == 2 || item.product_type == 3) {
@@ -290,7 +289,6 @@ export default function serviceListStore(): ServiceListStoreContract {
         });
 
        setErrorList(serviceList);
-      serviceListStore().setLoading(false)
       return serviceList;
     }
 
