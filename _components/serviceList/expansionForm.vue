@@ -170,23 +170,85 @@ export default defineComponent({
         };
       }
       if(field?.type === 'multiplier') {
-        /*if (indexMultiple.value && field.props?.fields?.employees?.props?.label === 'Employees' && field.props?.fields?.employees?.type === 'select') {
-          const rules = [val => {
-            if (field.value[indexMultiple.value].holiday || field.value[indexMultiple.value].start || field.value[indexMultiple.value].end) {
-              if (!val) {
-                return i18n.tr('isite.cms.message.fieldRequired');
-              }
-            }
-            return true;
-          }]
-
-          field.props.fields.employees.props.rules = lodash.cloneDeep(rules);
-        }*/
         return {
           ...field,
           props: {
             ...field.props,
             summary: differenceHourMultiple,
+            customRules: (fieldItem, indexItem, fieldL) => {
+
+              if (fieldItem.name === 'employees' && fieldItem.type === 'select') {
+                const rules = [val => {
+                  if (Array.isArray(val) && Boolean(fieldL.holiday) || fieldL.start || fieldL.end) {
+                    if (val.length === 0) {
+                      return i18n.tr('isite.cms.message.fieldRequired');
+                    }
+                  }
+                  return true;
+                }]
+
+                fieldItem.props.rules = lodash.cloneDeep(rules);
+              }
+              if (fieldItem.name === 'start' && fieldItem.type === 'fullDate') {
+                const rules = [val => {
+                  if (!val && (Boolean(fieldL.holiday) || fieldL.end || fieldL.employees)) {
+                    return i18n.tr('isite.cms.message.fieldRequired');
+                  }
+                  return true;
+                }]
+                fieldItem.props.rules = lodash.cloneDeep(rules);
+              }
+
+              if (fieldItem.name === 'end' && fieldItem.type === 'fullDate') {
+                const startDate = lodash.cloneDeep(fieldL.start
+                  ? moment(fieldL.start, 'MM/DD/YYYY HH:mm')
+                  : null);
+                const endDate = lodash.cloneDeep(fieldL.end
+                  ? moment(fieldL.end, 'MM/DD/YYYY HH:mm')
+                  : null);
+
+                const options = (dateTime, dateMin) => {
+                  if (!lodash.cloneDeep(fieldL.start)) return false;
+                  if (isNaN(dateTime)) {
+                    return dateTime >= startDate.format('YYYY/MM/DD')
+                  }
+                  if (!lodash.cloneDeep(fieldL.end)) return false;
+                  if (dateMin) {
+                    return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+                      ? dateMin >= Number(startDate.format('m'))
+                      : true;
+                  }
+                  return endDate.format('YYYY/MM/DD') === startDate.format('YYYY/MM/DD')
+                    ? dateTime >= startDate.format('H')
+                    : true;
+                }
+
+                const rules = [val => {
+                  if (!val && (Boolean(fieldL.holiday) ||
+                    fieldL.start ||
+                    fieldL.employees)) {
+                    return i18n.tr('isite.cms.message.fieldRequired');
+                  }
+                  if (!val && (!Boolean(fieldL.holiday) ||
+                    !fieldL.start ||
+                    !fieldL.employees)) {
+                    return true;
+                  }
+                  if (fieldL.start) {
+                    const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+                    const dateInFormat = fieldL.start
+                      ? moment(fieldL.start, FORMAT_DATE)
+                      : moment(FORMAT_DATE)
+                    const date = moment(val, FORMAT_DATE)
+                    const diff = date.diff(dateInFormat)
+                    return diff >= 0 || 'The end date cannot be less than the start date'
+                  }
+                }]
+                fieldItem.props.rules = lodash.cloneDeep(rules);
+                fieldItem.props.options = options;
+              }
+              return fieldItem;
+            },
           },
         };
       }
