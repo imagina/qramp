@@ -120,6 +120,7 @@ export default {
             value: null,
             type: 'select',
             props: {
+              vIf: this.crudInfo.type === 'multiplier',
               label: 'Multiplier Type',
               rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
               options:[
@@ -135,6 +136,7 @@ export default {
             value: [],
             type : 'multiplier',
             props: {
+              vIf: this.crudInfo.type === 'multiplier',
               label: 'Type',
               multiple: true,
               rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],

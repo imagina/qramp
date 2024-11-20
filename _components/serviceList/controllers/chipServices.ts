@@ -45,22 +45,13 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     }
 
     function deleteChip(productId: string): void {
-      serviceListStore().setLoading(true)
       deleteChipRecursive(productId, serviceListStore().getServiceList());
-      setTimeout(() => {
-        serviceListStore().setLoading(false)
-      },1000)
     }
 
     function searchProduct(productId: string): void {
-        serviceListStore().setLoading(true)
         emit('search', nameProduct(productId))
         popupProxyRef.value.hide();
         console.log('hola2')
-        setTimeout(() => {
-          serviceListStore().setLoading(false)
-        },1000)
-
     }
 
     function favourites(): void {
