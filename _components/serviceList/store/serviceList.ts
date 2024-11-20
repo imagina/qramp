@@ -263,16 +263,15 @@ export default function serviceListStore(): ServiceListStoreContract {
                   });
                   if(hasInvalidField) return hasInvalidField;
 
-                  if (item.Start && item.End) {
+                  if (item.start && item.end) {
                     const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
-                    const startDate = moment(item.Start, FORMAT_DATE);
-                    const endDate = moment(item.End, FORMAT_DATE);
+                    const startDate = moment(item.start, FORMAT_DATE);
+                    const endDate = moment(item.end, FORMAT_DATE);
 
 
                     if (!startDate.isValid() || !endDate.isValid()) {
                       return true;
                     }
-
 
                     return qRampStore().getDifferenceInHours(startDate, endDate) < 0;
                   }
