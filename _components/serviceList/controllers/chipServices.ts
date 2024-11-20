@@ -51,7 +51,6 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     function searchProduct(productId: string): void {
         emit('search', nameProduct(productId))
         popupProxyRef.value.hide();
-        console.log('hola2')
     }
 
     function favourites(): void {
