@@ -191,7 +191,11 @@ export default defineComponent({
               }
               if (fieldItem.name === 'start' && fieldItem.type === 'fullDate') {
                 const rules = [val => {
-                  if (!val && (Boolean(fieldL.holiday) || fieldL.end || fieldL.employees)) {
+                  if (!val &&
+                    (Boolean(fieldL.holiday) ||
+                      fieldL.end ||
+                      (Array.isArray(fieldL.employees) && fieldL.employees.length > 0))
+                    ) {
                     return i18n.tr('isite.cms.message.fieldRequired');
                   }
                   return true;
@@ -226,12 +230,12 @@ export default defineComponent({
                 const rules = [val => {
                   if (!val && (Boolean(fieldL.holiday) ||
                     fieldL.start ||
-                    fieldL.employees)) {
+                    (Array.isArray(fieldL.employees) && fieldL.employees.length > 0))) {
                     return i18n.tr('isite.cms.message.fieldRequired');
                   }
                   if (!val && (!Boolean(fieldL.holiday) ||
                     !fieldL.start ||
-                    !fieldL.employees)) {
+                    !(Array.isArray(fieldL.employees) && fieldL.employees.length > 0))) {
                     return true;
                   }
                   if (fieldL.start) {

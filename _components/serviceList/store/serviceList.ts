@@ -284,7 +284,7 @@ export default function serviceListStore(): ServiceListStoreContract {
             });
           }
 
-          return false;  // Para los demás casos, no se aplica el filtro
+          return false;
         });
 
        setErrorList(serviceList);
