@@ -80,29 +80,25 @@ export default defineComponent({
       baseSurplus = null,
       holiday = null)
     {
-      let totalMinimun = baseMinimum ? baseMinimum  * employeesTotal : null;
+      let totalMinimum = baseMinimum ? baseMinimum  * employeesTotal : null;
       let totalSurplus = baseSurplus ? baseSurplus * employeesTotal : null;
       const timeWithEmployees = employeesTotal * time;
       const titleRegHours = 'Reg. Hours:';
       const titleOtHour = 'OT Hours:';
-      if(totalMinimun && !totalSurplus) {
+      if(totalMinimum && !totalSurplus) {
         const titleMinimun = holiday ? titleOtHour : titleRegHours;
-        if(timeWithEmployees < totalMinimun) {
-          return `${titleMinimun}: ${timeWithEmployees}`
-        } else {
-          return `${titleMinimun}: ${totalMinimun} - Total: (${timeWithEmployees})`
-        }
+        return timeWithEmployees < totalMinimum ?
+          `${titleMinimun}: ${timeWithEmployees}` :
+          `${titleMinimun}: ${totalMinimum} - Total: (${timeWithEmployees})`
       }
-      if(totalMinimun && totalSurplus) {
-        if(!holiday) {
-          const remainingTime = Math.max(0, timeWithEmployees - totalMinimun);
-          return `${titleRegHours} ${totalMinimun} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
-        }
+      if(totalMinimum && totalSurplus) {
         if(holiday) {
           return `${titleOtHour}: ${timeWithEmployees} - Total: (${timeWithEmployees})`;
         }
-        return '';
+        const remainingTime = Math.max(0, timeWithEmployees - totalMinimum);
+        return `${titleRegHours} ${totalMinimum} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
       }
+      return '';
     }
     const differenceHourMultiple = (formField, index, product) => {
       indexMultiple.value = index;
