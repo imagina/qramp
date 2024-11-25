@@ -111,14 +111,14 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             const favourite = favouriteProductIdList.includes(product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
-            const minimun = contractRulesList && contractRulesList.valueRule === 'minimum' ? contractRulesList.valueFrom : null;
+            const minimum = contractRulesList && contractRulesList.valueRule === 'minimum' ? contractRulesList.valueFrom : null;
             const surplus = contractRulesList && contractRulesList.quantityRule === 'surplus' ? contractRulesList.quantity : null;
 
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
-            dynamicFieldModel.minimun = minimun;
+            dynamicFieldModel.minimum = minimum;
             dynamicFieldModel.surplus = surplus;
             dynamicFieldModel.formField = getDynamicField(product);
             dynamicFieldModel.favourite = favourite;

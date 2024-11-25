@@ -76,11 +76,11 @@ export default defineComponent({
     function calculateValues(
       employeesTotal = 1,
       time = 0,
-      baseMinimun = null,
+      baseMinimum = null,
       baseSurplus = null,
       holiday = null)
     {
-      let totalMinimun = baseMinimun ? baseMinimun  * employeesTotal : null;
+      let totalMinimun = baseMinimum ? baseMinimum  * employeesTotal : null;
       let totalSurplus = baseSurplus ? baseSurplus * employeesTotal : null;
       const timeWithEmployees = employeesTotal * time;
       const titleRegHours = 'Reg. Hours:';
@@ -90,16 +90,16 @@ export default defineComponent({
         if(timeWithEmployees < totalMinimun) {
           return `${titleMinimun}: ${timeWithEmployees}`
         } else {
-          return `${titleMinimun}: ${totalMinimun} - Total time: (${timeWithEmployees})`
+          return `${titleMinimun}: ${totalMinimun} - Total: (${timeWithEmployees})`
         }
       }
       if(totalMinimun && totalSurplus) {
         if(!holiday) {
           const remainingTime = Math.max(0, timeWithEmployees - totalMinimun);
-          return `${titleRegHours} ${totalMinimun} ${titleOtHour} ${remainingTime} - Total time: (${timeWithEmployees})`;
+          return `${titleRegHours} ${totalMinimun} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
         }
         if(holiday) {
-          return `${titleOtHour}: ${timeWithEmployees} - Total time: (${timeWithEmployees})`;
+          return `${titleOtHour}: ${timeWithEmployees} - Total: (${timeWithEmployees})`;
         }
         return '';
       }
@@ -107,7 +107,6 @@ export default defineComponent({
     const differenceHourMultiple = (formField, index, product) => {
       indexMultiple.value = index;
       const titleRegHours = 'Reg. Hours:';
-      const titleOtHour = 'OT Hours:'
       const startDate = formField.start || null;
       const endDate = formField.end || null;
       const holiday = formField.holiday || null;
@@ -117,10 +116,9 @@ export default defineComponent({
         return calculateValues(
           employeesTotal,
           time,
-          product.minimun,
+          product.minimum,
           product.surplus,
           holiday);
-        //return `${titleRegHours} ${product.minimun} (${qRampStore().getDifferenceInHours(startDate, endDate) * employeesTotal})`;
       }
       return `${titleRegHours} 0`
     };
@@ -354,8 +352,8 @@ export default defineComponent({
                   {{ item.helpText }}
                 </span>
                   <br>
-                  <span class="tw-text-xs tw-text-gray-500">
-                  Minimun: {{ 0 }}
+                  <span v-if="item.minimum"  class="tw-text-xs tw-text-gray-500">
+                  Minimum: {{ item.minimum }}hrs
                 </span>
                 </p>
                 <span class="tw-text-sm" style="color:#8A98C3;">{{ showValue(item.formField.quantity) }}</span>
@@ -370,13 +368,6 @@ export default defineComponent({
                   />
                 </label>
               </q-card-section>
-              <div class="tw-relative  tw-top-[-26px] tw-pr-1">
-                <p>
-              <span class="tw-text-xs tw-text-gray-500" v-if="item.productType == 4">
-                Difference (hours): {{ differenceHour(item.formField) }}
-              </span>
-                </p>
-              </div>
             </q-card>
           </q-expansion-item>
           <!-- <q-separator color="red" />-->
@@ -405,7 +396,7 @@ export default defineComponent({
               <div>
                 <p>{{ item.title }}</p>
                 <p v-if="item.helpText" class="tw-text-xs tw-text-gray-500">{{ item.helpText }}</p>
-                <p v-if="item.minimun" class="tw-text-xs tw-text-gray-500">Mininum: {{ item.minimun }}hrs</p>
+                <p v-if="item.minimum" class="tw-text-xs tw-text-gray-500">Minimum: {{ item.minimum }}hrs</p>
               </div>
             </div>
 
