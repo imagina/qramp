@@ -6,6 +6,7 @@ import { store } from 'src/plugins/utils'
 import _ from 'lodash';
 import serviceListStore from '../../_components/serviceList/store/serviceList'
 import { fields } from "../../_components/signature/model/fields";
+import workOrderList from "./workOrderList";
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -109,10 +110,16 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         organizeProduct?.forEach((product) => {
             const favourite = favouriteProductIdList.includes(product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
+            const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
+            const minimun = contractRulesList && contractRulesList.valueRule === 'minimum' ? contractRulesList.valueFrom : null;
+            const surplus = contractRulesList && contractRulesList.quantityRule === 'surplus' ? contractRulesList.quantity : null;
+
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
+            dynamicFieldModel.minimun = minimun;
+            dynamicFieldModel.surplus = surplus;
             dynamicFieldModel.formField = getDynamicField(product);
             dynamicFieldModel.favourite = favourite;
             dynamicFieldModel.productType = product.type;

@@ -72,19 +72,60 @@ export default defineComponent({
       }
       return 0
     };
-    const differenceHourMultiple = (formField, index) => {
+
+    function calculateValues(
+      employeesTotal = 1,
+      time = 0,
+      baseMinimun = null,
+      baseSurplus = null,
+      holiday = null)
+    {
+      let totalMinimun = baseMinimun ? baseMinimun  * employeesTotal : null;
+      let totalSurplus = baseSurplus ? baseSurplus * employeesTotal : null;
+      const timeWithEmployees = employeesTotal * time;
+      const titleRegHours = 'Reg. Hours:';
+      const titleOtHour = 'OT Hours:';
+      if(totalMinimun && !totalSurplus) {
+        const titleMinimun = holiday ? titleOtHour : titleRegHours;
+        if(timeWithEmployees < totalMinimun) {
+          return `${titleMinimun}: ${timeWithEmployees}`
+        } else {
+          return `${titleMinimun}: ${totalMinimun} - Total time: (${timeWithEmployees})`
+        }
+      }
+      if(totalMinimun && totalSurplus) {
+        if(!holiday) {
+          const remainingTime = Math.max(0, timeWithEmployees - totalMinimun);
+          return `${titleRegHours} ${totalMinimun} ${titleOtHour} ${remainingTime} - Total time: (${timeWithEmployees})`;
+        }
+        if(holiday) {
+          return `${titleOtHour}: ${timeWithEmployees} - Total time: (${timeWithEmployees})`;
+        }
+        return '';
+      }
+    }
+    const differenceHourMultiple = (formField, index, product) => {
       indexMultiple.value = index;
-      const title = 'Difference (hours):';
+      const titleRegHours = 'Reg. Hours:';
+      const titleOtHour = 'OT Hours:'
       const startDate = formField.start || null;
       const endDate = formField.end || null;
+      const holiday = formField.holiday || null;
       const employeesTotal = formField?.employees?.length || 1;
       if (startDate && endDate) {
-        return `${title} ${qRampStore().getDifferenceInHours(startDate, endDate) * employeesTotal}`;
+        const time = qRampStore().getDifferenceInHours(startDate, endDate);
+        return calculateValues(
+          employeesTotal,
+          time,
+          product.minimun,
+          product.surplus,
+          holiday);
+        //return `${titleRegHours} ${product.minimun} (${qRampStore().getDifferenceInHours(startDate, endDate) * employeesTotal})`;
       }
-      return `${title} 0`
+      return `${titleRegHours} 0`
     };
-    const transformerFields = (field, productType, formField) => {
-      if (productType === 4 && field.name === 'Employees' && field.type === 'select') {
+    const transformerFields = (field, product, formField) => {
+      if (product.productType === 4 && field.name === 'Employees' && field.type === 'select') {
         const rules = [val => {
           if (Array.isArray(val) && (formField.checkboxHoliday.value || formField.fullDateStart.value || formField.fullDateEnd.value)) {
             if (val.length === 0) {
@@ -101,7 +142,7 @@ export default defineComponent({
           },
         };
       }
-      if (productType === 4 && field.name === 'Start' && field.type === 'fullDate') {
+      if (product.productType === 4 && field.name === 'Start' && field.type === 'fullDate') {
         const rules = [val => {
           if (!val && (formField.checkboxHoliday.value || formField.fullDateEnd.value || formField.selectEmployees.value.length > 0)) {
             return i18n.tr('isite.cms.message.fieldRequired');
@@ -116,7 +157,7 @@ export default defineComponent({
           },
         };
       }
-      if (productType === 4 && field.name === 'End' && field.type === 'fullDate') {
+      if (product.productType === 4 && field.name === 'End' && field.type === 'fullDate') {
         const startDate = formField.fullDateStart?.value
           ? moment(formField.fullDateStart.value, 'MM/DD/YYYY HH:mm')
           : null;
@@ -174,7 +215,7 @@ export default defineComponent({
           ...field,
           props: {
             ...field.props,
-            summary: differenceHourMultiple,
+            summary: (formField, index) => differenceHourMultiple(formField, index, product),
             customRules: (fieldItem, indexItem, fieldL) => {
 
               if (fieldItem.name === 'employees' && fieldItem.type === 'select') {
@@ -282,7 +323,8 @@ export default defineComponent({
       differenceHour,
       transformerFields,
       refServiceList,
-      setDynamicRef
+      setDynamicRef,
+      calculateValues
     }
   },
 })
@@ -311,6 +353,10 @@ export default defineComponent({
                   <span v-if="item.helpText" class="tw-text-xs tw-text-gray-500">
                   {{ item.helpText }}
                 </span>
+                  <br>
+                  <span class="tw-text-xs tw-text-gray-500">
+                  Minimun: {{ 0 }}
+                </span>
                 </p>
                 <span class="tw-text-sm" style="color:#8A98C3;">{{ showValue(item.formField.quantity) }}</span>
               </q-item-section>
@@ -320,7 +366,7 @@ export default defineComponent({
                               :key="keyfield">
                 <label class="flex no-wrap items-center ">
                   <dynamic-field class="marginzero tw-w-full" v-model="data[index]['formField'][keyfield]['value']"
-                                 :field="transformerFields(field, item.productType, item.formField)"
+                                 :field="transformerFields(field, item, item.formField)"
                   />
                 </label>
               </q-card-section>
@@ -359,6 +405,7 @@ export default defineComponent({
               <div>
                 <p>{{ item.title }}</p>
                 <p v-if="item.helpText" class="tw-text-xs tw-text-gray-500">{{ item.helpText }}</p>
+                <p v-if="item.minimun" class="tw-text-xs tw-text-gray-500">Mininum: {{ item.minimun }}hrs</p>
               </div>
             </div>
 
@@ -372,7 +419,7 @@ export default defineComponent({
                 <div>
                   <dynamic-field
                     v-model="data[index]['formField'][keyfield]['value']"
-                    :field="transformerFields(field, item.productType, item.formField)"
+                    :field="transformerFields(field, item, item.formField)"
                     :ref="setDynamicRef(index)"
                   />
                 </div>

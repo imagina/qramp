@@ -52,6 +52,7 @@ const state = reactive<State>({
   responsibleList: [],
   workOrderItems: [],
   paxOperationTypeList: [],
+  contractRulesList: [],
   /* Creating a new array called workOrderList and assigning it to the variable workOrderList. */
   workOrderList: {
     data: [],
@@ -120,6 +121,14 @@ export default function workOrderList(): WorkOrderList {
 
   function getDataWorkOrderList(): WorkOrders {
     return state.workOrderList;
+  }
+
+  function setContractRulesList(data: any) {
+    return state.contractRulesList = data;
+  }
+
+  function getContractRulesList(): any {
+    return state.contractRulesList;
   }
 
   /**
@@ -1027,6 +1036,8 @@ export default function workOrderList(): WorkOrderList {
         getWorkOrdersItemsList,
         setPaxOperationTypeList,
         getPaxOperationTypeList,
-        getPaxOperationType
+        getPaxOperationType,
+        getContractRulesList,
+        setContractRulesList
     }
 }
