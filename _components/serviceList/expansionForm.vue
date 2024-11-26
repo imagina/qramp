@@ -102,7 +102,7 @@ export default defineComponent({
         const remainingTime = Math.max(0, timeWithEmployees - totalMinimum);
         return `${titleRegHours} ${totalMinimum} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
       }
-      return `Difference (hours): ${timeWithEmployees}`;
+      return `${titleRegHours} ${timeWithEmployees}`;
     }
     const differenceHourMultiple = (formField, index, product) => {
       indexMultiple.value = index;
