@@ -19,7 +19,6 @@ const getContractRules = async (contractId?: null | []): Promise<any[]> => {
         "apiRoutes.qramp.passengerContractRules",
         requestParams
       );
-      console.log(response.data);
       workOrderList().setContractRulesList(response.data);
       return response.data;
     } catch (error) {
