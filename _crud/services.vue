@@ -183,6 +183,7 @@ export default {
             type: "select",
             props: {
               label: 'Type (AGIONE)',
+              clearable: true,
               options:[
                 {label: 'Full Date', value: 1},
                 {label: 'Delay with Headcounts', value: 2},
@@ -190,6 +191,68 @@ export default {
                 {label: 'Employees + Range', value: 4}
               ]
             },
+          },
+          multiCategoryFields: {
+            value: [],
+            type : 'multiplier',
+            props: {
+              label: 'Multi Category Fields',
+              fields : {
+                categories: {
+                  value: null,
+                  type: 'crud',
+                  props: {
+                    crudType: 'select',
+                    crudData: import('./categories.vue'),
+                    crudProps: {
+                      multiple: true,
+                      useChips: true,
+                      clearable: true,
+                      label: this.$trp('isite.cms.form.category'),
+                    },
+                    config: {
+                      options: {
+                        label: 'name',
+                        value: 'id',
+                      }
+                    },
+                  },
+                },
+                attributes: {
+                  value: null,
+                  type: 'treeSelect',
+                  isFakeField: true,
+                  props: {
+                    multiple: true,
+                    useChips: true,
+                    clearable: true,
+                    label: 'Fields',
+                    sortValueBy: 'ORDER_SELECTED'
+                  },
+                  loadOptions: {
+                    apiRoute: 'apiRoutes.qramp.attributes',
+                    select: {
+                      label: 'name',
+                      id: 'id'
+                    },
+                  }
+                },
+                type: {
+                  value: null,
+                  type: "select",
+                  props: {
+                    label: 'Type (AGIONE)',
+                    clearable: true,
+                    options:[
+                      {label: 'Full Date', value: 1},
+                      {label: 'Delay with Headcounts', value: 2},
+                      {label: 'Price with Quantity', value: 3},
+                      {label: 'Employees + Range', value: 4}
+                    ]
+                  },
+                },
+              }
+            }
           },
         },
         formRight: {},
