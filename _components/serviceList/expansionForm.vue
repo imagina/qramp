@@ -106,7 +106,7 @@ export default defineComponent({
           return `${titleOtHour}: ${minimunT} - Total: (${timeWithEmployees})`;
         }
         const remainingTime = Math.max(0, timeWithEmployees - totalMinimum);
-        return `${titleRegHours} ${remainingTime} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
+        return `${titleRegHours} ${totalMinimum} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
       }
       return '';
     }
