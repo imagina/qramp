@@ -120,7 +120,7 @@ export default defineComponent({
           product.surplus,
           holiday);
       }
-      return `${titleRegHours} 0`
+      return '';
     };
     const transformerFields = (field, product, formField) => {
       if (product.productType === 4 && field.name === 'Employees' && field.type === 'select') {
