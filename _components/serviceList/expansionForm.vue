@@ -87,7 +87,6 @@ export default defineComponent({
       const titleOtHour = 'OT Hours:';
       if(totalMinimum && !totalSurplus) {
         const titleMinimun = holiday ? titleOtHour : titleRegHours;
-        console.log(timeWithEmployees < totalMinimum)
         if(timeWithEmployees < totalMinimum) {
           return `${titleMinimun}: ${totalMinimum}`
         } else {
