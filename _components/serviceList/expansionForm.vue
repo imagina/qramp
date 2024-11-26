@@ -87,14 +87,26 @@ export default defineComponent({
       const titleOtHour = 'OT Hours:';
       if(totalMinimum && !totalSurplus) {
         const titleMinimun = holiday ? titleOtHour : titleRegHours;
-        return `${titleMinimun}: ${totalMinimum} - Total: (${timeWithEmployees})`
+        let minimunT = 0;
+        if(timeWithEmployees < totalMinimum) {
+          minimunT = totalMinimum;
+        } else {
+          minimunT = timeWithEmployees;
+        }
+        return `${titleMinimun}: ${minimunT} - Total: (${timeWithEmployees})`
       }
       if(totalMinimum && totalSurplus) {
+        let minimunT = 0;
+        if(timeWithEmployees < totalMinimum) {
+          minimunT = totalMinimum;
+        } else {
+          minimunT = timeWithEmployees;
+        }
         if(holiday) {
-          return `${titleOtHour}: ${totalMinimum} - Total: (${timeWithEmployees})`;
+          return `${titleOtHour}: ${minimunT} - Total: (${timeWithEmployees})`;
         }
         const remainingTime = Math.max(0, timeWithEmployees - totalMinimum);
-        return `${titleRegHours} ${totalMinimum} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
+        return `${titleRegHours} ${minimunT} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
       }
       return '';
     }
