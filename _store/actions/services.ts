@@ -7,6 +7,7 @@ import _ from 'lodash';
 import serviceListStore from '../../_components/serviceList/store/serviceList'
 import { fields } from "../../_components/signature/model/fields";
 import workOrderList from "./workOrderList";
+import {BUSINESS_UNIT_SECURITY} from "../../_components/model/constants";
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -53,6 +54,7 @@ export const getCategories = async (company?: null | []): Promise<any[]> => {
  */
 export async function buildServiceList(): Promise<any[]> {
     try {
+        console.log('hola');
         const categories = await getCategories();
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
         const buildService = (item: any): any => {
@@ -113,7 +115,8 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
             const minimum = contractRulesList && contractRulesList.valueRule === 'minimum' ? contractRulesList.valueFrom : null;
             const surplus = contractRulesList && contractRulesList.quantityRule === 'surplus' ? contractRulesList.quantity : null;
-
+            const productType = (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_SECURITY && product.multiCategoryFields && product.multiCategoryFields.length > 0)
+              ? 4 : product.type || null;
             dynamicFieldModel.id = product.id;
             dynamicFieldModel.categoryId = product.categoryId;
             dynamicFieldModel.title = productName;
@@ -122,7 +125,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             dynamicFieldModel.surplus = surplus;
             dynamicFieldModel.formField = getDynamicField(product);
             dynamicFieldModel.favourite = favourite;
-            dynamicFieldModel.productType = product.type;
+            dynamicFieldModel.productType = productType;
             data.push({ ...dynamicFieldModel });
         });
         return data;
@@ -141,9 +144,19 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
 function getDynamicField(product) {
     try {
         const productoType = product.type || null;
-        const att = product.attributes || [];
+        const att = (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_SECURITY && product.multiCategoryFields && product.multiCategoryFields.length > 0)
+          ? product.multiCategoryFields[0]?.multiAttributes.map(item => {
+            const fields = item.fields
+              ? JSON.parse(item.fields.replace(/'/g, '"'))
+              : [];
+            return {
+              ...item,
+              fields,
+            }
+          })
+          : product.attributes || [];
         const optionAtt = product.options?.attributes || [];
-
+        console.log(att)
         const result = {};
         const organizedData = optionAtt.length > 0 ? _.sortBy(att, item => optionAtt.indexOf(String(item.id))) : att;
         for (let i = 0; i < organizedData.length; i++) {
