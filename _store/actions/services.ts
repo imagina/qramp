@@ -54,7 +54,6 @@ export const getCategories = async (company?: null | []): Promise<any[]> => {
  */
 export async function buildServiceList(): Promise<any[]> {
     try {
-        console.log('hola');
         const categories = await getCategories();
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
         const buildService = (item: any): any => {
@@ -108,7 +107,6 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             icon: "fa-solid fa-gear",
         };
         const organizeProduct = organizeProducts(product);
-        console.log('organiza',organizeProduct)
         const favouriteProductIdList = serviceListStore().getFavouriteList().map(item => item.productId);
         organizeProduct?.forEach((product) => {
             const favourite = favouriteProductIdList.includes(product.id);
