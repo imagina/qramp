@@ -108,6 +108,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             icon: "fa-solid fa-gear",
         };
         const organizeProduct = organizeProducts(product);
+        console.log('organiza',organizeProduct)
         const favouriteProductIdList = serviceListStore().getFavouriteList().map(item => item.productId);
         organizeProduct?.forEach((product) => {
             const favourite = favouriteProductIdList.includes(product.id);
@@ -141,22 +142,29 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  * @returns {dynamicField}
  *
  */
+function getAttProduct(product: any) {
+  const isSecurityBusinessUnit = qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY;
+  const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
+
+  if (isSecurityBusinessUnit && hasMultiCategoryFields) {
+    product.multiCategoryFields[0]?.multiAttributes.forEach((item: any) => {
+      if (typeof item.fields === 'string') {
+        item.fields = JSON.parse(item.fields.replace(/'/g, '"'));
+      } else if (!item.fields) {
+        item.fields = [];
+      }
+    });
+    return product.multiCategoryFields[0]?.multiAttributes;
+  }
+
+  return product.attributes || [];
+}
+
 function getDynamicField(product) {
     try {
         const productoType = product.type || null;
-        const att = (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_SECURITY && product.multiCategoryFields && product.multiCategoryFields.length > 0)
-          ? product.multiCategoryFields[0]?.multiAttributes.map(item => {
-            const fields = item.fields
-              ? JSON.parse(item.fields.replace(/'/g, '"'))
-              : [];
-            return {
-              ...item,
-              fields,
-            }
-          })
-          : product.attributes || [];
+        const att = getAttProduct(product);
         const optionAtt = product.options?.attributes || [];
-        console.log(att)
         const result = {};
         const organizedData = optionAtt.length > 0 ? _.sortBy(att, item => optionAtt.indexOf(String(item.id))) : att;
         for (let i = 0; i < organizedData.length; i++) {
@@ -350,7 +358,7 @@ function organizeProducts(data: any) {
         return data?.map((product) => {
             (productData as any).map((sw) => {
                 if (sw?.productId == product?.id) {
-                    product?.attributes?.map((att) => {
+                    getAttProduct(product).map((att) => {
                         sw.workOrderItemAttributes.map((swatt) => {
                             if (swatt.attributeId == att.id) {
                                 att.value = swatt.value;
