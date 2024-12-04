@@ -145,14 +145,20 @@ function getAttProduct(product: any) {
   const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
 
   if (isSecurityBusinessUnit && hasMultiCategoryFields) {
-    product.multiCategoryFields[0]?.multiAttributes.forEach((item: any) => {
-      if (typeof item.fields === 'string') {
-        item.fields = JSON.parse(item.fields.replace(/'/g, '"'));
-      } else if (!item.fields) {
-        item.fields = [];
-      }
-    });
-    return product.multiCategoryFields[0]?.multiAttributes;
+    product.multiCategoryFields.forEach(multiCategoryFields => {
+      multiCategoryFields?.multiAttributes?.forEach((item: any) => {
+        if (typeof item.fields === 'string') {
+          item.fields = JSON.parse(item.fields.replace(/'/g, '"'));
+        } else if (!item.fields) {
+          item.fields = [];
+        }
+      });
+    })
+
+    const result = product.multiCategoryFields.find(field =>
+      field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+    );
+    return result.multiAttributes || [];
   }
 
   return product.attributes || [];
