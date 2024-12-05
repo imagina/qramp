@@ -141,13 +141,12 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  *
  */
 function getAttProduct(product: any) {
-  const isSecurityBusinessUnit = qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY;
   const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
 
-  if (isSecurityBusinessUnit && hasMultiCategoryFields) {
+  if (hasMultiCategoryFields) {
     product.multiCategoryFields.forEach(multiCategoryFields => {
       multiCategoryFields?.multiAttributes?.forEach((item: any) => {
-        if (typeof item.fields === 'string') {
+        if (typeof item.fields === 'string' && item.fields.length > 0) {
           item.fields = JSON.parse(item.fields.replace(/'/g, '"'));
         } else if (!item.fields) {
           item.fields = [];
