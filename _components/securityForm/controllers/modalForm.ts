@@ -221,7 +221,6 @@ export default function modalFormController(props: any = null, emit: any = null)
     }
     const filterList = await serviceListStore().filterServicesListByQuantity();
     const validateServices = await serviceListStore().getRefGlobal().refServiceList?.validate() || true;
-    //console.log(serviceListStore().getRefGlobal().refServiceList)
     if (filterList.length > 0 || !validateServices) {
       store.step = STEP_SERVICE;
       const step: any = stepps.find(item => item.step === STEP_SERVICE);
