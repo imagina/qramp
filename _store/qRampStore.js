@@ -11,7 +11,7 @@ import {
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
-import { cacheOffline, i18n, store } from 'src/plugins/utils';
+import { cacheOffline, i18n, store, alert } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
@@ -592,23 +592,63 @@ export default function qRampStore() {
       return [false, false];
     }
 
-    function validateDateRule(val, dateIn, operationType, formatDateIn, formatDateOut) {
-      if (!val) return true
-      if (operationType !== 'full') return true
+    function validateDateRule(val, dateIn, operationType, formatDateIn, formatDateOut, validateByMinutes=true) {
+        if (!val) return true
+        if (operationType !== 'full') return true
 
-      const minutes = store.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
-      const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
-      const MESSAGE = `The departure date must be at least ${minutes} minutes later than the arrival date.`
-      const formatIn = formatDateIn ? formatDateIn : FORMAT_DATE
-      const dateInFormat = dateIn
-        ? moment(dateIn, formatIn)
-        : moment(formatIn)
+        const minutes = store.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
+        const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+        const MESSAGE = validateByMinutes 
+            ? `The departure date must be at least ${minutes} minutes later than the arrival date.`
+            : 'The departure date cannot be less than the arrival date'
+        const formatIn = formatDateIn ? formatDateIn : FORMAT_DATE
+        const dateInFormat = dateIn
+            ? moment(dateIn, formatIn)
+            : moment(formatIn)
 
-      const date = moment(val, formatDateOut ? formatDateOut : FORMAT_DATE)
+        const date = moment(val, formatDateOut ? formatDateOut : FORMAT_DATE)
 
-      const diff = moment(date.format(formatIn), formatIn).diff(dateInFormat, 'minutes')
+        const diff = moment(date.format(formatIn), formatIn).diff(dateInFormat, 'minutes')
 
-      return diff > minutes || MESSAGE
+        if (!validateByMinutes) return diff >= 0 || MESSAGE
+
+        return diff > minutes || MESSAGE
+    }
+
+    async function openAlertModal(message, callback) {
+        alert.warning({
+            mode: "modal",
+            message,
+            actions: [
+                {
+                    label: i18n.tr('isite.cms.label.cancel'),
+                    color: 'grey-8',
+                    handler: async () => {
+                        hideLoading();
+                    },
+                },
+                {
+                    label: i18n.tr("isite.cms.label.yes"),
+                    color: "primary",
+                    handler: async () => {
+                        callback && await callback();
+                    },
+                },
+            ],
+        });
+    }
+
+    async function runAlerts(alerts, callback) {
+        const activeAlerts = alerts.filter(item => item.validate && !item.accept);
+        const alert = activeAlerts[0];
+        if (alert) {
+            await openAlertModal(alert.message, async () => {
+                alert.accept = true;
+                await runAlerts(activeAlerts, callback);
+            })
+        } else {
+            await callback();
+        }
     }
 
     function validateDateOutboundSchedule(dateTime, dateMin = null, inbound, outbound, operationType) {
@@ -762,5 +802,6 @@ export default function qRampStore() {
 	    validateDateRule,
         validateOperationsDoNotApply,
         validateDateOutboundSchedule,
+        runAlerts
     }
 }

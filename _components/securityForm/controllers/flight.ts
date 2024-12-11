@@ -89,11 +89,11 @@ export default function flightController() {
     }
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
-  const validateDateRuleOutbound = (val, dateIn) => {
+  const validateDateRuleOutbound = (val, dateIn, validateByMinutes=true) => {
     if ( 
       !qRampStore().validateOperationsDoNotApply(storeFueling.form.operationTypeId)
     ) return true
-    return qRampStore().validateDateRule(val, dateIn, operationType.value)
+    return qRampStore().validateDateRule(val, dateIn, operationType.value, null, null, validateByMinutes)
   }
   const readonlyOperationType= computed(() => {
     const { parentId, preFlightNumber, operationTypeId } = form.value || {};
@@ -424,7 +424,7 @@ export default function flightController() {
           type: 'fullDate',
           props: {
             rules: [
-              val => validateDateRuleOutbound(val, form.value.inboundBlockIn)
+              val => validateDateRuleOutbound(val, form.value.inboundBlockIn, false)
             ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',
