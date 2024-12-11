@@ -345,12 +345,14 @@ export default {
     validateBetweenDates(dateIn, dateOut) {
       if (!dateIn && !dateOut) return false
       if (!dateIn && dateOut) return true
+
+      const minutes = store.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
       const inFormat = this.$moment(dateIn)
       const date = this.$moment(dateOut)
 
-      const diff = date.diff(inFormat)
+      const diff = date.diff(inFormat, 'minutes')
 
-      return diff < 0
+      return diff <= minutes
     },
     async showErrorMessage(message, step) {
       this.error = true;

@@ -592,19 +592,52 @@ export default function qRampStore() {
       return [false, false];
     }
 
-    function validateDateRule(val, dateIn) {
+    function validateDateRule(val, dateIn, operationType, formatDateIn, formatDateOut) {
       if (!val) return true
+      if (operationType !== 'full') return true
 
+      const minutes = store.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
       const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
+      const MESSAGE = `The departure date must be at least ${minutes} minutes later than the arrival date.`
+      const formatIn = formatDateIn ? formatDateIn : FORMAT_DATE
       const dateInFormat = dateIn
-        ? moment(dateIn, FORMAT_DATE)
-        : moment(FORMAT_DATE)
+        ? moment(dateIn, formatIn)
+        : moment(formatIn)
 
-      const date = moment(val, FORMAT_DATE)
+      const date = moment(val, formatDateOut ? formatDateOut : FORMAT_DATE)
 
-      const diff = date.diff(dateInFormat)
+      const diff = moment(date.format(formatIn), formatIn).diff(dateInFormat, 'minutes')
 
-      return diff >= 0 || 'The departure date cannot be less than the arrival date'
+      return diff > minutes || MESSAGE
+    }
+
+    function validateDateOutboundSchedule(dateTime, dateMin = null, inbound, outbound, operationType) {
+        if (operationType !== 'full') return true
+
+        const outboundDate = outbound
+        ? moment(outbound) : moment();
+        const today = outboundDate.format('YYYY/MM/DD');
+
+        const inboundDate = inbound
+        ? moment(inbound) : moment();
+        const todayIn = inboundDate.format('YYYY/MM/DD')
+        const hourIn = inboundDate.format('H');
+        const timeIn = inboundDate.format('HH:mm');
+        const validateDate = today === todayIn;
+        const minutes = store.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
+
+        if (isNaN(dateTime)) {
+            if (inboundScheduledArrival) {
+                return dateTime >= todayIn;
+            }
+            return dateTime >= today;
+        }
+        if (dateMin) {
+            const selectedTime = moment(`${dateTime}:${dateMin}`, 'HH:mm');
+            const difference = selectedTime.diff(moment(timeIn, 'HH:mm'), 'minutes');
+            return validateDate ? difference > minutes : true;
+        }
+        return validateDate ? Number(dateTime) >= Number(hourIn) : true;
     }
 
     function validateOperationsDoNotApply(operationTypeId) {
@@ -726,7 +759,8 @@ export default function qRampStore() {
         getWorkOrderId,
         setWorkOrderId,
         isbound,
-				validateDateRule,
-        validateOperationsDoNotApply
+	    validateDateRule,
+        validateOperationsDoNotApply,
+        validateDateOutboundSchedule,
     }
 }
