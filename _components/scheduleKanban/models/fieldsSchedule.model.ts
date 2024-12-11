@@ -7,7 +7,8 @@ import qRampStore from '../../../_store/qRampStore.js'
 import workOrderList from '../../../_store/actions/workOrderList'
 import store from '../store/modalSchedule.store'
 import kanbanStore from '../store/kanban.store'
-import { i18n } from 'src/plugins/utils'
+import { i18n, store as storeUtil } from 'src/plugins/utils'
+import moment from 'moment';
 
 export default function modelFields() {
     const isPassenger = computed(() =>  qRampStore().getIsPassenger());
@@ -70,6 +71,35 @@ export default function modelFields() {
       ]
       return !modulesWithoutOperationType.includes(businessUnitId)
     })
+
+    const operationType = computed(() => {
+      const type = workOrderList()
+        .getOperationTypeList()
+        .find(item => item.id === Number(form.value.operationTypeId));
+      return type?.options?.type;
+    });
+
+    const validateDateOutboundSchedule = (
+      dateTime, 
+      dateMin = null, 
+      inbound
+    ) => {
+      if (operationType.value !== 'full') return true;
+
+      const inboundDate = inbound
+      ? moment(inbound, 'HH:mm') : moment('HH:mm');
+      const hourIn = inboundDate.format('H');
+      const minutes = storeUtil.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
+
+      if (isNaN(dateTime)) return true;
+      if (dateMin) {
+        const selectedTime = moment(`${dateTime}:${dateMin}`, 'HH:mm');
+        const difference = selectedTime.diff(moment(inboundDate, 'HH:mm'), 'minutes');
+        return difference > minutes;
+      }
+      return Number(dateTime) >= Number(hourIn);
+    }
+
     const fields: ComputedRef<any> = computed(() => ({
         form: {
             inboundFlightNumber: {
@@ -146,13 +176,19 @@ export default function modelFields() {
               type: 'fullDate',
               props: {
                 rules: [
-                  val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+                  val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
+                  val => qRampStore().validateDateRule(val, form.value.sta, operationType.value, 'HH:mm')
                 ],
                 mask:'MM/DD/YYYY HH:mm',
                 hint:'Format: MM/DD/YYYY HH:mm',
                 readonly: isBlank.value,
                 label: 'STD',
                 format24h: true,
+                options: (dateTime, dateMin) => validateDateOutboundSchedule(
+                  dateTime, 
+                  dateMin, 
+                  form.value.sta
+                )
               },
             },
             flightStatusId: {

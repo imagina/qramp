@@ -3,7 +3,7 @@ import workOrderList from '../../../_store/actions/workOrderList';
 import { modelWeek } from './constants'
 import store from '../store/index.store'
 import {ModelFields, FormFields} from '../contracts/formFields.contract'
-import { i18n } from 'src/plugins/utils'
+import { i18n, store as storeUtil } from 'src/plugins/utils'
 import qRampStore from 'modules/qramp/_store/qRampStore'
 import moment from 'moment'
 
@@ -13,6 +13,34 @@ export default function modelFields(): ModelFields {
         qRampStore().getFilterCompany()
     );
     const isbound = computed(() => qRampStore().isbound(store.form.operationTypeId))
+    const operationType = computed(() => {
+        const type = workOrderList()
+            .getOperationTypeList()
+            .find(item => item.id === Number(store.form.operationTypeId));
+        return type?.options?.type;
+    })
+    
+    const validateDateOutboundSchedule = (
+        dateTime, 
+        dateMin = null, 
+        inbound
+    ) => {
+        if (operationType.value !== 'full') return true
+  
+        const inboundDate = inbound
+        ? moment(inbound, 'HH:mm') : moment('HH:mm');
+        const hourIn = inboundDate.format('H');
+        const minutes = storeUtil.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
+  
+        if (isNaN(dateTime)) return true;
+        if (dateMin) {
+            const selectedTime = moment(`${dateTime}:${dateMin}`, 'HH:mm');
+            const difference = selectedTime.diff(moment(inboundDate, 'HH:mm'), 'minutes');
+            return difference > minutes;
+        }
+        return Number(dateTime) >= Number(hourIn);
+    }
+
     const formFields: ComputedRef<FormFields> = computed(() => ({
         left: {
             carrierId: {
@@ -217,12 +245,18 @@ export default function modelFields(): ModelFields {
                             }
                           }
                           return true;
-                        }
+                        },
+                        val => qRampStore().validateDateRule(val, store.form.inboundScheduleArrival, operationType.value, 'HH:mm', 'HH:mm')
                     ],
                     label: `*Outbound Schedule Departure `,
                     clearable: true,
                     color: "primary",
                     format24h: true,
+                    options: (dateTime, dateMin) => validateDateOutboundSchedule(
+                        dateTime, 
+                        dateMin, 
+                        store.form.inboundScheduleArrival
+                    ),
                 },
                 label: i18n.tr('ifly.cms.form.scheduledArrival'),
             },

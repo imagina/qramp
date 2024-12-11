@@ -735,7 +735,6 @@ export default {
               clearable: true,
               color: "primary"
             },
-            label: this.$tr('ifly.cms.form.tail'),
           },
           inboundScheduledArrival: {
             name: 'inboundScheduledArrival',
@@ -845,7 +844,15 @@ export default {
               color: "primary",
               format24h: true,
               ...(this.operationType === 'full' && {
-                options: this.validateDateOutbound,
+                options: (dateTime, dateMin) => {
+                  return qRampStore().validateDateOutboundSchedule(
+                    dateTime, 
+                    dateMin, 
+                    this.form.inboundScheduledArrival, 
+                    this.form.outboundScheduledDeparture, 
+                    this.operationType
+                  )
+                }
               }),
               suffix: this.timezoneAirport,
             },
@@ -1392,35 +1399,8 @@ export default {
       }
       return validateDate ? Number(dateTime) >= Number(hourIn) : true;
     },
-    validateDateOutbound(dateTime, dateMin = null) {
-      const inboundScheduledArrival = this.form.inboundScheduledArrival
-      const outboundScheduledDeparture = this.form.outboundScheduledDeparture
-
-      const outboundScheduledDepartureDate = outboundScheduledDeparture
-        ? this.$moment(outboundScheduledDeparture) : this.$moment();
-      const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
-
-      const inboundScheduledArrivalDate = inboundScheduledArrival
-        ? this.$moment(inboundScheduledArrival) : this.$moment();
-      const todayIn = inboundScheduledArrivalDate.format('YYYY/MM/DD')
-      const hourIn = inboundScheduledArrivalDate.format('H');
-      const minIn = inboundScheduledArrivalDate.format('mm');
-      const validateDate = today === todayIn;
-
-      if (isNaN(dateTime)) {
-        if (inboundScheduledArrival) {
-          return dateTime >= todayIn;
-        }
-        return dateTime >= today;
-      }
-      if (dateMin) {
-        return validateDate ? Number(dateMin) >= Number(minIn) : true;
-      }
-      return validateDate ? Number(dateTime) >= Number(hourIn) : true;
-    },
     validateDateRuleOutbound(val, dateIn) {
-      if (this.operationType !== 'full') return true
-      return qRampStore().validateDateRule(val, dateIn)
+      return qRampStore().validateDateRule(val, dateIn, this.operationType)
     },
     changeDate(field) {
       if (field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {
