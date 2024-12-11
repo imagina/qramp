@@ -89,40 +89,11 @@ export default function flightController() {
     }
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
-  const validateDateOutbound = (dateTime, dateMin = null) => {
-    if (operationType.value !== 'full') return true
-
-    const inboundScheduledArrival = form.value.inboundScheduledArrival
-    const outboundScheduledDeparture = form.value.outboundScheduledDeparture
-
-    const outboundScheduledDepartureDate = outboundScheduledDeparture
-      ? moment(outboundScheduledDeparture) : moment();
-    const today = outboundScheduledDepartureDate.format('YYYY/MM/DD');
-
-    const inboundScheduledArrivalDate = inboundScheduledArrival
-      ? moment(inboundScheduledArrival) : moment();
-    const todayIn = inboundScheduledArrivalDate.format('YYYY/MM/DD')
-    const hourIn = inboundScheduledArrivalDate.format('H');
-    const minIn = inboundScheduledArrivalDate.format('mm');
-    const validateDate = today === todayIn;
-
-    if (isNaN(dateTime)) {
-      if (inboundScheduledArrival) {
-        return dateTime >= todayIn;
-      }
-      return dateTime >= today;
-    }
-    if (dateMin) {
-      return validateDate ? Number(dateMin) >= Number(minIn) : true;
-    }
-    return validateDate ? Number(dateTime) >= Number(hourIn) : true;
-  }
   const validateDateRuleOutbound = (val, dateIn) => {
-    if (
-      operationType.value !== 'full' ||
+    if ( 
       !qRampStore().validateOperationsDoNotApply(storeFueling.form.operationTypeId)
     ) return true
-    return qRampStore().validateDateRule(val, dateIn)
+    return qRampStore().validateDateRule(val, dateIn, operationType.value)
   }
   const readonlyOperationType= computed(() => {
     const { parentId, preFlightNumber, operationTypeId } = form.value || {};
@@ -419,7 +390,13 @@ export default function flightController() {
             clearable: true,
             color: "primary",
             format24h: true,
-            options: validateDateOutbound,
+            options: (dateTime, dateMin) => qRampStore().validateDateOutboundSchedule(
+              dateTime, 
+              dateMin, 
+              form.value.inboundScheduledArrival,
+              form.value.outboundScheduledDeparture,
+              operationType.value
+            ),
             suffix: timezoneAirport.value,
           },
         },
