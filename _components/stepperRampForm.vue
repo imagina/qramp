@@ -124,6 +124,12 @@ export default {
         this.error = value;
       }
     },
+    operationType() {
+      const flightForm = this.$store.state.qrampApp.form;
+      const operationType = workOrderList().getOperationTypeList()
+        .find(item => item.id === Number(flightForm.operationTypeId));
+      return operationType?.options?.type;
+    }
   },
   methods: {
     async init() {
@@ -209,30 +215,27 @@ export default {
           formatData.id = this.data.workOrderId;
         }
         const service = await serviceListStore().getServiceItems();
-        if (this.isPassenger && service.length === 0) {
-          this.$alert.warning({
-            mode: "modal",
-            message: 'Surely you want to save the work order without services',
-            actions: [
-              {
-                label: this.$tr('isite.cms.label.cancel'),
-                color: 'grey-8',
-                handler: async () => {
-                  qRampStore().hideLoading();
-                },
-              },
-              {
-                label: this.$tr("isite.cms.label.yes"),
-                color: "primary",
-                handler: async () => {
-                  await this.sendWorkOrder(formatData);
-                },
-              },
-            ],
-          });
-        } else {
+
+        const alerts = [
+          {
+            validate: this.isPassenger && service.length === 0,
+            message: 'Are you sure you want to save the work order without services?',
+            accept: false
+          },
+          {
+            validate: (
+              (formatData.outboundTailNumber.trim().toUpperCase() !== formatData.inboundTailNumber.trim().toUpperCase()) && 
+              this.operationType === 'full'
+            ),
+            message: 'Inbound and Outbound have different tail numbers. Are you sure you want to save the work order?',
+            accept: false
+          }
+        ]
+
+        await qRampStore().runAlerts(alerts, async () => {
           await this.sendWorkOrder(formatData);
-        }
+        });
+
         return formatData;
       } catch (error) {
         qRampStore().hideLoading();

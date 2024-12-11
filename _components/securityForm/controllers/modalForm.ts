@@ -59,6 +59,12 @@ export default function modalFormController(props: any = null, emit: any = null)
       }
     },
   ])
+  const operationType = computed(() => {
+    const type = workOrderList()
+      .getOperationTypeList()
+      .find(item => item.id === Number(store.form.operationTypeId));
+    return type?.options?.type;
+  })
   const actions = computed(() => {
     const statusId = store.form.statusId;
     const parentId = store.form.parentId;
@@ -194,29 +200,31 @@ export default function modalFormController(props: any = null, emit: any = null)
     }
 
     const service = await serviceListStore().getServiceItems();
-    if (service.length === 0) {
-      alert.warning({
-        mode: "modal",
-        message: 'Surely you want to save the work order without services',
-        actions: [
-          {
-            label: i18n.tr('isite.cms.label.cancel'),
-            color: 'grey-8',
-            handler: async () => {
-              store.loading = false;
-            },
-          },
-          {
-            label: i18n.tr("isite.cms.label.yes"),
-            color: "primary",
-            handler: async () => {
-              store.isClone ? await createService() : await updateService()
-            },
-          },
-        ],
-      });
-      return;
-    }
+
+    const alerts = [
+      {
+        validate: service.length === 0,
+        message: 'Are you sure you want to save the work order without services?',
+        accept: false
+      },
+      {
+        validate: (
+          (store.form.outboundTailNumber.trim().toUpperCase() !== store.form.inboundTailNumber.trim().toUpperCase()) && 
+          operationType.value === 'full'
+        ),
+        message: 'Inbound and Outbound have different tail numbers. Are you sure you want to save the work order?',
+        accept: false
+      }
+    ]
+
+    const activeAlerts = alerts.filter(item => item.validate && !item.accept);
+
+    await qRampStore().runAlerts(alerts, async () => {
+      store.isClone ? await createService() : await updateService()
+    });
+
+    if (activeAlerts.length > 0) return;
+
     const filterList = await serviceListStore().filterServicesListByQuantity();
     const validateServices = await serviceListStore().getRefGlobal().refServiceList?.validate() || true;
 
