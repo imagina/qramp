@@ -63,7 +63,7 @@ import {
   HalfTurnOutBountPassengerModel
 } from './model/constants.js';
 import remarkStore from './remarks/store.ts';
-import { cacheOffline } from 'src/plugins/utils';
+import { cacheOffline, store } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
 import storeCargo from 'src/modules/qramp/_components/cargo/store/cargo'
 import flightStore from 'src/modules/qramp/_components/flight/store'
@@ -345,7 +345,7 @@ export default {
         return resolve(validate);
       })
     },
-    validateBetweenDates(dateIn, dateOut) {
+    validateBetweenDates(dateIn, dateOut, validateByMinutes=true) {
       if (!dateIn && !dateOut) return false
       if (!dateIn && dateOut) return true
 
@@ -354,6 +354,8 @@ export default {
       const date = this.$moment(dateOut)
 
       const diff = date.diff(inFormat, 'minutes')
+
+      if (!validateByMinutes) return diff < 0
 
       return diff <= minutes
     },
@@ -428,7 +430,8 @@ export default {
 
           const isBlockOutAfterBlockIn = this.validateBetweenDates(
             inboundBlockIn, 
-            outboundBlockOut
+            outboundBlockOut,
+            false
           );
 
           const out = this.isPassenger ? 'Actual-out' : 'Block-out';
