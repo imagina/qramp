@@ -142,7 +142,6 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  */
 function getAttProduct(product: any) {
   const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
-
   if (hasMultiCategoryFields) {
     product.multiCategoryFields.forEach(multiCategoryFields => {
       multiCategoryFields?.multiAttributes?.forEach((item: any) => {
@@ -179,6 +178,7 @@ function getDynamicField(product) {
                 requestParams: {
                   filter: {
                     workOrderId: qRampStore().getWorkOrderId(),
+                    ...currentValue.options?.loadOptions?.requestParams?.filter || {}
                   }
                 }
               },
@@ -265,6 +265,7 @@ function setProps(type, name, options, productType, index, multipleFields= []) {
             requestParams: {
               filter: {
                 workOrderId: qRampStore().getWorkOrderId(),
+                ...field.options?.loadOptions?.requestParams?.filter || {}
               }
             }
           },
