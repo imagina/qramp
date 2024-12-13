@@ -224,8 +224,9 @@ export default {
           },
           {
             validate: (
-              (formatData.outboundTailNumber.trim().toUpperCase() !== formatData.inboundTailNumber.trim().toUpperCase()) && 
-              this.operationType === 'full'
+              this.operationType === 'full' &&
+              qRampStore().validateOperationsDoNotApply(formatData.operationTypeId) &&
+              (formatData.outboundTailNumber?.trim()?.toUpperCase() !== formatData.inboundTailNumber?.trim()?.toUpperCase())
             ),
             message: 'Inbound and Outbound have different tail numbers. Are you sure you want to save the work order?',
             accept: false
