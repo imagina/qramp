@@ -209,8 +209,9 @@ export default function modalFormController(props: any = null, emit: any = null)
       },
       {
         validate: (
-          (store.form.outboundTailNumber.trim().toUpperCase() !== store.form.inboundTailNumber.trim().toUpperCase()) && 
-          operationType.value === 'full'
+          operationType.value === 'full' &&
+          qRampStore().validateOperationsDoNotApply(store.form.operationTypeId) &&
+          (store.form.outboundTailNumber?.trim()?.toUpperCase() !== store.form.inboundTailNumber?.trim()?.toUpperCase())
         ),
         message: 'Inbound and Outbound have different tail numbers. Are you sure you want to save the work order?',
         accept: false
