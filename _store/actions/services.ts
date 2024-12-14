@@ -109,6 +109,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         const organizeProduct = organizeProducts(product);
         const favouriteProductIdList = serviceListStore().getFavouriteList().map(item => item.productId);
         organizeProduct?.forEach((product) => {
+            let categoryId = product.categoryId;
             const favourite = favouriteProductIdList.includes(product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
@@ -116,8 +117,16 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
             const surplus = contractRulesList && contractRulesList.quantityRule === 'surplus' ? contractRulesList.quantity : null;
             const productType = (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_SECURITY && product.multiCategoryFields && product.multiCategoryFields.length > 0)
               ? 4 : product.type || null;
+            const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
+            if(hasMultiCategoryFields) {
+              const result = product.multiCategoryFields.find(field =>
+                field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+              );
+              categoryId = result.multiCategories[0]?.id
+            }
+
             dynamicFieldModel.id = product.id;
-            dynamicFieldModel.categoryId = product.categoryId;
+            dynamicFieldModel.categoryId = categoryId;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
             dynamicFieldModel.minimum = minimum;
@@ -466,8 +475,10 @@ export function productDataTransformation(data = [], isType = false) {
         data.forEach((items: any) => {
             if (items.id || isDelete(items.formField)) {
                 const productType = isType ? {product_type: items.productType, name: items.title }: {};
+                const categoryId = items.categoryId ? {category_id: items.categoryId} : {};
                 products.push({
                     product_id: items.id,
+                    ...categoryId,
                     ...productType,
                     work_order_item_attributes: setAttr(items.formField),
                 });
