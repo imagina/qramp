@@ -58,7 +58,7 @@ export async function buildServiceList(): Promise<any[]> {
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
         const buildService = (item: any): any => {
             let dynamicField: any = {
-                dynamicField: getIfItIsTypeListOrDynamicField(item.products),
+                dynamicField: getIfItIsTypeListOrDynamicField(item.products, item.id),
             };
             dynamicField = dynamicField.dynamicField.length === 0 ? {} : dynamicField;
             let children = [];
@@ -98,7 +98,7 @@ export async function buildServiceList(): Promise<any[]> {
  *     "categoryId": "5e8f8f8f8f8f8f8f8f8f8f8f",
  *     "
  */
-export const getIfItIsTypeListOrDynamicField = (product) => {
+export const getIfItIsTypeListOrDynamicField = (product, categoryId = null) => {
     try {
 
         const products = product || [];
@@ -109,7 +109,7 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         const organizeProduct = organizeProducts(product);
         const favouriteProductIdList = serviceListStore().getFavouriteList().map(item => item.productId);
         organizeProduct?.forEach((product) => {
-            let categoryId = product.categoryId;
+            let categoryIdData = categoryId;
             const favourite = favouriteProductIdList.includes(product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
@@ -122,11 +122,11 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
               const result = product.multiCategoryFields.find(field =>
                 field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
               );
-              categoryId = result.multiCategories[0]?.id
+              categoryIdData = result.multiCategories[0]?.id
             }
 
             dynamicFieldModel.id = product.id;
-            dynamicFieldModel.categoryId = categoryId;
+            dynamicFieldModel.categoryId = categoryIdData;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
             dynamicFieldModel.minimum = minimum;
