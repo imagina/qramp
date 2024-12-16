@@ -113,7 +113,9 @@ export const getIfItIsTypeListOrDynamicField = (product, categoryId = null) => {
             const favourite = favouriteProductIdList.includes(product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
             const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
-            const minimum = contractRulesList && contractRulesList.valueRule === 'minimum' ? contractRulesList.valueFrom : null;
+            const valueRules = contractRulesList && contractRulesList.valueRule ? contractRulesList.valueRule : null;
+            const valueTo = contractRulesList && contractRulesList.valueTo ? contractRulesList.valueTo : null;
+            const valueFrom = contractRulesList && contractRulesList.valueFrom ? contractRulesList.valueFrom : null;
             const surplus = contractRulesList && contractRulesList.quantityRule === 'surplus' ? contractRulesList.quantity : null;
             const productType = (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_SECURITY && product.multiCategoryFields && product.multiCategoryFields.length > 0)
               ? 4 : product.type || null;
@@ -129,7 +131,9 @@ export const getIfItIsTypeListOrDynamicField = (product, categoryId = null) => {
             dynamicFieldModel.categoryId = categoryIdData;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
-            dynamicFieldModel.minimum = minimum;
+            dynamicFieldModel.valueRules = valueRules;
+            dynamicFieldModel.valueTo = valueTo;
+            dynamicFieldModel.valueFrom = valueFrom;
             dynamicFieldModel.surplus = surplus;
             dynamicFieldModel.formField = getDynamicField(product);
             dynamicFieldModel.favourite = favourite;

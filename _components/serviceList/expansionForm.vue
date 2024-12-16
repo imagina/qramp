@@ -73,7 +73,7 @@ export default defineComponent({
       return 0
     };
 
-    function calculateValues(
+    function calculateValuesMinimum(
       employeesTotal = 1,
       time = 0,
       baseMinimum = null,
@@ -102,7 +102,33 @@ export default defineComponent({
         const remainingTime = Math.max(0, timeWithEmployees - totalMinimum);
         return `${titleRegHours} ${totalMinimum} ${titleOtHour} ${remainingTime} - Total: (${timeWithEmployees})`;
       }
-      return `${titleRegHours} ${timeWithEmployees}`;0
+      return `${titleRegHours} ${timeWithEmployees}`;
+    }
+    function calculateValuesFlatRate(
+      employeesTotal = 1,
+      time = 0,
+      baseValueFrom = null,
+      baseValueTo = null,
+      baseSurplus = null,
+      holiday = null) {
+      const flatRade = time <= baseValueFrom ? baseValueTo * employeesTotal : time;
+      const titleRegHours = 'Reg. Hours:';
+      const titleOtHour = 'OT Hours:';
+
+      if(baseValueFrom && !baseSurplus) {
+        const title = holiday ? titleOtHour : titleRegHours;
+        return `${title}: ${flatRade}`
+      }
+
+      if(baseValueFrom && baseSurplus) {
+        const remainingTime = Math.max(0, (time - baseSurplus) * employeesTotal);
+        if(holiday) {
+          return `${titleOtHour}: ${remainingTime}`;
+        }
+        return `${titleRegHours} ${flatRade} ${titleOtHour} ${remainingTime}`;
+      }
+
+      return `${titleRegHours} ${0}`;
     }
     const differenceHourMultiple = (formField, index, product) => {
       indexMultiple.value = index;
@@ -113,12 +139,23 @@ export default defineComponent({
       const employeesTotal = formField?.employees?.length || 1;
       if (startDate && endDate) {
         const time = qRampStore().getDifferenceInHours(startDate, endDate);
-        return calculateValues(
-          employeesTotal,
-          time,
-          product.minimum,
-          product.surplus,
-          holiday);
+        if(product.valueRules === 'minimum') {
+          return calculateValuesMinimum(
+            employeesTotal,
+            time,
+            product.valueFrom,
+            product.surplus,
+            holiday);
+        }
+        if(product.valueRules === 'Flat Rate') {
+          return calculateValuesFlatRate(
+            employeesTotal,
+            time,
+            product.valueFrom,
+            product.valueTo,
+            product.surplus,
+            holiday);
+        }
       }
       return '';
     };
@@ -324,7 +361,7 @@ export default defineComponent({
       transformerFields,
       refServiceList,
       setDynamicRef,
-      calculateValues
+      calculateValuesMinimum
     }
   },
 })
@@ -354,8 +391,8 @@ export default defineComponent({
                   {{ item.helpText }}
                 </span>
                   <br>
-                  <span v-if="item.minimum"  class="tw-text-xs tw-text-gray-500">
-                  Minimum: {{ item.minimum }}hrs
+                  <span v-if="item.valueFrom"  class="tw-text-xs tw-text-gray-500">
+                  {{ item.valueRules }}: {{ item.valueFrom }}hrs
                 </span>
                 </p>
                 <span class="tw-text-sm" style="color:#8A98C3;">{{ showValue(item.formField.quantity) }}</span>
@@ -398,7 +435,8 @@ export default defineComponent({
               <div>
                 <p>{{ item.title }}</p>
                 <p v-if="item.helpText" class="tw-text-xs tw-text-gray-500">{{ item.helpText }}</p>
-                <p v-if="item.minimum" class="tw-text-xs tw-text-gray-500">Minimum: {{ item.minimum }}hrs</p>
+                <p v-if="item.valueFrom" class="tw-text-xs tw-text-gray-500 tw-capitalize">{{ item.valueRules }} Quantity: {{ item.valueFrom }}hrs
+                  <span v-if="item.valueRules === 'Flat Rate'">Flat rate value: {{item.valueTo}}hrs</span></p>
               </div>
             </div>
 
