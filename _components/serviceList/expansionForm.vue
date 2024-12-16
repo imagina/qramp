@@ -111,7 +111,7 @@ export default defineComponent({
       baseValueTo = null,
       baseSurplus = null,
       holiday = null) {
-      const flatRade = time <= baseValueFrom ? baseValueTo * employeesTotal : time;
+      const flatRade = time >= baseValueFrom ? baseValueTo * employeesTotal : time;
       const titleRegHours = 'Reg. Hours:';
       const titleOtHour = 'OT Hours:';
 
