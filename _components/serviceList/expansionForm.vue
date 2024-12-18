@@ -25,10 +25,10 @@ export default defineComponent({
     const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline);
     const dynamicRefs = ref({});
     const permissionFavourite: any = computed(() => ({
-      create: store.hasAccess('isite.favourites.create'),
-      edit: store.hasAccess('isite.favourites.edit'),
-      index: store.hasAccess(`isite.favourites.index`),
-      destroy: store.hasAccess(`isite.favourites.destroy`),
+      create: store.hasAccess('ramp.favourites.create'),
+      edit: store.hasAccess('ramp.favourites.edit'),
+      index: store.hasAccess(`ramp.favourites.index`),
+      destroy: store.hasAccess(`ramp.favourites.destroy`),
     }));
     async function selectFavourite(data: any) {
       data.favourite = !data.favourite;

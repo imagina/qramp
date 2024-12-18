@@ -787,7 +787,7 @@ export default function workOrderList(): WorkOrderList {
 
 
     async function getFavourites(refresh = false) {
-        if (hasAccess('isite.favourites.index')) {
+        if (hasAccess('ramp.favourites.index')) {
           if (!navigator.onLine) return;
             try {
               const {
