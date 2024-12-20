@@ -156,6 +156,7 @@ export default defineComponent({
             product.surplus,
             holiday);
         }
+        return `Reg. Hours: ${qRampStore().getDifferenceInHours(startDate, endDate)}`
       }
       return '';
     };
@@ -436,7 +437,7 @@ export default defineComponent({
                 <p>{{ item.title }}</p>
                 <p v-if="item.helpText" class="tw-text-xs tw-text-gray-500">{{ item.helpText }}</p>
                 <p v-if="item.valueFrom" class="tw-text-xs tw-text-gray-500 tw-capitalize">{{ item.valueRules }} Quantity: {{ item.valueFrom }}hrs
-                  <span v-if="item.valueRules === 'Flat Rate'">Flat rate value: {{item.valueTo}}hrs</span></p>
+                  <span v-if="item.valueRules === 'Flat Rate'">Flat rate value: {{item.valueTo}}</span></p>
               </div>
             </div>
 
