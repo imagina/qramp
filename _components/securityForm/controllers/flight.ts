@@ -90,7 +90,7 @@ export default function flightController() {
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
   const validateDateRuleOutbound = (val, dateIn, validateByMinutes=true) => {
-    if ( 
+    if (
       !qRampStore().validateOperationsDoNotApply(storeFueling.form.operationTypeId)
     ) return true
     return qRampStore().validateDateRule(val, dateIn, operationType.value, null, null, validateByMinutes)
@@ -133,7 +133,10 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+              val => {
+                if (!isActualInAndActualOut.value) return true;
+                return !!val || i18n.tr('isite.cms.message.fieldRequired');
+              }
             ],
             readonly: disabledReadonly.value,
             label: `*${i18n.tr('ifly.cms.form.acType')}`,
@@ -173,7 +176,10 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+              val => {
+                if (!isActualInAndActualOut.value) return true;
+                return !!val || i18n.tr('isite.cms.message.fieldRequired');
+              }
             ],
             readonly: disabledReadonly.value,
             label: `*${i18n.tr('ifly.cms.form.carrier')}`,
@@ -391,8 +397,8 @@ export default function flightController() {
             color: "primary",
             format24h: true,
             options: (dateTime, dateMin) => qRampStore().validateDateOutboundSchedule(
-              dateTime, 
-              dateMin, 
+              dateTime,
+              dateMin,
               form.value.inboundScheduledArrival,
               form.value.outboundScheduledDeparture,
               operationType.value
