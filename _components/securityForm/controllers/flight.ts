@@ -161,7 +161,7 @@ export default function flightController() {
             rules: [
               val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
-            readonly: readonlyOperationType.value,
+            //readonly: readonlyOperationType.value,
             label: `*${i18n.tr('ifly.cms.form.operation')}`,
             clearable: true,
             color: "primary",
