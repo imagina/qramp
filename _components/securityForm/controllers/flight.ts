@@ -139,7 +139,7 @@ export default function flightController() {
               }
             ],
             readonly: disabledReadonly.value,
-            label: `*${i18n.tr('ifly.cms.form.acType')}`,
+            label: `${!isActualInAndActualOut.value ? '': '*'}${i18n.tr('ifly.cms.form.acType')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -182,7 +182,7 @@ export default function flightController() {
               }
             ],
             readonly: disabledReadonly.value,
-            label: `*${i18n.tr('ifly.cms.form.carrier')}`,
+            label: `${!isActualInAndActualOut.value ? '': '*'}${i18n.tr('ifly.cms.form.carrier')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
