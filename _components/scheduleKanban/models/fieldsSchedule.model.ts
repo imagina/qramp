@@ -91,13 +91,10 @@ export default function modelFields() {
       ? moment(inbound, 'HH:mm') : moment('HH:mm');
       const hourIn = inboundDate.format('H');
       const minutes = storeUtil.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
-      console.log('holllaass')
       if (isNaN(dateTime)) return true;
-      console.log(dateMin, ' no ingresa')
       if (dateMin) {
         const selectedTime = moment(`${dateTime}:${dateMin}`, 'HH:mm');
         const difference = selectedTime.diff(moment(inboundDate, 'HH:mm'), 'minutes');
-        console.log('hola')
         return difference > minutes;
       }
 
