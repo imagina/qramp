@@ -595,20 +595,23 @@ export default function qRampStore() {
     function validateDateRule(val, dateIn, operationType, formatDateIn, formatDateOut) {
       if (!val) return true
       if (operationType !== 'full') return true
+      const minutes = store.getSetting('ramp::minimumMinutesDiffBetweenSchedules');
+      const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
+      const MESSAGE = `The departure date must be at least ${minutes} minutes later than the arrival date.`;
 
-      const minutes = store.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
-      const FORMAT_DATE = 'MM/DD/YYYY HH:mm'
-      const MESSAGE = `The departure date must be at least ${minutes} minutes later than the arrival date.`
-      const formatIn = formatDateIn ? formatDateIn : FORMAT_DATE
-      const dateInFormat = dateIn
-        ? moment(dateIn, formatIn)
-        : moment(formatIn)
+      const formatIn = formatDateIn || FORMAT_DATE;
+      const dateInFormat = dateIn ? moment(dateIn, formatIn) : moment();
 
-      const date = moment(val, formatDateOut ? formatDateOut : FORMAT_DATE)
+      const date = moment(val, formatDateOut || FORMAT_DATE);
 
-      const diff = moment(date.format(formatIn), formatIn).diff(dateInFormat, 'minutes')
+      if (!dateInFormat.isValid() || !date.isValid()) {
+        console.error("date error: ", { dateInFormat, date });
+        return "date error";
+      }
 
-      return diff > minutes || MESSAGE
+      const diff = date.diff(dateInFormat, 'minutes');
+
+      return diff > minutes || MESSAGE;
     }
 
     function validateDateOutboundSchedule(dateTime, dateMin = null, inbound, outbound, operationType) {

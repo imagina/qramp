@@ -9,6 +9,7 @@ import store from '../store/modalSchedule.store'
 import kanbanStore from '../store/kanban.store'
 import { i18n, store as storeUtil } from 'src/plugins/utils'
 import moment from 'moment';
+import storeFilters from "../store/filters.store";
 
 export default function modelFields() {
     const isPassenger = computed(() =>  qRampStore().getIsPassenger());
@@ -80,8 +81,8 @@ export default function modelFields() {
     });
 
     const validateDateOutboundSchedule = (
-      dateTime, 
-      dateMin = null, 
+      dateTime,
+      dateMin = null,
       inbound
     ) => {
       if (operationType.value !== 'full') return true;
@@ -90,13 +91,16 @@ export default function modelFields() {
       ? moment(inbound, 'HH:mm') : moment('HH:mm');
       const hourIn = inboundDate.format('H');
       const minutes = storeUtil.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
-
+      console.log('holllaass')
       if (isNaN(dateTime)) return true;
+      console.log(dateMin, ' no ingresa')
       if (dateMin) {
         const selectedTime = moment(`${dateTime}:${dateMin}`, 'HH:mm');
         const difference = selectedTime.diff(moment(inboundDate, 'HH:mm'), 'minutes');
+        console.log('hola')
         return difference > minutes;
       }
+
       return Number(dateTime) >= Number(hourIn);
     }
 
@@ -177,7 +181,11 @@ export default function modelFields() {
               props: {
                 rules: [
                   val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
-                  val => qRampStore().validateDateRule(val, form.value.sta, operationType.value, 'HH:mm')
+                  val => {
+                    const format = 'MM/DD/YYYY HH:mm';
+                    const date = moment(storeFilters.selectedDate, 'YYYY/MM/DD').format('MM/DD/YYYY');
+                    return qRampStore().validateDateRule(val, `${date} ${form.value.sta}`, operationType.value, format)
+                  }
                 ],
                 mask:'MM/DD/YYYY HH:mm',
                 hint:'Format: MM/DD/YYYY HH:mm',
@@ -185,8 +193,8 @@ export default function modelFields() {
                 label: 'STD',
                 format24h: true,
                 options: (dateTime, dateMin) => validateDateOutboundSchedule(
-                  dateTime, 
-                  dateMin, 
+                  dateTime,
+                  dateMin,
                   form.value.sta
                 )
               },
