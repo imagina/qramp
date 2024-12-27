@@ -126,7 +126,7 @@ export default function useKanbanBoard(props) {
           if (qRampStore().getBusinessUnitId() ===  BUSINESS_UNIT_SECURITY) {
             routeNameLocal = "security";
           }
-          console.log(qRampStore().getBusinessUnitId())
+
           if(qRampStore().getBusinessUnitId() ===  BUSINESS_UNIT_CARGO && qRampStore().getTypeWorkOrder() === CARGO_PAX) {
             routeNameLocal = "cargo";
           }
