@@ -20,7 +20,7 @@ import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
 import { store, i18n, helper, cache, router } from 'src/plugins/utils'
 import { useQuasar } from 'quasar';
-import {BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR, CARGO_PAX} from '../../model/constants.js';
+import {BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR, CARGO_PAX, BUSINESS_UNIT_CARGO} from '../../model/constants.js';
 import kanbanStore from "../store/kanban.store";
 
 export default function useKanbanBoard(props) {
@@ -126,7 +126,8 @@ export default function useKanbanBoard(props) {
           if (qRampStore().getBusinessUnitId() ===  BUSINESS_UNIT_SECURITY) {
             routeNameLocal = "security";
           }
-          if(qRampStore().getBusinessUnitId() ===  'null' && qRampStore().getTypeWorkOrder() === CARGO_PAX) {
+          console.log(qRampStore().getBusinessUnitId())
+          if(qRampStore().getBusinessUnitId() ===  BUSINESS_UNIT_CARGO && qRampStore().getTypeWorkOrder() === CARGO_PAX) {
             routeNameLocal = "cargo";
           }
           let tinyUrl =

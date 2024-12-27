@@ -19,19 +19,19 @@ export default function modelFields(): ModelFields {
             .find(item => item.id === Number(store.form.operationTypeId));
         return type?.options?.type;
     })
-    
+
     const validateDateOutboundSchedule = (
-        dateTime, 
-        dateMin = null, 
+        dateTime,
+        dateMin = null,
         inbound
     ) => {
         if (operationType.value !== 'full') return true
-  
+
         const inboundDate = inbound
         ? moment(inbound, 'HH:mm') : moment('HH:mm');
         const hourIn = inboundDate.format('H');
         const minutes = storeUtil.getSetting('ramp::minimumMinutesDiffBetweenSchedules')
-  
+
         if (isNaN(dateTime)) return true;
         if (dateMin) {
             const selectedTime = moment(`${dateTime}:${dateMin}`, 'HH:mm');
@@ -253,8 +253,8 @@ export default function modelFields(): ModelFields {
                     color: "primary",
                     format24h: true,
                     options: (dateTime, dateMin) => validateDateOutboundSchedule(
-                        dateTime, 
-                        dateMin, 
+                        dateTime,
+                        dateMin,
                         store.form.inboundScheduleArrival
                     ),
                 },
