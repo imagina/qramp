@@ -14,7 +14,7 @@ export default function getListCustomerWithContracts(data, permisition) {
             contractName: null,
         }
     });
-    if(qRampStore().getBusinessUnitId() !==  BUSINESS_UNIT_CARGO && qRampStore().getTypeWorkOrder() !== CARGO_PAX)  {
+    //if(qRampStore().getBusinessUnitId() !==  BUSINESS_UNIT_CARGO && qRampStore().getTypeWorkOrder() !== CARGO_PAX)  {
       contractsList.forEach((contract, index) => {
           const label = permisition ? `${contract.customerName} (${contract.contractName})` : contract.customerName;
           customers.push({
@@ -26,6 +26,6 @@ export default function getListCustomerWithContracts(data, permisition) {
               contractName: contract.contractName
           })
       });
-    }
+    //}
     return customers;
 }
