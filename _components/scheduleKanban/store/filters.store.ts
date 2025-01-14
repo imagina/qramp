@@ -7,7 +7,7 @@ import { State } from '../contracts/filtersStore.contract';
 import storeKanban from '../store/kanban.store';
 import { LABOR, BUSINESS_UNIT_LABOR, FLIGHT } from "src/modules/qramp/_components/model/constants";
 import qRampStore from "src/modules/qramp/_store/qRampStore";
-import { CARGO_PAX } from '../../model/constants';
+import { CARGO_PAX, BUSINESS_UNIT_CARGO } from '../../model/constants';
 
 const state = reactive<State>({
     showModal: false,
@@ -117,7 +117,7 @@ const store = computed(() => ({
       let typeWorkOrder = {};
       if (businessUnitId === BUSINESS_UNIT_LABOR) {
         typeWorkOrder = { type: [LABOR] };
-      } else if (qRampStore().getBusinessUnitId() == 'null' && typeWorkOrderFromStore === CARGO_PAX) {
+      } else if (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_CARGO && typeWorkOrderFromStore === CARGO_PAX) {
         typeWorkOrder = { type: [CARGO_PAX] };
       } else if (qRampStore().getBusinessUnitId() == 'null' && typeWorkOrderFromStore !== CARGO_PAX) {
         typeWorkOrder = { type: [FLIGHT] };
