@@ -114,6 +114,7 @@ const store = computed(() => ({
       const typeWorkOrderFromStore = qRampStore().getTypeWorkOrder();
       let businessUnitId: any = qRampStore().getBusinessUnitId();
       businessUnitId = businessUnitId !== 'null' ? {businessUnitId} : {};
+
       let typeWorkOrder = {};
       if (businessUnitId === BUSINESS_UNIT_LABOR) {
         typeWorkOrder = { type: [LABOR] };
@@ -122,7 +123,9 @@ const store = computed(() => ({
       } else if (qRampStore().getBusinessUnitId() == 'null' && typeWorkOrderFromStore !== CARGO_PAX) {
         typeWorkOrder = { type: [FLIGHT] };
       }
-
+      if(qRampStore().getBusinessUnitId() == BUSINESS_UNIT_CARGO && typeWorkOrderFromStore === CARGO_PAX) {
+        businessUnitId = {};
+      }
       const stationCompanies = qRampStore().getFilterCompany();
       const filters = {
         ...state.form,
