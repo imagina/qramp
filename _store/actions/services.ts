@@ -5,6 +5,9 @@ import pluginsArray from 'src/plugins/array.js';
 import { store } from 'src/plugins/utils'
 import _ from 'lodash';
 import serviceListStore from '../../_components/serviceList/store/serviceList'
+import { fields } from "../../_components/signature/model/fields";
+import workOrderList from "./workOrderList";
+import {BUSINESS_UNIT_SECURITY} from "../../_components/model/constants";
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -55,7 +58,7 @@ export async function buildServiceList(): Promise<any[]> {
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
         const buildService = (item: any): any => {
             let dynamicField: any = {
-                dynamicField: getIfItIsTypeListOrDynamicField(item.products),
+                dynamicField: getIfItIsTypeListOrDynamicField(item.products, item.id),
             };
             dynamicField = dynamicField.dynamicField.length === 0 ? {} : dynamicField;
             let children = [];
@@ -95,7 +98,7 @@ export async function buildServiceList(): Promise<any[]> {
  *     "categoryId": "5e8f8f8f8f8f8f8f8f8f8f8f",
  *     "
  */
-export const getIfItIsTypeListOrDynamicField = (product) => {
+export const getIfItIsTypeListOrDynamicField = (product, categoryId = null) => {
     try {
 
         const products = product || [];
@@ -106,15 +109,35 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
         const organizeProduct = organizeProducts(product);
         const favouriteProductIdList = serviceListStore().getFavouriteList().map(item => item.productId);
         organizeProduct?.forEach((product) => {
+            let categoryIdData = categoryId;
             const favourite = favouriteProductIdList.includes(product.id);
             const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
+            const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
+            const valueRules = contractRulesList && contractRulesList.valueRule ? contractRulesList.valueRule : null;
+            const valueTo = contractRulesList && contractRulesList.valueTo ? contractRulesList.valueTo : null;
+            const valueFrom = contractRulesList && contractRulesList.valueFrom ? contractRulesList.valueFrom : null;
+            const surplus = contractRulesList && contractRulesList.quantityRule === 'surplus' ? contractRulesList.quantity : null;
+            const productType = (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_SECURITY && product.multiCategoryFields && product.multiCategoryFields.length > 0)
+              ? 4 : product.type || null;
+            const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
+            if(hasMultiCategoryFields) {
+              const result = product.multiCategoryFields.find(field =>
+                field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+              );
+              categoryIdData = result.multiCategories[0]?.id
+            }
+
             dynamicFieldModel.id = product.id;
-            dynamicFieldModel.categoryId = product.categoryId;
+            dynamicFieldModel.categoryId = categoryIdData;
             dynamicFieldModel.title = productName;
             dynamicFieldModel.helpText = product.helpText;
+            dynamicFieldModel.valueRules = valueRules;
+            dynamicFieldModel.valueTo = valueTo;
+            dynamicFieldModel.valueFrom = valueFrom;
+            dynamicFieldModel.surplus = surplus;
             dynamicFieldModel.formField = getDynamicField(product);
             dynamicFieldModel.favourite = favourite;
-            dynamicFieldModel.productType = product.type;
+            dynamicFieldModel.productType = productType;
             data.push({ ...dynamicFieldModel });
         });
         return data;
@@ -130,12 +153,33 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  * @returns {dynamicField}
  *
  */
+function getAttProduct(product: any) {
+  const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
+  if (hasMultiCategoryFields) {
+    product.multiCategoryFields.forEach(multiCategoryFields => {
+      multiCategoryFields?.multiAttributes?.forEach((item: any) => {
+        if (typeof item.fields === 'string' && item.fields.length > 0) {
+          item.fields = JSON.parse(item.fields.replace(/'/g, '"'));
+        } else if (!item.fields) {
+          item.fields = [];
+        }
+      });
+    })
+
+    const result = product.multiCategoryFields.find(field =>
+      field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+    );
+    return result.multiAttributes || [];
+  }
+
+  return product.attributes || [];
+}
+
 function getDynamicField(product) {
     try {
         const productoType = product.type || null;
-        const att = product.attributes || [];
+        const att = getAttProduct(product);
         const optionAtt = product.options?.attributes || [];
-
         const result = {};
         const organizedData = optionAtt.length > 0 ? _.sortBy(att, item => optionAtt.indexOf(String(item.id))) : att;
         for (let i = 0; i < organizedData.length; i++) {
@@ -147,6 +191,7 @@ function getDynamicField(product) {
                 requestParams: {
                   filter: {
                     workOrderId: qRampStore().getWorkOrderId(),
+                    ...currentValue.options?.loadOptions?.requestParams?.filter || {}
                   }
                 }
               },
@@ -157,6 +202,7 @@ function getDynamicField(product) {
             currentValue.values,
             productoType,
             i,
+            currentValue.fields
             );
             const key = `${currentValue.type}${currentValue.name ? currentValue.name : ""}`;
             const type = currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
@@ -189,7 +235,7 @@ function getDynamicField(product) {
  * @param index
  * @returns {PropsDynamicField}
  */
-function setProps(type, name, options, productType, index) {
+function setProps(type, name, options, productType, index, multipleFields= []) {
     const readonly = qRampStore().disabledReadonly();
     if (type == "quantity" || type == "quantityFloat") {
         return {
@@ -220,6 +266,56 @@ function setProps(type, name, options, productType, index) {
             "place-holder": "MM/DD/YYYY HH:mm",
             format24h: true,
         };
+    }
+    if(type == "multiplier") {
+
+      const fields = multipleFields.map((field, indexField) => {
+        const propsOptions = field.options?.props || {};
+        const nameField = field.options?.name || '';
+        const loadOptions = field.options?.loadOptions ? {
+          loadOptions : {
+            ...field.options?.loadOptions,
+            requestParams: {
+              filter: {
+                workOrderId: qRampStore().getWorkOrderId(),
+                ...field.options?.loadOptions?.requestParams?.filter || {}
+              }
+            }
+          },
+        } : {};
+        let value = field.value ? field.type === 'checkbox' ? Number(field.value) : field.value : field.type === 'checkbox' ? 0 : null
+        if(propsOptions.multiple) {
+          value = value || [];
+        }
+        const props = setProps(
+          field.type,
+          field.label,
+          [],
+          null,
+          indexField,
+        );
+        return {
+          type: field.type,
+          value: value,
+          name: nameField,
+          props: { ...props, ...propsOptions },
+          ...loadOptions
+        }
+      }).reduce((obj, item) => {
+        if (item.name) {
+          obj[item.name] = item;
+        }
+        return obj;
+      }, {});
+
+      return {
+        type: type,
+        readonly,
+        label: name,
+        isDraggable: true,
+        maxQuantity: 7,
+        fields
+      };
     }
     return {
         type: type,
@@ -279,7 +375,7 @@ function organizeProducts(data: any) {
         return data?.map((product) => {
             (productData as any).map((sw) => {
                 if (sw?.productId == product?.id) {
-                    product?.attributes?.map((att) => {
+                    getAttProduct(product).map((att) => {
                         sw.workOrderItemAttributes.map((swatt) => {
                             if (swatt.attributeId == att.id) {
                                 att.value = swatt.value;
@@ -338,6 +434,9 @@ function validationDataAttr(obj: any, key: any) {
     if(obj[key].type === 'select' && obj[key].props?.multiple) {
       value = JSON.stringify(obj[key].value);
     }
+    if(obj[key].type === 'multiplier') {
+      value = JSON.stringify(obj[key].value);
+    }
     let data: any = {
         name: obj[key].name,
         value,
@@ -380,8 +479,10 @@ export function productDataTransformation(data = [], isType = false) {
         data.forEach((items: any) => {
             if (items.id || isDelete(items.formField)) {
                 const productType = isType ? {product_type: items.productType, name: items.title }: {};
+                const categoryId = items.categoryId ? {category_id: items.categoryId} : {};
                 products.push({
                     product_id: items.id,
+                    ...categoryId,
                     ...productType,
                     work_order_item_attributes: setAttr(items.formField),
                 });

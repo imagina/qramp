@@ -438,6 +438,7 @@ export interface State {
     responsibleList: any[];
     workOrderItems: any[];
     paxOperationTypeList: any[];
+    contractRulesList: any[]
 }
 
 export interface WorkOrderList {
@@ -487,5 +488,7 @@ export interface WorkOrderList {
     getWorkOrdersItemsList: () => any;
     getPaxOperationTypeList : () => any[]
     setPaxOperationTypeList : (data: any) => any
-    getPaxOperationType: (refresh: boolean) => any
+    getPaxOperationType: (refresh: boolean) => any,
+    getContractRulesList : () => any[]
+    setContractRulesList : (data: any) => any
 }

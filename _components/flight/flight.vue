@@ -899,7 +899,7 @@ export default {
             props: {
               rules: [
                 ...this.validateRulesBlock,
-                val => this.validateDateRuleOutbound(val, this.form.inboundBlockIn)
+                val => this.validateDateRuleOutbound(val, this.form.inboundBlockIn, false)
               ],
               hint: 'Format: MM/DD/YYYY HH:mm',
               mask: 'MM/DD/YYYY HH:mm',
@@ -1399,8 +1399,8 @@ export default {
       }
       return validateDate ? Number(dateTime) >= Number(hourIn) : true;
     },
-    validateDateRuleOutbound(val, dateIn) {
-      return qRampStore().validateDateRule(val, dateIn, this.operationType)
+    validateDateRuleOutbound(val, dateIn, validateByMinutes=true) {
+      return qRampStore().validateDateRule(val, dateIn, this.operationType, null, null, validateByMinutes)
     },
     changeDate(field) {
       if (field.name === 'outboundBlockOut' && this.form.outboundBlockOut !== null) {

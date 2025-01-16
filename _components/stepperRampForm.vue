@@ -63,7 +63,7 @@ import {
   HalfTurnOutBountPassengerModel
 } from './model/constants.js';
 import remarkStore from './remarks/store.ts';
-import { cacheOffline } from 'src/plugins/utils';
+import { cacheOffline, store } from 'src/plugins/utils';
 import workOrderList from '../_store/actions/workOrderList.ts'
 import storeCargo from 'src/modules/qramp/_components/cargo/store/cargo'
 import flightStore from 'src/modules/qramp/_components/flight/store'
@@ -124,6 +124,12 @@ export default {
         this.error = value;
       }
     },
+    operationType() {
+      const flightForm = this.$store.state.qrampApp.form;
+      const operationType = workOrderList().getOperationTypeList()
+        .find(item => item.id === Number(flightForm.operationTypeId));
+      return operationType?.options?.type;
+    }
   },
   methods: {
     async init() {
@@ -209,30 +215,28 @@ export default {
           formatData.id = this.data.workOrderId;
         }
         const service = await serviceListStore().getServiceItems();
-        if (this.isPassenger && service.length === 0) {
-          this.$alert.warning({
-            mode: "modal",
-            message: 'Surely you want to save the work order without services',
-            actions: [
-              {
-                label: this.$tr('isite.cms.label.cancel'),
-                color: 'grey-8',
-                handler: async () => {
-                  qRampStore().hideLoading();
-                },
-              },
-              {
-                label: this.$tr("isite.cms.label.yes"),
-                color: "primary",
-                handler: async () => {
-                  await this.sendWorkOrder(formatData);
-                },
-              },
-            ],
-          });
-        } else {
+
+        const alerts = [
+          {
+            validate: this.isPassenger && service.length === 0,
+            message: 'Are you sure you want to save the work order without services?',
+            accept: false
+          },
+          {
+            validate: (
+              this.operationType === 'full' &&
+              qRampStore().validateOperationsDoNotApply(formatData.operationTypeId) &&
+              (formatData.outboundTailNumber?.trim()?.toUpperCase() !== formatData.inboundTailNumber?.trim()?.toUpperCase())
+            ),
+            message: 'Inbound and Outbound have different tail numbers. Are you sure you want to save the work order?',
+            accept: false
+          }
+        ]
+
+        await qRampStore().runAlerts(alerts, async () => {
           await this.sendWorkOrder(formatData);
-        }
+        });
+
         return formatData;
       } catch (error) {
         qRampStore().hideLoading();
@@ -342,7 +346,7 @@ export default {
         return resolve(validate);
       })
     },
-    validateBetweenDates(dateIn, dateOut) {
+    validateBetweenDates(dateIn, dateOut, validateByMinutes=true) {
       if (!dateIn && !dateOut) return false
       if (!dateIn && dateOut) return true
 
@@ -351,6 +355,8 @@ export default {
       const date = this.$moment(dateOut)
 
       const diff = date.diff(inFormat, 'minutes')
+
+      if (!validateByMinutes) return diff < 0
 
       return diff <= minutes
     },
@@ -425,7 +431,8 @@ export default {
 
           const isBlockOutAfterBlockIn = this.validateBetweenDates(
             inboundBlockIn, 
-            outboundBlockOut
+            outboundBlockOut,
+            false
           );
 
           const out = this.isPassenger ? 'Actual-out' : 'Block-out';

@@ -16,10 +16,10 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     const servicesAlertSetting = computed(() => store.getSetting('ramp::servicesAlert'))
     const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline);
     const permissionFavourite = computed(() => ({
-        create: store.hasAccess('isite.favourites.create'),
-        edit: store.hasAccess('isite.favourites.edit'),
-        index: store.hasAccess(`isite.favourites.index`),
-        destroy: store.hasAccess(`isite.favourites.destroy`),
+        create: store.hasAccess('ramp.favourites.create'),
+        edit: store.hasAccess('ramp.favourites.edit'),
+        index: store.hasAccess(`ramp.favourites.index`),
+        destroy: store.hasAccess(`ramp.favourites.destroy`),
     }));
     const showFavourite: ComputedRef<boolean> = computed(() => serviceListStore().getShowFavourite());
     const nameProduct = (productId: string) => {
@@ -45,7 +45,7 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     }
 
     function deleteChip(productId: string): void {
-        deleteChipRecursive(productId, serviceListStore().getServiceList());
+      deleteChipRecursive(productId, serviceListStore().getServiceList());
     }
 
     function searchProduct(productId: string): void {

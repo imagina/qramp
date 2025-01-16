@@ -8,6 +8,7 @@ import remarksStore from '../../remarks/store';
 import stepps from '../models/defaultModels/stepps';
 import signatureStore from 'src/modules/qramp/_components/signature/store/index.store'
 import moment from 'moment';
+import getContractRules from "../services/getContractRules";
 
 const MODEL_FORM = {
     id: null,
@@ -172,7 +173,6 @@ const store = computed(() => ({
         flightBoundFormStatus.boundScheduledDeparture = qRampStore().checkIfDataArrives(value.outboundScheduledDeparture);
         flightBoundFormStatus.boundOriginAirportId = qRampStore().checkIfDataArrives(value.inboundOriginAirportId);
         flightBoundFormStatus.boundDestinationAirport = qRampStore().checkIfDataArrives(value.outboundDestinationAirportId);
-
         qRampStore().setTypeWorkOrder(value.type)
         if(navigator.onLine) {
             qRampStore().setWorkOrderItems(value.workOrderItems);
@@ -199,7 +199,14 @@ const store = computed(() => ({
         if (qRampStore().isNonFlight()) {
             state.form.scheduleDate = dateFormatterFull(value.scheduleDate)
         }
-        serviceListStore().init().then();
+        if(state.form.contractId) {
+          getContractRules(state.form.contractId).then(response => {
+            serviceListStore().init().then();
+          });
+        } else {
+          serviceListStore().init().then();
+        }
+
         remarksStore().setForm(value);
         qRampStore().setStatusId(state.form.statusId);
     },
@@ -244,7 +251,8 @@ const store = computed(() => ({
         stepps.forEach(item => {
          item.error = false;
         })
-    }
+        workOrderList().setContractRulesList([])
+    },
 })).value
 
 

@@ -89,11 +89,11 @@ export default function flightController() {
     }
     return validateDate ? Number(dateTime) >= Number(hourIn) : true;
   }
-  const validateDateRuleOutbound = (val, dateIn) => {
-    if ( 
+  const validateDateRuleOutbound = (val, dateIn, validateByMinutes=true) => {
+    if (
       !qRampStore().validateOperationsDoNotApply(storeFueling.form.operationTypeId)
     ) return true
-    return qRampStore().validateDateRule(val, dateIn, operationType.value)
+    return qRampStore().validateDateRule(val, dateIn, operationType.value, null, null, validateByMinutes)
   }
   const readonlyOperationType= computed(() => {
     const { parentId, preFlightNumber, operationTypeId } = form.value || {};
@@ -133,10 +133,13 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+              val => {
+                if (!isActualInAndActualOut.value) return true;
+                return !!val || i18n.tr('isite.cms.message.fieldRequired');
+              }
             ],
             readonly: disabledReadonly.value,
-            label: `*${i18n.tr('ifly.cms.form.acType')}`,
+            label: `${!isActualInAndActualOut.value ? '': '*'}${i18n.tr('ifly.cms.form.acType')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -158,7 +161,7 @@ export default function flightController() {
             rules: [
               val => !!val || i18n.tr('isite.cms.message.fieldRequired')
             ],
-            readonly: readonlyOperationType.value,
+            //readonly: readonlyOperationType.value,
             label: `*${i18n.tr('ifly.cms.form.operation')}`,
             clearable: true,
             color: "primary",
@@ -173,10 +176,13 @@ export default function flightController() {
           type: 'select',
           props: {
             rules: [
-              val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+              val => {
+                if (!isActualInAndActualOut.value) return true;
+                return !!val || i18n.tr('isite.cms.message.fieldRequired');
+              }
             ],
             readonly: disabledReadonly.value,
-            label: `*${i18n.tr('ifly.cms.form.carrier')}`,
+            label: `${!isActualInAndActualOut.value ? '': '*'}${i18n.tr('ifly.cms.form.carrier')}`,
             clearable: true,
             color: "primary",
             'hide-bottom-space': false,
@@ -391,8 +397,8 @@ export default function flightController() {
             color: "primary",
             format24h: true,
             options: (dateTime, dateMin) => qRampStore().validateDateOutboundSchedule(
-              dateTime, 
-              dateMin, 
+              dateTime,
+              dateMin,
               form.value.inboundScheduledArrival,
               form.value.outboundScheduledDeparture,
               operationType.value
@@ -424,7 +430,7 @@ export default function flightController() {
           type: 'fullDate',
           props: {
             rules: [
-              val => validateDateRuleOutbound(val, form.value.inboundBlockIn)
+              val => validateDateRuleOutbound(val, form.value.inboundBlockIn, false)
             ],
             hint: 'Format: MM/DD/YYYY HH:mm',
             mask: 'MM/DD/YYYY HH:mm',

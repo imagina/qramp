@@ -229,44 +229,66 @@ export default function serviceListStore(): ServiceListStoreContract {
 
 
     async function filterServicesListByQuantity(): Promise<any> {
-       let serviceList = await getServiceListSelected(true);
-       serviceList = serviceList.filter(item => {
-        if (item.product_type == 2 || item.product_type == 3) {
-            return item.work_order_item_attributes.some(attr => attr.value === null ||
-              attr.value === undefined);
-        }
-        if(item.product_type == 4) {
-          const startAttr = item.work_order_item_attributes.find(attr => attr.name === 'Start');
-          const startValue = startAttr ? startAttr.value : null;
-          return item.work_order_item_attributes.some(attr => {
-              const requiredFields = ['Employees', 'Start', 'End'];
-
-              const isValid = item => {
-                if (!requiredFields.includes(item.name)) return true;
-                if (item.name === 'End' && startValue) {
-                  const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
-                  const dateInFormat = startValue
-                    ? moment(startValue, FORMAT_DATE)
-                    : moment(FORMAT_DATE);
-
-                  const date = moment(item.value, FORMAT_DATE);
-                  const diff = date.diff(dateInFormat);
-
-                  return diff >= 0;
-                }
-                return item.value !== null &&
-                  item.value !== "" &&
-                  (!Array.isArray(item.value) || item.value.length > 0) &&
-                  item.value !== "[]";
-              };
-              return item.work_order_item_attributes.some(attrItem => !isValid(attrItem))
+      let serviceList = await getServiceListSelected(true);
+        serviceList = serviceList.filter(item => {
+          if (item.product_type == 2 || item.product_type == 3) {
+            return item.work_order_item_attributes.some(attr =>
+              attr.value === null || attr.value === undefined
+            );
           }
-          );
-        }
-        return false;
-       })
+
+          if (item.product_type == 4) {
+            return item.work_order_item_attributes.some(attr => {
+              const requiredFields = ['employees', 'start', 'end'];
+
+              const isValidField = (field) => {
+                return field === null || field === "" || field === undefined ||
+                  (Array.isArray(field) && field.length === 0);
+              };
+
+              const validateData = (data) => {
+                let parsedData;
+
+                try {
+                  parsedData = JSON.parse(data);
+                } catch (e) {
+                  return true;
+                }
+
+                return parsedData.some((item) => {
+
+                  const hasInvalidField = requiredFields.some((field) => {
+                    const fieldValue = item[field];
+                    return isValidField(fieldValue);
+                  });
+                  if(hasInvalidField) return hasInvalidField;
+
+                  if (item.start && item.end) {
+                    const FORMAT_DATE = 'MM/DD/YYYY HH:mm';
+                    const startDate = moment(item.start, FORMAT_DATE);
+                    const endDate = moment(item.end, FORMAT_DATE);
+
+
+                    if (!startDate.isValid() || !endDate.isValid()) {
+                      return true;
+                    }
+
+                    return qRampStore().getDifferenceInHours(startDate, endDate) < 0;
+                  }
+
+
+                });
+              };
+
+              return validateData(attr.value);
+            });
+          }
+
+          return false;
+        });
+
        setErrorList(serviceList);
-       return serviceList;
+      return serviceList;
     }
 
     return {

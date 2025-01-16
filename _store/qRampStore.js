@@ -11,7 +11,7 @@ import {
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
-import { cacheOffline, i18n, store } from 'src/plugins/utils';
+import { cacheOffline, i18n, store, alert } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
@@ -614,6 +614,42 @@ export default function qRampStore() {
       return diff > minutes || MESSAGE;
     }
 
+    async function openAlertModal(message, callback) {
+        alert.warning({
+            mode: "modal",
+            message,
+            actions: [
+                {
+                    label: i18n.tr('isite.cms.label.cancel'),
+                    color: 'grey-8',
+                    handler: async () => {
+                        hideLoading();
+                    },
+                },
+                {
+                    label: i18n.tr("isite.cms.label.yes"),
+                    color: "primary",
+                    handler: async () => {
+                        callback && await callback();
+                    },
+                },
+            ],
+        });
+    }
+
+    async function runAlerts(alerts, callback) {
+        const activeAlerts = alerts.filter(item => item.validate && !item.accept);
+        const alert = activeAlerts[0];
+        if (alert) {
+            await openAlertModal(alert.message, async () => {
+                alert.accept = true;
+                await runAlerts(activeAlerts, callback);
+            })
+        } else {
+            await callback();
+        }
+    }
+
     function validateDateOutboundSchedule(dateTime, dateMin = null, inbound, outbound, operationType) {
         if (operationType !== 'full') return true
 
@@ -765,5 +801,6 @@ export default function qRampStore() {
 	    validateDateRule,
         validateOperationsDoNotApply,
         validateDateOutboundSchedule,
+        runAlerts
     }
 }
