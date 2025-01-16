@@ -1,25 +1,48 @@
 import moment from 'moment'
+import { i18n } from 'src/plugins/utils'
 export const STEP_FLIGHT = 1;
 export const STEP_SERVICE = 2;
 export const STEP_REMARKS = 3;
 export const STEP_SIGNATURE = 4;
+export const STEP_DELAY = 3;
 export const STATUS_DRAFT = 1; //No completed
 export const STATUS_POSTED = 2;
+export const STATUS_POSTING = 6;
 export const STATUS_SUBMITTED = 3;
 export const STATUS_CLOSED = 4;
 export const STATUS_SCHEDULE = 5; //No completed
-export const CATEGORY_SERVICES = 1;
-export const COLOR_DRAFT = 'tw-text-orange-500';
-export const COLOR_POSTED = 'tw-text-green-500';
-export const COLOR_SUBMITTED = 'tw-text-purple-500';
-export const COLOR_CLOSED = 'tw-text-blue-300';
-export const COLOR_SCHEDULE = 'tw-text-pink-500';
 export const BUSINESS_UNIT_PASSENGER = 8;
-export const BUSINESS_UNIT_RAMP = { operator: '!=', value: 8};
+export const BUSINESS_UNIT_FUELING = 9;
+export const BUSINESS_UNIT_LABOR = 2;
+export const BUSINESS_UNIT_SECURITY = 4;
+export const BUSINESS_UNIT_RAMP = 'null';
+export const BUSINESS_UNIT_CARGO = 1;
 export const COMPANY_PASSENGER = [30,33,34];
 export const COMPANY_RAMP = [26,34];
+export const COMPANY_SECURITY = [35,36];
+export const NON_FLIGHT = 2;
+export const FLIGHT = 1;
+export const LABOR = 4;
+export const FUELING = 3;
+export const SECURITY = 5;
+export const CARGO_PAX = 6;
 export const OPERATION_TYPE_OTHER = 6;
+export const OPERATION_TYPE_PASSENGER_NON_FLIGHT = 13
+export const OPERATION_TYPE_SECURITY_NON_FLIGHT = 36
+export const OPERATION_TYPE_NON_FLIGHT = [
+  OPERATION_TYPE_PASSENGER_NON_FLIGHT,
+  OPERATION_TYPE_SECURITY_NON_FLIGHT
+];
+export const ADDITIONAL_FLIGHT_SERVICES = [STATUS_POSTED, STATUS_POSTING];
+export const DEFAULT_STATION_ID = 28;
 
+export const STATION_BNA = 33;
+export const STATION_PBI = 50;
+export const STATIONS_DELAY = [STATION_BNA, STATION_PBI]
+export const OPERATION_TYPE_TURN_PASSENGER = 7
+export const FIFTEEN_MINUTES = 15;
+export const THIRTY_MINUTES = 30;
+export const CODE_DELAY_99 = 77;
 export const modelDataBound = {
     destinationAirport: {
         id: null,
@@ -55,33 +78,41 @@ export const FlightformFieldModel = [
     'statusId',
   ];
 
+    export const FlightFormFieldSecurityModel = [
+        'stationId',
+        'acTypeId',
+        'operationTypeId',
+        'carrierId',
+        'statusId',
+    ];
+
   export const HalfTurnInBountModel = [
     'inboundFlightNumber',
-    'inboundOriginAirportId',
-    'inboundTailNumber',
+    //'inboundOriginAirportId',
+    //'inboundTailNumber',
     'inboundScheduledArrival',
   ];
 
   export const HalfTurnOutBountModel = [
     'outboundFlightNumber',
-    'outboundDestinationAirportId',
-    'outboundTailNumber',
+    //'outboundDestinationAirportId',
+    //'outboundTailNumber',
     'outboundScheduledDeparture',
   ];
 
   export const HalfTurnInBountPassengerModel = [
-    //'inboundFlightNumber',
+    'inboundFlightNumber',
     //'inboundOriginAirportId',
-    'inboundTailNumber',
-    //'inboundScheduledArrival',
+    //'inboundTailNumber',
+    'inboundScheduledArrival',
     //'gateDestination',
   ];
 
   export const HalfTurnOutBountPassengerModel = [
-    //'outboundFlightNumber',
+    'outboundFlightNumber',
     //'outboundDestinationAirportId',
-    'outboundTailNumber',
-    //'outboundScheduledDeparture',
+    //'outboundTailNumber',
+    'outboundScheduledDeparture',
     //'gateOrigin'
   ];
 
@@ -328,3 +359,69 @@ export const FlightformFieldModel = [
     "searchableFields": "id,reference_id",
     "fileFormats": null
 };
+
+export const columnsFlightAware = [
+  { name: 'tailNumber', label: 'Tail Number', field: 'registration', sortable: true , align: 'left'},
+  { name: 'outbound', label: 'Departure', field: 'outbound' , align: 'left'},
+  { name: 'inbound', label: 'Arrival ', field: 'inbound', align: 'left'},
+  { name: 'aircraftType', label: 'Aircraft', field: 'aircraftType', align: 'left'}
+]
+
+export const columnsWorkOrders = [
+  {
+    name: 'id',
+    label: 'ID',
+    field: 'id' ,
+    align: 'left',
+    format: (val, row) => {
+      if (row.type === NON_FLIGHT) {
+        return `
+          <span>${val}</span>
+          <span
+            class="
+              tw-border
+              tw-py-0.5
+              tw-px-1
+              tw-rounded-md
+              tw-text-xs
+              tw-ml-2
+            "
+          />
+            non-flight
+          </span>
+        `
+      }
+      return `<span>${val}</span>`
+    },
+  },
+  { name: 'inboundFlightNumber', label: 'Inbound Flight Number', field: 'inboundFlightNumber', align: 'left'},
+  {
+    name: 'inboundScheduledArrival',
+    label: 'Inbound Scheduled Arrival',
+    field: 'inboundScheduledArrival' ,
+    align: 'left',
+    format: (val) => (val ? i18n.trdT(val) : "-"),
+  },
+  { name: 'outboundFlightNumber', label: 'Outbound Flight Number', field: 'outboundFlightNumber' , align: 'left'},
+  {
+    name: 'outboundScheduledDeparture',
+    label: 'Outbound Scheduled Departure',
+    field: 'outboundScheduledDeparture' ,
+    align: 'left',
+    format: (val) => (val ? i18n.trdT(val) : "-"),
+  },
+  {
+    name: 'scheduleDateLocal',
+    label: 'Service Date Created',
+    field: 'scheduleDateLocal',
+    align: 'left',
+    format: (val) => (val ? i18n.trdT(val) : "-"),
+  }
+]
+
+export const modalFullProps = {
+  title: '',
+  update: true,
+  workOrderId: null,
+  width: '90vw',
+}

@@ -1,23 +1,23 @@
 <template>
   <div class="kanbanBoardCtn">
       <page-actions
-        ref="pageActions" 
+        ref="refPageActions"
         :title="title"
         multipleRefresh
-        :extra-actions="extraPageActions"  
+        :extra-actions="extraPageActions"
         class="q-mb-md"
-        @refresh="buildKanbanStructure(true)" 
+        @search="val => changeSearch(val)"
+        @refresh="buildKanbanStructure(true)"
       />
-    <filters />
-    <filtersBar v-if="false"/>
-   <actionBar /> 
+    <filters v-if="storeFilter.showModal"/>
+    <actionBar />
   <div class="tw-flex">
     <div
       class="
-        tw-flex-none 
-        tw-py-4 
-        tw-border-b 
-        tw-border-gray-200 
+        tw-flex-none
+        tw-py-4
+        tw-border-b
+        tw-border-gray-200
         tw-space-y-4 tw-hidden"
     >
       <q-btn-toggle
@@ -39,12 +39,13 @@
     </div>
 
     <div
-      v-if="columns.length > 0" 
+      v-if="columns.length > 0"
       class="
-       tw-flex-1 
-       tw-h-auto 
-       tw-flex 
-       tw-overflow-x-auto"
+        tw-flex-1
+        tw-h-auto
+        tw-flex
+        tw-overflow-x-auto
+      "
       >
       <kanbanColumn
         v-for="(column, index) in columns"
@@ -52,19 +53,31 @@
         :column="column"
         :groupOptions="groupOptions"
         class="
-         tw-flex-none 
-         tw-space-y-0 
-         tw-h-auto 
-         tw-rounded-lg 
-         tw-mb-4"
+          tw-flex-none
+          tw-space-y-0
+          tw-h-auto
+          tw-rounded-lg
+          tw-mb-4
+        "
       />
     </div>
   </div>
   <modalSchedule />
-  <formOrders ref="refFormOrders" @getWorkOrderFilter="individualRefreshByColumns" />
+  <formOrders
+    ref="refFormOrders"
+    v-if="!isSecurity"
+    @getWorkOrderFilter="individualRefreshByColumns"
+  />
+  <securityForm v-else ref="refFormOrders" @refresh-data="individualRefreshByColumns" />
+  <modalNonFlight
+    ref="refModalNonFlight"
+    :refFormOrders="refFormOrders"
+    @getWorkOrderFilter="individualRefreshByColumns"
+  />
   <modalStation />
   <selectFlightNumberModal />
   <flightDetail />
+  <inner-loading :visible="loadingMain"/>
 </div>
 </template>
 
@@ -80,6 +93,9 @@ import formOrders from "../../formOrders.vue";
 import modalStation from "./modalStation.vue";
 import selectFlightNumberModal from '../../modal/selectFlightNumber/index.vue'
 import flightDetail from '../../modal/flightDetail.vue';
+import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index';
+import securityForm from '../../securityForm/components/index.vue';
+
 export default defineComponent({
   components: {
     kanbanColumn,
@@ -90,7 +106,9 @@ export default defineComponent({
     formOrders,
     modalStation,
     selectFlightNumberModal,
-    flightDetail
+    flightDetail,
+    modalNonFlight,
+    securityForm
   },
   setup(props) {
     return {...useKanbanBoard(props)}

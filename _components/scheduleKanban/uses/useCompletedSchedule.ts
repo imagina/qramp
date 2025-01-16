@@ -1,16 +1,36 @@
-import Vue, {computed} from 'vue';
+import { computed, inject } from 'vue';
 import modalScheduleStore from '../store/modalSchedule.store'
 import storeKanban from '../store/kanban.store'
 import _ from "lodash";
 import getCurrentColumn from '../actions/getCurrentColumn';
-
+import qRampStore from 'src/modules/qramp/_store/qRampStore';
+import { 
+  FLIGHT, 
+  NON_FLIGHT, 
+  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_SECURITY,
+} from 'src/modules/qramp/_components/model/constants'
+import modalNonFlightStore from 'src/modules/qramp/_components/modalNonFlight/store/index.store'
+import { i18n } from 'src/plugins/utils'
 
 export default function useCompletedSchedule(props: any, emit: any) {
   const isBlank = computed(() => storeKanban.isBlank);
   const scheduleType = computed(() => props.scheduleType);
   const dateColumn = computed(() => props.column.date.format('YYYY-MM-DD'));
   const cards = computed(() => props.column.cards)
-
+  const moduleWithNonFlight = computed(() => {
+    const businessUnitId = qRampStore().getBusinessUnitId()
+    const modulesWithNonFlight = [
+      BUSINESS_UNIT_PASSENGER,
+      BUSINESS_UNIT_SECURITY
+    ]
+    return modulesWithNonFlight.includes(businessUnitId)
+  })
+  const refModalNonFlight: any = inject('refModalNonFlight')
+  const dropdownItems = [
+    { label: 'Create Flight', action: () => openForm(FLIGHT) },
+    { label: 'Create Non-flight', action: () => openForm(NON_FLIGHT) },
+  ]
 
   const showInline = computed(()=> modalScheduleStore.showInline)
   const modalShowSchedule = computed({
@@ -22,9 +42,31 @@ export default function useCompletedSchedule(props: any, emit: any) {
     set: (value: string) => modalScheduleStore.titleModal = value
   })
 
-  const openForm = computed(() => props.isWeekAgenda? openModalForm : openInlineForm)
+  const openModalNonFlight = () => {
+    modalNonFlightStore.seletedDateColumn = dateColumn.value;
+    modalScheduleStore.seletedDateColumn = dateColumn.value;
+    modalNonFlightStore.stationId = modalScheduleStore.stationId;
+    refModalNonFlight.value.handleModalChange()
+  }
+
+  const openForm = (typeWorkOrder: number | null) => {
+    const isNonFlight = typeWorkOrder === NON_FLIGHT
+    if (props.isWeekAgenda) isNonFlight ? openModalNonFlight() : openModalForm()
+    if (!props.isWeekAgenda) isNonFlight ? openModalNonFlight() : openInlineForm()
+    if (typeWorkOrder) qRampStore().setTypeWorkOrder(typeWorkOrder);
+  }
   const completed = computed(() => props.column.completed)
   const uncompleted = computed(() => props.column.uncompleted)  
+
+  const createNonFlight = computed(() => {
+    return  !isBlank.value && 
+            !showInline.value && 
+            moduleWithNonFlight.value
+  })
+
+  const createFlight = computed(() => {
+    return !isBlank.value && !showInline.value
+  })
   
   function openModalForm() {
     modalScheduleStore.isEdit = false;
@@ -61,6 +103,12 @@ export default function useCompletedSchedule(props: any, emit: any) {
     openForm,
     completed,
     uncompleted,
-    cards
+    cards,
+    FLIGHT,
+    NON_FLIGHT,
+    createNonFlight,
+    createFlight,
+    dropdownItems,
+    i18n
   }
 }

@@ -2,6 +2,7 @@
 </template>
 <script>
 import {COMPANY_RAMP} from '../_components/model/constants.js'
+import {store} from "../../../plugins/utils";
 export default {
   data() {
     return {
@@ -26,7 +27,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'operationName',
@@ -93,18 +93,18 @@ export default {
           },
           companyId: {
             value: null,
-            type: 'crud',
+            type: 'select',
             props: {
-              crudType: 'select',
-              crudData: import('../../qsetupagione/_crud/companies'),
-              crudProps: {
-                label: 'Company Name',
-              },
+              label: 'Company Name',
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
-              config: {options: {label: 'fullName', value: 'id'}},
             },
+            loadOptions: {
+              apiRoute: 'apiRoutes.qsetupagione.setupCompanies',
+              select: {label: 'fullName', id: 'id'},
+              requestParams: {filter: {id: store.getSetting('ramp::rampCompanies')}}
+            }
           },
           options: {
             value: null,
@@ -126,5 +126,5 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

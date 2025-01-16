@@ -1,5 +1,6 @@
 <template></template>
 <script>
+import {FUELING, FLIGHT, NON_FLIGHT, LABOR, SECURITY} from '../_components/model/constants.js'
 export default {
   name: 'categories',
   data() {
@@ -23,7 +24,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'name',
@@ -46,9 +46,9 @@ export default {
               format: val => (val && val.companyName) ? val.companyName : '-'
             },
             // {
-            //   name: 'parent', 
-            //   label: this.$tr('isite.cms.form.parent'), 
-            //   field: 'parent', 
+            //   name: 'parent',
+            //   label: this.$tr('isite.cms.form.parent'),
+            //   field: 'parent',
             //   align: 'left',
             //   format: val => (val && val.name) ? val.name : '-'
             // },
@@ -66,10 +66,10 @@ export default {
               align: "left",
               format: (val) => (val ? this.$trd(val) : "-"),
             },
-            { 
-              name: 'actions', 
-              label: this.$tr('isite.cms.form.actions'), 
-              align: 'left' 
+            {
+              name: 'actions',
+              label: this.$tr('isite.cms.form.actions'),
+              align: 'left'
             },
           ],
           requestParams: {
@@ -77,7 +77,10 @@ export default {
           },
         },
         update: {
-          title: 'Update Category'
+          title: 'Update Category',
+          requestParams: {
+            include:"company",
+          },
         },
         delete: true,
         formLeft: {
@@ -108,7 +111,7 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.categories',
               select: {
-                label: 'name', 
+                label: 'name',
                 id: 'id'
               },
             }
@@ -124,10 +127,43 @@ export default {
             loadOptions: {
               apiRoute: 'apiRoutes.qsetupagione.setupCompanies',
               select: {
-                label: 'companyName', 
+                label: 'companyName',
                 id: 'id'
               },
             }
+          },
+          types: {
+            value: [],
+            type: 'select',
+            props: {
+              rules: [
+                val => val.length || this.$tr('isite.cms.message.fieldRequired')
+              ],
+              label: 'Work Order Types',
+              multiple: true,
+              useChips: true,
+              clearable: true,
+              color: "primary",
+              options: [
+                {label: 'Flight', value: FLIGHT},
+                {label: 'Non flight', value: NON_FLIGHT},
+                {label: 'Fueling', value: FUELING},
+                {label: 'Labor', value: LABOR},
+                {label: 'Security', value: SECURITY}
+              ]
+            },
+          },
+          businessUnitId: {
+            value: null,
+            type: "select",
+            loadOptions: {
+              apiRoute: "apiRoutes.qsetupagione.businessUnits",
+              select: { label: "workdayWid", id: "id" },
+            },
+            props: {
+              label: "Business Unit Id",
+              clearable: true,
+            },
           },
         }
       }
@@ -140,5 +176,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

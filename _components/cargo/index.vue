@@ -8,9 +8,9 @@
             <div>Inbound</div>
           </div>
           <div class="q-pa-md">
-            <template v-for="(field, keyField) in formFields.inbound" >
-              <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
-                <p 
+            <template v-for="(field, keyField) in formFields.inbound" :key="keyField">
+              <label id="labelInput" class="row items-center justify-end no-wrap">
+                <p
                   class="text-primary text-right md:tw-text-base span q-mr-sm col-5"
                   v-if="field.props.vIf"
                 >
@@ -20,7 +20,7 @@
                 <dynamic-field
                   class="col-7"
                   :field="field"
-                  v-model="form[field.name || keyField]" 
+                  v-model="form[field.name || keyField]"
                 />
               </label>
               <hr v-if="readonly" class="label-container"/>
@@ -34,9 +34,9 @@
             <div>Outbound</div>
           </div>
           <div class="q-pa-md">
-            <template v-for="(field, keyField) in formFields.outbound" >
-              <label id="labelInput" :key="keyField" class="row items-center justify-end no-wrap">
-                <p 
+            <template v-for="(field, keyField) in formFields.outbound" :key="keyField">
+              <label id="labelInput" class="row items-center justify-end no-wrap">
+                <p
                   class="text-primary text-right md:tw-text-base span q-mr-sm col-5"
                   v-if="field.props.vIf"
                 >
@@ -46,7 +46,7 @@
                 <dynamic-field
                   class="col-7"
                   :field="field"
-                  v-model="form[field.name || keyField]" 
+                  v-model="form[field.name || keyField]"
                 />
               </label>
               <hr v-if="readonly" class="label-container"/>
@@ -64,10 +64,8 @@ import responsive from '../../_mixins/responsive.js'
 import qRampStore from '../../_store/qRampStore.js'
 import cargoStore from './store/cargo.ts';
 import {
-  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_PASSENGER,
   BUSINESS_UNIT_RAMP,
-  COMPANY_PASSENGER,
-  COMPANY_RAMP
 } from '../model/constants.js'
 import delayComponent from './delayComponent.vue'
 
@@ -92,7 +90,7 @@ export default {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
@@ -101,7 +99,7 @@ export default {
       return cargoStore().getForm();
     },
     showKilosFiels() {
-      const contractsWithKilosFiels = this.$store.getters['qsiteApp/getSettingValueByName']('setup::contractsWithKilosFiels');
+      const contractsWithKilosFiels = this.$getSetting('setup::contractsWithKilosFiels');
       return contractsWithKilosFiels.some((item) => item === qRampStore().getContractId());
     },
     formFields() {
@@ -192,5 +190,5 @@ export default {
 .span {
   padding-bottom: 22px;
 }
-        
+
 </style>

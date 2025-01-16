@@ -1,10 +1,23 @@
-import Vue, { computed } from "vue";
+import { computed } from "vue";
 import modelHoursFilter from "../models/hoursFilter.model";
 import kanbanStore from "../store/kanban.store";
 import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
+import { i18n } from 'src/plugins/utils'
+import { FLIGHT, NON_FLIGHT, BUSINESS_UNIT_SECURITY } from "src/modules/qramp/_components/model/constants";
+import qRampStore from "src/modules/qramp/_store/qRampStore";
+import { CARGO_PAX } from "../../model/constants";
 
 
 export default function filterModel() {
+  const validateSection = computed(() => {
+    if(qRampStore().getBusinessUnitId() === 'null' && qRampStore().getTypeWorkOrder() === CARGO_PAX) {
+      return false;
+    }
+    if(qRampStore().getBusinessUnitId() !== BUSINESS_UNIT_SECURITY && qRampStore().getTypeWorkOrder() !== CARGO_PAX){
+      return false;
+    }
+    return true;
+  })
   return computed(() => ({
     time: {
       value: null,
@@ -15,6 +28,25 @@ export default function filterModel() {
         options: modelHoursFilter,
         alphabeticalSort: false,
         readonly: kanbanStore.isAppOffline,
+      },
+    },
+    customerId: {
+      value: null,
+      type: 'select',
+
+      quickFilter: true,
+      loadOptions: {
+          apiRoute: 'apiRoutes.qramp.setupCustomers',
+          select: {'label': 'customerName', 'id': 'id'},
+          requestParams: {
+              filter: {
+                  companyId: kanbanStore.filterCompany,
+              },
+          },
+      },
+      props: {
+          label: 'Customer',
+          'clearable': true
       },
     },
     carrierId: {
@@ -60,18 +92,33 @@ export default function filterModel() {
         readonly: kanbanStore.isAppOffline,
       },
     },
-    adHoc: {
-      value: null,
-      type: "select",
+    type: {
+      value: [],
+      type: 'select',
       props: {
-        label: "Ad Hoc",
+        vIf: validateSection.value,
+        label: 'Work Order Types',
+        multiple: true,
+        useChips: true,
         clearable: true,
-        readonly: kanbanStore.isAppOffline,
+        color: "primary",
         options: [
-          { label: Vue.prototype.$tr("isite.cms.label.yes"), value: true },
-          { label: Vue.prototype.$tr("isite.cms.label.no"), value: false },
-        ],
+          {label: 'Flight', value: FLIGHT},
+          {label: 'Non flight', value: NON_FLIGHT},
+        ]
       },
+    },
+    operationTypeId: {
+      value: null,
+      type: 'select',
+      props: {
+        label: `${i18n.tr('ifly.cms.form.operation')} type`,
+        clearable: true,
+        color:"primary",
+        'hide-bottom-space': false,
+        options: workOrderList().getOperationTypeList()
+      },
+      label: i18n.tr('ifly.cms.form.operation'),
     },
     flightStatusId: {
       value: null,
@@ -91,25 +138,20 @@ export default function filterModel() {
         readonly: kanbanStore.isAppOffline,
       },
     },
-    areaId: {
+    adHoc: {
       value: null,
       type: "select",
-      loadOptions: {
-        apiRoute: "apiRoutes.qsetupagione.areas",
-        select: { label: "name", id: "id" },
-        requestParams: {
-          filter: {
-            companyId: kanbanStore.filterCompany,
-          },
-        },
-      },
       props: {
-        label: "Areas",
+        label: "Ad Hoc",
         clearable: true,
         readonly: kanbanStore.isAppOffline,
+        options: [
+          { label: i18n.tr("isite.cms.label.yes"), value: true },
+          { label: i18n.tr("isite.cms.label.no"), value: false },
+        ],
       },
     },
-    type: {
+    typeAgenda: {
       value: null,
     },
     dateStart: {

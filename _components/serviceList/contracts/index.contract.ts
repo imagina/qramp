@@ -84,6 +84,12 @@ export interface ServiceModelContract {
 export interface ReactiveStoreContract {
     serviceList: ServiceModelContract[],
     loading: Boolean,
+    favouriteList: any[],
+    showFavourite: boolean,
+    errorList: [],
+    breadcrumbs: any[],
+    selectService: ServiceModelContract,
+    refGlobal: any,
 }
 
 export interface ServiceListStoreContract {
@@ -92,6 +98,13 @@ export interface ServiceListStoreContract {
     setServiceList(value: ServiceModelContract[]): void;
 
     getServiceList(): ServiceModelContract[];
+
+    getFavouriteList(): any[];
+
+    setFavouriteList(value: any): void;
+    setErrorList(value: any[]): void;
+
+    getErrorList(): any[];
 
     setLoading(value: boolean): void;
 
@@ -106,4 +119,17 @@ export interface ServiceListStoreContract {
     orderServicesWithTheStructureToSave(services: ServiceModelContract[]): Promise<any>;
 
     getServiceItems(): Promise<ServiceModelContract[]>;
+
+    removeFromFavouriteList(data: any): any;
+    pustFavouriteList(data: any): any;
+    getShowFavourite(): boolean;
+    setShowFavourite(value: boolean): void;
+
+    filterServicesListByQuantity(): Promise<any>;
+    getBreadcrumbs(): any[];
+    setBreadcrumbs(value: any[]): void;
+    setSelectService(value: ServiceModelContract): void;
+    getSelectService(): ServiceModelContract;
+    getRefGlobal(): any,
+    setRefGlobal(value: any): void;
 }

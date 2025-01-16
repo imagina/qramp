@@ -1,46 +1,17 @@
 <template>
   <div>
-    <master-modal 
-      id="formRampComponent" 
-      v-model="show" 
-      v-bind="modalProps" 
-      :persistent="true" 
-      :loading="loading"
-      @hide="clear" 
-      :actions="actions" 
-      :width="modalProps.width" 
-      :maximized="$q.screen.lt.md"
-    >
-    <stepper-ramp-form 
-      v-if="modalProps.update" 
-      @sp="sp = $event" 
-      @loading="setLoading" 
-      ref="stepper" 
-      :steps="steppers"
-      :data="modalProps" 
-      @close-modal="close($event)"
-      @getWorkOrders="getWorkOrders" 
-    />
-    <simpleWorkOrders 
-      v-if="!modalProps.update" 
-      ref="simpleWorkOrder"
-      @loading="setLoading" 
-    />
-  </master-modal>
-    <commentsModal
-        v-if="!isAppOffline"
-        ref="commentsModal"
-        :commentableId="modalProps.workOrderId"
-        @getWorkOrders="getWorkOrders"
-        isCrud
-    />
+    <master-modal id="formRampComponent" v-model="show" v-bind="modalProps" :persistent="true" :loading="loading"
+      @hide="clear" :actions="actions" :width="modalProps.width" :maximized="$q.screen.lt.md">
+      <stepper-ramp-form v-if="modalProps.update" @sp="sp = $event" @loading="setLoading" ref="stepper"
+        :steps="steppers" :data="modalProps" @close-modal="close($event)" @getWorkOrders="getWorkOrders" />
+      <simpleWorkOrders v-if="!modalProps.update" ref="simpleWorkOrder" @loading="setLoading" @refreshData="$emit('refresh-data')"/>
+    </master-modal>
   </div>
 </template>
 <script>
 import { computed } from 'vue';
 import stepperRampForm from '../_components/stepperRampForm.vue'
 import responsive from '../_mixins/responsive.js'
-import services from '../_mixins/services.js';
 import {
   STATUS_DRAFT,
   STATUS_POSTED,
@@ -50,7 +21,9 @@ import {
   STEP_FLIGHT,
   STEP_SERVICE,
   STEP_REMARKS,
-  STEP_SIGNATURE
+  STEP_SIGNATURE,
+  NON_FLIGHT,
+  modalFullProps
 } from '../_components/model/constants.js'
 import qRampStore from '../_store/qRampStore.js'
 import simpleWorkOrders from './simpleWorkOrders.vue'
@@ -59,20 +32,23 @@ import cargoStore from './cargo/store/cargo.ts';
 import storeFlight from './flight/store.ts';
 import iFlight from './flight/flight.vue'
 import iRemarks from './remarks/index.vue'
-import iSignature from '../_components/signature.vue';
+import iSignature from '../_components/signature/signature.vue';
 import serviceList from './serviceList/index.vue';
 import remarksStore from './remarks/store.ts';
 import workOrderList from '../_store/actions/workOrderList';
 import delayComponent from '../_components/cargo/delayComponent';
-import commentsModal from "../_components/schedule/modals/commentsModal.vue";
+import { constructionWorkOrder } from 'src/modules/qramp/_store/actions/constructionWorkOrder'
+import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
+import { cacheOffline } from 'src/plugins/utils';
+import signatureStore from 'src/modules/qramp/_components/signature/store/index.store.ts'
 
 export default {
+  emits: ['getWorkOrderFilter', 'refresh-data'],
   components: {
     stepperRampForm,
     simpleWorkOrders,
-    commentsModal,
   },
-  mixins: [responsive, services],
+  mixins: [responsive],
   data() {
     return {
       show: false,
@@ -102,15 +78,12 @@ export default {
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    permisionCommentsIndex() {
-      return this.$auth.hasAccess('ramp.work-orders-comments.index');
-    },
     steppers() {
       let stepps = [
         {
           ref: 'flight',
           title: 'Flight',
-          icon: 'fas fa-plane',
+          icon: 'fa-regular fa-plane',
           step: STEP_FLIGHT,
           form: this.flight,
           component: iFlight,
@@ -118,14 +91,14 @@ export default {
         {
           ref: 'services',
           title: 'Services',
-          icon: 'fas fa-briefcase',
+          icon: 'fa-regular fa-briefcase-blank',
           step: STEP_SERVICE,
           component: serviceList,
         },
         {
           ref: 'remark',
           title: 'Remark',
-          icon: 'far fa-edit',
+          icon: 'fa-regular fa-comment-dots',
           step: STEP_REMARKS,
           form: this.remark,
           component: iRemarks,
@@ -133,13 +106,13 @@ export default {
         {
           ref: "signature",
           title: this.$tr('ifly.cms.label.signature'),
-          icon: 'draw',
+          icon: 'fa-solid fa-pen-line',
           step: STEP_SIGNATURE,
           form: this.signature,
           component: iSignature,
         }
       ].filter(item => !this.isPassenger ? item : item.step !== STEP_SIGNATURE);
-      if(this.isPassenger) {
+      if (this.isPassenger) {
         const delay = {
           ref: "delay",
           title: "Delay",
@@ -184,48 +157,51 @@ export default {
     },
     actionsStepperButtom() {
       const statusId = qRampStore().getStatusId();
+      const parentId = storeFlight().getForm().parentId
+      const flight = qRampStore().getClonedWorkOrder()
+      const showOpenSourceWorkOrder = Boolean(parentId)
+
       const actions = [
         {
           props: {
-            vIf: !this.isAppOffline && this.permisionCommentsIndex,
-            color: 'primary',
-            icon: 'fa-light fa-comment',
-            label: 'Comments',
+            vIf: this.$hasAccess('ramp.work-orders.destroy'),
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : this.$tr('isite.cms.label.delete'),
+            icon: 'fa-regular fa-trash',
+            loading: this.loadingComputed,
           },
-          action: () => {
-            if(this.$refs.commentsModal) {
-              this.$refs.commentsModal.showModal();
-            }
+          action: async () => {
+            this.promptDeleteWorkOrder()
           }
         },
         {
           props: {
-            vIf: this.sp > 1,
-            color: 'white',
-            'text-color': 'primary',
-            icon: 'fas fa-arrow-left',
-            label: this.$tr('isite.cms.label.back'),
+            vIf: !showOpenSourceWorkOrder && Boolean(flight),
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : 'Return to cloned work order',
+            icon: 'fa-regular fa-arrow-left',
           },
-          action: () => {
-            this.$refs.stepper.previous()
+          action: async() => {
+            this.loadChildData();
           }
         },
         {
           props: {
-            vIf: this.sp !== this.steppers.length,
-            color: 'primary',
-            'icon-right': 'fas fa-arrow-right',
-            label: this.$tr('isite.cms.label.next')
+            icon: 'fa-brands fa-sourcetree',
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : 'Open source work order',
+            vIf: showOpenSourceWorkOrder,
+            loading: this.loadingComputed,
           },
-          action: () => {
-            this.$refs.stepper.next()
+          action: async () => {
+            await this.loadParentData();
           }
         },
         {
           props: {
-            color: 'primary',
-            'icon-right': 'fa-thin fa-floppy-disk',
-            label: 'Save to Draft',
+            icon: 'fa-regular fa-floppy-disk',
+            class: 'btn-action-form-orders',
+            label: this.$q.screen.lt.sm ? null : 'Save to Draft',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
@@ -237,16 +213,17 @@ export default {
               await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
-              await workOrderList().getWorkOrders(true);
+              await workOrderList().getWorkOrderConditionally(true);
             };
             qRampStore().hideLoading()
           }
         },
         {
           props: {
-            color: 'primary',
-            'icon-right': 'fal fa-check',
-            label: this.$tr('isite.cms.label.closeFlight'),
+            color: 'white',
+            icon: 'fal fa-check',
+            'text-color': 'positive',
+            label: 'Close',
             vIf: statusId == STATUS_DRAFT || statusId == STATUS_CLOSED || statusId == STATUS_SCHEDULE,
             loading: this.loadingComputed,
           },
@@ -258,7 +235,7 @@ export default {
               await this.getWorkOrders(formData);
             }, 1000);
             if (!this.isAppOffline) {
-              await workOrderList().getWorkOrders(true);
+              await workOrderList().getWorkOrderConditionally(true);
             }
             qRampStore().hideLoading()
           }
@@ -278,9 +255,33 @@ export default {
             await this.$refs.stepper.sendInfo();
             await qRampStore().setStatusId(null);
             if (!this.isAppOffline) {
-              workOrderList().getWorkOrders(true);
+              workOrderList().getWorkOrderConditionally(true);
             }
             qRampStore().hideLoading()
+          }
+        },
+        {
+          props: {
+            vIf: this.sp > 1,
+            color: 'white',
+            'text-color': 'primary',
+            class: 'tw-text-xs',
+            icon: 'fas fa-arrow-left',
+          },
+          action: () => {
+            this.$refs.stepper.previous()
+          }
+        },
+        {
+          props: {
+            vIf: this.sp !== this.steppers.length,
+            'text-color': 'white',
+            color: 'primary',
+            'icon-right': 'fas fa-arrow-right',
+            class: 'tw-text-xs',
+          },
+          action: () => {
+            this.$refs.stepper.next()
           }
         },
       ];
@@ -296,8 +297,23 @@ export default {
      */
     close(show) {
       this.show = show
-      this.$root.$emit('crud.data.refresh')
+      this.$emit('refresh-data')
       this.services = [];
+      serviceListStore().setShowFavourite(false)
+      serviceListStore().setErrorList([]);
+      qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
+      signatureStore.resetStore()
+    },
+    setSignature(data) {
+      signatureStore.form = {
+        customerSignature: data.customerSignature,
+        customerName: data.customerName,
+        customerTitle: data.customerTitle,
+        representativeSignature: data.representativeSignature,
+        representativeName: data.representativeName,
+        representativeTitle: data.representativeTitle,
+      }
     },
     /**
      * Loads the form asynchronously with the given parameters.
@@ -309,10 +325,20 @@ export default {
      */
     async loadform(params) {
       try {
-        qRampStore().showLoading();
         const updateData = this.$clone(params)
         this.show = true
+
+        /* Chip to identify non-flight work order */
+        const type = Number(updateData.data?.type)
+        const isNonFlight = type === NON_FLIGHT
+        const chip = {
+          label: "Non-flight",
+        }
         this.modalProps = updateData.modalProps
+        if (this.isPassenger) {
+          if(isNonFlight && this.modalProps.update) this.modalProps.chip = { ...chip }
+        }
+
         this.flight = {}
         this.remark = {}
         this.signature = {}
@@ -321,22 +347,32 @@ export default {
         qRampStore().setWorkOrderItems([]);
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
-        if (!updateData.data) {
-          qRampStore().hideLoading();
-          return;
-        }
+        if (!updateData.data) return
+        this.setSignature(updateData.data)
+        qRampStore().setTypeWorkOrder(updateData.data?.type || null);
         this.statusId = updateData.data['statusId'] ? updateData.data['statusId'].toString() : '1';
         this.needToBePosted = updateData.data['needToBePosted'] || false;
         qRampStore().setStatusId(this.statusId);
         qRampStore().setNeedToBePosted(this.needToBePosted);
         storeFlight().setForm(updateData.data);
-        this.flight = storeFlight().getForm();
+        this.flight = structuredClone(storeFlight().getForm());
         qRampStore().setResponsible(updateData.data['responsible']);
         cargoStore().setForm(updateData.data);
         cargoStore().setDelayList(updateData.data);
         cargoStore().setDelayComment(updateData.data.delayComment || null)
         cargoStore().setOurDelay(updateData.data.ourDelay || null);
-        qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        if(navigator.onLine) {
+          qRampStore().setWorkOrderItems(updateData.data['workOrderItems']);
+        } else {
+          const workOrderItems = workOrderList().getWorkOrdersItemsList()?.filter(
+            item => item.workorderId == this.modalProps.workOrderId
+          );
+          const updatedItems = updateData.data['workOrderItems']?.length > 0
+            ? updateData.data['workOrderItems']
+            : workOrderItems;
+          qRampStore().setWorkOrderItems(updatedItems);
+        }
+
         await serviceListStore().init();
         remarksStore().setForm(updateData.data);
         this.signature.customerName = updateData.data['customerName']
@@ -348,6 +384,7 @@ export default {
         this.$store.commit('qrampApp/SET_FORM_FLIGHT', this.flight);
         this.$store.commit('qrampApp/SET_FORM_SIGNATURE', this.signature)
         qRampStore().hideLoading();
+        this.loading = false;
       } catch (error) {
         this.loading = false;
         qRampStore().hideLoading();
@@ -365,6 +402,11 @@ export default {
       this.services = [];
       cargoStore().reset();
       remarksStore().reset();
+      serviceListStore().setShowFavourite(false)
+      serviceListStore().setErrorList([]);
+      qRampStore().setClonedWorkOrder(null)
+      storeFlight().reset()
+      signatureStore.resetStore()
     },
     /**
      * Set the loading state of the modal.
@@ -377,14 +419,114 @@ export default {
     },
     async getWorkOrders(data = null) {
       this.$emit('getWorkOrderFilter', data);
+    },
+    async loadChildData() {
+      this.loading = true;
+      this.resetFormModalFull()
+      const flight = qRampStore().getClonedWorkOrder()
+      storeFlight().setForm({ ...flight })
+      await workOrderList().getFavourites()
+
+      const modalProps = {
+        ...modalFullProps,
+        title: this.modalProps.lastTitle,
+        workOrderId: flight.id,
+        isClone: true
+      }
+
+      this.loadform({ data: flight, modalProps })
+    },
+    async loadParentData() {
+      this.loading = true;
+      const data = JSON.parse(JSON.stringify(this.$store.state.qrampApp));
+      const formData = structuredClone(await constructionWorkOrder(data))
+      qRampStore().setClonedWorkOrder(formData)
+
+      this.resetFormModalFull();
+      const workOrder = await getWorkOrder(formData?.parentId)
+      workOrder.data.parentId = null
+      storeFlight().setForm({ ...workOrder.data })
+      await workOrderList().getFavourites()
+
+      const modalProps = {
+        ...modalFullProps,
+        title: this.$tr('ifly.cms.form.updateWorkOrder') + (workOrder.data.id ? ` Id: ${workOrder.data.id}` : ''),
+        lastTitle: this.modalProps.title,
+        workOrderId: workOrder.data.id,
+        chip: {
+          label: "Parent",
+        },
+        parent: true
+      }
+
+      this.loadform({ data: workOrder.data, modalProps })
+    },
+    resetFormModalFull() {
+      serviceListStore().setShowFavourite(false)
+      serviceListStore().setErrorList([]);
+      serviceListStore().resetStore();
+      cargoStore().reset();
+      remarksStore().reset();
+      this.$refs.stepper.sp = STEP_FLIGHT;
+    },
+    promptDeleteWorkOrder() {
+      this.$alert.error({
+        mode: 'modal',
+        title: 'Delete',
+        message: 'Are you sure you want to delete this work order?',
+        actions: [
+          {
+            label: this.$tr('isite.cms.label.cancel'),
+            color: 'grey',
+          },
+          {
+            label: this.$tr("isite.cms.label.yes"),
+            color: 'red',
+            handler: async () => {
+              await this.deleteWorkOrder()
+            },
+          },
+        ],
+      });
+    },
+    async deleteWorkOrder() {
+      const route = 'apiRoutes.qramp.workOrders';
+      await cacheOffline.deleteItem(this.modalProps.workOrderId, route)
+      try {
+        await this.$crud.delete(route, this.modalProps.workOrderId, {
+          data: {
+            attributes: {
+              id: this.modalProps.workOrderId,
+              titleOffline: 'Delete Work Order'
+            }
+          }
+        });
+      } catch (e) {
+        console.error(e)
+      }
+      await this.getWorkOrders();
+      this.clear()
+      this.$emit('refresh-data')
+      qRampStore().hideLoading();
     }
   },
 }
 </script>
 <style>
+.btn-action-form-orders {
+  @apply tw-bg-gray-200 sm:tw-bg-transparent;
+  color: #4C5D94;
+}
+
+.q-btn__wrapper {
+  padding: 4px 12px;
+}
+
+.master-dialog__actions .q-btn .q-icon {
+  font-size: 16px;
+}
+
 #formRampComponent .boundColor {
   background-color: #F1F4FA;
 }
 </style>
-
-

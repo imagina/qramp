@@ -1,14 +1,13 @@
 /* Importing the baseService, qRampStore, and Vue. */
-import baseService from "@imagina/qcrud/_services/baseService.js";
+import baseService from "src/modules/qcrud/_services/baseService.js";
 import qRampStore from "../qRampStore.js";
-import Vue from 'vue';
-import {
-    BUSINESS_UNIT_PASSENGER, 
-    BUSINESS_UNIT_RAMP,
-    COMPANY_PASSENGER,
-    COMPANY_RAMP,
-} from '../../_components/model/constants.js';
-import pluginsArray from '@imagina/qsite/_plugins/array.js';
+import pluginsArray from 'src/plugins/array.js';
+import { store } from 'src/plugins/utils'
+import _ from 'lodash';
+import serviceListStore from '../../_components/serviceList/store/serviceList'
+import { fields } from "../../_components/signature/model/fields";
+import workOrderList from "./workOrderList";
+import {BUSINESS_UNIT_SECURITY} from "../../_components/model/constants";
 
 /* A model for the service list. */
 export const serviceListModel = {
@@ -20,25 +19,24 @@ export const serviceListModel = {
  * It makes a request to the server, and returns the response data.
  * @returns An array of categories.
  */
-export const getCategories = async (): Promise<any[]> => {
-    if (Vue.prototype.$auth && Vue.prototype.$auth.hasAccess('ramp.categories.index')) {
+export const getCategories = async (company?: null | []): Promise<any[]> => {
+    if (store.hasAccess('ramp.categories.index')) {
         try {
-            const isPassenger = qRampStore().getIsPassenger();
-            const companyId = isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP; 
+            const companyId = company ? company : qRampStore().getFilterCompany();
+
             let requestParams = {
                 params: {
                     include:
                         "products,products.attributes,products,products.attributes.values",
                     filter: {
                         companyId,
-                    }    
+                    }
                 },
             };
             const response = await baseService.index(
                 "apiRoutes.qramp.categories",
                 requestParams
             );
-            console.log(response.data);
             return response.data;
         } catch (error) {
             console.log(error);
@@ -58,32 +56,31 @@ export async function buildServiceList(): Promise<any[]> {
     try {
         const categories = await getCategories();
         const categoryList = categories.length > 0 ? pluginsArray.tree(categories): [];
-        const build = categoryList.map((item) => {
+        const buildService = (item: any): any => {
             let dynamicField: any = {
-                dynamicField: getIfItIsTypeListOrDynamicField(item.products),
+                dynamicField: getIfItIsTypeListOrDynamicField(item.products, item.id),
             };
             dynamicField = dynamicField.dynamicField.length === 0 ? {} : dynamicField;
-            let lists = {};
-            if(item.children && item.children.length > 0) {
-                lists = item.children.map(item => {
-                    let dynamicFieldChildren: any = {
-                        dynamicField: getIfItIsTypeListOrDynamicField(item.products),
-                    };
-                    return {
-                        id: item.id,
-                        title: item.name,
-                        ...dynamicFieldChildren
-                    };
-                })
-                lists = { lists }
+            let children = [];
+            if (item.children && item.children.length > 0) {
+                children = item.children.map(child => buildService(child));
             }
             return {
                 id: item.id,
                 title: item.name,
                 ...dynamicField,
-                ...lists,
+                lists: children
             };
-        });
+        };
+
+        const build = categoryList.filter(item => {
+            const types = item.types || [];
+            let businessUnitId = qRampStore().getBusinessUnitId();
+            if (businessUnitId === 'null') {
+              businessUnitId = null;
+            }
+            return item.businessUnitId == businessUnitId && types.includes(String(qRampStore().getTypeWorkOrder()));
+        }).map(buildService);
         return build;
     } catch (error) {
         console.log(error);
@@ -93,7 +90,7 @@ export async function buildServiceList(): Promise<any[]> {
 
 /**
  * It takes a list of products, and returns a list of dynamic fields.
- * @param product - 
+ * @param product -
  * @returns [
  *   {
  *     "icon": "settings",
@@ -101,19 +98,46 @@ export async function buildServiceList(): Promise<any[]> {
  *     "categoryId": "5e8f8f8f8f8f8f8f8f8f8f8f",
  *     "
  */
-export const getIfItIsTypeListOrDynamicField = (product) => {
+export const getIfItIsTypeListOrDynamicField = (product, categoryId = null) => {
     try {
+
         const products = product || [];
         const data: any = [];
         const dynamicFieldModel: any = {
-            icon: "settings",
+            icon: "fa-solid fa-gear",
         };
         const organizeProduct = organizeProducts(product);
+        const favouriteProductIdList = serviceListStore().getFavouriteList().map(item => item.productId);
         organizeProduct?.forEach((product) => {
+            let categoryIdData = categoryId;
+            const favourite = favouriteProductIdList.includes(product.id);
+            const productName = product.externalId ?  `${product.name} (${product.externalId})` : product.name;
+            const contractRulesList = workOrderList().getContractRulesList().find(item => item.productId == product.id);
+            const valueRules = contractRulesList && contractRulesList.valueRule ? contractRulesList.valueRule : null;
+            const valueTo = contractRulesList && contractRulesList.valueTo ? contractRulesList.valueTo : null;
+            const valueFrom = contractRulesList && contractRulesList.valueFrom ? contractRulesList.valueFrom : null;
+            const surplus = contractRulesList && contractRulesList.quantityRule === 'surplus' ? contractRulesList.quantity : null;
+            const productType = (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_SECURITY && product.multiCategoryFields && product.multiCategoryFields.length > 0)
+              ? 4 : product.type || null;
+            const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
+            if(hasMultiCategoryFields) {
+              const result = product.multiCategoryFields.find(field =>
+                field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+              );
+              categoryIdData = result.multiCategories[0]?.id
+            }
+
             dynamicFieldModel.id = product.id;
-            dynamicFieldModel.categoryId = product.categoryId;
-            dynamicFieldModel.title = product.name;
-            dynamicFieldModel.formField = getDynamicField(product.attributes);
+            dynamicFieldModel.categoryId = categoryIdData;
+            dynamicFieldModel.title = productName;
+            dynamicFieldModel.helpText = product.helpText;
+            dynamicFieldModel.valueRules = valueRules;
+            dynamicFieldModel.valueTo = valueTo;
+            dynamicFieldModel.valueFrom = valueFrom;
+            dynamicFieldModel.surplus = surplus;
+            dynamicFieldModel.formField = getDynamicField(product);
+            dynamicFieldModel.favourite = favourite;
+            dynamicFieldModel.productType = productType;
             data.push({ ...dynamicFieldModel });
         });
         return data;
@@ -127,29 +151,72 @@ export const getIfItIsTypeListOrDynamicField = (product) => {
  * values of the array replaced with the values of the object.
  * @param attributes
  * @returns {dynamicField}
- *  
+ *
  */
-function getDynamicField(attributes) {
+function getAttProduct(product: any) {
+  const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
+  if (hasMultiCategoryFields) {
+    product.multiCategoryFields.forEach(multiCategoryFields => {
+      multiCategoryFields?.multiAttributes?.forEach((item: any) => {
+        if (typeof item.fields === 'string' && item.fields.length > 0) {
+          item.fields = JSON.parse(item.fields.replace(/'/g, '"'));
+        } else if (!item.fields) {
+          item.fields = [];
+        }
+      });
+    })
+
+    const result = product.multiCategoryFields.find(field =>
+      field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+    );
+    return result.multiAttributes || [];
+  }
+
+  return product.attributes || [];
+}
+
+function getDynamicField(product) {
     try {
+        const productoType = product.type || null;
+        const att = getAttProduct(product);
+        const optionAtt = product.options?.attributes || [];
         const result = {};
-        const att = attributes || [];
-        for (let i = 0; i < att.length; i++) {
-            const currentValue = att[i];
+        const organizedData = optionAtt.length > 0 ? _.sortBy(att, item => optionAtt.indexOf(String(item.id))) : att;
+        for (let i = 0; i < organizedData.length; i++) {
+            const currentValue = organizedData[i];
+            const propsOptions = currentValue.options?.props || {}
+            const loadOptions = currentValue.options?.loadOptions ? {
+              loadOptions : {
+                ...currentValue.options?.loadOptions,
+                requestParams: {
+                  filter: {
+                    workOrderId: qRampStore().getWorkOrderId(),
+                    ...currentValue.options?.loadOptions?.requestParams?.filter || {}
+                  }
+                }
+              },
+            } : {};
             const props = setProps(
             currentValue.type,
             currentValue.name,
             currentValue.values,
-            i
+            productoType,
+            i,
+            currentValue.fields
             );
             const key = `${currentValue.type}${currentValue.name ? currentValue.name : ""}`;
             const type = currentValue.type === "quantityFloat" ? "quantity" : currentValue.type;
-
+            let value = currentValue.value ? currentValue.type === 'checkbox' ? Number(currentValue.value) : currentValue.value : currentValue.type === 'checkbox' ? 0 : null
+            if(propsOptions.multiple) {
+              value = value || [];
+            }
             result[key] = {
-            name: currentValue.name,
-            value: currentValue.value ? currentValue.value : null,
-            type,
-            id: currentValue.id,
-            props: { ...props },
+                name: currentValue.name,
+                value,
+                type,
+                id: currentValue.id,
+                props: { ...props, ...propsOptions },
+                ...loadOptions
             };
         }
 
@@ -168,11 +235,15 @@ function getDynamicField(attributes) {
  * @param index
  * @returns {PropsDynamicField}
  */
-function setProps(type, name, options, index) {
+function setProps(type, name, options, productType, index, multipleFields= []) {
     const readonly = qRampStore().disabledReadonly();
-    if (type == "quantity") {
+    if (type == "quantity" || type == "quantityFloat") {
         return {
+            label: name,
             readonly,
+            type: "number",
+            step: "0.1",
+            mask: "###################",
         };
     }
     if (type == "select") {
@@ -196,14 +267,58 @@ function setProps(type, name, options, index) {
             format24h: true,
         };
     }
-    if (type === "quantityFloat") {
+    if(type == "multiplier") {
+
+      const fields = multipleFields.map((field, indexField) => {
+        const propsOptions = field.options?.props || {};
+        const nameField = field.options?.name || '';
+        const loadOptions = field.options?.loadOptions ? {
+          loadOptions : {
+            ...field.options?.loadOptions,
+            requestParams: {
+              filter: {
+                workOrderId: qRampStore().getWorkOrderId(),
+                ...field.options?.loadOptions?.requestParams?.filter || {}
+              }
+            }
+          },
+        } : {};
+        let value = field.value ? field.type === 'checkbox' ? Number(field.value) : field.value : field.type === 'checkbox' ? 0 : null
+        if(propsOptions.multiple) {
+          value = value || [];
+        }
+        const props = setProps(
+          field.type,
+          field.label,
+          [],
+          null,
+          indexField,
+        );
         return {
-            readonly,
-            type: "number",
-            step: "0.1",
-        };
+          type: field.type,
+          value: value,
+          name: nameField,
+          props: { ...props, ...propsOptions },
+          ...loadOptions
+        }
+      }).reduce((obj, item) => {
+        if (item.name) {
+          obj[item.name] = item;
+        }
+        return obj;
+      }, {});
+
+      return {
+        type: type,
+        readonly,
+        label: name,
+        isDraggable: true,
+        maxQuantity: 7,
+        fields
+      };
     }
     return {
+        type: type,
         readonly,
         label: name,
     };
@@ -228,18 +343,22 @@ function setProps(type, name, options, index) {
  *   }
  * ]
  */
-export function getListOfSelectedServices(data) {
+export function getListOfSelectedServices(data, isType = true) {
     try {
-        const service = Vue.prototype.$clone(data.filter((items) => {
-            for (let item in items.formField) {
-                for (let key in items.formField[item]) {
-                    if (key == "value") {
-                        return items.formField[item][key];
-                    }
-                }
+        const service = data.filter(item => {
+            for (let key in item.formField) {
+              const value = item.formField[key].value;
+              if (Array.isArray(value) && value.length > 0) {
+                return true;
+              }
+
+              if (!Array.isArray(value) && value) {
+                return true;
+              }
             }
-        }));
-        return productDataTransformation(service) || [];
+            return false;
+        });
+        return productDataTransformation(service, isType) || [];
     } catch (error) {
         console.log(error);
     }
@@ -256,7 +375,7 @@ function organizeProducts(data: any) {
         return data?.map((product) => {
             (productData as any).map((sw) => {
                 if (sw?.productId == product?.id) {
-                    product?.attributes?.map((att) => {
+                    getAttProduct(product).map((att) => {
                         sw.workOrderItemAttributes.map((swatt) => {
                             if (swatt.attributeId == att.id) {
                                 att.value = swatt.value;
@@ -298,7 +417,7 @@ function setAttr(obj) {
  * type. If the object has an id and no attributeId, return an object with id, name, value, type, and
  * attributeId. If the object has an attributeId and value, return an object with attributeId, name,
  * value, and type.
- * @param {any} obj 
+ * @param {any} obj
  * @param {any} key - the key of the object
  * @returns {
  *   id: 1,
@@ -309,9 +428,18 @@ function setAttr(obj) {
  * }
  */
 function validationDataAttr(obj: any, key: any) {
+    let value = obj[key].type === 'quantity'
+        ? !obj[key].value || obj[key].value == 0  ? null
+        : Math.abs(obj[key].value) : obj[key].value;
+    if(obj[key].type === 'select' && obj[key].props?.multiple) {
+      value = JSON.stringify(obj[key].value);
+    }
+    if(obj[key].type === 'multiplier') {
+      value = JSON.stringify(obj[key].value);
+    }
     let data: any = {
         name: obj[key].name,
-        value: obj[key].value,
+        value,
         type: obj[key].type,
     };
     if (obj[key].id && obj[key].attributeId) {
@@ -343,15 +471,19 @@ function validationDataAttr(obj: any, key: any) {
  *     "product_id": "1",
  *     "work_order_item_attributes": [],
  *    }
- * ] 
+ * ]
  */
-export function productDataTransformation(data = []) {
+export function productDataTransformation(data = [], isType = false) {
     try {
         const products: any = [];
         data.forEach((items: any) => {
             if (items.id || isDelete(items.formField)) {
+                const productType = isType ? {product_type: items.productType, name: items.title }: {};
+                const categoryId = items.categoryId ? {category_id: items.categoryId} : {};
                 products.push({
                     product_id: items.id,
+                    ...categoryId,
+                    ...productType,
                     work_order_item_attributes: setAttr(items.formField),
                 });
             }

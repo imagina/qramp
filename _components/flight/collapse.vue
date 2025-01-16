@@ -86,7 +86,7 @@ export default defineComponent({
       expandible, 
       flightNumber, 
       isComplete,
-      titleCompleted
+      titleCompleted,
     }
   }
 })

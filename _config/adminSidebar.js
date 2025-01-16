@@ -1,4 +1,4 @@
-const pages = config('pages') // Get Pages from config
+import pages from 'src/setup/pages' // Get Pages from config
 
 //Blog
 export default [
@@ -7,13 +7,8 @@ export default [
     icon: 'fa-light fa-arrows-up-down-left-right',
     children: [
       pages.qramp.workOrders,
-      pages.qramp.flightMap,
       pages.qramp.schedule,
-      pages.qramp.workOrderStatuses,
-      pages.qramp.categories,
-      pages.qramp.services,
-      pages.qramp.attributes,
-      pages.qramp.operationType
+      pages.qramp.operationType,
     ]
   },
   {
@@ -21,9 +16,26 @@ export default [
     icon: 'fa-light fa-tickets-airline',
     children: [
       pages.qramp.passenger,
-      pages.qramp.passengerFlightMap,
       pages.qramp.passengerSchedule,
-      pages.qramp.operationTypePassenger
+      pages.qramp.operationTypePassenger,
+      pages.qramp.fueling,
+      {
+        title: 'Labor',
+        icon: 'fa-light fa-tickets-airline',
+        children: [
+          pages.qramp.labor,
+          pages.qramp.laborSchedule
+        ]
+      },
+    ]
+  },
+  {
+    title: 'Security',
+    icon: 'fa-light fa-shield-halved',
+    children: [
+      pages.qramp.security,
+      pages.qramp.securitySchedule,
+      pages.qramp.securityOperationType
     ]
   },
   {
@@ -33,5 +45,4 @@ export default [
       pages.qramp.oagStations
     ]
   },
-  
 ]

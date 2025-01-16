@@ -24,7 +24,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'type',
@@ -296,5 +295,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

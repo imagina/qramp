@@ -1,13 +1,8 @@
 <template>
   <div>
-    <q-btn 
-      color="primary"
-      label="back to schedule" 
-      icon="fa-duotone fa-calendar-plus"
-      class="tw-my-4"
-      @click="getUrlSchedule"
-    />
-    <schedulerModal />
+    <schedulerModal @refreshData="getDataTable(true)" />
+    <crud :crud-data="import('./baseCrud.vue')" :custom-data="crudData" ref="crudComponent"
+          :title="$route.meta.title" />
   </div>
 </template>
 <script>
@@ -16,7 +11,11 @@ import schedulerStore from '../_components/scheduler/store/index.store.ts'
 import schedulerModal from '../_components/scheduler/index.vue';
 import show from '../_components/scheduler/actions/show.ts';
 import {
-  BUSINESS_UNIT_RAMP, BUSINESS_UNIT_PASSENGER
+  BUSINESS_UNIT_RAMP,
+  BUSINESS_UNIT_CARGO,
+  BUSINESS_UNIT_PASSENGER,
+  LABOR,
+  BUSINESS_UNIT_LABOR, BUSINESS_UNIT_SECURITY, CARGO_PAX
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 
@@ -29,17 +28,39 @@ export default {
       crudId: this.$uid(),
     }
   },
-  created() {
+  beforeMount() {
     this.$nextTick(async () => {
+      const urlSchedule = localStorage.getItem("urlSchedule");
+      if (urlSchedule.includes('/ramp')) {
+        await qRampStore().setIsPassenger(false);
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
+      } else if (urlSchedule.includes('/passenger')) {
+        await qRampStore().setIsPassenger(true)
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_PASSENGER);
+      } else if (urlSchedule.includes('/labor')) {
+        await qRampStore().setIsPassenger(true)
+        await qRampStore().setTypeWorkOrder(LABOR)
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_LABOR);
+      } else if (urlSchedule.includes('/security')) {
+        await qRampStore().setIsPassenger(false);
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_SECURITY);
+      } else if (urlSchedule.includes('/cargo')) {
+        await qRampStore().setIsPassenger(false);
+        qRampStore().setBusinessUnitId(BUSINESS_UNIT_CARGO);
+        qRampStore().setTypeWorkOrder(CARGO_PAX);
+      }
       await workOrderList().getAllList();
     })
   },
   computed: {
     filterBusinessUnit() {
-      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
+      return qRampStore().getBusinessUnitId();
     },
     isPassenger() {
       return qRampStore().getIsPassenger();
+    },
+    filterCompany() {
+      return qRampStore().getFilterCompany();
     },
     crudData() {
       return {
@@ -54,6 +75,16 @@ export default {
             schedulerStore.showModal = true;
           }
         },
+        extraActions: [{
+          label: 'Back to schedule',
+          props: {
+            icon: 'fa-light fa-calendar-plus',
+            label: 'Back to schedule',
+          },
+          action: () => {
+            this.getUrlSchedule()
+          }
+        }],
         read: {
           columns: [
             {
@@ -61,7 +92,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'customerId',
@@ -191,7 +221,98 @@ export default {
             },
             { name: 'actions', label: this.$tr('isite.cms.form.actions'), align: 'left' },
           ],
-          filters: {},
+          filters: {
+            stationId: {
+              value: null,
+              type: "select",
+              props: {
+                label: "Station",
+                clearable: true,
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getStationList().map(item => ({
+                    label: item.fullName,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
+              },
+            },
+            carrierId: {
+              value: null,
+              type: 'select',
+              props: {
+                vIf: false,
+                label: 'Carrier',
+                clearable: true,
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getAirlinesList().map(item => ({
+                    label: item.airlineName,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
+              },
+            },
+            customerId: {
+              value: null,
+              type: 'select',
+              quickFilter: true,
+              loadOptions: {
+                apiRoute: 'apiRoutes.qramp.setupCustomers',
+                select: { 'label': 'customerName', 'id': 'id' },
+                requestParams: {
+                  filter: {
+                    companyId: this.filterCompany,
+                  },
+                },
+              },
+              props: {
+                label: 'Customer',
+                'clearable': true
+              },
+            },
+            acTypeId: {
+              value: null,
+              type: 'select',
+              props: {
+                label: this.$tr('ifly.cms.sidebar.aircraftType'),
+                clearable: true,
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getACTypesList().map(item => ({
+                    label: item.model,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
+              },
+            },
+            operationTypeId: {
+              value: null,
+              type: 'select',
+              props: {
+                label: this.$tr('ifly.cms.form.operation'),
+                clearable: true,
+                color: "primary",
+                'hide-bottom-space': false,
+              },
+              loadOptions: {
+                delayed: () => new Promise(resolve => {
+                  const lists = workOrderList().getOperationTypeList().map(item => ({
+                    label: item.operationName,
+                    value: item.id
+                  }))
+                  resolve(lists)
+                }),
+              },
+              label: this.$tr('ifly.cms.form.operation'),
+            },
+          },
           actions: [
             {
               name: 'edit',
@@ -205,11 +326,13 @@ export default {
           requestParams: {
             filter: {
               withoutDefaultInclude: true,
-              businessUnitId: this.filterBusinessUnit,
+              ...(this.filterBusinessUnit === 'null' ? {}: {businessUnitId:this.filterBusinessUnit}),
+              stationCompanies: this.filterCompany,
+              ...(qRampStore().getTypeWorkOrder() === CARGO_PAX) ? {type: CARGO_PAX} : {}
             },
           }
         },
-        update: false,
+        update: true,
         delete: true,
         formLeft: {},
         formRight: {}
@@ -236,15 +359,17 @@ export default {
       };
 
       const namesOfDays = numbersDays.map(number => daysOfWeek[number]);
-     
+
       return namesOfDays.join(', ');
     },
     getUrlSchedule() {
       const url = localStorage.getItem('urlSchedule');
       window.location.href = url;
     },
+    async getDataTable(refresh) {
+      await this.$refs.crudComponent.getDataTable(refresh);
+    },
   }
 }
 </script>
-<style lang="stylus">
-</style>
+<style lang="scss"></style>

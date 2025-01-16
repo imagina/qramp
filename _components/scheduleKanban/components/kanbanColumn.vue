@@ -1,19 +1,20 @@
 <template>
-  <div 
+  <div
     class="tw-relative  columnCtn q-col tw-w-full"
     :class="{'columnCtnFull' : !isWeekAgenda }"
   >
-    <div 
-      class="tw-py-3" 
+    <div
+      ref="refKanbanColumn"
+      class="tw-py-3"
       :class="`cardCtn-${date}`"
       @dragover.prevent="setDrag(true)"
       @drop.prevent="setDrag(false)"
     >
-      <div 
+      <div
        class="
-        tw-border-b-2 
-        tw-border-gray-200 
-        tw-pb-1 
+        tw-border-b-2
+        tw-border-gray-200
+        tw-pb-1
         tw-text-sm"
       >
         <div class="tw-flex tw-items-center tw-space-x-2 tw-justify-center">
@@ -22,15 +23,15 @@
           </p>
           <button
             class="
-             tw-rounded-full 
-             tw-w-7 
-             tw-h-7 
-             tw--mt-4 
-             tw-text-blueGray-500
+             tw-rounded-full
+             tw-w-7
+             tw-h-7
+             tw--mt-4
+             tw-text-slate-500
              dayGray"
             :class="{
               'buttom-day': selectedDate === date.format('YYYY/MM/DD'),
-              'tw-border tw-border-blue-500': $moment().format('YYYY/MM/DD') === date.format('YYYY/MM/DD')
+              'tw-border tw-border-blue-500': moment().format('YYYY/MM/DD') === date.format('YYYY/MM/DD')
             }"
             @click="showKanbanDay"
           >
@@ -48,13 +49,13 @@
       <div
         v-if="column.loading"
         class="
-         tw-flex 
-         tw-justify-center 
-         tw-absolute 
-         tw-inset-0 
-         tw-pt-48 
-         tw-bg-white 
-         tw-bg-opacity-75 
+         tw-flex
+         tw-justify-center
+         tw-absolute
+         tw-inset-0
+         tw-pt-48
+         tw-bg-white
+         tw-bg-opacity-75
          tw-z-20"
       >
         <q-spinner color="primary" size="2em" />
@@ -66,13 +67,14 @@
           'h-201-black': isBlank
         }"
       >
-        <div 
+        <div
           v-if="column.isDrag"
+          ref="refTrigger"
           class="
-           tw-flex 
-           tw-absolute 
-           tw-justify-center  
-           tw-inset-0 
+           tw-flex
+           tw-absolute
+           tw-justify-center
+           tw-inset-0
            tw-mt-80"
         >
             <i class="fa-thin fa-cards-blank tw-text-7xl tw-text-gray-300" />
@@ -88,25 +90,30 @@
           class="scrollbar tw-overflow-y-auto tw-overflow-x-hidden tw-mb-4 tw-h-full tw-px-2"
           handle=".dot-vertical"
           @end="changeDate"
-          :disabled="isBlank && isWeekAgenda"
+          :disabled="true"
+          item-key="id"
         >
-          <component
-            v-for="(card, index) in cards"
-            :is="card.editable? 'inlineSchedule': cardComponentName"
-            :isWeekAgenda="isWeekAgenda"
-            :id="card.id"
-            :key="card.id"
-            :card="card"
-            :dateColumn="column.date.format('YYYY-MM-DD')"
-            :class="{ hidden: column.isDrag  }"
-          />
+        <template #item="{ element }">
+          <div :id="element?.id" :key="element?.id">
+            <component
+              :is="element?.editable ? 'inlineSchedule': cardComponentName"
+              :isWeekAgenda="isWeekAgenda"
+              :card="element"
+              :dateColumn="column.date.format('YYYY-MM-DD')"
+              :class="{ hidden: column?.isDrag  }"
+            />
+          </div>
+        </template>
+        <template #footer>
           <div
+            ref="refTrigger"
             v-show="!column.isDrag"
             class="tw-text-center tw-h-5 tw-flex tw-justify-center"
             :class="`trigger-${date}`"
           >
             <q-spinner v-if="isLoading" color="primary" size="1.3em" />
           </div>
+        </template>
         </draggable>
       </div>
     </div>
@@ -192,11 +199,15 @@ export default defineComponent({
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-track {
-  @apply tw-bg-gray-100  !important;
+  @apply tw-bg-gray-100 !important;
 }
 
 .columnCtn .scrollbar::-webkit-scrollbar-thumb {
   @apply tw-bg-gray-100 !important;
+}
+
+.columnCtn .scrollbar:hover::-webkit-scrollbar-thumb {
+  @apply tw-bg-gray-300 !important;
 }
 
 .columnCtn .text-blue-gray-rb-5 {

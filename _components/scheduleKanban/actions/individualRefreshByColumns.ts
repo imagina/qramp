@@ -27,7 +27,7 @@ export default async function individualRefreshByColumns(): Promise<void> {
         const endDate = date.endOf('day');
         const filterTime = storeFilters.filterTime;
         const params = {
-            field: "schedule_date",
+            field: 'schedule_date_local',
             type: "customRange",
             from: startDate.set({ 
                 hour: filterTime[0], 

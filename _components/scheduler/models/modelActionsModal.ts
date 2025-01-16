@@ -1,27 +1,26 @@
-import Vue, { computed, getCurrentInstance, ComputedRef } from 'vue';
+import { computed, ComputedRef } from 'vue';
 import save from '../actions/save'
 import update from '../actions/update'
 import store from '../store/index.store'
 import {
-    ModelActionsModalResult, 
-    Action, 
-    Proxy
-} from '../contracts/modelActionsModal.contract';
+    ModelActionsModalResult,
+    Action,
+} from '../contracts/modelActionsModal.contract'
+import { i18n } from 'src/plugins/utils'
 
-export default function modelActionsModal(): ModelActionsModalResult {
-    const proxy = (getCurrentInstance() as any).proxy as Proxy;
+
+export default function modelActionsModal(emit:any = null): ModelActionsModalResult {
     const actions: ComputedRef<Action[]> = computed(() => ([
         {
             props: {
                 loading: store.loading,
                 color: 'primary',
                 'icon-right': 'fa-thin fa-floppy-disk',
-                label: Vue.prototype.$tr('isite.cms.label.save'),
+                label: i18n.tr('isite.cms.label.save'),
             },
             action: () => {
-                const refFormScheduler = proxy.$refs.refFormFields.$refs.refFormScheduler;
-                if (refFormScheduler) {
-                    refFormScheduler
+                if (store.refFormScheduler) {
+                    store.refFormScheduler
                         .validate()
                         .then(async (success) => {
                             if (success) {
@@ -31,7 +30,7 @@ export default function modelActionsModal(): ModelActionsModalResult {
                                     await save()
                                 }
                                 await store.reset();
-                                proxy.$root.$emit('crud.data.refresh');
+                                emit('refreshData');
                             }
                         })
                 }

@@ -1,44 +1,44 @@
 import factoryCustomerWithContracts from '../../_store/actions/factoryCustomerWithContracts.js';
 import qRampStore from '../../_store/qRampStore.js';
-import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP } from '../model/constants.js';
+import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP, COMPANY_PASSENGER, COMPANY_RAMP, NON_FLIGHT } from '../model/constants.js';
 import workOrderList from '../../_store/actions/workOrderList.ts'
 import storeKanban from '../scheduleKanban/store/kanban.store.ts';
 
 export default {
   computed: {
+    validateNoFligth(){
+      return qRampStore().getTypeWorkOrder() === NON_FLIGHT;
+    },
     isAppOffline() {
       return storeKanban.isAppOffline
     },
     isPassenger() {
       return qRampStore().getIsPassenger();
     },
-    filterBusinessUnit() {
-      return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-    },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
     allowContractName() {
-      return this.$auth.hasAccess("ramp.work-orders.see-contract-name");
+      return this.$hasAccess("ramp.work-orders.see-contract-name");
     },
     manageResponsiblePermissions() {
-      return this.$auth.hasAccess('ramp.work-orders.manage-responsible');
+      return this.$hasAccess('ramp.work-orders.manage-responsible');
     },
     filterStation() {
       return workOrderList()
         .getStationList()
-        .map(item => ({ 
-            label: item.fullName, 
-            value: item.id 
+        .map(item => ({
+            label: item.fullName,
+            value: item.id
           })
         )
     },
     filterResponsible() {
       return workOrderList()
         .getResponsible()
-        .map(item => ({ 
-          label: item.fullName, 
-          value: item.id 
+        .map(item => ({
+          label: item.fullName,
+          value: item.id
         }))
     },
     fields() {
@@ -76,7 +76,6 @@ export default {
             loadOptions: {
               delayed: this.getCustomerList,
             },
-            label: this.$tr("ifly.cms.form.customer"),
           },
           preFlightNumber: {
             name: "preFlightNumber",
@@ -84,7 +83,11 @@ export default {
             type: "search",
             props: {
               rules: [
-                (val) => !!val || this.$tr("isite.cms.message.fieldRequired"),
+                (val) => {
+                  if(!this.validateNoFligth) {
+                    return !!val || this.$tr("isite.cms.message.fieldRequired")
+                  }
+                } 
               ],
               hint: "Enter the fight number and press enter or press the search icon",
               loading: this.loadingState,
@@ -116,7 +119,7 @@ export default {
             type: "select",
             props: {
               vIf: this.manageResponsiblePermissions,
-              label: 'Responsible',
+              label: 'Assigned to',
               clearable: true,
               color: "primary",
               hint: "If you left this field empty, the responsible will be you automatically",
@@ -140,37 +143,9 @@ export default {
   methods: {
     getCustomerList() {
       return new Promise(async (resolve) => {
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : { businessUnitId: BUSINESS_UNIT_RAMP };
-        const custemerParams = {
-          params: {
-            filter: {
-              withoutContracts: true,
-              customerStatusId: 1,
-              companyId: this.filterCompany,
-            },
-          },
-          refresh: false,
-        };
-        const contractParams = {
-          params: {
-            filter: {
-              contractStatusId: 1,
-              ...businessUnitId,
-            },
-          },
-          refresh: false,
-        };
-        const customersData = await Promise.all([
-          this.$crud.index("apiRoutes.qramp.setupCustomers", custemerParams),
-          this.$crud.index("apiRoutes.qramp.setupContracts", contractParams),
-        ]);
-        const customerList = factoryCustomerWithContracts(
-          customersData,
-          this.allowContractName
-        );
-
+        const customerList = await workOrderList().getCustomerWithContract();
         return resolve(customerList);
-      });
+      })
     }
   },
 };

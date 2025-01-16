@@ -37,8 +37,8 @@ const store = computed(() => ({
     return state.flightNumbers;
   },
   set flightNumbers(item: any) {
-    const flightNumberInbound = item.faFlightId.split('-')[0] || null;
-    const flightNumberoutbound = item.outboundFaFlightId.split('-')[0] || null;
+    const flightNumberInbound = item.faFlightId ? item.faFlightId.split('-')[0] : null;
+    const flightNumberoutbound = item.outboundFaFlightId ? item.outboundFaFlightId.split('-')[0] : null;
     const inbound = {
       workOrderId: item.id, 
       faFlightId: item.faFlightId, 

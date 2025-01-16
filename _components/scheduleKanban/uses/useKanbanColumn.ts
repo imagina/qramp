@@ -1,4 +1,4 @@
-import Vue, { computed, ref, onMounted, provide, getCurrentInstance } from 'vue';
+import { computed, ref, onMounted, provide } from 'vue';
 import storeKanban from '../store/kanban.store';
 import storeFilters from '../store/filters.store'
 import moment from 'moment'
@@ -15,8 +15,9 @@ import getWorkOrdersStatistics from '../actions/getWorkOrderStatistics';
 
 export default function useKanbanColumn(props: any = {}) {
   provide('singleRefreshmentColumn', singleRefreshment);
-  const proxy = (getCurrentInstance() as any).proxy as any;
   const isLoading = ref(false);
+  const refKanbanColumn = ref(null);
+  const refTrigger = ref(null);
   const cards: any = computed({
     get: () => props.column.cards,
     set: (value) => (props.column.cards = value),
@@ -27,7 +28,10 @@ export default function useKanbanColumn(props: any = {}) {
   const cardComponentName = computed(() => {
     const kanbanCardComponentName = 'kanban-card';
     const kanbanDayComponentName = 'kanban-day';
-    if ( (storeKanban.scheduleType == scheduleTypeModel[1].value) && ( Screen.width > devicesModel.mobile.maxWidth )) return kanbanDayComponentName;
+    if (
+      (storeKanban.scheduleType == scheduleTypeModel[1].value) &&
+      ( Screen.width > devicesModel.mobile.maxWidth )
+    ) return kanbanDayComponentName;
     return kanbanCardComponentName;
   })
 
@@ -41,8 +45,12 @@ export default function useKanbanColumn(props: any = {}) {
     set: (value) => (storeKanban.isDraggingCard = value),
   });
   const cardHours = computed(() => {
-    return (index, card, cards) => index !== 0
-      && moment(card.scheduleDate).format('HH') === moment(cards[index - 1].scheduleDate).format('HH')
+    return (index, card, cards) =>  {
+      const lastCard = moment(cards[index - 1].scheduleDate).format('HH')
+      const selectedCard = moment(card.scheduleDate).format('HH')
+
+      return index !== 0 && selectedCard === lastCard
+    }
   })
 
   async function showKanbanDay(){
@@ -54,9 +62,9 @@ export default function useKanbanColumn(props: any = {}) {
       storeFilters.selectedDate = date.value.format('YYYY/MM/DD');
       storeFilters.scheduleType = scheduleTypeModel[1].value;
       storeKanban.scheduleType = storeFilters.scheduleType;
-      await buildKanbanStructure;
+      await buildKanbanStructure();
       props.column.loading = false;
-      setUrlParams(proxy);
+      setUrlParams();
     }
   }
 
@@ -72,6 +80,10 @@ export default function useKanbanColumn(props: any = {}) {
       if(props.column.loading || props.column.total === cards.value.length) return;
       isLoading.value = true;
       props.column.page = props.column.page + 1;
+      if(!storeFilters.stationId) {
+        isLoading.value = false;
+        return;
+      }
       const response = await getIndividualWorkOrders(true, props.column.page, date.value);
       cards.value.push(...response.data);
       isLoading.value = false;
@@ -86,7 +98,7 @@ export default function useKanbanColumn(props: any = {}) {
       const endDate = date.endOf('day');
       const filterTime = storeFilters.filterTime;
       const params = {
-        field: "schedule_date",
+        field: 'schedule_date_local',
         type: "customRange",
         from: startDate.set({ hour: filterTime[0], minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss'),
         to: endDate.set({ hour: filterTime[1], minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm:ss')
@@ -120,7 +132,7 @@ export default function useKanbanColumn(props: any = {}) {
       } else {
         item.isDrag = false
       }
-      
+
     })
   }
   async function changeDate(event) {
@@ -131,14 +143,18 @@ export default function useKanbanColumn(props: any = {}) {
     if(!column) return;
     try {
       column.loading = true;
-      const card = column.cards.find(item => item.id == event.item.id);
+      const card = column.cards.find(item => String(item.id) === String(event.item.id));
       if(!card) return;
       const attributes = updateTransportScheduleChanges(card, event);
       column.cards = [];
       await updateWorkOrder(event.item.id, attributes);
       column.page = 1;
-      const response = await getIndividualWorkOrders(true, column.page,  moment(event.to.id));
-      const previousColumn:any = storeKanban.columns.find((element) => element.date.format('YYYY-MM-DD') == event.from.id)      
+      const response = await getIndividualWorkOrders(
+        true,
+        column.page,
+        moment(event.to.id)
+      );
+      const previousColumn:any = storeKanban.columns.find((element) => element.date.format('YYYY-MM-DD') == event.from.id)
       await updateColumnStatistics( previousColumn.date, previousColumn)
       await updateColumnStatistics( column.date, column)
       column.cards = response.data;
@@ -149,23 +165,24 @@ export default function useKanbanColumn(props: any = {}) {
     }
   }
   function updateTransportScheduleChanges(card, event) {
-    let arrival: any = moment(card.inboundScheduledArrival);
-    let departure: any = moment(card.outboundScheduledDeparture);
-    const sheduleDateColumn = moment(event.to.id);
+    const DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss'
+    let arrival: any = moment(card.inboundScheduledArrival, DATE_FORMAT);
+    let departure: any = moment(card.outboundScheduledDeparture, DATE_FORMAT);
+    const sheduleDateColumn = moment(event.to.id, 'YYYY-MM-DD');
     const isbound = validateOperationType(card.operationTypeId);
     if(isbound.inbound && !isbound.outbound) {
-      arrival = `${sheduleDateColumn.format('MM/DD/YYYY')} ${arrival.format('HH:MM')}`;
+      arrival = `${sheduleDateColumn.format('MM/DD/YYYY')} ${arrival.format('HH:mm')}`;
       departure = null;
     }
     if(!isbound.inbound && isbound.outbound) {
       arrival = null;
-      departure = `${sheduleDateColumn.format('MM/DD/YYYY')} ${departure.format('HH:MM')}`;
+      departure = `${sheduleDateColumn.format('MM/DD/YYYY')} ${departure.format('HH:mm')}`;
     }
     if(isbound.inbound && isbound.outbound) {
-      const daysDifference = sheduleDateColumn.diff(arrival.format('MM/DD/YYYY'), 'days');
+      const daysDifference = sheduleDateColumn.diff(arrival, 'days');
       departure.add(daysDifference, 'days');
-      arrival = `${sheduleDateColumn.format('MM/DD/YYYY')} ${arrival.format('HH:MM')}`;
-      departure = departure.format('MM/DD/YYYY HH:MM');
+      arrival = `${sheduleDateColumn.format('MM/DD/YYYY')} ${arrival.format('HH:mm')}`;
+      departure = departure.format('MM/DD/YYYY HH:mm');
     }
     return {
       id: event.item.id,
@@ -175,14 +192,14 @@ export default function useKanbanColumn(props: any = {}) {
   }
   onMounted(() => {
     const observerOptions = {
-      root: document.querySelector(`.cardCtn-${date.value}`),
+      root: refKanbanColumn.value,
     };
-    const target: any = document.querySelector(`.trigger-${date.value}`);
+    const target: any = refTrigger.value;
     const observer = new IntersectionObserver(
       observerCallback,
       observerOptions
     );
-    observer.observe(target);
+    if (target) observer.observe(target);
   })
   return {
     selectedDate,
@@ -198,6 +215,9 @@ export default function useKanbanColumn(props: any = {}) {
     isBlank,
     isWeekAgenda,
     showKanbanDay,
-    cardComponentName
+    cardComponentName,
+    refKanbanColumn,
+    refTrigger,
+    moment
   }
 }

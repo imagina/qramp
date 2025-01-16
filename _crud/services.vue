@@ -19,7 +19,6 @@ export default {
               label: this.$tr('isite.cms.form.id'),
               field: 'id',
               style: 'width: 50px',
-              action: (item) => false
             },
             {
               name: 'name',
@@ -34,9 +33,23 @@ export default {
               align: 'left',
             },
             {
-              name: 'status', 
-              label: this.$tr('isite.cms.form.status'), 
-              field: 'status', 
+              name: 'helpText',
+              label: 'Help text',
+              field: 'helpText',
+              format: val => val ? val : '-',
+              align: 'left',
+            },
+            {
+              name: 'status',
+              label: this.$tr('isite.cms.form.status'),
+              field: 'status',
+              align: 'left'
+            },
+            {
+              name: 'type',
+              label: 'Type',
+              field: 'type',
+              format: val => (val == 1) ? 'Full Date' : ((val == 2) ?'Delay with Headcounts' : '-'),
               align: 'left'
             },
             {
@@ -60,10 +73,10 @@ export default {
               align: "left",
               format: (val) => (val ? this.$trd(val) : "-"),
             },
-            { 
-              name: 'actions', 
-              label: this.$tr('isite.cms.form.actions'), 
-              align: 'left' 
+            {
+              name: 'actions',
+              label: this.$tr('isite.cms.form.actions'),
+              align: 'left'
             },
           ],
           requestParams: {
@@ -71,8 +84,8 @@ export default {
           },
         },
         create: false,
-        update: { 
-          title: 'Update Workday Service',
+        update: {
+          title: 'Update Sales Line Items',
           requestParams: {
             include:"categories,attributes"
           }
@@ -81,13 +94,20 @@ export default {
         formLeft: {
           id: {
             value: ''
-          }, 
+          },
           name: {
             value: "",
             type: "input",
             props: {
               label: 'Product Name',
               readonly: true,
+            },
+          },
+          helpText: {
+            value: "",
+            type: "input",
+            props: {
+              label: 'Help text',
             },
           },
           status: {
@@ -98,17 +118,26 @@ export default {
               label: 'Status',
               options:[
                 {
-                  label: this.$tr('isite.cms.label.enabled'), 
+                  label: this.$tr('isite.cms.label.enabled'),
                   value: true
                 },
                 {
-                  label: this.$tr('isite.cms.label.disabled'), 
+                  label: this.$tr('isite.cms.label.disabled'),
                   value: false
                 }
               ],
               color: "primary"
             },
 
+          },
+          sortOrder: {
+            value: null,
+            type: "input",
+            props: {
+              label: 'Sort order',
+              type: "number",
+              mask: "###################",
+            },
           },
           categories: {
             value: null,
@@ -124,7 +153,7 @@ export default {
               },
               config: {
                 options: {
-                  label: 'name', 
+                  label: 'name',
                   value: 'id',
                 }
               },
@@ -138,15 +167,91 @@ export default {
               multiple: true,
               useChips: true,
               clearable: true,
-              label: 'Types',
+              label: 'Fields',
               sortValueBy: 'ORDER_SELECTED'
             },
             loadOptions: {
               apiRoute: 'apiRoutes.qramp.attributes',
               select: {
-                label: 'name', 
+                label: 'name',
                 id: 'id'
               },
+            }
+          },
+          type: {
+            value: null,
+            type: "select",
+            props: {
+              label: 'Type (AGIONE)',
+              clearable: true,
+              options:[
+                {label: 'Full Date', value: 1},
+                {label: 'Delay with Headcounts', value: 2},
+                {label: 'Price with Quantity', value: 3},
+                {label: 'Employees + Range', value: 4}
+              ]
+            },
+          },
+          multiCategoryFields: {
+            value: [],
+            type : 'multiplier',
+            props: {
+              label: 'Multi Category Fields',
+              fields : {
+                categories: {
+                  value: null,
+                  type: 'crud',
+                  props: {
+                    crudType: 'select',
+                    crudData: import('./categories.vue'),
+                    crudProps: {
+                      multiple: true,
+                      useChips: true,
+                      clearable: true,
+                      label: this.$trp('isite.cms.form.category'),
+                    },
+                    config: {
+                      options: {
+                        label: 'name',
+                        value: 'id',
+                      }
+                    },
+                  },
+                },
+                attributes: {
+                  value: null,
+                  type: 'treeSelect',
+                  isFakeField: true,
+                  props: {
+                    multiple: true,
+                    useChips: true,
+                    clearable: true,
+                    label: 'Fields',
+                    sortValueBy: 'ORDER_SELECTED'
+                  },
+                  loadOptions: {
+                    apiRoute: 'apiRoutes.qramp.attributes',
+                    select: {
+                      label: 'name',
+                      id: 'id'
+                    },
+                  }
+                },
+                type: {
+                  value: null,
+                  type: "select",
+                  props: {
+                    label: 'Type (AGIONE)',
+                    clearable: true,
+                    options:[
+                      {label: 'Full Date', value: 1},
+                      {label: 'Delay with Headcounts', value: 2},
+                      {label: 'Price with Quantity', value: 3},
+                      {label: 'Employees + Range', value: 4}
+                    ]
+                  },
+                },
+              }
             }
           },
         },

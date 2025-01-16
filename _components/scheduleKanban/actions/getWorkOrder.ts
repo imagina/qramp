@@ -1,36 +1,32 @@
-import Vue from 'vue';
 import {WorkOrders} from '../contracts/getWorkOrder.contract'
 import filtersStore from '../store/filters.store'
-import qRampStore from 'src/modules/qramp/_store/qRampStore';
-import { BUSINESS_UNIT_PASSENGER, BUSINESS_UNIT_RAMP } from '../../model/constants';
 import dataReturnedWorkOrder from '../models/dataReturnedWorkOrder.model'
 import getWorkOrderOffline from './getWorkOrderOffline';
 import store from '../store/kanban.store';
+import crud from 'src/modules/qcrud/_services/baseService'
 
 export default async function getWorkOrders(refresh = false, page = 1, date): Promise<WorkOrders> {
     try {
-        const isPassenger = qRampStore().getIsPassenger();
-        const businessUnitId = isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
-        
+        let searchData: any = store.search ? { search: store.search } : {};
         const params = {
             refresh,
             params: {
-                take: 10,
+                take: 15,
                 page,
                 filter: {
-                    businessUnitId,
                     ...filtersStore.payload,
-                    date,
                     withoutDefaultInclude: true,
+                    date,
                     order: {
-                        field: "schedule_date",
+                        field: "schedule_date_local",
                         way: "asc",
                     },
+                    ...searchData,
                 },
             },
         };
         if (!store.isAppOffline) {
-            return Vue.prototype.$crud.index(
+            return crud.index(
                 "apiRoutes.qramp.workOrders",
                 params,
             );

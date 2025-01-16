@@ -8,68 +8,62 @@
         @validateBound="addmanually"
     />
     <q-form
-        ref="formSimpleWorkOrders"
-        id="simpleWordOrder"
-        class="
-        tw-px-8
-        tw-pt-8
-        tw-pb-10
-        tw-my-4
-        tw-mx-8
-        tw-mb-32
-        tw-border
-        tw-border-gray-200
+      ref="formSimpleWorkOrders"
+      id="simpleWordOrder"
+      class="
+        tw-p-5
+        tw-mb-20
         tw-rounded-lg
       "
     >
       <div
-          class="col-12 col-md-6"
-          v-for="(field, keyField) in fields.form"
-          :key="keyField"
+        class="col-12 col-md-6"
+        v-for="(field, keyField) in fields.form"
+        :key="keyField"
       >
         <div v-if="keyField == 'customerId'">
           <dynamic-field
-              v-if="bannerMessage"
-              class="q-mb-md"
-              :field="fields.banner"
+            v-if="bannerMessage"
+            class="q-mb-md"
+            :field="fields.banner"
           />
           <dynamic-field
-              :field="field"
-              v-model="selectCustomerComputed"
-              @input="setCustomerForm(keyField)"
-              @filter="setCustomerName"
-              ref="customerId"
+            :field="field"
+            v-model="selectCustomerComputed"
+            @update:modelValue="setCustomerForm(keyField)"
+            @filter="setCustomerName"
+            ref="customerId"
           >
-            <div slot="before-options">
+            <template #before-options>
               <div class="q-py-md q-px-md" @click="addCustumers">
                 <div class="row cursor-pointer">
                   <div class="q-pr-md">
                     <q-btn
-                        push
-                        color="primary"
-                        round
-                        icon="fas fa-plus"
-                        size="xs"
+                      push
+                      color="primary"
+                      round
+                      icon="fas fa-plus"
+                      size="xs"
                     />
                   </div>
                   <div class="q-py-xs">
                     <label class="cursor-pointer">{{
-                        $tr("ifly.cms.label.createNewCustomer")
+                        $tr('ifly.cms.label.createNewCustomer')
                       }}</label>
                   </div>
                 </div>
               </div>
-            </div>
+            </template>
           </dynamic-field>
         </div>
         <div v-else>
           <dynamic-field
-              :key="keyField"
-              :id="keyField"
-              :field="field"
-              v-model="form[keyField]"
-              @enter="search(field)"
-              @input="zanetizeData(keyField)"
+            :key="keyField"
+            :id="keyField"
+            :field="field"
+            v-model="form[keyField]"
+            @enter="search(field)"
+            @update:modelValue="zanetizeData(keyField)"
           />
         </div>
       </div>
@@ -77,24 +71,21 @@
   </div>
 </template>
 <script>
-import qRampStore from "../_store/qRampStore.js";
-import tableFlight from "../_components/modal/tableFlight.vue";
-import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js'
+import qRampStore from '../_store/qRampStore.js';
+import tableFlight from '../_components/modal/tableFlight.vue';
+import fieldsSimpleWorkOrders from './model/fieldsSimpleWorkOrders.js';
 import {
-  BUSINESS_UNIT_PASSENGER, 
-  BUSINESS_UNIT_RAMP, 
+  BUSINESS_UNIT_PASSENGER,
+  BUSINESS_UNIT_RAMP,
   STATUS_DRAFT,
-  COMPANY_PASSENGER,
-  COMPANY_RAMP,
-  modelWorkOrder
+  modelWorkOrder,
 } from './model/constants.js';
-import cacheOffline from '@imagina/qsite/_plugins/cacheOffline.js';
-import workOrderList from '../_store/actions/workOrderList.ts'
-
+import { cacheOffline } from 'src/plugins/utils';
+import workOrderList from '../_store/actions/workOrderList.ts';
 
 export default {
   components: {
-    tableFlight,
+    tableFlight
   },
   data() {
     return {
@@ -111,7 +102,7 @@ export default {
         statusId: STATUS_DRAFT
       },
       bannerMessage: null,
-      selectCustomers: "",
+      selectCustomers: '',
       customerName: null,
       loadingState: false,
       dataTable: [],
@@ -123,7 +114,8 @@ export default {
   mixins: [
     fieldsSimpleWorkOrders
   ],
-  inject: ["showWorkOrder", "closeModal"],
+  inject: ['showWorkOrder', 'closeModal'],
+  emits: ['loading', 'isError', 'refreshData'],
   computed: {
     isAppOffline() {
       return this.$store.state.qofflineMaster.isAppOffline;
@@ -134,7 +126,7 @@ export default {
       },
       set(value) {
         this.selectCustomers = value;
-      },
+      }
     },
     disabledReadonly() {
       return qRampStore().disabledReadonly();
@@ -146,7 +138,7 @@ export default {
       return this.isPassenger ? BUSINESS_UNIT_PASSENGER : BUSINESS_UNIT_RAMP;
     },
     filterCompany() {
-      return this.isPassenger ? COMPANY_PASSENGER : COMPANY_RAMP;
+      return qRampStore().getFilterCompany();
     },
   },
   methods: {
@@ -156,33 +148,33 @@ export default {
       }
     },
     addCustumers() {
-      if (this.customerName !== "") {
+      if (this.customerName !== '') {
         const id = `customer-${qRampStore().numberInRange(8000, 1000)}`;
-        this.newCustumerAdHoc = [{id, label: this.customerName}];
+        this.newCustumerAdHoc = [{ id, label: this.customerName }];
         this.form.adHoc = true;
         this.form.customCustomer = true;
-        this.bannerMessage = this.$tr("ifly.cms.message.requestNewCustomer");
+        this.bannerMessage = this.$tr('ifly.cms.message.requestNewCustomer');
         this.selectCustomerComputed = {
           id,
           value: this.customerName,
-          label: this.customerName,
+          label: this.customerName
         };
         this.form.customCustomerName = this.customerName;
         this.form.customerId = null;
         this.form.contractId = null;
-        this.customerName = "";
+        this.customerName = '';
         return;
       }
       this.$alert.error({
-        message: this.$tr("ifly.cms.message.orderaddNewrecord"),
+        message: this.$tr('ifly.cms.message.orderaddNewrecord')
       });
     },
     setCustomerForm(key) {
-      if (key !== "customerId") return;
+      if (key !== 'customerId') return;
       const selectCustomers =
-        this.selectCustomers === null || 
+        this.selectCustomers === null ||
         this.selectCustomers === undefined ||
-        this.selectCustomers === "" ? {} : this.selectCustomers;
+        this.selectCustomers === '' ? {} : this.selectCustomers;
       this.form.customerId = selectCustomers.id || null;
       const customCustomerName = selectCustomers.label || null;
       this.form.customCustomerName = this.form.customerId
@@ -190,15 +182,15 @@ export default {
         : customCustomerName;
       this.form.contractId = selectCustomers.contractId || null;
       const message = this.form.contractId
-        ? `${this.$tr("ifly.cms.message.selectedCustomerWithContract")}`
-        : this.$tr("ifly.cms.message.selectedCustomerWithoutContract");
+        ? `${this.$tr('ifly.cms.message.selectedCustomerWithContract')}`
+        : this.$tr('ifly.cms.message.selectedCustomerWithoutContract');
       this.bannerMessage =
         selectCustomers && !this.form.contractId ? message : null;
       this.form.adHoc = this.form.contractId ? false : true;
       this.form.customCustomer = this.form.contractId ? false : true;
     },
     setCustomerName(query) {
-      this.customerName = query || "";
+      this.customerName = query || '';
     },
     saveSimpleWorkOrder() {
       this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
@@ -214,10 +206,7 @@ export default {
           }
 
         } else {
-          this.$alert.error({
-            message: this.$tr("isite.cms.message.formInvalid"),
-          });
-          this.$emit("isError", true);
+          this.triggerErrorEvent()
         }
       });
     },
@@ -243,9 +232,9 @@ export default {
     },
     async orderConfirmationMessage() {
       this.$emit('loading', true);
-      let response = await this.saveRequestSimpleWorkOrder();
+      const response = await this.saveRequestSimpleWorkOrder();
       await this.$alert.info({
-        mode: "modal",
+        mode: 'modal',
         title: '',
         message: 'What do you want to do?',
         modalWidth: '600px',
@@ -254,58 +243,66 @@ export default {
             label: 'Go out to the list',
             color: 'grey-6',
             handler: async () => {
+              await this.$emit('refreshData');
               await this.closeModal();
             }
           },
 
           {
             label: 'Continue editing',
-            color: "light-blue-7",
+            color: 'light-blue-7',
             handler: async () => {
-              await this.showWorkOrder(response.data);
+              try {
+                this.$emit('refreshData');
+                await this.showWorkOrder(response.data)
+              } catch (err) {
+                console.error(err);
+              }
               this.acceptSchedule = false;
-              this.$root.$emit('crud.data.refresh');
-            },
+            }
           },
           {
             label: 'Create a new one',
             color: 'positive',
             handler: () => {
               this.resetForm();
+              this.$emit('refreshData');
             }
-          },
-        ],
+          }
+        ]
       });
       this.$emit('loading', false);
     },
-    search({type}) {
-      if(!this.isAppOffline) {
+    search({ type }) {
+      if (!this.isAppOffline) {
         if (
             type != "search" &&
             (this.form.preFlightNumber !== "" || this.form.preFlightNumber !== null)
-        )
-          return;
+        ) return;
+
+        if (!this.form.preFlightNumber) return;
+
         const params = {
           refresh: true,
           params: {
-            filter: {search: this.form?.preFlightNumber?.toUpperCase()},
-          },
+            filter: { search: this.form?.preFlightNumber?.toUpperCase() }
+          }
         };
         this.loadingState = true;
         //Request
         this.$crud
-            .index("apiRoutes.qfly.flightaware", params)
-            .then((response) => {
-              this.responseStatus(response);
-            })
-            .catch((error) => {
-              this.loadingState = false;
-              this.$alert.error({message: this.$tr("ifly.cms.message.errorlookingForFlight")})
-              console.log(error);
-            });
+          .index('apiRoutes.qfly.flightaware', params)
+          .then((response) => {
+            this.responseStatus(response);
+          })
+          .catch((error) => {
+            this.loadingState = false;
+            this.$alert.error({ message: this.$tr('ifly.cms.message.errorlookingForFlight') });
+            console.log(error);
+          });
       }
     },
-    setDataTable({select, dialog}) {
+    setDataTable({ select, dialog }) {
       this.form.faFlightId = select.faFlightId || null;
       this.dialog = dialog;
       this.acceptSchedule = false;
@@ -314,48 +311,52 @@ export default {
       this.form.faFlightId = null;
       this.dialog = false;
       this.acceptSchedule = true;
-      ;
     },
     async saveRequestSimpleWorkOrder() {
       try {
-        const CACHE_PATH = 'apiRoutes.qramp.workOrders'
-        const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders'
-        let response = null
+        const CACHE_PATH = 'apiRoutes.qramp.workOrders';
+        const API_ROUTE = 'apiRoutes.qramp.simpleWorkOrders';
+        let response = null;
 
         qRampStore().showLoading();
-        const businessUnitId = this.isPassenger ? { businessUnitId : BUSINESS_UNIT_PASSENGER } : {};
+        let businessUnitId = qRampStore().getBusinessUnitId();
+        businessUnitId =  businessUnitId !== 'null' ? {businessUnitId} : {};
         const offlineId = new Date().valueOf()
 
         const dataForm = {
-          ...this.form, 
-          offlineId: this.isAppOffline ? offlineId : null, 
+          ...this.form,
+          offlineId: this.isAppOffline ? offlineId : null,
           titleOffline: qRampStore().getTitleOffline(),
           ...businessUnitId,
+          type: qRampStore().getTypeWorkOrder(),
+          ...(this.isAppOffline ? { apiRoute: CACHE_PATH, } : {})
         };
         try {
           response = await this.$crud.create(
             API_ROUTE,
-            dataForm,
-          )
+            dataForm
+          );
         } catch (err) {
-          console.log(err)
+          console.log(err);
         }
 
         const offlineWorkOrder = {
           ...modelWorkOrder,
+          businessUnitId,
           adHoc: this.form.adHoc,
           stationId: Number(this.form.stationId),
           customerId: Number(this.form.customerId),
           inboundFlightNumber: this.form.preFlightNumber,
           outboundFlightNumber: this.form.preFlightNumber,
           offline: this.isAppOffline,
-          id: this.isAppOffline ? offlineId : await response?.data?.id
+          id: this.isAppOffline ? offlineId : await response?.data?.id,
+          type: qRampStore().getTypeWorkOrder(),
         };
         await cacheOffline.addNewRecord(CACHE_PATH, offlineWorkOrder);
 
-        if(!this.isAppOffline) workOrderList().getWorkOrders(true, true)
+        if (!this.isAppOffline) workOrderList().getWorkOrderConditionally(true, true);
         qRampStore().hideLoading();
-        
+
         return this.isAppOffline ? { data: { ...offlineWorkOrder } } : response;
       } catch (error) {
         qRampStore().hideLoading();
@@ -383,6 +384,13 @@ export default {
               handler: () => {
                 this.acceptSchedule = true;
                 this.form.faFlightId = null;
+                this.$refs.formSimpleWorkOrders.validate().then(async (success) => {
+                  if (success) {
+                    this.orderConfirmationMessage()
+                  } else {
+                    this.triggerErrorEvent()
+                  }
+                });
               },
             },
           ],
@@ -400,11 +408,11 @@ export default {
         customCustomerName: null,
         customCustomer: null,
         faFlightId: null,
-        statusId: STATUS_DRAFT,
-      }
+        statusId: STATUS_DRAFT
+      };
       this.newCustumerAdHoc = [];
       this.bannerMessage = null;
-      this.selectCustomers = "";
+      this.selectCustomers = '';
       this.customerName = null;
       this.loadingState = false;
       this.dataTable = [];
@@ -412,7 +420,13 @@ export default {
       this.loading = false;
       this.acceptSchedule = false;
       this.$refs.formSimpleWorkOrders.reset();
+    },
+    triggerErrorEvent() {
+      this.$alert.error({
+        message: this.$tr('isite.cms.message.formInvalid')
+      });
+      this.$emit('isError', true);
     }
-  },
+  }
 };
 </script>

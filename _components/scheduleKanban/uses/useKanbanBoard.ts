@@ -1,31 +1,44 @@
-import Vue, {
+import {
   ref,
   computed,
   provide,
-  getCurrentInstance,
   watch,
   onMounted,
+  onUnmounted,
 } from "vue";
 import storeKanban from "../store/kanban.store";
 import storeFilter from "../store/filters.store";
 import modelHoursFilter from "../models/hoursFilter.model";
 import qRampStore from "./../../../_store/qRampStore.js";
-import _ from "lodash";
 import buildKanbanStructure from "../actions/buildKanbanStructure";
 import individualRefreshByColumns from "../actions/individualRefreshByColumns";
 import checkUrlParams from "../actions/checkUrlParams";
 import setUrlParams from "../actions/setUrlParams";
 import getTitleFilter from "../actions/getTitleFilter";
-import cache from "@imagina/qsite/_plugins/cache";
-import workOrderList from "src/modules/qramp/_store/actions/workOrderList";
+import workOrderList from "modules/qramp/_store/actions/workOrderList";
 import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
+import { store, i18n, helper, cache, router } from 'src/plugins/utils'
+import { useQuasar } from 'quasar';
+import {BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR, CARGO_PAX, BUSINESS_UNIT_CARGO} from '../../model/constants.js';
+import kanbanStore from "../store/kanban.store";
 
 export default function useKanbanBoard(props) {
-  const proxy = (getCurrentInstance() as any).proxy as any;
+  const { hasAccess } = store
+  const $q = useQuasar()
+  const refPageActions: any = ref(null);
+  const loadingMain = ref(true);
   const refFormOrders = ref(null);
-  const isAppOffline = computed(() => proxy.$store.state.qofflineMaster.isAppOffline)
+  const refModalNonFlight = ref(null);
+  const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
+  const search = computed({
+    get: () => storeKanban.search,
+    set: (value) => {
+      storeKanban.search = value;
+    }
+  })
   provide("refFormOrders", refFormOrders);
+  provide("refModalNonFlight", refModalNonFlight);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
   const isDraggingCard = computed(() => storeKanban.isDraggingCard);
   const fullscreen = ref(false);
@@ -39,10 +52,10 @@ export default function useKanbanBoard(props) {
       options: modelHoursFilter,
     },
   });
-
-  const title = computed(() => isPassenger.value ? 'Passenger Schedule' : 'Ramp Schedule')
+  const isSecurity = computed(() => qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY);
+  const title = computed(() => kanbanStore.title);
   const selectedDate = computed(() => storeFilter.selectedDate);
-
+  const showModalStation = computed(() => storeFilter.showModalStation);
   const scheduleType = computed({
     get: () => storeKanban.scheduleType,
     set: (value) => (storeKanban.scheduleType = value),
@@ -58,70 +71,78 @@ export default function useKanbanBoard(props) {
   const scheduleTypeOptions = ref([
     {
       id: 2,
-      label: Vue.prototype.$tr("isite.cms.label.week"),
+      label: i18n.tr("isite.cms.label.week"),
       value: "week-agenda",
       icon: "fas fa-calendar-week",
     },
     {
       id: 3,
-      label: `${Vue.prototype.$tr("isite.cms.label.day")}`,
+      label: `${i18n.tr("isite.cms.label.day")}`,
       value: "day-agenda",
       icon: "fas fa-calendar-day",
     },
   ]);
   const extraPageActions = computed(() => {
     let extraActions: any = [
+      'search',
       {
         label: "Copy Tiny URL",
         props: {
           icon: "fa-light fa-copy",
         },
         action: () => {
-          const routeName = isPassenger.value ? "passenger" : "ramp";
-          let hrefSplit = window.location.href.split("?");
+          const { routeName, hrefSplit } = determineRouteAndSplitHref()
+
           let tinyUrl =
-            proxy.$store.state.qsiteApp.originURL +
+            store.state.qsiteApp.originURL +
             `/#/${routeName}/schedule/public/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
-          Vue.prototype.$helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
+          helper.copyToClipboard(tinyUrl, "Tiny URL copied!");
         },
       },
       {
-        label: Vue.prototype.$tr("isite.cms.configList.fullScreen", {
+        label: i18n.tr("isite.cms.configList.fullScreen", {
           capitalize: true,
         }),
         props: {
-          icon: fullscreen.value ? "fullscreen_exit" : "fullscreen",
+          icon: fullscreen.value ? "fa-light fa-compress" : "fa-light fa-expand",
         },
         action: () => {
           fullscreen.value = !fullscreen.value;
-          proxy.$q.fullscreen.toggle();
+          $q.fullscreen.toggle();
         },
       },
       {
         label: "Scheduler",
-        vIf:
-          Vue.prototype.$auth.hasAccess("ramp.schedulers.manage"),
+        vIf: hasAccess("ramp.schedulers.manage"),
         props: {
           label: "Scheduler",
-          icon: "fa-duotone fa-calendar-plus",
+          icon: "fa-light fa-calendar-plus",
         },
         action: () => {
-          const routeName = isPassenger.value ? "passenger" : "ramp";
-          let hrefSplit = window.location.href.split("?");
+          const { routeName, hrefSplit } = determineRouteAndSplitHref()
+          let routeNameLocal = routeName
+
+          if (qRampStore().getBusinessUnitId() ===  BUSINESS_UNIT_SECURITY) {
+            routeNameLocal = "security";
+          }
+
+          if(qRampStore().getBusinessUnitId() ===  BUSINESS_UNIT_CARGO && qRampStore().getTypeWorkOrder() === CARGO_PAX) {
+            routeNameLocal = "cargo";
+          }
           let tinyUrl =
-            proxy.$store.state.qsiteApp.originURL +
-            `/#/${routeName}/schedule/index`;
+            store.state.qsiteApp.originURL +
+            `/#/${routeNameLocal}/schedule/index`;
           if (hrefSplit[1]) tinyUrl = tinyUrl + "?" + hrefSplit[1];
           localStorage.setItem("urlSchedule", tinyUrl);
-          proxy.$router.push({ name: "qramp.admin.scheduler" });
+          router.push({ name: "qramp.admin.scheduler" });
         },
       },
       {
-        label: Vue.prototype.$tr("isite.cms.label.filter"),
-        vIf: true,
+        label: i18n.tr("isite.cms.label.filter"),
+        vIf: !isAppOffline.value,
         props: {
-          icon: "fa-duotone fa-filter",
+          icon: "fa-light fa-filter",
           id: "filter-button-crud",
         },
         action: () => {
@@ -134,28 +155,28 @@ export default function useKanbanBoard(props) {
   });
 
   const init = async () => {
-    eventsKanban(proxy).cardRefresh();
-    await checkUrlParams(proxy);
+    eventsKanban().cardRefresh();
+    await checkUrlParams();
     storeKanban.scheduleType = storeFilter.scheduleType;
-    storeKanban.isAppOffline = proxy.$store.state.qofflineMaster.isAppOffline
+    storeKanban.isAppOffline = store.state.qofflineMaster.isAppOffline
     getTitleFilter();
-    await setUrlParams(proxy);
+    await setUrlParams();
     await buildKanbanStructure();
   };
   async function setStations() {
-    const params = { ...proxy.$route.query };
+    const params = { ...router.route.query };
     const localStationId =
       (await cache.get.item("stationId")) !== "null"
         ? await cache.get.item("stationId")
         : null;
     storeFilter.stationId =
-      getStationAssigned(proxy.$store.state.quserAuth.userData) ||
+      getStationAssigned(store.state.quserAuth.userData) ||
       params.stationId ||
       localStationId ||
       null;
     storeFilter.form.stationId = storeFilter.stationId;
 
-    const station = await workOrderList()
+    const station = workOrderList()
       .getStationList()
       .find((item) => {
         return validateMatchCompanyStation(item)
@@ -186,26 +207,46 @@ export default function useKanbanBoard(props) {
       console.log(error);
     }
   }
+  async function changeSearch(searchData = null) {
+    search.value = searchData;
+    await buildKanbanStructure(true);
+  }
+
+  function determineRouteAndSplitHref() {
+    let routeName = isPassenger.value ? "passenger" : "ramp";
+    if(qRampStore().getBusinessUnitId() === BUSINESS_UNIT_LABOR) {
+      routeName = "labor";
+    }
+    let hrefSplit = window.location.href.split("?");
+
+    return { routeName, hrefSplit }
+  }
+
   onMounted(async() => {
     await setStations()
     await init()
+    loadingMain.value = false;
   });
   watch(
-    () => proxy.$route,
+    () => router.route,
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
-      
-      if(storeFilter.stationId === null) {
-        storeFilter.showModalStation = true;
-      }
 
       if (newPath !== oldPath) {
+        storeFilter.stationId = null;
         await setStations()
+        workOrderList().setStationList([]);
+        refPageActions.value.search = null;
+        storeKanban.search = null;
+      }
+      if(storeFilter.stationId === null) {
+        storeFilter.showModalStation = true;
+        return;
       }
 
       if (!storeKanban.loading) {
-        init();
+        await init();
       }
     },
     { deep: true }
@@ -214,6 +255,10 @@ export default function useKanbanBoard(props) {
     storeKanban.isAppOffline = newValue;
     await setStations()
     await init()
+  })
+  onUnmounted(() => {
+    storeKanban.columns = [];
+    storeFilter.showModalStation = false;
   })
   return {
     selectedDate,
@@ -227,8 +272,16 @@ export default function useKanbanBoard(props) {
     isDraggingCard,
     buildKanbanStructure,
     refFormOrders,
+    refModalNonFlight,
     individualRefreshByColumns,
     title,
-    isAppOffline
+    isAppOffline,
+    storeFilter,
+    loadingMain,
+    search,
+    changeSearch,
+    refPageActions,
+    isSecurity,
+    showModalStation
   };
 }

@@ -1,18 +1,20 @@
-import Vue, { reactive, computed } from 'vue';
+import { reactive, computed } from 'vue';
 import modelHoursFilter from '../models/hoursFilter.model'
 import scheduleTypeModel from '../models/scheduleType.model';
 import filterModel from '../models/filters.model'
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { State } from '../contracts/filtersStore.contract';
-import getCurrentTime from '../actions/getCurrentTime';
 import storeKanban from '../store/kanban.store';
+import { LABOR, BUSINESS_UNIT_LABOR, FLIGHT } from "src/modules/qramp/_components/model/constants";
+import qRampStore from "src/modules/qramp/_store/qRampStore";
+import { CARGO_PAX, BUSINESS_UNIT_CARGO } from '../../model/constants';
 
 const state = reactive<State>({
     showModal: false,
     titleModal: '',
     filters: filterModel(),
     form: {
-      time: getCurrentTime()
+      time: '0-23'
     },
     loading: false,
     updateModal: false,
@@ -109,7 +111,28 @@ const store = computed(() => ({
       return state.fullDay.split('-');
     },
     get payload(){
-      const filters = {...state.form};
+      const typeWorkOrderFromStore = qRampStore().getTypeWorkOrder();
+      let businessUnitId: any = qRampStore().getBusinessUnitId();
+      businessUnitId = businessUnitId !== 'null' ? {businessUnitId} : {};
+
+      let typeWorkOrder = {};
+      if (businessUnitId === BUSINESS_UNIT_LABOR) {
+        typeWorkOrder = { type: [LABOR] };
+      } else if (qRampStore().getBusinessUnitId() == BUSINESS_UNIT_CARGO && typeWorkOrderFromStore === CARGO_PAX) {
+        typeWorkOrder = { type: [CARGO_PAX] };
+      } else if (qRampStore().getBusinessUnitId() == 'null' && typeWorkOrderFromStore !== CARGO_PAX) {
+        typeWorkOrder = { type: [FLIGHT] };
+      }
+      if(qRampStore().getBusinessUnitId() == BUSINESS_UNIT_CARGO && typeWorkOrderFromStore === CARGO_PAX) {
+        businessUnitId = {};
+      }
+      const stationCompanies = qRampStore().getFilterCompany();
+      const filters = {
+        ...state.form,
+        ...typeWorkOrder,
+        ...businessUnitId,
+        stationCompanies
+      };
       delete filters.time;
       delete filters.scheduleType;
       Object.keys(filters).forEach(

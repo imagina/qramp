@@ -306,6 +306,7 @@ export interface DataWorkOrder {
     defaultInclude: string;
     searchableFields: string;
     fileFormats: null;
+    type: number;
 }
 
 export interface Responsible {
@@ -435,6 +436,9 @@ export interface State {
     airportsList: any[];
     workOrderDelays: WorkOrderDelays[];
     responsibleList: any[];
+    workOrderItems: any[];
+    paxOperationTypeList: any[];
+    contractRulesList: any[]
 }
 
 export interface WorkOrderList {
@@ -447,7 +451,7 @@ export interface WorkOrderList {
     setCustomerList: (data: CustomerContract[]) => void;
     getCustomerList: () => CustomerContract[];
     getCustomer: () => Promise<CustomerContract[] | void>;
-    getAllList: () => Promise<void>;
+    getAllList: (refresh: boolean) => Promise<void>;
     setContractList: (data: Contract[]) => void;
     getContractList: () => Contract[];
     setFlightStatusesList: (data: FlightStatusContract[]) => void;
@@ -460,7 +464,7 @@ export interface WorkOrderList {
     getGates: () => Promise<Gates[] | void>;
     getDataWorkOrderList: () => WorkOrders;
     setDataWorkOrderList: (data: WorkOrders) => void;
-    getWorkOrders: () => Promise<WorkOrders | void>;
+    getWorkOrders: (refresh?: boolean, businessUnit?) => Promise<WorkOrders | void>;
     getCustomerWithContract: () =>  Promise<any[] | void>;
     setCustomerWithContractLists: (data: any) => void;
     getCustomerWithContractLists: () => any;
@@ -474,4 +478,17 @@ export interface WorkOrderList {
     getWorkOrderDelays: () => WorkOrderDelays[];
     setResponsible: (data: any)  => void;
     getResponsible: ()  => any;
+    getACTypes: () => any;
+    getFavourites: (refresh?: boolean) => Promise<any>;
+    getBillingClosedDate: (refresh) => Promise<any>;
+    getWorkOrderSearch: (search: string, refresh?: boolean) => Promise<any>;
+    getFlightawareSearch: (search: string, refresh: boolean) => Promise<any>;
+    getSearchFlightNumber: (search: string, type: "workorder" | "flightaware", refresh: boolean) => Promise<any>;
+    getWorkOrderConditionally: (refresh: boolean) => Promise<any>;
+    getWorkOrdersItemsList: () => any;
+    getPaxOperationTypeList : () => any[]
+    setPaxOperationTypeList : (data: any) => any
+    getPaxOperationType: (refresh: boolean) => any,
+    getContractRulesList : () => any[]
+    setContractRulesList : (data: any) => any
 }

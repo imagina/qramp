@@ -50,10 +50,10 @@ export default {
               align: 'left',
               format: (val) => (val ? this.$trd(val) : '-'),
             },
-            { 
-              name: 'actions', 
-              label: this.$tr('isite.cms.form.actions'), 
-              align: 'left' 
+            {
+              name: 'actions',
+              label: this.$tr('isite.cms.form.actions'),
+              align: 'left'
             },
           ],
         },
@@ -80,34 +80,130 @@ export default {
               rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
               options:[
                 {
-                  label: 'Input', 
+                  label: 'Input',
                   value: 'input'
                 },
                 {
-                  label: 'Select', 
+                  label: 'Select',
                   value: 'select'
                 },
                 {
-                  label: 'Quantity', 
+                  label: 'Quantity',
                   value: 'quantity'
                 },
                 {
-                  label: 'Quantity Float', 
+                  label: 'Quantity Float',
                   value: 'quantityFloat'
                 },
                 {
-                  label: 'Hour', 
+                  label: 'Hour',
                   value: 'hour'
                 },
                 {
-                  label: 'Full Date', 
+                  label: 'Full Date',
                   value: 'fullDate'
+                },
+                {
+                  label: 'Checkbox',
+                  value: 'checkbox'
+                },
+                {
+                  label: 'Multiplier',
+                  value: 'multiplier'
                 },
               ],
               color: "primary"
             },
 
           },
+          multiplierType: {
+            value: null,
+            type: 'select',
+            props: {
+              vIf: this.crudInfo.type === 'multiplier',
+              label: 'Multiplier Type',
+              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
+              options:[
+                {
+                  label: 'Employees Security Hours',
+                  value: 'employeesSecurityHours'
+                },
+              ],
+              color: "primary"
+            },
+          },
+          fields: {
+            value: [],
+            type : 'multiplier',
+            props: {
+              vIf: this.crudInfo.type === 'multiplier',
+              label: 'Type',
+              multiple: true,
+              rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
+              fields : {
+                label: {
+                  type: 'input',
+                  colClass: "col-12",
+                  props: {
+                    label: 'label',
+                  },
+                },
+                type: {
+                  name: 'type',
+                  value: '',
+                  colClass: "col-12",
+                  type: 'select',
+                  props: {
+                    label: 'Type',
+                    rules: [(val) => !!val || this.$tr("isite.cms.message.fieldRequired")],
+                    options:[
+                      {
+                        label: 'Input',
+                        value: 'input'
+                      },
+                      {
+                        label: 'Select',
+                        value: 'select'
+                      },
+                      {
+                        label: 'Quantity',
+                        value: 'quantity'
+                      },
+                      {
+                        label: 'Quantity Float',
+                        value: 'quantityFloat'
+                      },
+                      {
+                        label: 'Hour',
+                        value: 'hour'
+                      },
+                      {
+                        label: 'Full Date',
+                        value: 'fullDate'
+                      },
+                      {
+                        label: 'Checkbox',
+                        value: 'checkbox'
+                      },
+                    ],
+                    color: "primary"
+                  },
+
+                },
+                options: {
+                  type: 'json',
+                  colClass: "col-12",
+                  props: {label: 'options'}
+                }
+              },
+              color: "primary"
+            },
+
+          },
+          options: {
+            type: 'json',
+            props: {label: 'options'}
+          }
         }
       }
     },
@@ -119,5 +215,5 @@ export default {
   methods: {}
 }
 </script>
-<style lang="stylus">
+<style lang="scss">
 </style>

@@ -29,6 +29,7 @@ const state = reactive<State>({
     },
     loading: false,
     updateModal: false,
+    refFormScheduler: null,
 })
 function dateFormatterFull(date: string): string {
     if (!date) return '';
@@ -43,6 +44,12 @@ const store: Store = computed(() => ({
     },
     set showModal(value: boolean) {
         state.showModal = value;
+    },
+    get refFormScheduler() {
+        return state.refFormScheduler;
+    },
+    set refFormScheduler(value: any) {
+        state.refFormScheduler = value;
     },
     get titleModal(): string {
         return state.titleModal;

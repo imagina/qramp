@@ -1,4 +1,4 @@
-import moment, { Moment } from "moment";
+import { Moment } from "moment";
 
 export interface Columns {
   isDrag: boolean;
@@ -9,6 +9,7 @@ export interface Columns {
   total: number;
   completed: number;
   uncompleted: number;
+  title: string | null;
 }
 
 export interface State {
@@ -21,4 +22,6 @@ export interface State {
   isBlank: boolean;
   filterCompany?: number;
   isAppOffline: boolean;
+  search: string | null;
+  title: string | null;
 }
