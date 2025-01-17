@@ -246,7 +246,10 @@ export default function modelFields(): ModelFields {
                           }
                           return true;
                         },
-                        val => qRampStore().validateDateRule(val, store.form.inboundScheduleArrival, operationType.value, 'HH:mm', 'HH:mm')
+                        val => {
+                           if(store.form.depDays && store.form.depDays > 0) return true;
+                           return qRampStore().validateDateRule(val, store.form.inboundScheduleArrival, operationType.value, 'HH:mm', 'HH:mm')
+                        }
                     ],
                     label: `*Outbound Schedule Departure `,
                     clearable: true,
