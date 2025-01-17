@@ -117,6 +117,7 @@ export default function modelFields() {
                 color:"primary"
               },
             },
+            customer: 2,
             stationId: {
               name:'stationId',
               value: store.stationId,
