@@ -14,7 +14,7 @@ export const avatarComponent = (src, name) => {
         ) : (
           `
           <div class="tw-flex tw-items-center tw-justify-center tw-w-7 tw-h-7 tw-bg-gray-100 tw-rounded-full">
-            <i class="fa-regular fa-user-pilot tw-text-lg tw-text-gray-500"></i>
+            <i class="fa-light fa-plane-tail tw-text-lg tw-text-gray-400"></i>
           </div>
           `
         )
