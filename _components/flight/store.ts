@@ -183,7 +183,7 @@ export default function flightStore(): FlightStoreContract {
         state.form.customerName = customerName || customCustomerName;
         state.form.contractId = flight.contractId ? flight.contractId : null;
         state.form.contractName = flight.contract ? flight.contract.contractName : null;
-        state.form.cancellationNoticeTime = flight.cancellationNoticeTime ? flight.cancellationNoticeTime : null;
+        state.form.cancellationNoticeTime = flight.cancellationNoticeTime ?? null;
         state.form.cancellationType = flight.cancellationType ? flight.cancellationType : null;
         state.form.parentId = flight.parentId ? flight.parentId : null;
         state.form.scheduleDate = flight.scheduleDate ? flight.scheduleDate : null;
