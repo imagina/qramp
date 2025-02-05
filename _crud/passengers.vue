@@ -32,6 +32,7 @@ import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/i
 import { cacheOffline } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 import { avatarComponent } from '../common/avatarComponent'
+import { cache } from 'src/plugins/utils';
 
 export default {
   name: 'RampCrud',
@@ -46,7 +47,8 @@ export default {
       crudId: this.$uid(),
       areaId: null,
       loadingBulk: false,
-      refFormOrders: null
+      refFormOrders: null,
+      token: '',
     }
   },
   provide() {
@@ -76,6 +78,7 @@ export default {
   mounted() {
     this.$nextTick(async () => {
       this.refFormOrders = this.$refs.formOrders
+      this.token = await getToken()
     })
   },
   beforeUnmount() {
@@ -117,7 +120,7 @@ export default {
               }
             },
             {
-              label: 'Create Non Flight',
+            label: 'Create Non Flight',
               action: async () => {
                 await this.openCreateMode(NON_FLIGHT)
               }
@@ -125,6 +128,19 @@ export default {
           ]
         },
         read: {
+          help: {
+            title: 'Work Order',
+            description: `
+              In this crud you can manage work Orders (create, update, delete).
+              <a 
+                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/passenger-module/work-orders?token=${this.token}' 
+                target='_blank'
+                class='tw-text-blue-500'>
+                  Go to documentation
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            `,
+          },
           columns: [
             {
               name: 'id',
@@ -452,7 +468,20 @@ export default {
                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
               }),
               action: async (item) => {
-                await this.showWorkOrder(item)
+                const help = {
+                    title: 'Edit Work Order',
+                    description: `
+                      Have questions? Check the 
+                      <a 
+                        href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/passenger-module/work-orders#editing-a-work-order?${this.token}' 
+                        target='_blank'
+                        class='tw-text-blue-500'>
+                          documentation
+                      </a>
+                      for more details on updating Work Orders.
+                    `
+                }
+                await this.showWorkOrder(item, { help })
               }
             },
             {
@@ -728,6 +757,19 @@ export default {
             title: this.$tr('ifly.cms.form.newWorkOrder'),
             update: false,
             width: '34vw',
+            help: {
+              title: 'Create a Work Order',
+              description: `
+                Need help? Check the
+                <a 
+                  href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/passenger-module/work-orders#creating-a-work-order?token=${this.token}' 
+                  target='_blank'
+                  class='tw-text-blue-500'>
+                    documentation
+                </a>
+                for more information on creating Work Orders.
+              `
+            },
           }
         })
       }
@@ -755,6 +797,14 @@ export default {
           </span>`
         : ''
     },
+    async getToken() {
+      try {
+        const sessionData = await cache.get.item('sessionData')
+        return sessionData.userToken.split(' ')[1]
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>
