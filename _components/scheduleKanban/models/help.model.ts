@@ -18,7 +18,7 @@ const getToken = async () => {
     }
 }
 
-const route = {
+const routes = {
     [BUSINESS_UNIT_RAMP]: 'ramp-module',
     [BUSINESS_UNIT_PASSENGER]: 'passenger-module',
     [BUSINESS_UNIT_SECURITY]: 'security-module',
@@ -27,14 +27,14 @@ const route = {
 const token = await getToken()
 
 export const help = () => {
-    const trash = route[qRampStore().getBusinessUnitId() || 0]
+    const path = routes[qRampStore().getBusinessUnitId() || 0]
 
     const schedule = computed(() => ({
         title: 'Schedule',
         description: `
             Need help? Check the
             <a 
-                href='${BASE_URL}/${trash}/schedule?token=${token}' 
+                href='${BASE_URL}/${path}/schedule?token=${token}' 
                 target='_blank'
                 class='tw-text-blue-500'>
                 documentation
@@ -48,7 +48,7 @@ export const help = () => {
         description: `
             Need help? Check the
             <a 
-                href='${BASE_URL}/${trash}/schedule#create-an-schedule?token=${token}' 
+                href='${BASE_URL}/${path}/schedule#create-an-schedule?token=${token}' 
                 target='_blank'
                 class='tw-text-blue-500'>
                 documentation
