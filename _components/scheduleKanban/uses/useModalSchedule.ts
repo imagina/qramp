@@ -16,6 +16,7 @@ import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
 import { store as pluginStore, i18n, alert } from 'src/plugins/utils'
+import { help } from '../models/help.model'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
@@ -104,6 +105,7 @@ export default function useModalSchedule(props: any, emit: any) {
   const flightStatus = computed(() => fieldsSchedule().flightStatus.value);
   const isbound = computed(() => validateOperationType(form.value.operationTypeId));
   const fields = computed(() => fieldsSchedule().fields.value);
+  const helpText = computed(() => help().create.value);
   function zanetizeData(key: string) {
     if (key === "flightNumber") {
       form.value[key] = form.value[key].toUpperCase().replace(/\s+/g, "");
@@ -225,6 +227,7 @@ export default function useModalSchedule(props: any, emit: any) {
     saveForm,
     showCommentsComponent,
     storeKanban,
-    i18n
+    i18n,
+    helpText,
   }
 }

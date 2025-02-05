@@ -22,6 +22,7 @@ import { store, i18n, helper, cache, router } from 'src/plugins/utils'
 import { useQuasar } from 'quasar';
 import {BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR, CARGO_PAX, BUSINESS_UNIT_CARGO} from '../../model/constants.js';
 import kanbanStore from "../store/kanban.store";
+import { help } from '../models/help.model'
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
@@ -52,6 +53,7 @@ export default function useKanbanBoard(props) {
       options: modelHoursFilter,
     },
   });
+  const helpText = computed(() => help().schedule.value);
   const isSecurity = computed(() => qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY);
   const title = computed(() => kanbanStore.title);
   const selectedDate = computed(() => storeFilter.selectedDate);
@@ -282,6 +284,7 @@ export default function useKanbanBoard(props) {
     changeSearch,
     refPageActions,
     isSecurity,
-    showModalStation
+    showModalStation,
+    helpText,
   };
 }
