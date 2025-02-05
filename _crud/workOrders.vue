@@ -23,7 +23,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts'
-import { cacheOffline } from 'src/plugins/utils';
+import { cacheOffline, cache } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 import { avatarComponent } from '../common/avatarComponent'
 
@@ -38,6 +38,7 @@ export default {
             crudId: this.$uid(),
             areaId: null,
             loadingBulk: false,
+            token: '',
         }
     },
     provide() {
@@ -63,6 +64,11 @@ export default {
             qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
             await workOrderList().getAllList(true);
             await workOrderList().getCustomerWithContract()
+        })
+    },
+    mounted() {
+        this.$nextTick(async () => {
+            this.token = await this.getToken()
         })
     },
     beforeDestroy() {
@@ -102,6 +108,19 @@ export default {
                             this.$refs.formOrders.loadform({
                                 modalProps: {
                                     title: this.$tr('ifly.cms.form.newWorkOrder'),
+                                    help: {
+                                        title: 'Create a Work Order',
+                                        description: `
+                                            Need help? Check the
+                                            <a 
+                                                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders#creating-a-work-order?token=${this.token}' 
+                                                target='_blank'
+                                                class='tw-text-blue-500'>
+                                                    documentation
+                                            </a>
+                                            for more information on creating Work Orders.
+                                        `
+                                    },
                                     update: false,
                                     width: '35vw'
                                 }
@@ -109,6 +128,19 @@ export default {
                     },
                 },
                 read: {
+                    help: {
+                        title: 'Work Order',
+                        description: `
+                            In this crud you can manage work Orders (create, update, delete).
+                            <a 
+                                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders?token=${this.token}' 
+                                target='_blank'
+                                class='tw-text-blue-500'>
+                                    Go to documentation
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        `,
+                    },
                     columns: [
                         {
                             name: 'id',
@@ -413,7 +445,20 @@ export default {
                                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
                             }),
                             action: async (item) => {
-                                await this.showWorkOrder(item)
+                                const help = {
+                                    title: 'Edit Work Order',
+                                    description: `
+                                        Have questions? Check the 
+                                        <a 
+                                            href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders#editing-a-work-order?token=${this.token}' 
+                                            target='_blank'
+                                            class='tw-text-blue-500'>
+                                                documentation
+                                        </a>
+                                        for more details on updating Work Orders.
+                                    `
+                                }
+                                await this.showWorkOrder(item, { help })
                             }
                         },
                         {
@@ -701,6 +746,14 @@ export default {
                     </span>`
                 : ''
         },
+        async getToken() {
+            try {
+                const sessionData = await cache.get.item('sessionData')
+                return sessionData.userToken.split(' ')[1]
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 }
 </script>
