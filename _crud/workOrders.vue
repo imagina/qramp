@@ -450,7 +450,7 @@ export default {
                                     description: `
                                         Have questions? Check the 
                                         <a 
-                                            href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders#editing-a-work-order?token=${this.token}' 
+                                            href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders?token=${this.token}' 
                                             target='_blank'
                                             class='tw-text-blue-500'>
                                                 documentation
