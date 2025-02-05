@@ -26,7 +26,13 @@ export default {
   data() {
     return {
       crudId: this.$uid(),
+      token: ''
     }
+  },
+  mounted() {
+    this.$nextTick(async () => {
+      this.token = await getToken()
+    })
   },
   beforeMount() {
     this.$nextTick(async () => {
@@ -86,6 +92,19 @@ export default {
           }
         }],
         read: {
+          help: {
+            title: 'Scheduler',
+            description: `
+              Need help? Check the 
+              <a 
+                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/schedule#scheduler?token=${this.token}' 
+                target='_blank'
+                class='tw-text-blue-500'>
+                  documentation
+              </a>
+              for more information on using the Scheduler and its features.
+            `,
+          },
           columns: [
             {
               name: 'id',
@@ -369,6 +388,14 @@ export default {
     async getDataTable(refresh) {
       await this.$refs.crudComponent.getDataTable(refresh);
     },
+    async getToken() {
+      try {
+        const sessionData = await cache.get.item('sessionData')
+        return sessionData.userToken.split(' ')[1]
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 }
 </script>
