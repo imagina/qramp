@@ -18,6 +18,7 @@ import {
   BUSINESS_UNIT_LABOR, BUSINESS_UNIT_SECURITY, CARGO_PAX
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
+import { cache } from 'src/plugins/utils'
 
 export default {
   components: {
@@ -26,12 +27,19 @@ export default {
   data() {
     return {
       crudId: this.$uid(),
-      token: ''
+      token: '',
+      path: '',
+      routes: {
+        [BUSINESS_UNIT_RAMP]: 'ramp-module',
+        [BUSINESS_UNIT_PASSENGER]: 'passenger-module',
+        [BUSINESS_UNIT_SECURITY]: 'security-module',
+      }
     }
   },
   mounted() {
     this.$nextTick(async () => {
-      this.token = await getToken()
+      this.token = await this.getToken()
+      this.path = this.routes[qRampStore().getBusinessUnitId() || 0]
     })
   },
   beforeMount() {
@@ -97,7 +105,7 @@ export default {
             description: `
               Need help? Check the 
               <a 
-                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/schedule#scheduler?token=${this.token}' 
+                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/${this.path}/schedule#scheduler?token=${this.token}' 
                 target='_blank'
                 class='tw-text-blue-500'>
                   documentation
