@@ -2,6 +2,7 @@ import { ref, computed, ComputedRef, onBeforeUnmount } from 'vue';
 import storeModalWorkOrderAlert from '../store/modalSchedulePlannings.store'
 import workOrderList from "../../../_store/actions/workOrderList";
 import baseService from 'src/modules/qcrud/_services/baseService'
+import { alert } from 'src/plugins/utils';
 
 export default function useModalStation() {
   const refWorkOrderAlert: any = ref(null);
@@ -27,12 +28,15 @@ export default function useModalStation() {
         },
         action: async () => {
           try {
+            const isEdit = storeModalWorkOrderAlert.isEdit;
+            const titleAlert = `Schedule Planning was ${!isEdit ? 'created' : 'updated'} successfully.'`
             storeModalWorkOrderAlert.loading = true;
-            if(!storeModalWorkOrderAlert.isEdit) {
+            if(!isEdit) {
               await baseService.create('apiRoutes.qramp.schedulePlanning', storeModalWorkOrderAlert.form)
             } else {
               await baseService.update('apiRoutes.qramp.schedulePlanning', storeModalWorkOrderAlert.form.id ,storeModalWorkOrderAlert.form)
             }
+            alert.success(titleAlert)
             storeModalWorkOrderAlert.loading = false;
             hideModal()
           } catch (e) {
