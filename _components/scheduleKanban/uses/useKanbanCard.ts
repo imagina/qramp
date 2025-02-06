@@ -1,4 +1,4 @@
-import {computed, inject } from 'vue';
+import {computed, inject, ref } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
@@ -20,6 +20,7 @@ import moment from 'moment';
 import { i18n } from 'src/plugins/utils'
 
 export default function useKanbanCard(props: any = {}) {
+  const objectSelected = ref(false);
   const refFormOrders: any = inject('refFormOrders');
   const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -67,7 +68,7 @@ export default function useKanbanCard(props: any = {}) {
     };
     return statuses[props.card.statusId] || '';
   })
-  
+
   const isNonFlight = computed(() => props.card.type === NON_FLIGHT)
 
   async function openModalSchedule() {
@@ -128,6 +129,55 @@ export default function useKanbanCard(props: any = {}) {
     qRampStore().showVisibleMapModal();
 
   }
+  function selectObject(e) {
+    const box = document.querySelector(`.kanban-card-${props.card.id}`);
+    if (!objectSelected.value) {
+      createGhostCard(box);
+
+      document.addEventListener('mousemove', moveObject);
+      document.addEventListener('mouseup', unSelectObject);
+      objectSelected.value = true;
+    }
+  }
+
+  function unSelectObject() {
+    const ghostCard = document.querySelector('.ghost-card');
+    if (ghostCard) {
+      ghostCard.remove(); // Eliminar la tarjeta fantasma
+    }
+
+    document.removeEventListener('mousemove', moveObject);
+    objectSelected.value = false;
+  }
+
+  function moveObject(e) {
+    const ghostCard = document.querySelector('.ghost-card');
+    if (ghostCard) {
+      ghostCard.style.top = `${e.clientY + 5}px`;
+      ghostCard.style.left = `${e.clientX + 5}px`;
+    }
+  }
+
+  function createGhostCard(originalCard) {
+    const ghostCard = originalCard.cloneNode(true);
+
+    // Aplicar estilos para distinguirla de la tarjeta original
+    ghostCard.classList.add('ghost-card');
+    ghostCard.style.position = 'absolute';
+    ghostCard.style.pointerEvents = 'none'; // Para que no interfiera con los eventos
+    ghostCard.style.opacity = '0.7';
+    ghostCard.style.zIndex = '1000';
+
+    // Colocarla inicialmente en la posición de la tarjeta original
+    const rect = originalCard.getBoundingClientRect();
+    ghostCard.style.top = `${rect.top}px`;
+    ghostCard.style.left = `${rect.left}px`;
+    ghostCard.style.width = `${rect.width}px`;
+    ghostCard.style.height = `${rect.height}px`;
+
+    // Añadir al DOM
+    document.body.appendChild(ghostCard);
+  }
   return {
     colorCheckSchedule,
     titleStatus,
@@ -140,6 +190,7 @@ export default function useKanbanCard(props: any = {}) {
     storeKanban,
     openModalSelectFlightNumber,
     isNonFlight,
-    moment
+    moment,
+    selectObject
   };
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="`kanban-card-${card.id}`">
     <div class="
       tw-relative
       tw-rounded-lg
@@ -11,7 +11,7 @@
       v-if="!card.editable"
     >
       <div>
-        <chipServices 
+        <chipServices
           :workOrderItemsTotal="card.workOrderItemsTotal"
           :workOrderId="card.id"
           :typeWorkOrder="card.type"
@@ -19,16 +19,16 @@
         />
         <div class="tw-py-3 tw-pl-2 tw-w-full">
           <div class="tw-flex tw-pb-1">
-            <div 
-              class="tw-w-10/12 tw-flex tw-cursor-pointer"  
+            <div
+              class="tw-w-10/12 tw-flex tw-cursor-pointer"
               @click="openModalSchedule"
             >
               <i v-if="isNonFlight" class="fa-regular fa-plane-slash tw-mr-2" />
-              <p 
+              <p
                 class="
-                  text-kanban-card 
-                  tw--mt-0.5 
-                  tw-cursor-pointer 
+                  text-kanban-card
+                  tw--mt-0.5
+                  tw-cursor-pointer
                   tw-truncate
                 "
               >
@@ -43,7 +43,7 @@
               tw--mt-2
               tw-text-gray-500
               dot-vertical
-              tw-hidden 
+              tw-hidden
               "
               :class="{
                 'tw-cursor-move': !isBlank
@@ -249,5 +249,11 @@ export default defineComponent({
 }
 .bg-gray-c-100 {
   background: rgba(31, 41, 79, 0.07);
+}
+.ghost-card {
+  border: 2px dashed #aaa;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: none; /* Deshabilitar transiciones para que siga el cursor fluidamente */
 }
 </style>
