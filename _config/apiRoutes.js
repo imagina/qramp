@@ -48,5 +48,6 @@ export default {
   bulkReloadTransactions: `${urlBase}/work-orders/bulk-reload-transactions`,
   workOrderItems: `${urlBase}/work-order-items`,
   favourites: `${urlBase}/favourites`,
-  paxOperationTypes : `${urlBase}/pax-operation-types`
+  paxOperationTypes : `${urlBase}/pax-operation-types`,
+  schedulePlanning : `${urlBase}/schedule-planning`
 }
