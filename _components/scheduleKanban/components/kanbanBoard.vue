@@ -77,6 +77,7 @@
   <modalStation />
   <selectFlightNumberModal />
   <flightDetail />
+  <modalSchedulePlannings/>
   <inner-loading :visible="loadingMain"/>
 </div>
 </template>
@@ -95,6 +96,7 @@ import selectFlightNumberModal from '../../modal/selectFlightNumber/index.vue'
 import flightDetail from '../../modal/flightDetail.vue';
 import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index';
 import securityForm from '../../securityForm/components/index.vue';
+import modalSchedulePlannings from './modalSchedulePlannings.vue'
 
 export default defineComponent({
   components: {
@@ -108,7 +110,8 @@ export default defineComponent({
     selectFlightNumberModal,
     flightDetail,
     modalNonFlight,
-    securityForm
+    securityForm,
+    modalSchedulePlannings
   },
   setup(props) {
     return {...useKanbanBoard(props)}

@@ -128,6 +128,17 @@
         </div>
         <div
           class="
+          tw-absolute
+          tw-right-2
+          tw--mt-4
+          tw-cursor-pointer"
+          @click="openModalWorkOrderAlert"
+          v-if="operationType !== 'full'"
+        >
+          <i class="fa-light fa-gear"/>
+        </div>
+        <div
+          class="
             tw-flex
             tw-left-0
             tw-h-7

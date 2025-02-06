@@ -18,7 +18,8 @@ import selectFlightNumberStore from '../../modal/selectFlightNumber/store/select
 import validateOperationType from '../actions/validateOperationType'
 import moment from 'moment';
 import { i18n } from 'src/plugins/utils'
-
+import storeModalSchedulePlannings from '../store/modalSchedulePlannings.store'
+import baseService from 'src/modules/qcrud/_services/baseService';
 export default function useKanbanCard(props: any = {}) {
   const objectSelected = ref(false);
   const refFormOrders: any = inject('refFormOrders');
@@ -32,6 +33,11 @@ export default function useKanbanCard(props: any = {}) {
     const color = statusColor ? `tw-border-${statusColor}` : 'tw-border-gray-200';
     return color;
   })
+  const operationType = computed(() => {
+    const operationType = workOrderList()
+      .getOperationTypeList().find(operationType => operationType.id == props.card.operationTypeId);
+    return operationType?.options?.type
+  });
   const flightStatuses = computed(() => {
     const flightStatuses: any =
       workOrderList()
@@ -143,7 +149,7 @@ export default function useKanbanCard(props: any = {}) {
   function unSelectObject() {
     const ghostCard = document.querySelector('.ghost-card');
     if (ghostCard) {
-      ghostCard.remove(); // Eliminar la tarjeta fantasma
+      ghostCard.remove();
     }
 
     document.removeEventListener('mousemove', moveObject);
@@ -160,23 +166,47 @@ export default function useKanbanCard(props: any = {}) {
 
   function createGhostCard(originalCard) {
     const ghostCard = originalCard.cloneNode(true);
-
-    // Aplicar estilos para distinguirla de la tarjeta original
     ghostCard.classList.add('ghost-card');
     ghostCard.style.position = 'absolute';
     ghostCard.style.pointerEvents = 'none'; // Para que no interfiera con los eventos
     ghostCard.style.opacity = '0.7';
     ghostCard.style.zIndex = '1000';
-
-    // Colocarla inicialmente en la posición de la tarjeta original
     const rect = originalCard.getBoundingClientRect();
     ghostCard.style.top = `${rect.top}px`;
     ghostCard.style.left = `${rect.left}px`;
     ghostCard.style.width = `${rect.width}px`;
     ghostCard.style.height = `${rect.height}px`;
-
-    // Añadir al DOM
     document.body.appendChild(ghostCard);
+  }
+  async function openModalWorkOrderAlert() {
+    try {
+      storeModalSchedulePlannings.loading = true;
+      const params = {
+        refresh: true,
+        params: {
+          filter: {
+            field: 'flight_number',
+            operationType: props.card.operationTypeId
+          }
+        },
+      }
+      const response = await baseService.show('apiRoutes.qramp.schedulePlanning',props.card.calendar.title, params);
+      if(response.status === 200) {
+        storeModalSchedulePlannings.form.id = response.data.id;
+      }
+      storeModalSchedulePlannings.isEdit =  response.status === 200 ? true : false;
+      storeModalSchedulePlannings.showModal = true;
+      storeModalSchedulePlannings.form.flightNumber = props.card.calendar.title || null;
+      storeModalSchedulePlannings.form.operationTypeId = props.card.operationTypeId || null;
+      storeModalSchedulePlannings.form.alwaysHalf = response.data.alwaysHalf || false;
+      storeModalSchedulePlannings.std = props.card.calendar.std || null;
+      storeModalSchedulePlannings.sta = props.card.calendar.sta || null;
+      storeModalSchedulePlannings.loading = false;
+    } catch (e) {
+      storeModalSchedulePlannings.loading = false;
+      storeModalSchedulePlannings.isEdit = false;
+      console.log(e);
+    }
   }
   return {
     colorCheckSchedule,
@@ -191,6 +221,8 @@ export default function useKanbanCard(props: any = {}) {
     openModalSelectFlightNumber,
     isNonFlight,
     moment,
-    selectObject
+    selectObject,
+    openModalWorkOrderAlert,
+    operationType
   };
 }
