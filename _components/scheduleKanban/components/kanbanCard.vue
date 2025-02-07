@@ -36,10 +36,11 @@
         <div class="tw-py-3 tw-pl-2 tw-w-full">
           <div class="tw-flex tw-pb-1">
             <div
-              class="tw-w-10/12 tw-flex tw-cursor-pointer"
+              class="tw-w-10/12 tw-flex"
               @click="openModalSchedule"
               :class="{
-                'tw-cursor-not-allowed' : operationType == 'full' && dragCard,
+                'tw-cursor-not-allowed': operationType == 'full' && dragCard,
+                  'tw-cursor-pointer': !(operationType == 'full' && dragCard),
               }"
             >
               <i v-if="isNonFlight" class="fa-regular fa-plane-slash tw-mr-2" />
@@ -47,11 +48,11 @@
                 class="
                   text-kanban-card
                   tw--mt-0.5
-                  tw-cursor-pointer
                   tw-truncate
                 "
                 :class="{
-                  'tw-cursor-not-allowed' : operationType == 'full' && dragCard,
+                  'tw-cursor-not-allowed': operationType == 'full' && dragCard,
+                  'tw-cursor-pointer': !(operationType == 'full' && dragCard),
                 }"
               >
                 {{ card.calendar.title }}
