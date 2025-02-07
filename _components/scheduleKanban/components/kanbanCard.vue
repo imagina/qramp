@@ -131,7 +131,9 @@
           tw-absolute
           tw-right-2
           tw--mt-4
-          tw-cursor-pointer"
+          tw-cursor-pointer
+          tw-hidden
+          lg:tw-block"
           @click="openModalWorkOrderAlert"
           v-if="operationType !== 'full'"
         >
