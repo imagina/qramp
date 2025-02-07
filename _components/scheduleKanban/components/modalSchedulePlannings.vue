@@ -8,20 +8,20 @@
       :actions="actions"
       :maximized="$q.screen.lt.md"
     >
-      <div class="tw-shadow-md tw-rounded-lg tw-my-8">
-      <div class="tw-flex tw-items-center tw-gap-3 tw-px-2">
+      <div class="tw-shadow-md tw-rounded-lg tw-my-2">
+      <div class="tw-flex tw-items-center tw-gap-1 tw-px-2">
         <span class="tw-text-lg tw-font-semibold tw-text-gray-800 tw-pl-4">
           Flight Number: {{ form.flightNumber }}
         </span>
-              <span v-if="sta" class="tw-bg-blue-100 tw-text-blue-700 tw-text-sm tw-font-bold tw-px-2 tw-py-1 tw-rounded">
+              <span v-if="sta" class="tw-bg-blue-100 tw-text-blue-700 tw-text-sm tw-font-bold tw-px-2 tw-rounded">
           STA
         </span>
-              <span v-if="std" class="tw-bg-blue-100 tw-text-blue-700 tw-text-sm tw-font-bold tw-px-2 tw-py-1 tw-rounded">
+              <span v-if="std" class="tw-bg-blue-100 tw-text-blue-700 tw-text-sm tw-font-bold tw-px-2 tw-rounded">
           STD
         </span>
       </div>
 
-      <q-form ref="refWorkOrderAlert" class="tw-mt-4  tw-p-4">
+      <q-form ref="refWorkOrderAlert" class="tw-mt-1 tw-p-4">
          <q-checkbox
               v-model="form.alwaysHalf"
               :label="operationName"
