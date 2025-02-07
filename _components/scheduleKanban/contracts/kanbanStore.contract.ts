@@ -24,4 +24,6 @@ export interface State {
   isAppOffline: boolean;
   search: string | null;
   title: string | null;
+  dragCard: boolean;
+  draggedFloatingCard: any,
 }

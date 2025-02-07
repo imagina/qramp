@@ -21,7 +21,12 @@ import { i18n } from 'src/plugins/utils'
 import storeModalSchedulePlannings from '../store/modalSchedulePlannings.store'
 import baseService from 'src/modules/qcrud/_services/baseService';
 export default function useKanbanCard(props: any = {}) {
-  const objectSelected = ref(false);
+  const dragCard = computed({
+    get: () => storeKanban.dragCard,
+    set: (value: boolean) => {
+      storeKanban.dragCard = value
+    }
+  })
   const refFormOrders: any = inject('refFormOrders');
   const isBlank = computed(() => storeKanban.isBlank);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -78,6 +83,7 @@ export default function useKanbanCard(props: any = {}) {
   const isNonFlight = computed(() => props.card.type === NON_FLIGHT)
 
   async function openModalSchedule() {
+    if(operationType.value == 'full' && dragCard.value) return;
     if (!isWeekAgenda.value && modalScheduleStore.showInline) return
     if (!isWeekAgenda.value && props.card.statusId === STATUS_SCHEDULE && !isPassenger.value){
       openInlineSchedule(props);
@@ -137,12 +143,13 @@ export default function useKanbanCard(props: any = {}) {
   }
   function selectObject(e) {
     const box = document.querySelector(`.kanban-card-${props.card.id}`);
-    if (!objectSelected.value) {
+    if (!dragCard.value) {
       createGhostCard(box);
 
       document.addEventListener('mousemove', moveObject);
       document.addEventListener('keydown', handleEscapeKey);
-      objectSelected.value = true;
+      dragCard.value = true;
+      storeKanban.draggedFloatingCard = props.card;
     }
   }
 
@@ -159,7 +166,7 @@ export default function useKanbanCard(props: any = {}) {
     }
 
     document.removeEventListener('mousemove', moveObject);
-    objectSelected.value = false;
+    dragCard.value = false;
   }
 
   function moveObject(e) {
@@ -230,6 +237,7 @@ export default function useKanbanCard(props: any = {}) {
     selectObject,
     openModalWorkOrderAlert,
     operationType,
-    validateIfTheOperationIsDifferentTurn
+    validateIfTheOperationIsDifferentTurn,
+    dragCard
   };
 }

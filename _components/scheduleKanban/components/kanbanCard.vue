@@ -7,8 +7,12 @@
       tw-my-2
       tw-border-l-8
       showCard
-      tw-bg-white" :class="colorCheckSchedule"
+      tw-bg-white"
       v-if="!card.editable"
+      :class="{
+        'bg-gray-important' : operationType == 'full' && dragCard,
+        [colorCheckSchedule]: true
+      }"
     >
       <div>
         <div class="tw-absolute tw-right-2 tw--mt-2.5">
@@ -19,7 +23,7 @@
               :typeWorkOrder="card.type"
             />
             <q-btn
-              v-if="operationType != 'full'"
+              v-if="operationType != 'full' && !dragCard"
               icon="fa-light fa-arrows-up-down-left-right"
               text-color="primary"
               size="xs"
@@ -34,6 +38,9 @@
             <div
               class="tw-w-10/12 tw-flex tw-cursor-pointer"
               @click="openModalSchedule"
+              :class="{
+                'tw-cursor-not-allowed' : operationType == 'full' && dragCard,
+              }"
             >
               <i v-if="isNonFlight" class="fa-regular fa-plane-slash tw-mr-2" />
               <p
@@ -43,6 +50,9 @@
                   tw-cursor-pointer
                   tw-truncate
                 "
+                :class="{
+                  'tw-cursor-not-allowed' : operationType == 'full' && dragCard,
+                }"
               >
                 {{ card.calendar.title }}
               </p>
@@ -280,4 +290,8 @@ export default defineComponent({
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: none;
 }
+.bg-gray-important {
+  @apply tw-bg-gray-100 !important;
+}
+
 </style>

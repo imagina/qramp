@@ -14,7 +14,9 @@ const state: State = reactive({
   isBlank: false,
   isAppOffline: false,
   search: null,
-  title: 'Ramp Schedule'
+  title: 'Ramp Schedule',
+  dragCard: false,
+  draggedFloatingCard: {},
 });
 
 const store: State = computed(() => ({
@@ -80,6 +82,18 @@ const store: State = computed(() => ({
   },
   set search(value: string | null) {
     state.search = value;
+  },
+  get dragCard(): boolean {
+    return state.dragCard;
+  },
+  set dragCard(value: boolean) {
+    state.dragCard = value;
+  },
+  get draggedFloatingCard(): any {
+    return state.draggedFloatingCard;
+  },
+  set draggedFloatingCard(value: any) {
+    state.draggedFloatingCard = value;
   },
 })).value;
 
