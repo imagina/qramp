@@ -1,5 +1,6 @@
 import { reactive, computed } from 'vue';
 interface Form {
+  id?: number;
   flightNumber: null | string;
   operationTypeId: null | number;
   alwaysHalf: boolean
