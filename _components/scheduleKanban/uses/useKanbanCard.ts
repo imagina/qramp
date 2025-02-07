@@ -142,7 +142,14 @@ export default function useKanbanCard(props: any = {}) {
 
       document.addEventListener('mousemove', moveObject);
       document.addEventListener('mouseup', unSelectObject);
+      document.addEventListener('keydown', handleEscapeKey);
       objectSelected.value = true;
+    }
+  }
+
+  function handleEscapeKey(event) {
+    if (event.key === 'Escape') {
+      unSelectObject();
     }
   }
 
