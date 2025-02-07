@@ -6,7 +6,7 @@ import {
   STATUS_POSTED,
   STATUS_SUBMITTED,
   STATUS_SCHEDULE,
-  NON_FLIGHT,
+  NON_FLIGHT, OPERATION_TYPE_TURN,
 } from '../../model/constants.js';
 import workOrderList from '../../../_store/actions/workOrderList';
 import qRampStore from './../../../_store/qRampStore.js'
@@ -74,7 +74,7 @@ export default function useKanbanCard(props: any = {}) {
     };
     return statuses[props.card.statusId] || '';
   })
-
+  const validateIfTheOperationIsDifferentTurn = computed(() => props.card.operationTypeId != OPERATION_TYPE_TURN)
   const isNonFlight = computed(() => props.card.type === NON_FLIGHT)
 
   async function openModalSchedule() {
@@ -141,7 +141,6 @@ export default function useKanbanCard(props: any = {}) {
       createGhostCard(box);
 
       document.addEventListener('mousemove', moveObject);
-      document.addEventListener('mouseup', unSelectObject);
       document.addEventListener('keydown', handleEscapeKey);
       objectSelected.value = true;
     }
@@ -230,6 +229,7 @@ export default function useKanbanCard(props: any = {}) {
     moment,
     selectObject,
     openModalWorkOrderAlert,
-    operationType
+    operationType,
+    validateIfTheOperationIsDifferentTurn
   };
 }

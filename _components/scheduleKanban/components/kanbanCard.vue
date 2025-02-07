@@ -19,6 +19,7 @@
               :typeWorkOrder="card.type"
             />
             <q-btn
+              v-if="validateIfTheOperationIsDifferentTurn"
               icon="fa-light fa-arrows-up-down-left-right"
               text-color="primary"
               size="xs"
