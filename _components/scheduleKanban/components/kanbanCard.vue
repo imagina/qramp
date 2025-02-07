@@ -11,12 +11,23 @@
       v-if="!card.editable"
     >
       <div>
-        <chipServices
-          :workOrderItemsTotal="card.workOrderItemsTotal"
-          :workOrderId="card.id"
-          :typeWorkOrder="card.type"
-          class="tw-absolute tw-right-2 tw--mt-2.5"
-        />
+        <div class="tw-absolute tw-right-2 tw--mt-2.5">
+          <div class="tw-flex tw-py-4">
+            <chipServices
+              :workOrderItemsTotal="card.workOrderItemsTotal"
+              :workOrderId="card.id"
+              :typeWorkOrder="card.type"
+            />
+            <q-btn
+              icon="fa-light fa-arrows-up-down-left-right"
+              text-color="primary"
+              size="xs"
+              round
+              flat
+              @click="selectObject"
+            />
+          </div>
+        </div>
         <div class="tw-py-3 tw-pl-2 tw-w-full">
           <div class="tw-flex tw-pb-1">
             <div
@@ -264,9 +275,8 @@ export default defineComponent({
   background: rgba(31, 41, 79, 0.07);
 }
 .ghost-card {
-  border: 2px dashed #aaa;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: none; /* Deshabilitar transiciones para que siga el cursor fluidamente */
+  transition: none;
 }
 </style>

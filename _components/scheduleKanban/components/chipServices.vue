@@ -29,12 +29,11 @@ export default defineComponent({
 
 <template>
   <div
-    class="tw-py-4"
     v-if="workOrderItemsTotal > 0"
   >
   <q-btn
       icon="fa-light fa-briefcase-blank"
-      class="tw-mr-2"
+      class="tw-mr-1"
       text-color="primary"
       :size="size"
       round
