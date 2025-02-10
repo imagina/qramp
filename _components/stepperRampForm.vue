@@ -288,7 +288,6 @@ export default {
       await cacheOffline.updateRecord(route, workOrder, workOrder?.id);
     },
     async sendWorkOrder(formatData) {
-      console.log('ingrese');
       const ROUTE = 'apiRoutes.qramp.workOrders';
       const titleOffline = qRampStore().getTitleOffline();
       const params = {params: {titleOffline}};
@@ -306,7 +305,6 @@ export default {
       const request = this.data.update && !this.data?.isClone
         ? this.$crud.update(ROUTE, this.data.workOrderId, formatData, params)
         : this.$crud.create(ROUTE, formatData, params);
-      console.log('request', kanbanStore.draggedFloatingCard);
       if(kanbanStore.draggedFloatingCard.id) {
         this.$crud.delete(ROUTE, kanbanStore.draggedFloatingCard.id);
         kanbanStore.draggedFloatingCard = {};
