@@ -24,6 +24,7 @@ import {BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR, CARGO_PAX, BUSINESS_UNIT_CA
 import kanbanStore from "../store/kanban.store";
 
 export default function useKanbanBoard(props) {
+  storeFilter.scheduleType = router.route.query.typeAgenda || storeFilter.scheduleType;
   const { hasAccess } = store
   const $q = useQuasar()
   const refPageActions: any = ref(null);
