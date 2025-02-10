@@ -42,6 +42,7 @@ import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/s
 import { cacheOffline } from 'src/plugins/utils';
 import signatureStore from 'src/modules/qramp/_components/signature/store/index.store.ts'
 import kanbanStore from "./scheduleKanban/store/kanban.store";
+import storeKanban from "./scheduleKanban/store/kanban.store";
 
 export default {
   emits: ['getWorkOrderFilter', 'refresh-data'],
@@ -306,6 +307,7 @@ export default {
       storeFlight().reset()
       signatureStore.resetStore()
       kanbanStore.draggedFloatingCard = {};
+      kanbanStore.seletedDateColumnDrag = null;
     },
     setSignature(data) {
       signatureStore.form = {
@@ -410,6 +412,7 @@ export default {
       storeFlight().reset()
       signatureStore.resetStore()
       kanbanStore.draggedFloatingCard = {};
+      kanbanStore.seletedDateColumnDrag = null;
     },
     /**
      * Set the loading state of the modal.
