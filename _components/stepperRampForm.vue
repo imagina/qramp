@@ -68,6 +68,8 @@ import workOrderList from '../_store/actions/workOrderList.ts'
 import storeCargo from 'src/modules/qramp/_components/cargo/store/cargo'
 import flightStore from 'src/modules/qramp/_components/flight/store'
 import signatureStore from 'src/modules/qramp/_components/signature/store/index.store.ts'
+import kanbanStore from  'src/modules/qramp/_components/scheduleKanban/store/kanban.store'
+import storeKanban from "./scheduleKanban/store/kanban.store";
 
 export default {
   name: 'stepperRampForm',
@@ -236,7 +238,6 @@ export default {
         await qRampStore().runAlerts(alerts, async () => {
           await this.sendWorkOrder(formatData);
         });
-
         return formatData;
       } catch (error) {
         qRampStore().hideLoading();
@@ -316,6 +317,10 @@ export default {
         this.disabled = false;
         qRampStore().hideLoading();
         await this.$emit('getWorkOrders', formatData);
+        if(kanbanStore.draggedFloatingCard.id) {
+          this.$crud.delete(ROUTE, kanbanStore.draggedFloatingCard.id);
+          kanbanStore.draggedFloatingCard = {};
+        }
       })
       .catch(async err => {
         qRampStore().hideLoading();
@@ -327,6 +332,7 @@ export default {
           this.$alert.error({message: `${this.$tr('isite.cms.message.recordNoUpdated')}`})
           console.log('SEND INFO ERROR:', err)
         }
+        kanbanStore.draggedFloatingCard = {};
       })
     },
     validateFulldate() {
@@ -408,7 +414,7 @@ export default {
             flightformField = flightformField.concat(halfTurnOutBount);
           }
         }
-        
+
         // Passenger
         if(charter) {
           flightformField = flightformField.concat(['charterRate']);
@@ -421,7 +427,7 @@ export default {
         if (type === 'full' && qRampStore().validateOperationsDoNotApply(flightForm.operationTypeId)) {
           // Validation for scheduled arrival and scheduled Departure
           const isOutboundAfterInbound = this.validateBetweenDates(
-            flightForm.inboundScheduledArrival, 
+            flightForm.inboundScheduledArrival,
             flightForm.outboundScheduledDeparture
           );
 
@@ -430,7 +436,7 @@ export default {
           const outboundBlockOut = flightForm.outboundBlockOut;
 
           const isBlockOutAfterBlockIn = this.validateBetweenDates(
-            inboundBlockIn, 
+            inboundBlockIn,
             outboundBlockOut,
             false
           );
@@ -438,13 +444,13 @@ export default {
           const out = this.isPassenger ? 'Actual-out' : 'Block-out';
           const inb = this.isPassenger ? 'actual-in' : 'block-in';
 
-          const message = isOutboundAfterInbound 
+          const message = isOutboundAfterInbound
             ? 'The outbound scheduled departure must be greater than the inbound scheduled arrival'
             : `${out} must be greater than ${inb}`
 
           if (isOutboundAfterInbound || isBlockOutAfterBlockIn) {
             this.showErrorMessage(
-              message, 
+              message,
               STEP_FLIGHT
             );
             return true
@@ -455,7 +461,7 @@ export default {
             .some(item => flightForm[item] === null || flightForm[item] === '')
         if (validateflightform) {
           this.showErrorMessage(
-            this.$tr('isite.cms.message.formInvalid'), 
+            this.$tr('isite.cms.message.formInvalid'),
             STEP_FLIGHT
           );
           return true;

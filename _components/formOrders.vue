@@ -41,6 +41,7 @@ import { constructionWorkOrder } from 'src/modules/qramp/_store/actions/construc
 import getWorkOrder from "src/modules/qramp/_components/scheduleKanban/actions/showWorkOrders"
 import { cacheOffline } from 'src/plugins/utils';
 import signatureStore from 'src/modules/qramp/_components/signature/store/index.store.ts'
+import kanbanStore from "./scheduleKanban/store/kanban.store";
 
 export default {
   emits: ['getWorkOrderFilter', 'refresh-data'],
@@ -304,6 +305,7 @@ export default {
       qRampStore().setClonedWorkOrder(null)
       storeFlight().reset()
       signatureStore.resetStore()
+      kanbanStore.draggedFloatingCard = {};
     },
     setSignature(data) {
       signatureStore.form = {
@@ -407,6 +409,7 @@ export default {
       qRampStore().setClonedWorkOrder(null)
       storeFlight().reset()
       signatureStore.resetStore()
+      kanbanStore.draggedFloatingCard = {};
     },
     /**
      * Set the loading state of the modal.

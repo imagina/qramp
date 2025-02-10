@@ -189,6 +189,7 @@ export default function useKanbanCard(props: any = {}) {
 
   function handleEscapeKey(event) {
     if (event.key === 'Escape') {
+      storeKanban.draggedFloatingCard = {};
       unSelectObject();
     }
   }
