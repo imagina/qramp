@@ -26,4 +26,5 @@ export interface State {
   title: string | null;
   dragCard: boolean;
   draggedFloatingCard: any,
+  seletedDateColumnDrag: null | string;
 }

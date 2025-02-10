@@ -184,12 +184,14 @@ export default function useKanbanCard(props: any = {}) {
       document.addEventListener('keydown', handleEscapeKey);
       dragCard.value = true;
       storeKanban.draggedFloatingCard = props.card;
+      storeKanban.seletedDateColumnDrag = props.dateColumn;
     }
   }
 
   function handleEscapeKey(event) {
     if (event.key === 'Escape') {
       storeKanban.draggedFloatingCard = {};
+      storeKanban.seletedDateColumnDrag = null;
       unSelectObject();
     }
   }

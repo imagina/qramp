@@ -17,6 +17,7 @@ const state: State = reactive({
   title: 'Ramp Schedule',
   dragCard: false,
   draggedFloatingCard: {},
+  seletedDateColumnDrag: null,
 });
 
 const store: State = computed(() => ({
@@ -25,6 +26,12 @@ const store: State = computed(() => ({
   },
   set title(value: string) {
     state.title = value;
+  },
+  get seletedDateColumnDrag(): string {
+    return state.seletedDateColumnDrag;
+  },
+  set seletedDateColumnDrag(value: string) {
+    state.seletedDateColumnDrag = value;
   },
   get scheduleType(): string {
     return state.scheduleType;
