@@ -164,7 +164,7 @@
                   @click="selectObject"
                 >
                   <q-item-section >
-                    <div>
+                    <div class="tw-flex tw-items-center  tw-gap-2">
                       <q-icon name="fa-light fa-arrows-up-down-left-right" />
                       Link to Another
                     </div>
@@ -177,7 +177,7 @@
                   v-if="operationType !== 'full' && isPassenger"
                 >
                   <q-item-section>
-                    <div>
+                    <div class="tw-flex tw-items-center  tw-gap-2">
                       <q-icon name="fa-light fa-gear" />
                       Planning
                     </div>
@@ -188,7 +188,7 @@
                   v-close-popup
                   @click="deleteCard"
                 >
-                  <div>
+                  <div class="tw-flex tw-items-center  tw-gap-2">
                     <q-icon name="fa-light fa-trash" />
                     Delete
                   </div>
