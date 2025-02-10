@@ -43,6 +43,11 @@ export default function useKanbanCard(props: any = {}) {
       .getOperationTypeList().find(operationType => operationType.id == props.card.operationTypeId);
     return operationType?.options?.type
   });
+  const operationTypeDrag = computed(() => {
+    const operationType = workOrderList()
+      .getOperationTypeList().find(operationType => operationType.id == storeKanban.draggedFloatingCard.operationTypeId);
+    return operationType?.options?.type
+  });
   const flightStatuses = computed(() => {
     const flightStatuses: any =
       workOrderList()
@@ -81,7 +86,30 @@ export default function useKanbanCard(props: any = {}) {
   })
   const validateIfTheOperationIsDifferentTurn = computed(() => props.card.operationTypeId != OPERATION_TYPE_TURN)
   const isNonFlight = computed(() => props.card.type === NON_FLIGHT)
-
+  function mergeDataWorkOrder(data) {
+    data.operationTypeId = OPERATION_TYPE_TURN;
+    if(operationTypeDrag.value === 'inbound') {
+      data.inboundOagFlightId = storeKanban.draggedFloatingCard.inboundOagFlightId;
+      data.inboundFlightNumber = storeKanban.draggedFloatingCard.inboundFlightNumber;
+      data.inboundTailNumber = storeKanban.draggedFloatingCard.inboundTailNumber;
+      data.inboundScheduledArrival = storeKanban.draggedFloatingCard.inboundScheduledArrival;
+      data.inboundEstimatedArrival = storeKanban.draggedFloatingCard.inboundEstimatedArrival;
+      data.inboundOriginAirportId = storeKanban.draggedFloatingCard.inboundOriginAirportId;
+      data.inboundBlockIn = storeKanban.draggedFloatingCard.inboundBlockIn;
+      data.inboundGateArrival = storeKanban.draggedFloatingCard.inboundGateArrival;
+    }
+    if(operationTypeDrag.value === 'outbound') {
+      data.outboundOagFlightId = storeKanban.draggedFloatingCard.outboundOagFlightId;
+      data.outboundFlightNumber = storeKanban.draggedFloatingCard.outboundFlightNumber;
+      data.outboundTailNumber = storeKanban.draggedFloatingCard.outboundTailNumber;
+      data.outboundScheduledDeparture = storeKanban.draggedFloatingCard.outboundScheduledDeparture;
+      data.outboundDestinationAirportId = storeKanban.draggedFloatingCard.outboundDestinationAirportId;
+      data.outboundEstimatedDeparture = storeKanban.draggedFloatingCard.outboundEstimatedDeparture;
+      data.outboundBlockOut = storeKanban.draggedFloatingCard.outboundBlockOut;
+      data.outboundGateDeparture = storeKanban.draggedFloatingCard.outboundGateDeparture;
+    }
+    return data;
+  }
   async function openModalSchedule() {
     if(operationType.value == 'full' && dragCard.value) return;
     if (!isWeekAgenda.value && modalScheduleStore.showInline) return
@@ -92,8 +120,13 @@ export default function useKanbanCard(props: any = {}) {
     modalScheduleStore.titleModal = `Edit schedule Id: ${props.card.id}`;
     modalScheduleStore.seletedDateColumn = props.dateColumn;
     if(props.card.statusId !== STATUS_SCHEDULE || isPassenger.value) {
-      const titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
-      const response = await showWorkOrder(props.card.id);
+      let titleModal = i18n.tr('ifly.cms.form.updateWorkOrder') + (props.card.id ? ` Id: ${props.card.id}` : '')
+      let response: {data: any} = await showWorkOrder(props.card.id);
+      if(operationType.value != 'full' && dragCard.value) {
+        const flightNumber = storeKanban.draggedFloatingCard.inboundFlightNumber || storeKanban.draggedFloatingCard.outboundFlightNumber;
+        titleModal = `${titleModal} (Merge WorkOrder ${storeKanban.draggedFloatingCard.id}) Flight Number ${flightNumber}`;
+        response.data = mergeDataWorkOrder(response.data);
+      }
       await refFormOrders.value.loadform({
         modalProps: {
           title: titleModal,
@@ -103,6 +136,7 @@ export default function useKanbanCard(props: any = {}) {
         },
         data: response.data,
       });
+      unSelectObject();
       return;
     }
     modalScheduleStore.isEdit = true;
