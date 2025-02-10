@@ -1,5 +1,6 @@
 import { reactive } from 'vue';
 import qRampStore from '../../_store/qRampStore.js'
+import storeKanban from "../scheduleKanban/store/kanban.store";
 export interface FormContarct {
     operationTypeId: string | null;
     statusId: string;
@@ -49,6 +50,8 @@ export interface FormContarct {
     type: number | null;
     paxOperationTypeId: number | null;
     charterRate: number | null;
+    inboundOagFlightId?: string | null;
+    outboundOagFlightId?: string | null;
 }
 export interface StateContarct {
     form: FormContarct;
@@ -189,6 +192,8 @@ export default function flightStore(): FlightStoreContract {
         state.form.scheduleDate = flight.scheduleDate ? flight.scheduleDate : null;
         state.form.type = flight.type ? flight.type : null;
         state.responsibles = flight?.responsible ? [{value: flight.responsible.id, label: flight.responsible.fullName}] : [];
+        state.inboundOagFlightId = flight.inboundOagFlightId || null;
+        state.outboundOagFlightId = flight.outboundOagFlightId || null;
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;
             state.form.outboundGateDeparture = flight.outboundGateDeparture || null;
