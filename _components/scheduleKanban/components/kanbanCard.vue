@@ -22,15 +22,6 @@
               :workOrderId="card.id"
               :typeWorkOrder="card.type"
             />
-            <q-btn
-              v-if="operationType != 'full' && !dragCard && isPassenger"
-              icon="fa-light fa-arrows-up-down-left-right"
-              text-color="primary"
-              size="xs"
-              round
-              flat
-              @click="selectObject"
-            />
           </div>
         </div>
         <div class="tw-py-3 tw-pl-2 tw-w-full">
@@ -153,14 +144,58 @@
           class="
           tw-absolute
           tw-right-2
-          tw--mt-4
+          tw--mt-5
           tw-cursor-pointer
           tw-hidden
           lg:tw-block"
-          @click="openModalWorkOrderAlert"
-          v-if="operationType !== 'full' && isPassenger"
         >
-          <i class="fa-light fa-gear"/>
+          <q-btn
+            round
+            flat
+            size="sm"
+            icon="fa-solid fa-ellipsis"
+          >
+            <q-menu auto-close>
+              <q-list class="qlistKanban">
+                <q-item
+                  clickable
+                  v-close-popup
+                  v-if="operationType != 'full' && !dragCard && isPassenger"
+                  @click="selectObject"
+                >
+                  <q-item-section >
+                    <div>
+                      <q-icon name="fa-light fa-arrows-up-down-left-right" />
+                      Link to Another
+                    </div>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="openModalWorkOrderAlert"
+                  v-if="operationType !== 'full' && isPassenger"
+                >
+                  <q-item-section>
+                    <div>
+                      <q-icon name="fa-light fa-gear" />
+                      Planning
+                    </div>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="deleteCard"
+                >
+                  <div>
+                    <q-icon name="fa-light fa-trash" />
+                    Delete
+                  </div>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </div>
         <div
           class="
@@ -204,8 +239,10 @@ import useKanbanCard from '../uses/useKanbanCard'
 import lastComments from './lastComments.vue'
 import kanbanCardActions from './KanbanCardActions.vue'
 import chipServices from './chipServices.vue'
+import deleteWorkOrders from "../actions/deleteWorkOrders";
 
 export default defineComponent({
+  methods: {deleteWorkOrders},
   components: {
     lastComments,
     kanbanCardActions,
@@ -294,5 +331,7 @@ export default defineComponent({
 .bg-gray-important {
   @apply tw-bg-gray-100 !important;
 }
-
+.qlistKanban .q-item {
+  @apply tw-p-3
+}
 </style>

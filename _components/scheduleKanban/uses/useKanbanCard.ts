@@ -20,6 +20,8 @@ import moment from 'moment';
 import { i18n } from 'src/plugins/utils'
 import storeModalSchedulePlannings from '../store/modalSchedulePlannings.store'
 import baseService from 'src/modules/qcrud/_services/baseService';
+import deleteWorkOrders from "../actions/deleteWorkOrders";
+import individualRefreshByColumns from "../actions/individualRefreshByColumns";
 export default function useKanbanCard(props: any = {}) {
   const dragCard = computed({
     get: () => storeKanban.dragCard,
@@ -270,6 +272,11 @@ export default function useKanbanCard(props: any = {}) {
       console.log(e);
     }
   }
+  async function deleteCard() {
+    modalScheduleStore.seletedDateColumn = props.dateColumn;
+    await deleteWorkOrders(props.card.id);
+    await individualRefreshByColumns()
+  }
   return {
     colorCheckSchedule,
     titleStatus,
@@ -289,6 +296,7 @@ export default function useKanbanCard(props: any = {}) {
     validateIfTheOperationIsDifferentTurn,
     dragCard,
     draggedFloatingCard,
-    validateClassGray
+    validateClassGray,
+    deleteCard
   };
 }
