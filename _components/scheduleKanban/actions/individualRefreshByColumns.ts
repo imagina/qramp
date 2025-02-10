@@ -63,6 +63,9 @@ function dragDelete() {
     if (!column) return;
     column.loading = true;
     column.cards = column.cards.filter(item => item.id != storeKanban.draggedFloatingCard.id);
-    column.loading = false;
+    setTimeout(() =>{
+      column.loading = false;
+    }, 100)
+
   }
 }
