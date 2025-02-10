@@ -192,8 +192,8 @@ export default function flightStore(): FlightStoreContract {
         state.form.scheduleDate = flight.scheduleDate ? flight.scheduleDate : null;
         state.form.type = flight.type ? flight.type : null;
         state.responsibles = flight?.responsible ? [{value: flight.responsible.id, label: flight.responsible.fullName}] : [];
-        state.inboundOagFlightId = flight.inboundOagFlightId || null;
-        state.outboundOagFlightId = flight.outboundOagFlightId || null;
+        state.form.inboundOagFlightId = flight.inboundOagFlightId || null;
+        state.form.outboundOagFlightId = flight.outboundOagFlightId || null;
         if (qRampStore().getIsPassenger()) {
             state.form.inboundGateArrival = flight.inboundGateArrival || null;
             state.form.outboundGateDeparture = flight.outboundGateDeparture || null;
