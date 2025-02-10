@@ -23,7 +23,7 @@
               :typeWorkOrder="card.type"
             />
             <q-btn
-              v-if="operationType != 'full' && !dragCard"
+              v-if="operationType != 'full' && !dragCard && isPassenger"
               icon="fa-light fa-arrows-up-down-left-right"
               text-color="primary"
               size="xs"
@@ -158,7 +158,7 @@
           tw-hidden
           lg:tw-block"
           @click="openModalWorkOrderAlert"
-          v-if="operationType !== 'full'"
+          v-if="operationType !== 'full' && isPassenger"
         >
           <i class="fa-light fa-gear"/>
         </div>
