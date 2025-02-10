@@ -24,7 +24,7 @@ import {BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR, CARGO_PAX, BUSINESS_UNIT_CA
 import kanbanStore from "../store/kanban.store";
 
 export default function useKanbanBoard(props) {
-  storeFilter.scheduleType = router.route.query.typeAgenda || storeFilter.scheduleType;
+  storeFilter.scheduleType = router.route.query.typeAgenda;
   const { hasAccess } = store
   const $q = useQuasar()
   const refPageActions: any = ref(null);
@@ -156,9 +156,9 @@ export default function useKanbanBoard(props) {
   });
 
   const init = async () => {
+    storeKanban.scheduleType = storeFilter.scheduleType;
     eventsKanban().cardRefresh();
     await checkUrlParams();
-    storeKanban.scheduleType = storeFilter.scheduleType;
     storeKanban.isAppOffline = store.state.qofflineMaster.isAppOffline
     getTitleFilter();
     await setUrlParams();
@@ -233,7 +233,7 @@ export default function useKanbanBoard(props) {
     async (currentValue, oldValue) => {
       const newPath = currentValue.path
       const oldPath = oldValue.path
-
+      storeFilter.scheduleType = router.route.query.typeAgenda;
       if (newPath !== oldPath) {
         storeFilter.stationId = null;
         await setStations()

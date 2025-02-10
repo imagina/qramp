@@ -19,6 +19,7 @@ import {
   BUSINESS_UNIT_LABOR,
   BUSINESS_UNIT_RAMP, CARGO_PAX, FLIGHT, BUSINESS_UNIT_CARGO
 } from "../model/constants";
+import storeFilter from "./store/filters.store";
 
 export default defineComponent({
   components: {
@@ -31,6 +32,7 @@ export default defineComponent({
     }
   },
   setup(props) {
+    storeFilter.scheduleType = router.route.query.typeAgenda;
     init();
     watch(() => router.route.path, (currentValue, oldValue) => {
         if (routeName !== currentValue) {
