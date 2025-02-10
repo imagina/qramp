@@ -48,6 +48,18 @@ export default function useKanbanCard(props: any = {}) {
       .getOperationTypeList().find(operationType => operationType.id == storeKanban.draggedFloatingCard.operationTypeId);
     return operationType?.options?.type
   });
+  const validateClassGray = computed(() => {
+    if(dragCard.value) {
+      if(operationType.value == 'full') {
+        return true
+      }
+      if(draggedFloatingCard.value.operationTypeId == props.card.operationTypeId) {
+        return true
+      }
+    }
+    return false
+  })
+  const draggedFloatingCard = computed(() => storeKanban.draggedFloatingCard)
   const flightStatuses = computed(() => {
     const flightStatuses: any =
       workOrderList()
@@ -111,7 +123,7 @@ export default function useKanbanCard(props: any = {}) {
     return data;
   }
   async function openModalSchedule() {
-    if(operationType.value == 'full' && dragCard.value) return;
+    if(validateClassGray.value) return;
     if (!isWeekAgenda.value && modalScheduleStore.showInline) return
     if (!isWeekAgenda.value && props.card.statusId === STATUS_SCHEDULE && !isPassenger.value){
       openInlineSchedule(props);
@@ -275,6 +287,8 @@ export default function useKanbanCard(props: any = {}) {
     openModalWorkOrderAlert,
     operationType,
     validateIfTheOperationIsDifferentTurn,
-    dragCard
+    dragCard,
+    draggedFloatingCard,
+    validateClassGray
   };
 }

@@ -10,7 +10,7 @@
       tw-bg-white"
       v-if="!card.editable"
       :class="{
-        'bg-gray-important' : operationType == 'full' && dragCard,
+        'bg-gray-important' : validateClassGray,
         [colorCheckSchedule]: true
       }"
     >
@@ -39,8 +39,8 @@
               class="tw-w-10/12 tw-flex"
               @click="openModalSchedule"
               :class="{
-                'tw-cursor-not-allowed': operationType == 'full' && dragCard,
-                  'tw-cursor-pointer': !(operationType == 'full' && dragCard),
+                'tw-cursor-not-allowed': validateClassGray,
+                 'tw-cursor-pointer': !validateClassGray,
               }"
             >
               <i v-if="isNonFlight" class="fa-regular fa-plane-slash tw-mr-2" />
@@ -51,8 +51,8 @@
                   tw-truncate
                 "
                 :class="{
-                  'tw-cursor-not-allowed': operationType == 'full' && dragCard,
-                  'tw-cursor-pointer': !(operationType == 'full' && dragCard),
+                  'tw-cursor-not-allowed': validateClassGray,
+                  'tw-cursor-pointer': !validateClassGray,
                 }"
               >
                 {{ card.calendar.title }}
