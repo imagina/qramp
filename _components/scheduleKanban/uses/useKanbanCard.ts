@@ -22,6 +22,7 @@ import storeModalSchedulePlannings from '../store/modalSchedulePlannings.store'
 import baseService from 'src/modules/qcrud/_services/baseService';
 import deleteWorkOrders from "../actions/deleteWorkOrders";
 import individualRefreshByColumns from "../actions/individualRefreshByColumns";
+import {alert} from "../../../../../plugins/utils";
 export default function useKanbanCard(props: any = {}) {
   const dragCard = computed({
     get: () => storeKanban.dragCard,
@@ -138,7 +139,7 @@ export default function useKanbanCard(props: any = {}) {
       let response: {data: any} = await showWorkOrder(props.card.id);
       if(operationType.value != 'full' && dragCard.value) {
         const flightNumber = storeKanban.draggedFloatingCard.inboundFlightNumber || storeKanban.draggedFloatingCard.outboundFlightNumber;
-        titleModal = `${titleModal} (Merge WorkOrder ${storeKanban.draggedFloatingCard.id}) Flight Number ${flightNumber}`;
+        titleModal = `${titleModal}  (Mergin with ${flightNumber} - ${storeKanban.draggedFloatingCard.id})`;
         response.data = mergeDataWorkOrder(response.data);
       }
       await refFormOrders.value.loadform({
@@ -273,9 +274,23 @@ export default function useKanbanCard(props: any = {}) {
     }
   }
   async function deleteCard() {
-    modalScheduleStore.seletedDateColumn = props.dateColumn;
-    await deleteWorkOrders(props.card.id);
-    await individualRefreshByColumns()
+    alert.warning({
+      mode: "modal",
+      title: 'Delete',
+      message: 'Are you sure you want to delete this work order?',
+      actions: [
+        {label: i18n.tr('isite.cms.label.no'), color: 'grey-8'},
+        {
+          label: i18n.tr("isite.cms.label.yes"),
+          color: "primary",
+          handler: async () => {
+            modalScheduleStore.seletedDateColumn = props.dateColumn;
+            await deleteWorkOrders(props.card.id);
+            await individualRefreshByColumns()
+          },
+        },
+      ],
+    });
   }
   return {
     colorCheckSchedule,
