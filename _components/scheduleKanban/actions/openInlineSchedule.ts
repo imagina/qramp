@@ -6,6 +6,7 @@ import setEditableCard from '../actions/setEditableCard';
 export default async function openInlineSchedule(props: any): Promise<void> {
     try {
         const response = await showWorkOrder(props.card.id);
+        modalScheduleStore.seletedDateColumn = props.dateColumn;
         modalScheduleStore.isEdit = true;
         modalScheduleStore.showInline = true;
         modalScheduleStore.form = { ...response.data };
