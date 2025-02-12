@@ -21,7 +21,7 @@ export const getWorkOrderAndOpenModal = async (ref, data, modalProps={}, makeReq
             include: "customer,workOrderStatus,operationType,station,contract,responsible",
         }
     }).then(async (item) => {
-        openModalFull(ref, item.data)
+        openModalFull(ref, item.data, modalProps)
     }).catch((err) => {
         console.error(err)
     }).finally(() => {

@@ -9,6 +9,7 @@
     :maximized="$q.screen.lt.md"
     :width="form.id ? '50%' : '400px'"
     :customClass="`tw-border-l-2 tw-border-${flightStatus ? flightStatus.color : 'gray-100'}`"
+    :help="helpText"
   >
     <q-form ref="refFormSchedule">
       <scheduleFields />

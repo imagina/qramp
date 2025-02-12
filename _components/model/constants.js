@@ -426,3 +426,9 @@ export const modalFullProps = {
   workOrderId: null,
   width: '90vw',
 }
+
+export const documentationPaths = {
+  [BUSINESS_UNIT_RAMP]: 'ramp-module',
+  [BUSINESS_UNIT_PASSENGER]: 'passenger-module',
+  [BUSINESS_UNIT_SECURITY]: 'security-module',
+}

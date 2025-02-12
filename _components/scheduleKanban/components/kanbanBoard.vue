@@ -8,6 +8,7 @@
         class="q-mb-md"
         @search="val => changeSearch(val)"
         @refresh="buildKanbanStructure(true)"
+        :help="helpText"
       />
     <filters v-if="storeFilter.showModal"/>
     <actionBar />

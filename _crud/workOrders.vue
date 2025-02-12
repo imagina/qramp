@@ -23,7 +23,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts'
-import { cacheOffline } from 'src/plugins/utils';
+import { cacheOffline, helper } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 import { avatarComponent } from '../common/avatarComponent'
 
@@ -38,6 +38,7 @@ export default {
             crudId: this.$uid(),
             areaId: null,
             loadingBulk: false,
+            token: '',
         }
     },
     provide() {
@@ -63,6 +64,11 @@ export default {
             qRampStore().setBusinessUnitId(BUSINESS_UNIT_RAMP);
             await workOrderList().getAllList(true);
             await workOrderList().getCustomerWithContract()
+        })
+    },
+    mounted() {
+        this.$nextTick(async () => {
+            this.token = await helper.getToken()
         })
     },
     beforeDestroy() {
@@ -102,6 +108,16 @@ export default {
                             this.$refs.formOrders.loadform({
                                 modalProps: {
                                     title: this.$tr('ifly.cms.form.newWorkOrder'),
+                                    help: {
+                                        title: 'Create a Work Order',
+                                        description: `
+                                            Need help? Check the documentation for more information on creating Work Orders.
+                                            ${helper.documentationLink(
+                                                '/docs/agione/ramp-module/work-orders#creating-a-work-order',
+                                                this.token
+                                            )}
+                                        `
+                                    },
                                     update: false,
                                     width: '35vw'
                                 }
@@ -109,6 +125,16 @@ export default {
                     },
                 },
                 read: {
+                    help: {
+                        title: 'Work Order',
+                        description: `
+                            In this crud you can manage work Orders (create, update, delete).
+                            ${helper.documentationLink(
+                                '/docs/agione/ramp-module/work-orders',
+                                this.token
+                            )}
+                        `,
+                    },
                     columns: [
                         {
                             name: 'id',
@@ -413,7 +439,17 @@ export default {
                                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
                             }),
                             action: async (item) => {
-                                await this.showWorkOrder(item)
+                                const help = {
+                                    title: 'Edit Work Order',
+                                    description: `
+                                        Have questions? Check the documentation for more details on updating Work Orders.
+                                        ${helper.documentationLink(
+                                            '/docs/agione/ramp-module/work-orders#editing-a-work-order',
+                                            this.token
+                                        )}
+                                    `
+                                }
+                                await this.showWorkOrder(item, { help })
                             }
                         },
                         {
