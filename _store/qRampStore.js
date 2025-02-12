@@ -11,7 +11,7 @@ import {
 } from '../_components/model/constants.js'
 import moment from 'moment';
 import baseService from 'modules/qcrud/_services/baseService.js'
-import { cacheOffline, i18n, store, alert, cache } from 'src/plugins/utils';
+import { cacheOffline, i18n, store, alert } from 'src/plugins/utils';
 import { reactive } from "vue";
 import storeKanban from '../_components/scheduleKanban/store/kanban.store.ts'
 import momentTimezone from "moment-timezone";
@@ -689,15 +689,6 @@ export default function qRampStore() {
       return true
     }
 
-    async function getToken() {
-        try {
-            const sessionData = await cache.get.item('sessionData')
-            return sessionData.userToken.replace('Bearer ', '')
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     function getFormTable(data) {
       const {
         ident,
@@ -810,7 +801,6 @@ export default function qRampStore() {
 	    validateDateRule,
         validateOperationsDoNotApply,
         validateDateOutboundSchedule,
-        runAlerts,
-        getToken
+        runAlerts
     }
 }
