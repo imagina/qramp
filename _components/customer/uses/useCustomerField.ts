@@ -13,6 +13,7 @@ import { alert, i18n } from 'src/plugins/utils'
 export default function useCustomerField(props: any) {
     const dataForm = computed(() => props.dataForm);
     const addNewOptions = computed(() => props.addNewOptions);
+    const isRules = computed(() => props.isRules);
     const readonly = computed(() => props.readonly);
     // Reactive state for the form fields and additional data.
     const state = reactive<FormState>({
@@ -42,9 +43,14 @@ export default function useCustomerField(props: any) {
             },
             props: {
                 rules: [
-                    val => !!val || i18n.tr('isite.cms.message.fieldRequired')
+                    val => {
+                      if (!isRules.value) {
+                        return true;
+                      }
+                      !!val || i18n.tr('isite.cms.message.fieldRequired')
+                    }
                 ],
-                label: `*Customer/Contract`,
+                label: `${isRules.value ? '*': ''}Customer/Contract`,
                 clearable: true,
                 color: "primary",
                 'hide-bottom-space': false,
@@ -143,12 +149,12 @@ export default function useCustomerField(props: any) {
                 return item.id == dataForm.value.customerId && item.contractId == null;
             }
           }) || null;
-  
+
         if (customer) {
             if (customer.label) {
                 state.selectCustomers = customer;
             }
-        } 
+        }
         await setCustomer();
     }
     function reset() {

@@ -122,7 +122,13 @@ export const getIfItIsTypeListOrDynamicField = (product, categoryId = null) => {
             const hasMultiCategoryFields = product.multiCategoryFields && product.multiCategoryFields.length > 0;
             if(hasMultiCategoryFields) {
               const result = product.multiCategoryFields.find(field =>
-                field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+                field?.multiCategories.some(category => {
+                  if(qRampStore().getBusinessUnitId() === 'null') {
+                    return category.business_unit_id === null;
+                  }
+                  return category.business_unit_id === qRampStore().getBusinessUnitId()
+
+                })
               );
               categoryIdData = result.multiCategories[0]?.id
             }
@@ -167,7 +173,12 @@ function getAttProduct(product: any) {
     })
 
     const result = product.multiCategoryFields.find(field =>
-      field?.multiCategories.some(category => category.business_unit_id === qRampStore().getBusinessUnitId())
+      field?.multiCategories.some(category => {
+        if(qRampStore().getBusinessUnitId() === 'null') {
+          return category.business_unit_id === null;
+        }
+        return category.business_unit_id === qRampStore().getBusinessUnitId()
+      })
     );
     return result.multiAttributes || [];
   }

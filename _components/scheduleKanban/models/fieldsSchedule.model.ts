@@ -117,6 +117,7 @@ export default function modelFields() {
                 color:"primary"
               },
             },
+            customer: 2,
             stationId: {
               name:'stationId',
               value: store.stationId,
@@ -180,7 +181,7 @@ export default function modelFields() {
                   val => !!val || i18n.tr('isite.cms.message.fieldRequired'),
                   val => {
                     const format = 'MM/DD/YYYY HH:mm';
-                    const date = moment(storeFilters.selectedDate, 'YYYY/MM/DD').format('MM/DD/YYYY');
+                    const date = moment(store.seletedDateColumn, 'YYYY/MM/DD').format('MM/DD/YYYY')
                     return qRampStore().validateDateRule(val, `${date} ${form.value.sta}`, operationType.value, format)
                   }
                 ],

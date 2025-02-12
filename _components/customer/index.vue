@@ -47,6 +47,10 @@ export default defineComponent({
       type: Boolean,
       default: () => false,
     },
+    isRules: {
+      type: Boolean,
+      default: () => true,
+    }
   },
   setup(props) {
     return { ...useCustomerField(props) };

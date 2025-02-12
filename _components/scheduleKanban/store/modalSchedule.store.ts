@@ -40,6 +40,8 @@ function getForm(data: any) {
     form.acTypeId = data.acTypeId;
     form.inboundScheduledArrival = data.inboundScheduledArrival;
     form.statusId = data.statusId;
+    form.customerId = data.customerId || null;
+    form.contractId = data.contractId || null;
     return form;
 }
 
