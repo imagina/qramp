@@ -20,8 +20,16 @@ import eventsKanban from '../actions/eventsKanban'
 import validateMatchCompanyStation from "../actions/validateMatchCompanyStation";
 import { store, i18n, helper, cache, router } from 'src/plugins/utils'
 import { useQuasar } from 'quasar';
-import {BUSINESS_UNIT_SECURITY, BUSINESS_UNIT_LABOR, CARGO_PAX, BUSINESS_UNIT_CARGO} from '../../model/constants.js';
+import {
+  BUSINESS_UNIT_SECURITY, 
+  BUSINESS_UNIT_LABOR, 
+  CARGO_PAX, 
+  BUSINESS_UNIT_CARGO, 
+  BUSINESS_UNIT_PASSENGER, 
+  BUSINESS_UNIT_RAMP
+} from '../../model/constants.js';
 import kanbanStore from "../store/kanban.store";
+import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
@@ -30,6 +38,7 @@ export default function useKanbanBoard(props) {
   const loadingMain = ref(true);
   const refFormOrders = ref(null);
   const refModalNonFlight = ref(null);
+  const token = ref(null);
   const isAppOffline = computed(() => store.state.qofflineMaster.isAppOffline)
   const search = computed({
     get: () => storeKanban.search,
@@ -37,6 +46,11 @@ export default function useKanbanBoard(props) {
       storeKanban.search = value;
     }
   })
+  const routes = {
+    [BUSINESS_UNIT_RAMP]: 'ramp-module',
+    [BUSINESS_UNIT_PASSENGER]: 'passenger-module',
+    [BUSINESS_UNIT_SECURITY]: 'security-module',
+  }
   provide("refFormOrders", refFormOrders);
   provide("refModalNonFlight", refModalNonFlight);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -51,6 +65,16 @@ export default function useKanbanBoard(props) {
       format24h: true,
       options: modelHoursFilter,
     },
+  });
+  const helpText = computed(() => {
+    const path = routes[qRampStore().getBusinessUnitId() || 0]
+    return {
+      title: 'Schedule',
+      description: `
+        Need help? Check the documentation for more information on how to use the schedule.
+        ${documentationLink(`/docs/agione/${path}/schedule`, token.value)}
+      `,
+    }
   });
   const isSecurity = computed(() => qRampStore().getBusinessUnitId() === BUSINESS_UNIT_SECURITY);
   const title = computed(() => kanbanStore.title);
@@ -225,6 +249,7 @@ export default function useKanbanBoard(props) {
   onMounted(async() => {
     await setStations()
     await init()
+    token.value = await qRampStore().getToken()
     loadingMain.value = false;
   });
   watch(
@@ -282,6 +307,7 @@ export default function useKanbanBoard(props) {
     changeSearch,
     refPageActions,
     isSecurity,
-    showModalStation
+    showModalStation,
+    helpText,
   };
 }
