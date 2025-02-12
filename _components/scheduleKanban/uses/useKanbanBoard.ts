@@ -28,7 +28,7 @@ import {
 } from '../../model/constants.js';
 import kanbanStore from "../store/kanban.store";
 import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
-import { documentationPaths } from '../models/documentationPaths.model'
+import { documentationPaths } from 'src/modules/qramp/_components/model/constants.js'
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store

@@ -17,7 +17,7 @@ import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
 import { store as pluginStore, i18n, alert } from 'src/plugins/utils'
 import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
-import { documentationPaths } from '../models/documentationPaths.model'
+import { documentationPaths } from 'src/modules/qramp/_components/model/constants.js'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
