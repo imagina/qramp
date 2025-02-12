@@ -26,6 +26,7 @@ import workOrderList from '../_store/actions/workOrderList.ts'
 import { cacheOffline, cache } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 import { avatarComponent } from '../common/avatarComponent'
+import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
 
 export default {
     name: 'RampCrud',
@@ -111,14 +112,11 @@ export default {
                                     help: {
                                         title: 'Create a Work Order',
                                         description: `
-                                            Need help? Check the
-                                            <a 
-                                                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders#creating-a-work-order?token=${this.token}' 
-                                                target='_blank'
-                                                class='tw-text-blue-500'>
-                                                    documentation
-                                            </a>
-                                            for more information on creating Work Orders.
+                                            Need help? Check the documentation for more information on creating Work Orders.
+                                            ${documentationLink(
+                                                '/docs/agione/ramp-module/work-orders#creating-a-work-order',
+                                                this.token
+                                            )}
                                         `
                                     },
                                     update: false,
@@ -132,13 +130,10 @@ export default {
                         title: 'Work Order',
                         description: `
                             In this crud you can manage work Orders (create, update, delete).
-                            <a 
-                                href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders?token=${this.token}' 
-                                target='_blank'
-                                class='tw-text-blue-500'>
-                                    Go to documentation
-                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
+                            ${documentationLink(
+                                '/docs/agione/ramp-module/work-orders',
+                                this.token
+                            )}
                         `,
                     },
                     columns: [
@@ -448,14 +443,11 @@ export default {
                                 const help = {
                                     title: 'Edit Work Order',
                                     description: `
-                                        Have questions? Check the 
-                                        <a 
-                                            href='https://delightful-ground-0eae6c50f.4.azurestaticapps.net/docs/documentation/ramp-module/work-orders#editing-a-work-order?token=${this.token}' 
-                                            target='_blank'
-                                            class='tw-text-blue-500'>
-                                                documentation
-                                        </a>
-                                        for more details on updating Work Orders.
+                                        Have questions? Check the documentation for more details on updating Work Orders.
+                                        ${documentationLink(
+                                            '/docs/agione/ramp-module/work-orders#editing-a-work-order',
+                                            this.token
+                                        )}
                                     `
                                 }
                                 await this.showWorkOrder(item, { help })
