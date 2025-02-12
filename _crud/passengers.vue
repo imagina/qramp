@@ -32,6 +32,7 @@ import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/i
 import { cacheOffline } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 import { avatarComponent } from '../common/avatarComponent'
+import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
 
 export default {
   name: 'RampCrud',
@@ -46,7 +47,8 @@ export default {
       crudId: this.$uid(),
       areaId: null,
       loadingBulk: false,
-      refFormOrders: null
+      refFormOrders: null,
+      token: '',
     }
   },
   provide() {
@@ -76,6 +78,7 @@ export default {
   mounted() {
     this.$nextTick(async () => {
       this.refFormOrders = this.$refs.formOrders
+      this.token = await qRampStore().getToken()
     })
   },
   beforeUnmount() {
@@ -125,6 +128,16 @@ export default {
           ]
         },
         read: {
+          help: {
+            title: 'Work Order',
+            description: `
+              In this crud you can manage work Orders (create, update, delete).
+              ${documentationLink(
+                '/docs/agione/passenger-module/work-orders',
+                this.token
+              )}
+            `,
+          },
           columns: [
             {
               name: 'id',
@@ -452,7 +465,17 @@ export default {
                 icon: this.validateStatus(item.statusId) ? 'fal fa-pen' : 'fal fa-eye',
               }),
               action: async (item) => {
-                await this.showWorkOrder(item)
+                const help = {
+                  title: 'Edit Work Order',
+                  description: `
+                    Have questions? Check the documentation for more details on updating Work Orders.
+                    ${documentationLink(
+                    '/docs/agione/passenger-module/work-orders#editing-a-work-order',
+                    this.token
+                  )}
+                  `
+                }
+                await this.showWorkOrder(item, { help })
               }
             },
             {
@@ -728,6 +751,16 @@ export default {
             title: this.$tr('ifly.cms.form.newWorkOrder'),
             update: false,
             width: '34vw',
+            help: {
+              title: 'Create a Work Order',
+              description: `
+                Need help? Check the documentation for more information on creating Work Orders.
+                ${documentationLink(
+                  '/docs/agione/passenger-module/work-orders#creating-a-work-order',
+                  this.token
+                )}
+              `
+            },
           }
         })
       }
