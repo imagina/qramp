@@ -3,11 +3,10 @@ import serviceListStore from '../store/serviceList';
 import findDynamicFieldTitle from '../services/findDynamicFieldTitle';
 import searchAndCreateDynamicField from '../services/searchAndCreateDynamicField';
 import deleteChipRecursive from '../services/deleteChipRecursive';
-import { store } from 'src/plugins/utils'
+import { store, helper } from 'src/plugins/utils'
 import baseService from 'modules/qcrud/_services/baseService.js'
 import qRampStore from '../../../_store/qRampStore.js';
 import { documentationPaths } from 'src/modules/qramp/_components/model/constants.js'
-import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
 
 const chipServicesController = (props: any = {}, emit: any = null) => {
     let lists: any = ref([]);
@@ -31,7 +30,7 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
       title: 'Favorites',
       description: `
         Add services as favorites by clicking the star icon.
-        ${documentationLink(`/docs/agione/${path.value}/work-orders#favorites`, token.value)}
+        ${helper.documentationLink(`/docs/agione/${path.value}/work-orders#favorites`, token.value)}
       `
     }));
     const nameProduct = (productId: string) => {
@@ -70,7 +69,7 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
     }
 
     onMounted(async () => {
-      token.value = await qRampStore().getToken()
+      token.value = await helper.getToken()
       path.value = documentationPaths[qRampStore().getBusinessUnitId() || 0]
     })
 

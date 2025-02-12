@@ -23,10 +23,9 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts'
-import { cacheOffline } from 'src/plugins/utils';
+import { cacheOffline, helper } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 import { avatarComponent } from '../common/avatarComponent'
-import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
 
 export default {
     name: 'RampCrud',
@@ -69,7 +68,7 @@ export default {
     },
     mounted() {
         this.$nextTick(async () => {
-            this.token = await qRampStore().getToken()
+            this.token = await helper.getToken()
         })
     },
     beforeDestroy() {
@@ -113,7 +112,7 @@ export default {
                                         title: 'Create a Work Order',
                                         description: `
                                             Need help? Check the documentation for more information on creating Work Orders.
-                                            ${documentationLink(
+                                            ${helper.documentationLink(
                                                 '/docs/agione/ramp-module/work-orders#creating-a-work-order',
                                                 this.token
                                             )}
@@ -130,7 +129,7 @@ export default {
                         title: 'Work Order',
                         description: `
                             In this crud you can manage work Orders (create, update, delete).
-                            ${documentationLink(
+                            ${helper.documentationLink(
                                 '/docs/agione/ramp-module/work-orders',
                                 this.token
                             )}
@@ -444,7 +443,7 @@ export default {
                                     title: 'Edit Work Order',
                                     description: `
                                         Have questions? Check the documentation for more details on updating Work Orders.
-                                        ${documentationLink(
+                                        ${helper.documentationLink(
                                             '/docs/agione/ramp-module/work-orders#editing-a-work-order',
                                             this.token
                                         )}

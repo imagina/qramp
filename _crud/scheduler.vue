@@ -19,7 +19,7 @@ import {
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
 import { documentationPaths } from '../_components/model/constants.js'
-import { documentationLink } from '../common/documentationLink.js'
+import { helper } from 'src/plugins/utils'
 
 export default {
   components: {
@@ -100,7 +100,7 @@ export default {
             title: 'Scheduler',
             description: `
               Need help? Check the documentation for more information on using the Scheduler and its features.
-              ${documentationLink(`/docs/agione/${this.path}/schedule#scheduler`, this.token)}
+              ${helper.documentationLink(`/docs/agione/${this.path}/schedule#scheduler`, this.token)}
             `,
           },
           columns: [
@@ -385,14 +385,6 @@ export default {
     },
     async getDataTable(refresh) {
       await this.$refs.crudComponent.getDataTable(refresh);
-    },
-    async getToken() {
-      try {
-        const sessionData = await cache.get.item('sessionData')
-        return sessionData.userToken.split(' ')[1]
-      } catch (error) {
-        console.log(error)
-      }
     }
   }
 }

@@ -11,8 +11,8 @@ import modelActionsModal from '../models/modelActionsModal';
 import { SchedulerModalComposition, HelpText } from '../contracts/useSchedulerModal.contract'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract'
 import { documentationPaths } from 'src/modules/qramp/_components/model/constants.js'
-import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
 import qRampStore from 'src/modules/qramp/_store/qRampStore.js'
+import { helper } from 'src/plugins/utils'
 /**
  * Custom composition function for managing scheduler modal state and actions.
  * @returns {SchedulerModalComposition}
@@ -62,7 +62,7 @@ export default function useSchedulerModal(props: any = null, emit:any = null): S
             title: '',
             description: `
                 Need help? Check the documentation for more information on creating Scheduler.
-                ${documentationLink(`/docs/agione/${path.value}/schedule#create-a-scheduler`, token.value)}
+                ${helper.documentationLink(`/docs/agione/${path.value}/schedule#create-a-scheduler`, token.value)}
             `
         }
     });
@@ -79,7 +79,7 @@ export default function useSchedulerModal(props: any = null, emit:any = null): S
     const { actions } = modelActionsModal(emit) as ModelActionsModalResult;
 
     onMounted(() => {
-        token.value = qRampStore().getToken()
+        token.value = helper.getToken()
         path.value = documentationPaths[qRampStore().getBusinessUnitId() || 0]
     })
 

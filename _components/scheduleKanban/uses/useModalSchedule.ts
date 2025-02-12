@@ -15,8 +15,7 @@ import getCurrentColumn from '../actions/getCurrentColumn';
 import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
-import { store as pluginStore, i18n, alert } from 'src/plugins/utils'
-import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
+import { store as pluginStore, i18n, alert, helper } from 'src/plugins/utils'
 import { documentationPaths } from 'src/modules/qramp/_components/model/constants.js'
 
 export default function useModalSchedule(props: any, emit: any) {
@@ -113,7 +112,7 @@ export default function useModalSchedule(props: any, emit: any) {
       title: 'Create an Work Order',
       description: `
         Need help? Check the documentation for more information on creating Work Orders.
-        ${documentationLink(`/docs/agione/${path}/schedule#create-an-schedule`, token.value)}
+        ${helper.documentationLink(`/docs/agione/${path}/schedule#create-an-schedule`, token.value)}
       `,
     }
   });
@@ -220,7 +219,7 @@ export default function useModalSchedule(props: any, emit: any) {
   }
   
   onMounted(async () => {
-    token.value = await qRampStore().getToken()
+    token.value = await helper.getToken()
   })
 
   onBeforeUnmount(() => {

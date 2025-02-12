@@ -27,7 +27,6 @@ import {
   BUSINESS_UNIT_CARGO,
 } from '../../model/constants.js';
 import kanbanStore from "../store/kanban.store";
-import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
 import { documentationPaths } from 'src/modules/qramp/_components/model/constants.js'
 
 export default function useKanbanBoard(props) {
@@ -66,7 +65,7 @@ export default function useKanbanBoard(props) {
       title: 'Schedule',
       description: `
         Need help? Check the documentation for more information on how to use the schedule.
-        ${documentationLink(`/docs/agione/${path}/schedule`, token.value)}
+        ${helper.documentationLink(`/docs/agione/${path}/schedule`, token.value)}
       `,
     }
   });
@@ -243,7 +242,7 @@ export default function useKanbanBoard(props) {
   onMounted(async() => {
     await setStations()
     await init()
-    token.value = await qRampStore().getToken()
+    token.value = await helper.getToken()
     loadingMain.value = false;
   });
   watch(
