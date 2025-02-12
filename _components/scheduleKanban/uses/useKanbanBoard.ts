@@ -24,12 +24,11 @@ import {
   BUSINESS_UNIT_SECURITY, 
   BUSINESS_UNIT_LABOR, 
   CARGO_PAX, 
-  BUSINESS_UNIT_CARGO, 
-  BUSINESS_UNIT_PASSENGER, 
-  BUSINESS_UNIT_RAMP
+  BUSINESS_UNIT_CARGO,
 } from '../../model/constants.js';
 import kanbanStore from "../store/kanban.store";
 import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
+import { documentationPaths } from '../models/documentationPaths.model'
 
 export default function useKanbanBoard(props) {
   const { hasAccess } = store
@@ -46,11 +45,6 @@ export default function useKanbanBoard(props) {
       storeKanban.search = value;
     }
   })
-  const routes = {
-    [BUSINESS_UNIT_RAMP]: 'ramp-module',
-    [BUSINESS_UNIT_PASSENGER]: 'passenger-module',
-    [BUSINESS_UNIT_SECURITY]: 'security-module',
-  }
   provide("refFormOrders", refFormOrders);
   provide("refModalNonFlight", refModalNonFlight);
   const isPassenger = computed(() => qRampStore().getIsPassenger());
@@ -67,7 +61,7 @@ export default function useKanbanBoard(props) {
     },
   });
   const helpText = computed(() => {
-    const path = routes[qRampStore().getBusinessUnitId() || 0]
+    const path = documentationPaths[qRampStore().getBusinessUnitId() || 0]
     return {
       title: 'Schedule',
       description: `
