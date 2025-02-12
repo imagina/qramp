@@ -18,6 +18,8 @@ import {
   BUSINESS_UNIT_LABOR, BUSINESS_UNIT_SECURITY, CARGO_PAX
 } from "../_components/model/constants"
 import qRampStore from '../_store/qRampStore.js'
+import { documentationPaths } from '../_components/model/constants.js'
+import { helper } from 'src/plugins/utils'
 
 export default {
   components: {
@@ -26,7 +28,15 @@ export default {
   data() {
     return {
       crudId: this.$uid(),
+      token: '',
+      path: '',
     }
+  },
+  mounted() {
+    this.$nextTick(async () => {
+      this.token = await helper.getToken()
+      this.path = documentationPaths[qRampStore().getBusinessUnitId() || '']
+    })
   },
   beforeMount() {
     this.$nextTick(async () => {
@@ -86,6 +96,13 @@ export default {
           }
         }],
         read: {
+          help: {
+            title: 'Scheduler',
+            description: `
+              Need help? Check the documentation for more information on using the Scheduler and its features.
+              ${helper.documentationLink(`/docs/agione/${this.path}/schedule#scheduler`, this.token)}
+            `,
+          },
           columns: [
             {
               name: 'id',
@@ -368,7 +385,7 @@ export default {
     },
     async getDataTable(refresh) {
       await this.$refs.crudComponent.getDataTable(refresh);
-    },
+    }
   }
 }
 </script>

@@ -4,11 +4,15 @@ import {
     WritableComputedRef,
     ComputedRef,
     Ref,
+    onMounted
 } from 'vue';
 import store from '../store/index.store';
 import modelActionsModal from '../models/modelActionsModal';
-import { SchedulerModalComposition } from '../contracts/useSchedulerModal.contract'
+import { SchedulerModalComposition, HelpText } from '../contracts/useSchedulerModal.contract'
 import { ModelActionsModalResult } from '../contracts/modelActionsModal.contract'
+import { documentationPaths } from 'src/modules/qramp/_components/model/constants.js'
+import qRampStore from 'src/modules/qramp/_store/qRampStore.js'
+import { helper } from 'src/plugins/utils'
 /**
  * Custom composition function for managing scheduler modal state and actions.
  * @returns {SchedulerModalComposition}
@@ -19,6 +23,8 @@ export default function useSchedulerModal(props: any = null, emit:any = null): S
      * @type {Ref<HTMLElement | null>}
      */
     const refFormFields: Ref<HTMLElement | null> = ref(null);
+    const token: Ref<string | null> = ref(null)
+    const path: Ref<string> = ref('')
 
     /**
      * Computed property indicating whether the application is in a loading state.
@@ -51,6 +57,16 @@ export default function useSchedulerModal(props: any = null, emit:any = null): S
         }
     });
 
+    const helpText: ComputedRef<HelpText> = computed(() => {
+        return {
+            title: '',
+            description: `
+                Need help? Check the documentation for more information on creating Scheduler.
+                ${helper.documentationLink(`/docs/agione/${path.value}/schedule#create-a-scheduler`, token.value)}
+            `
+        }
+    });
+
     /**
      * Reset the scheduler modal state.
      * @function
@@ -62,12 +78,18 @@ export default function useSchedulerModal(props: any = null, emit:any = null): S
 
     const { actions } = modelActionsModal(emit) as ModelActionsModalResult;
 
+    onMounted(async () => {
+        token.value = await helper.getToken()
+        path.value = documentationPaths[qRampStore().getBusinessUnitId() || '']
+    })
+
     return {
         showModal,
         actions,
         refFormFields,
         clear,
         loading,
-        titleModal
+        titleModal,
+        helpText,
     };
 }
