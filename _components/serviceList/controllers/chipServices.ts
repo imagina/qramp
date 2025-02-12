@@ -70,7 +70,7 @@ const chipServicesController = (props: any = {}, emit: any = null) => {
 
     onMounted(async () => {
       token.value = await helper.getToken()
-      path.value = documentationPaths[qRampStore().getBusinessUnitId() || 0]
+      path.value = documentationPaths[qRampStore().getBusinessUnitId() || '']
     })
 
     updateLists().then();
