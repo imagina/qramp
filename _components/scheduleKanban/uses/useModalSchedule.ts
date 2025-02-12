@@ -1,4 +1,4 @@
-import { computed, ComputedRef, ref, onBeforeUnmount, inject } from 'vue';
+import { computed, ComputedRef, ref, onBeforeUnmount, inject, onMounted } from 'vue';
 import store from '../store/modalSchedule.store'
 import fieldsSchedule from '../models/fieldsSchedule.model'
 import validateOperationType from '../actions/validateOperationType'
@@ -16,9 +16,12 @@ import setEditableCard from '../actions/setEditableCard';
 import setIndividualCards from '../actions/setIndividualCards'
 import updateWorkOrder from '../actions/updateWorkOrder'
 import { store as pluginStore, i18n, alert } from 'src/plugins/utils'
+import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
+import { documentationPaths } from '../models/documentationPaths.model'
 
 export default function useModalSchedule(props: any, emit: any) {
   const refFormSchedule: any = ref(null);
+  const token = ref(null);
   const refFormOrders: any = inject('refFormOrders');
   const showModal = computed({
     get: () => store.showModal,
@@ -104,6 +107,16 @@ export default function useModalSchedule(props: any, emit: any) {
   const flightStatus = computed(() => fieldsSchedule().flightStatus.value);
   const isbound = computed(() => validateOperationType(form.value.operationTypeId));
   const fields = computed(() => fieldsSchedule().fields.value);
+  const helpText = computed(() => {
+    const path = documentationPaths[qRampStore().getBusinessUnitId() || 0]
+    return {
+      title: 'Create an Work Order',
+      description: `
+        Need help? Check the documentation for more information on creating Work Orders.
+        ${documentationLink(`/docs/agione/${path}/schedule#create-an-schedule`, token.value)}
+      `,
+    }
+  });
   function zanetizeData(key: string) {
     if (key === "flightNumber") {
       form.value[key] = form.value[key].toUpperCase().replace(/\s+/g, "");
@@ -205,6 +218,11 @@ export default function useModalSchedule(props: any, emit: any) {
       data: response.data,
     });
   }
+  
+  onMounted(async () => {
+    token.value = await qRampStore().getToken()
+  })
+
   onBeforeUnmount(() => {
     store.reset();
   });
@@ -225,6 +243,7 @@ export default function useModalSchedule(props: any, emit: any) {
     saveForm,
     showCommentsComponent,
     storeKanban,
-    i18n
+    i18n,
+    helpText,
   }
 }
