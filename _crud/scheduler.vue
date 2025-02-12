@@ -34,8 +34,8 @@ export default {
   },
   mounted() {
     this.$nextTick(async () => {
-      this.token = await qRampStore().getToken()
-      this.path = documentationPaths[qRampStore().getBusinessUnitId() || 0]
+      this.token = await helper.getToken()
+      this.path = documentationPaths[qRampStore().getBusinessUnitId() || '']
     })
   },
   beforeMount() {

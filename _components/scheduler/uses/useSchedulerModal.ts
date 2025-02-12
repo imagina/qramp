@@ -78,9 +78,9 @@ export default function useSchedulerModal(props: any = null, emit:any = null): S
 
     const { actions } = modelActionsModal(emit) as ModelActionsModalResult;
 
-    onMounted(() => {
-        token.value = helper.getToken()
-        path.value = documentationPaths[qRampStore().getBusinessUnitId() || 0]
+    onMounted(async () => {
+        token.value = await helper.getToken()
+        path.value = documentationPaths[qRampStore().getBusinessUnitId() || '']
     })
 
     return {
