@@ -23,7 +23,7 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts'
-import { cacheOffline, cache } from 'src/plugins/utils';
+import { cacheOffline } from 'src/plugins/utils';
 import { getWorkOrderAndOpenModal } from '../_store/actions/getWorkOrderAndOpenModal'
 import { avatarComponent } from '../common/avatarComponent'
 import { documentationLink } from 'src/modules/qramp/common/documentationLink.js'
@@ -69,7 +69,7 @@ export default {
     },
     mounted() {
         this.$nextTick(async () => {
-            this.token = await this.getToken()
+            this.token = await qRampStore().getToken()
         })
     },
     beforeDestroy() {
@@ -738,14 +738,6 @@ export default {
                     </span>`
                 : ''
         },
-        async getToken() {
-            try {
-                const sessionData = await cache.get.item('sessionData')
-                return sessionData.userToken.split(' ')[1]
-            } catch (error) {
-                console.log(error)
-            }
-        }
     }
 }
 </script>
