@@ -1,4 +1,4 @@
-import {computed, inject, ref } from 'vue';
+import {computed, inject, ref, onMounted } from 'vue';
 import storeKanban from '../store/kanban.store';
 import {
   STATUS_DRAFT,
@@ -17,13 +17,14 @@ import scheduleTypeModel from "../models/scheduleType.model";
 import selectFlightNumberStore from '../../modal/selectFlightNumber/store/selectFlightNumber'
 import validateOperationType from '../actions/validateOperationType'
 import moment from 'moment';
-import { i18n } from 'src/plugins/utils'
+import { i18n, helper } from 'src/plugins/utils'
 import storeModalSchedulePlannings from '../store/modalSchedulePlannings.store'
 import baseService from 'src/modules/qcrud/_services/baseService';
 import deleteWorkOrders from "../actions/deleteWorkOrders";
 import individualRefreshByColumns from "../actions/individualRefreshByColumns";
 import {alert} from "../../../../../plugins/utils";
 export default function useKanbanCard(props: any = {}) {
+  const token = ref(null)
   const dragCard = computed({
     get: () => storeKanban.dragCard,
     set: (value: boolean) => {
@@ -101,6 +102,22 @@ export default function useKanbanCard(props: any = {}) {
   })
   const validateIfTheOperationIsDifferentTurn = computed(() => props.card.operationTypeId != OPERATION_TYPE_TURN)
   const isNonFlight = computed(() => props.card.type === NON_FLIGHT)
+  const helpLinkToAnother = computed(() => ({
+    title: 'Link to Another',
+    description: `
+      Need help? See the documentation for more information on "Link to Another".
+      ${helper.documentationLink('/docs/agione/passenger-module/schedule#link-to-another', token.value)}
+    `
+  }))
+
+  const helpPlanning = computed(() => ({
+    title: 'Planning',
+    description: `
+      Need help? See the documentation for more information on "Planning".
+      ${helper.documentationLink('/docs/agione/passenger-module/schedule#planning', token.value)}
+    `
+  }))  
+
   function mergeDataWorkOrder(data) {
     data.operationTypeId = OPERATION_TYPE_TURN;
     if(operationTypeDrag.value === 'inbound') {
@@ -292,6 +309,11 @@ export default function useKanbanCard(props: any = {}) {
       ],
     });
   }
+
+  onMounted(async () => {
+    token.value = await helper.getToken()
+  })
+
   return {
     colorCheckSchedule,
     titleStatus,
@@ -312,6 +334,8 @@ export default function useKanbanCard(props: any = {}) {
     dragCard,
     draggedFloatingCard,
     validateClassGray,
-    deleteCard
+    deleteCard,
+    helpLinkToAnother,
+    helpPlanning
   };
 }
