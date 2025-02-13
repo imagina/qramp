@@ -33,14 +33,12 @@ import {
 import qRampStore from '../_store/qRampStore.js'
 import flightDetail from '../_components/modal/flightDetail.vue';
 import workOrderList from '../_store/actions/workOrderList.ts';
-import { cacheOffline } from 'src/plugins/utils.ts';
-import { store } from 'src/plugins/utils'
+import { cacheOffline, store, helper } from 'src/plugins/utils';
 import securityForm from '../_components/securityForm/components/index'
 import securityFormStore from '../_components/securityForm/store/index.ts'
 import storeFlight from '../_components/flight/store'
 import modalNonFlight from 'src/modules/qramp/_components/modalNonFlight/views/index.vue';
 import { showChipForNoFlight } from 'src/modules/qramp/_store/actions/showChipForNoFlight.ts'
-import { ref } from 'vue'
 
 export default {
   name: 'RampCrud',
@@ -55,6 +53,7 @@ export default {
       areaId: null,
       loadingBulk: false,
       refModalCreate: null,
+      token: '',
     }
   },
   provide() {
@@ -91,6 +90,7 @@ export default {
   mounted() {
     this.$nextTick(async () => {
       this.refModalCreate = this.$refs.modalCreate;
+      this.token = await helper.getToken()
     })
   },
   beforeUnmount() {
@@ -140,6 +140,16 @@ export default {
           ]
         },
         read: {
+          help: {
+            title: 'Work Order',
+            description: `
+              In this crud you can manage work Orders (create, update, delete).
+              ${helper.documentationLink(
+                '/docs/agione/security-module/work-orders',
+                this.token
+              )}
+            `,
+          },
           columns: [
             {
               name: 'id',
