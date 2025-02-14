@@ -9,6 +9,7 @@
           :actions="actions"
           :chip="chip"
           @hide="clear"
+          :help="helptext"
         >
             <div>
                 <simpleWorkOrders v-if="!isUpdate" ref="refCreateForm" @refreshData="getDataTable()"/>
