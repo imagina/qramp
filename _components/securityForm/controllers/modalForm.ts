@@ -21,7 +21,7 @@ import updateWorkOrders from '../services/updateWorkOrders';
 import stepps from '../models/defaultModels/stepps'
 import serviceListStore from '../../serviceList/store/serviceList';
 import baseService from "src/modules/qcrud/_services/baseService.js";
-import { alert, store as storeUtil, i18n } from 'src/plugins/utils';
+import { alert, store as storeUtil, i18n, helper } from 'src/plugins/utils';
 import { useQuasar } from 'quasar';
 import showWorkOrder from '../services/showWorkOrder'
 import workOrderList from '../../../_store/actions/workOrderList';
@@ -36,6 +36,7 @@ export default function modalFormController(props: any = null, emit: any = null)
   provide('showWorkOrder', showWorkOrder);
   const refCreateForm: any = ref(null);
   const refStepper: any = ref(null);
+  const token: null | string = ref(null);
   const loading: ComputedRef<boolean> = computed(() => store.loading);
   const isUpdate = computed(() => store.isUpdate);
   const titleModal: ComputedRef<string> = computed(() => store.titleModal);
@@ -174,6 +175,19 @@ export default function modalFormController(props: any = null, emit: any = null)
     ];
     return isUpdate.value ? actionsUpdate : actionsCreate.value;
   });
+  const helptext = computed(() => ({
+    title: isUpdate.value ? 'Update security' : 'Create security',
+    description: `
+      Need help? Check the documentation for more information on 
+      ${isUpdate.value ? 'updating Work Orders' : 'creating Work Orders'}.
+      ${helper.documentationLink(
+        `/docs/agione/security-module/work-orders${
+          isUpdate.value ? '#editing-a-work-order' : '#creating-a-work-order'
+        }`, 
+        token.value
+      )}
+    `,
+  }))
   function clear(): void {
     store.reset();
     serviceListStore().setShowFavourite(false)
@@ -316,6 +330,7 @@ export default function modalFormController(props: any = null, emit: any = null)
   }
   onMounted(async () => {
     store.emitEvent.refreshData = await getDataTable();
+    token.value = await helper.getToken();
   })
   return {
     showModal,
@@ -331,5 +346,6 @@ export default function modalFormController(props: any = null, emit: any = null)
     getDataTable,
     loadform,
     chip,
+    helptext
   };
 }
