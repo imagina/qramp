@@ -167,6 +167,10 @@
                     <div class="tw-flex tw-items-center  tw-gap-2">
                       <q-icon name="fa-light fa-arrows-up-down-left-right" />
                       Link to Another
+                      <help-text
+                        @click.native.stop
+                        v-bind="helpLinkToAnother"
+                      />
                     </div>
                   </q-item-section>
                 </q-item>
@@ -180,6 +184,10 @@
                     <div class="tw-flex tw-items-center  tw-gap-2">
                       <q-icon name="fa-light fa-gear" />
                       Planning
+                      <help-text
+                        @click.native.stop
+                        v-bind="helpPlanning"
+                      />
                     </div>
                   </q-item-section>
                 </q-item>
