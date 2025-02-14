@@ -153,7 +153,7 @@ export default {
               },
               config: {
                 options: {
-                  label: 'name',
+                  label: 'fullNameWithCompany',
                   value: 'id',
                 }
               },
